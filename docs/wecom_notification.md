@@ -63,3 +63,5 @@ git config --get core.hooksPath
 ```
 
 通知仍然读取本地 `.env`，并统一调用 `scripts/wecom_notify.py`。如果 `WECOM_NOTIFY_ENABLED=false`，commit/push hook 也会跳过发送。
+
+push watcher 在后台运行，异常输出写入本地 `.git/wecom_notify.log`，该日志不会提交到仓库。
