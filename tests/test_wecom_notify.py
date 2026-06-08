@@ -91,20 +91,24 @@ class WeComNotifyTests(unittest.TestCase):
         )
 
         self.assertIn("### 主要修改内容", summary)
-        self.assertIn("工作区变更：2 个文件", summary)
+        self.assertIn("企业微信通知", summary)
+        self.assertIn("文档说明", summary)
+        self.assertIn("工作区变更：2 个", summary)
         self.assertIn("` M README.md`", summary)
         self.assertIn("`?? scripts/wecom_notify.py`", summary)
-        self.assertIn("### 变更统计", summary)
 
     def test_formats_clean_repo_last_commit_summary(self):
         summary = format_git_change_summary(
             status_output="",
             last_commit_output="abc1234 update notification",
             last_commit_stat_output=" scripts/wecom_notify.py | 12 ++++++++++++\n",
+            last_commit_files_output="M\tscripts/wecom_notify.py\n",
         )
 
+        self.assertIn("### 主要修改内容", summary)
+        self.assertIn("企业微信通知", summary)
         self.assertIn("最近提交：`abc1234 update notification`", summary)
-        self.assertIn("### 提交统计", summary)
+        self.assertIn("`M\tscripts/wecom_notify.py`", summary)
 
     def test_compose_repository_message_can_skip_git_summary(self):
         message = compose_repository_message("hello", include_git_summary=False)

@@ -2,7 +2,7 @@
 
 本仓库的消息通知统一走 `scripts/wecom_notify.py`。后续新增任何脚本、实验任务、定时任务或 CI 流程时，都应调用这个入口发送企业微信机器人提醒，避免在多个位置直接拼 webhook 请求。
 
-命令行入口和 Git hook 通知默认会在消息正文后追加 git “主要修改内容”，包括工作区变更文件、diff 统计，或在工作区干净时展示最近一次提交摘要。
+命令行入口和 Git hook 通知默认会在消息正文后追加 git “主要修改内容”，先按变更范围生成自然语言摘要，再列出涉及文件；工作区干净时展示最近一次提交摘要。
 
 ## 配置
 
@@ -80,6 +80,6 @@ git config core.hooksPath .githooks
 git config --get core.hooksPath
 ```
 
-通知仍然读取本地 `.env`，并统一调用 `scripts/wecom_notify.py`。如果 `WECOM_NOTIFY_ENABLED=false`，commit/push hook 也会跳过发送。hook 消息会附带“主要修改内容”，用于在企业微信里直接查看本次提交或推送的核心改动。
+通知仍然读取本地 `.env`，并统一调用 `scripts/wecom_notify.py`。如果 `WECOM_NOTIFY_ENABLED=false`，commit/push hook 也会跳过发送。hook 消息会附带自然语言版“主要修改内容”，用于在企业微信里直接查看本次提交或推送的核心改动。
 
 push watcher 在后台运行，异常输出写入本地 `.git/wecom_notify.log`，该日志不会提交到仓库。

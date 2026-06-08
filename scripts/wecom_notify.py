@@ -89,49 +89,117 @@ def _limit_lines(lines: list[str], max_lines: int) -> tuple[list[str], int]:
     return lines[:max_lines], max(0, len(lines) - max_lines)
 
 
+def _path_from_status_line(line: str) -> str:
+    if len(line) >= 4 and line[2] == " ":
+        path = line[3:]
+    else:
+        parts = line.strip().split(maxsplit=1)
+        path = parts[-1] if parts else ""
+    if " -> " in path:
+        path = path.split(" -> ")[-1]
+    return path.strip()
+
+
+def _path_from_name_status_line(line: str) -> str:
+    parts = [part for part in line.split("\t") if part]
+    if len(parts) >= 2:
+        return parts[-1].strip()
+    return _path_from_status_line(line)
+
+
+def _human_change_bullets(paths: list[str]) -> list[str]:
+    normalized = {path.replace("\\", "/") for path in paths if path}
+    bullets: list[str] = []
+
+    if any(
+        path in {"scripts/wecom_notify.py", "scripts/git_wecom_notify.py"}
+        or path.startswith(".githooks/")
+        for path in normalized
+    ):
+        bullets.append("企业微信通知：调整消息组装和发送入口，让 bot 消息先展示可读的改动摘要。")
+
+    if any(path in {"scripts/git_wecom_notify.py"} or path.startswith(".githooks/") for path in normalized):
+        bullets.append("Git 自动通知：commit/push hook 会复用同一套仓库通知格式。")
+
+    if any(path.startswith("tests/") for path in normalized):
+        bullets.append("测试覆盖：补充通知、Git hook 或接口检查相关单元测试，避免摘要格式回退。")
+
+    if any(
+        path in {"README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md"}
+        or path.startswith("docs/")
+        for path in normalized
+    ):
+        bullets.append("文档说明：更新 README、变更记录和相关说明文档，保持使用方式可追溯。")
+
+    if any(path.startswith("scripts/llm_") or path == "docs/llm_clients.md" for path in normalized):
+        bullets.append("LLM 配置检查：更新 OpenAI/OpenRouter 客户端或 smoke test 支撑后续实验。")
+
+    if any(
+        path.startswith("docs/source_")
+        or path in {
+            "docs/research_brief.md",
+            "docs/literature_map.md",
+            "docs/industry_practices.md",
+            "docs/experiment_plan.md",
+        }
+        for path in normalized
+    ):
+        bullets.append("研究资料：补充资料搜集、文献地图、行业实践或实验计划相关内容。")
+
+    if not bullets:
+        top_level = sorted({path.split("/", 1)[0] for path in normalized})
+        scope = "、".join(top_level[:3]) if top_level else "仓库文件"
+        bullets.append(f"仓库更新：共涉及 {len(normalized)} 个文件，主要范围是 {scope}。")
+
+    return [f"- {bullet}" for bullet in bullets[:5]]
+
+
 def format_git_change_summary(
     status_output: str,
     diff_stat_output: str = "",
     last_commit_output: str = "",
     last_commit_stat_output: str = "",
+    last_commit_files_output: str = "",
     max_lines: int = DEFAULT_MAX_GIT_LINES,
 ) -> str:
     """Format repository changes as concise WeCom markdown."""
     status_lines = [line for line in status_output.splitlines() if line.strip()]
     if status_lines:
+        changed_paths = [_path_from_status_line(line) for line in status_lines]
         shown, hidden = _limit_lines(status_lines, max_lines)
         lines = [
             "",
             "### 主要修改内容",
-            f"- 工作区变更：{len(status_lines)} 个文件",
+            *_human_change_bullets(changed_paths),
+            "",
+            "### 涉及文件",
+            f"- 工作区变更：{len(status_lines)} 个",
         ]
         lines.extend(f"- `{line}`" for line in shown)
         if hidden:
             lines.append(f"- 其余 {hidden} 个文件未展开")
 
-        stat_lines = [line for line in diff_stat_output.splitlines() if line.strip()]
-        if stat_lines:
-            shown_stat, hidden_stat = _limit_lines(stat_lines, max_lines)
-            lines.extend(["", "### 变更统计"])
-            lines.extend(f"> {line}" for line in shown_stat)
-            if hidden_stat:
-                lines.append(f"> 其余 {hidden_stat} 行未展开")
-
         return "\n".join(lines)
 
     if last_commit_output:
+        commit_file_lines = [
+            line for line in last_commit_files_output.splitlines() if line.strip()
+        ]
+        changed_paths = [_path_from_name_status_line(line) for line in commit_file_lines]
         lines = [
             "",
             "### 主要修改内容",
+            *_human_change_bullets(changed_paths),
+            "",
+            "### 涉及提交",
             f"- 最近提交：`{last_commit_output}`",
         ]
-        stat_lines = [line for line in last_commit_stat_output.splitlines() if line.strip()]
-        if stat_lines:
-            shown_stat, hidden_stat = _limit_lines(stat_lines, max_lines)
-            lines.extend(["", "### 提交统计"])
-            lines.extend(f"> {line}" for line in shown_stat)
-            if hidden_stat:
-                lines.append(f"> 其余 {hidden_stat} 行未展开")
+        if commit_file_lines:
+            shown_files, hidden_files = _limit_lines(commit_file_lines, max_lines)
+            lines.extend(["", "### 涉及文件"])
+            lines.extend(f"- `{line}`" for line in shown_files)
+            if hidden_files:
+                lines.append(f"- 其余 {hidden_files} 个文件未展开")
         return "\n".join(lines)
 
     return "\n### 主要修改内容\n- 未检测到 git 变更"
@@ -155,15 +223,18 @@ def collect_git_change_summary(
 
     last_commit_output = ""
     last_commit_stat_output = ""
+    last_commit_files_output = ""
     if not status_output:
         last_commit_output = _run_git(root, ["log", "-1", "--pretty=format:%h %s"])
         last_commit_stat_output = _run_git(root, ["show", "--stat", "--format=", "HEAD"])
+        last_commit_files_output = _run_git(root, ["show", "--name-status", "--format=", "HEAD"])
 
     return format_git_change_summary(
         status_output=status_output,
         diff_stat_output=diff_stat_output,
         last_commit_output=last_commit_output,
         last_commit_stat_output=last_commit_stat_output,
+        last_commit_files_output=last_commit_files_output,
         max_lines=max_lines,
     )
 
