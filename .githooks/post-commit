@@ -1,0 +1,20 @@
+#!/bin/sh
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$repo_root" || exit 0
+
+run_python() {
+    if command -v python >/dev/null 2>&1; then
+        python "$@"
+    elif command -v py >/dev/null 2>&1; then
+        py -3 "$@"
+    else
+        return 127
+    fi
+}
+
+if ! run_python scripts/git_wecom_notify.py post-commit; then
+    echo "wecom notification failed after commit" >&2
+fi
+
+exit 0

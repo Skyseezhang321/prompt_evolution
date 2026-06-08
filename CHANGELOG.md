@@ -28,6 +28,7 @@
 
 - 新增项目构建原则文档，并补充 `AGENTS.md` / `CLAUDE.md`，方便 Codex 和 Claude Code 读取仓库工作约束。
 - 新增企业微信机器人通知脚本、配置示例、使用文档和单元测试，后续消息通知统一通过该入口发送。
+- 新增本地 Git hook 自动通知，commit 后发送提交消息，push 成功后发送远程更新消息。
 - 新增 OpenAI / OpenRouter 最小 LLM API 客户端、dry-run/live smoke test、配置示例、使用文档和单元测试，用于后续实验前检查 provider 配置。
 
 ### Changed

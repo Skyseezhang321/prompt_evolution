@@ -42,3 +42,24 @@ send_wecom_notification("### 实验完成\n- run_id: 20260608-001")
 ```
 
 企业微信机器人异常、网络异常或 webhook 未配置时会抛出 `NotificationError`。调用方如果有自己的重试或降级策略，应捕获这个异常并记录失败原因。
+
+## Git 自动通知
+
+仓库提供 `.githooks/`，用于本机提交和推送通知：
+
+- `.githooks/post-commit`：每次本地 commit 完成后发送 commit 通知。
+- `.githooks/pre-push`：Git 没有客户端 `post-push` hook，因此这里在 push 前启动后台 watcher；只有远程 ref 更新到本地 SHA 后才发送 push completed 通知。
+
+首次启用或换新机器后运行：
+
+```bash
+git config core.hooksPath .githooks
+```
+
+本机当前配置可用以下命令检查：
+
+```bash
+git config --get core.hooksPath
+```
+
+通知仍然读取本地 `.env`，并统一调用 `scripts/wecom_notify.py`。如果 `WECOM_NOTIFY_ENABLED=false`，commit/push hook 也会跳过发送。
