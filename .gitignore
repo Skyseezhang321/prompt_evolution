@@ -11,6 +11,9 @@ outputs/
 artifacts/
 *.log
 
+# Local source snapshots
+local_sources/raw/
+
 # Secrets
 .env
 .env.*

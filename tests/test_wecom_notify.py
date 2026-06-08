@@ -9,9 +9,12 @@ from scripts.wecom_notify import (
     ENV_WEBHOOK,
     NotificationError,
     build_payload,
+    compose_repository_message,
+    format_git_change_summary,
     load_dotenv,
     notifications_enabled,
     resolve_webhook,
+    send_repository_notification,
     send_wecom_notification,
 )
 
@@ -80,6 +83,46 @@ class WeComNotifyTests(unittest.TestCase):
 
         self.assertTrue(result["dry_run"])
         self.assertEqual(result["payload"]["markdown"]["content"], "hello")
+
+    def test_formats_worktree_change_summary(self):
+        summary = format_git_change_summary(
+            status_output=" M README.md\n?? scripts/wecom_notify.py\n",
+            diff_stat_output=" README.md | 3 +++\n 1 file changed, 3 insertions(+)",
+        )
+
+        self.assertIn("### 主要修改内容", summary)
+        self.assertIn("工作区变更：2 个文件", summary)
+        self.assertIn("` M README.md`", summary)
+        self.assertIn("`?? scripts/wecom_notify.py`", summary)
+        self.assertIn("### 变更统计", summary)
+
+    def test_formats_clean_repo_last_commit_summary(self):
+        summary = format_git_change_summary(
+            status_output="",
+            last_commit_output="abc1234 update notification",
+            last_commit_stat_output=" scripts/wecom_notify.py | 12 ++++++++++++\n",
+        )
+
+        self.assertIn("最近提交：`abc1234 update notification`", summary)
+        self.assertIn("### 提交统计", summary)
+
+    def test_compose_repository_message_can_skip_git_summary(self):
+        message = compose_repository_message("hello", include_git_summary=False)
+
+        self.assertEqual(message, "hello")
+
+    def test_repository_dry_run_includes_supplied_git_summary(self):
+        result = send_repository_notification(
+            "hello",
+            webhook="https://example.com/webhook",
+            dry_run=True,
+            repo=Path.cwd(),
+            max_git_lines=1,
+        )
+
+        content = result["payload"]["markdown"]["content"]
+        self.assertTrue(content.startswith("hello"))
+        self.assertIn("### 主要修改内容", content)
 
 
 if __name__ == "__main__":

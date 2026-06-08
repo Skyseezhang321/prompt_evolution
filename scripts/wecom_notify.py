@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -20,6 +21,7 @@ ENV_WEBHOOK = "WECOM_BOT_WEBHOOK"
 ENV_ENABLED = "WECOM_NOTIFY_ENABLED"
 
 FALSE_VALUES = {"0", "false", "no", "off", "disabled"}
+DEFAULT_MAX_GIT_LINES = 12
 
 
 class NotificationError(RuntimeError):
@@ -48,6 +50,122 @@ def load_dotenv(path: Optional[Path] = None) -> None:
 def notifications_enabled() -> bool:
     """Return whether outbound bot notifications are enabled."""
     return os.getenv(ENV_ENABLED, "true").strip().lower() not in FALSE_VALUES
+
+
+def _run_git(repo: Path, args: list[str]) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(repo), *args],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if result.returncode != 0:
+        return ""
+    return result.stdout.strip()
+
+
+def find_git_root(start: Optional[Path] = None) -> Optional[Path]:
+    """Return the git repository root for start, if one can be found."""
+    base = start or Path.cwd()
+    result = subprocess.run(
+        ["git", "-C", str(base), "rev-parse", "--show-toplevel"],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if result.returncode != 0:
+        return None
+    root = result.stdout.strip()
+    return Path(root) if root else None
+
+
+def _limit_lines(lines: list[str], max_lines: int) -> tuple[list[str], int]:
+    if max_lines <= 0:
+        return [], len(lines)
+    return lines[:max_lines], max(0, len(lines) - max_lines)
+
+
+def format_git_change_summary(
+    status_output: str,
+    diff_stat_output: str = "",
+    last_commit_output: str = "",
+    last_commit_stat_output: str = "",
+    max_lines: int = DEFAULT_MAX_GIT_LINES,
+) -> str:
+    """Format repository changes as concise WeCom markdown."""
+    status_lines = [line for line in status_output.splitlines() if line.strip()]
+    if status_lines:
+        shown, hidden = _limit_lines(status_lines, max_lines)
+        lines = [
+            "",
+            "### 主要修改内容",
+            f"- 工作区变更：{len(status_lines)} 个文件",
+        ]
+        lines.extend(f"- `{line}`" for line in shown)
+        if hidden:
+            lines.append(f"- 其余 {hidden} 个文件未展开")
+
+        stat_lines = [line for line in diff_stat_output.splitlines() if line.strip()]
+        if stat_lines:
+            shown_stat, hidden_stat = _limit_lines(stat_lines, max_lines)
+            lines.extend(["", "### 变更统计"])
+            lines.extend(f"> {line}" for line in shown_stat)
+            if hidden_stat:
+                lines.append(f"> 其余 {hidden_stat} 行未展开")
+
+        return "\n".join(lines)
+
+    if last_commit_output:
+        lines = [
+            "",
+            "### 主要修改内容",
+            f"- 最近提交：`{last_commit_output}`",
+        ]
+        stat_lines = [line for line in last_commit_stat_output.splitlines() if line.strip()]
+        if stat_lines:
+            shown_stat, hidden_stat = _limit_lines(stat_lines, max_lines)
+            lines.extend(["", "### 提交统计"])
+            lines.extend(f"> {line}" for line in shown_stat)
+            if hidden_stat:
+                lines.append(f"> 其余 {hidden_stat} 行未展开")
+        return "\n".join(lines)
+
+    return "\n### 主要修改内容\n- 未检测到 git 变更"
+
+
+def collect_git_change_summary(
+    repo: Optional[Path] = None,
+    max_lines: int = DEFAULT_MAX_GIT_LINES,
+) -> str:
+    """Collect a concise git summary for notification messages."""
+    root = repo or find_git_root()
+    if root is None:
+        return "\n### 主要修改内容\n- 当前目录不是 git 仓库"
+
+    status_output = _run_git(root, ["status", "--short"])
+    diff_stat_parts = [
+        _run_git(root, ["diff", "--stat"]),
+        _run_git(root, ["diff", "--cached", "--stat"]),
+    ]
+    diff_stat_output = "\n".join(part for part in diff_stat_parts if part)
+
+    last_commit_output = ""
+    last_commit_stat_output = ""
+    if not status_output:
+        last_commit_output = _run_git(root, ["log", "-1", "--pretty=format:%h %s"])
+        last_commit_stat_output = _run_git(root, ["show", "--stat", "--format=", "HEAD"])
+
+    return format_git_change_summary(
+        status_output=status_output,
+        diff_stat_output=diff_stat_output,
+        last_commit_output=last_commit_output,
+        last_commit_stat_output=last_commit_stat_output,
+        max_lines=max_lines,
+    )
 
 
 def build_payload(
@@ -153,6 +271,44 @@ def send_wecom_notification(
     return result
 
 
+def compose_repository_message(
+    content: str,
+    include_git_summary: bool = True,
+    repo: Optional[Path] = None,
+    max_git_lines: int = DEFAULT_MAX_GIT_LINES,
+) -> str:
+    """Compose the final notification body for repository events."""
+    if not include_git_summary:
+        return content
+    return f"{content.rstrip()}{collect_git_change_summary(repo=repo, max_lines=max_git_lines)}"
+
+
+def send_repository_notification(
+    content: str,
+    msgtype: str = "markdown",
+    webhook: Optional[str] = None,
+    timeout: float = 10,
+    dry_run: bool = False,
+    include_git_summary: bool = True,
+    repo: Optional[Path] = None,
+    max_git_lines: int = DEFAULT_MAX_GIT_LINES,
+) -> dict[str, Any]:
+    """Send a repository notification with the main git changes attached."""
+    final_content = compose_repository_message(
+        content=content,
+        include_git_summary=include_git_summary,
+        repo=repo,
+        max_git_lines=max_git_lines,
+    )
+    return send_wecom_notification(
+        content=final_content,
+        msgtype=msgtype,
+        webhook=webhook,
+        timeout=timeout,
+        dry_run=dry_run,
+    )
+
+
 def _read_message(args: argparse.Namespace) -> str:
     parts: list[str] = []
 
@@ -199,6 +355,17 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
         action="store_true",
         help="print payload without sending the webhook request",
     )
+    parser.add_argument(
+        "--no-git-summary",
+        action="store_true",
+        help="do not append the repository's main git changes",
+    )
+    parser.add_argument(
+        "--max-git-lines",
+        type=int,
+        default=DEFAULT_MAX_GIT_LINES,
+        help="maximum git status/stat lines to include per section",
+    )
     return parser.parse_args(argv)
 
 
@@ -208,12 +375,14 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     try:
         content = _read_message(args)
-        result = send_wecom_notification(
+        result = send_repository_notification(
             content=content,
             msgtype=args.msgtype,
             webhook=args.webhook,
             timeout=args.timeout,
             dry_run=args.dry_run,
+            include_git_summary=not args.no_git_summary,
+            max_git_lines=args.max_git_lines,
         )
     except (NotificationError, ValueError) as exc:
         print(f"notification failed: {exc}", file=sys.stderr)

@@ -2,6 +2,8 @@
 
 更新时间：2026-06-08
 
+状态：初始种子清单，尚未覆盖完整行业经验。新增来源应先进入 `source_inventory.md`，重要单一来源使用 `docs/industry_notes/template.md` 记录，稳定的跨来源判断再汇总到本文。
+
 ## 总体判断
 
 主流实践已经从“手写 prompt 技巧”转向“eval-driven development + prompt versioning + observability + controlled optimization”。自动优化工具有价值，但前提是有高质量测试集、评分器、日志和回滚机制。
@@ -51,12 +53,18 @@
 6. 自动建议，人工发布：候选 prompt 可以自动产生，但进入主分支或生产前要经过 eval gate 和人工审查。
 7. 持续监控：模型升级、数据分布变化和工具 API 改动都会让 prompt 性能衰退。
 
+## 待核验行业案例
+
+- [Hermes Agent 自我进化机制行业观察](industry_notes/practice-zhihu-hermes-agent-2026.md)：用户提供的知乎全文快照，提出程序性记忆、技能自动生成、技能局部 patch 优化和轨迹反哺模型训练等实践线索。当前证据等级为 weak，需核验 Hermes / OpenClaw 原始项目、issue 和文档后再纳入稳定结论。
+- [Karpathy-Inspired Claude Code Guidelines 仓库分析](industry_notes/practice-github-karpathy-guidelines-2026.md)：极小但高传播的 coding agent 行为规则包，核心价值是把常见失败模式转成“先澄清、少抽象、精准改、可验证”的短约束。仓库热度可核验，但效果仍需本项目 eval 验证。
+
 ## 推荐仓库规范
 
 - `prompts/`：存放 prompt 模板，包含 model、parameters、tools、schema。
 - `evals/`：存放评测数据、评分器、rubric 和运行配置。
 - `runs/`：存放每次优化运行的候选、分数、成本和轨迹摘要。
 - `docs/paper_notes/`：论文笔记。
+- `docs/industry_notes/`：行业经验、工程复盘、thread 和产品实践的单篇深读笔记。
 - `docs/decisions/`：记录关键研究和工程决策。
 
 ## 自进化系统的生产发布门槛

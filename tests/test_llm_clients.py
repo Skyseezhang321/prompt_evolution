@@ -10,10 +10,12 @@ from scripts.llm_clients import (
     ENV_OPENAI_API_KEY,
     ENV_OPENAI_BASE_URL,
     ENV_OPENAI_MODEL,
+    ENV_OPENAI_MODELS,
     ENV_OPENROUTER_API_KEY,
     ENV_OPENROUTER_APP_TITLE,
     ENV_OPENROUTER_HTTP_REFERER,
     ENV_OPENROUTER_MODEL,
+    ENV_OPENROUTER_MODELS,
     LLMConfigError,
     build_chat_messages,
     call_openai_response,
@@ -21,6 +23,8 @@ from scripts.llm_clients import (
     extract_openai_text,
     extract_openrouter_text,
     load_dotenv,
+    resolve_openai_models,
+    resolve_openrouter_models,
 )
 
 
@@ -57,13 +61,14 @@ class LLMClientsTests(unittest.TestCase):
                 prompt="hello",
                 instructions="answer briefly",
                 dry_run=True,
+                model="gpt-override",
             )
 
         self.assertTrue(result["dry_run"])
         self.assertEqual(result["provider"], "openai")
         self.assertEqual(result["url"], f"{DEFAULT_OPENAI_BASE_URL}/responses")
         self.assertEqual(result["headers"]["Authorization"], "Bearer <redacted>")
-        self.assertEqual(result["payload"]["model"], "gpt-test")
+        self.assertEqual(result["payload"]["model"], "gpt-override")
         self.assertEqual(result["payload"]["input"], "hello")
         self.assertEqual(result["payload"]["instructions"], "answer briefly")
 
@@ -82,6 +87,7 @@ class LLMClientsTests(unittest.TestCase):
                 prompt="hello",
                 system_prompt="answer briefly",
                 dry_run=True,
+                model="openai/gpt-override",
             )
 
         self.assertTrue(result["dry_run"])
@@ -93,9 +99,28 @@ class LLMClientsTests(unittest.TestCase):
         self.assertEqual(result["headers"]["Authorization"], "Bearer <redacted>")
         self.assertEqual(result["headers"]["HTTP-Referer"], "https://example.com")
         self.assertEqual(result["headers"]["X-OpenRouter-Title"], "Prompt Evolution")
-        self.assertEqual(result["payload"]["model"], "openai/gpt-test")
+        self.assertEqual(result["payload"]["model"], "openai/gpt-override")
         self.assertEqual(result["payload"]["messages"][0]["role"], "system")
         self.assertEqual(result["payload"]["messages"][1]["role"], "user")
+
+    def test_openai_model_matrix_can_be_configured_from_env(self):
+        with patch.dict(
+            os.environ,
+            {ENV_OPENAI_MODELS: "gpt-a, gpt-b ,gpt-c"},
+            clear=True,
+        ):
+            self.assertEqual(resolve_openai_models(), ["gpt-a", "gpt-b", "gpt-c"])
+
+    def test_openrouter_model_matrix_can_be_configured_from_env(self):
+        with patch.dict(
+            os.environ,
+            {ENV_OPENROUTER_MODELS: "deepseek/a, qwen/b, z-ai/c"},
+            clear=True,
+        ):
+            self.assertEqual(
+                resolve_openrouter_models(),
+                ["deepseek/a", "qwen/b", "z-ai/c"],
+            )
 
     def test_build_chat_messages_requires_non_empty_prompt(self):
         with self.assertRaises(ValueError):

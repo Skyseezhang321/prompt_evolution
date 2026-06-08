@@ -10,44 +10,59 @@
 
 | 项目 | 当前状态 |
 | --- | --- |
-| 当前阶段 | 研究框架、实验纪律和文档骨架已建立；准备进入最小可复现实验。 |
-| 当前主线 | 把 prompt 优化从“改文案”转化为“带 eval、版本、失败分析和回滚的优化问题”。 |
-| 第一批实验方向 | 结构化信息抽取或文本分类，先验证 manual / few-shot / APE-style / ProTeGi-style baseline。 |
+| 当前阶段 | 五天交付版研究闭环：快速跟进前沿状态，形成可执行方案，并用初步实验验证关键判断。 |
+| 当前主线 | 建立从 source -> note -> frontier map -> recommendation -> experiment evidence -> final report 的可追溯链路。 |
+| 第一批实验方向 | 不追求完整 benchmark；只选择 1-2 个能验证重要结论的最小任务。 |
 | 主要风险 | eval 过拟合、LLM-as-judge 偏差、prompt 漂移、成本失控、自动优化破坏安全边界。 |
-| 阅读路径 | 先读本 README，再读 [项目构建原则](docs/project_principles.md)、[研究框架](docs/research_brief.md)、[实验计划](docs/experiment_plan.md) 和 [变更记录](CHANGELOG.md)。 |
+| 阅读路径 | 先读本 README；想参与共创先读 [参与贡献指南](CONTRIBUTING.md) 和 [共创工作流](docs/contribution_workflow.md)；继续研究细节再读 [资料搜集计划](docs/source_collection_plan.md)、[来源清单](docs/source_inventory.md)、[研究框架](docs/research_brief.md)、[实验计划](docs/experiment_plan.md)、[最终报告结构](docs/final_report_outline.md) 和 [变更记录](CHANGELOG.md)。 |
+
+## 五天交付目标
+
+本项目当前目标不是穷尽复现所有 prompt optimization 方法，而是在有限时间内完成一个可信、可执行的研究交付：
+
+- 跟上当前前沿：明确 automatic prompt optimization、reflective prompt evolution、self-evolving prompts、context engineering 和 eval-driven prompt iteration 的主要进展。
+- 形成经验总结：把行业实践和论文结论整理成可复用的原则、方法分类和风险清单。
+- 产出可执行方案：给出 2-3 个有实际落地价值的方案或建议，说明适用场景、前提、成本和风险。
+- 做初步验证：选择 1-2 个关键判断做最小实验，提供观察证据、失败案例和后续验证路径。
+- 形成最终报告：区分“证据支持的结论”“初步实验观察”和“仍待验证的推测”。
 
 ## 重要分析和判断
 
-截至 2026-06-08，当前最值得优先验证的判断：
+截至 2026-06-08，以下是当前资料搜集和初步核验后最值得跟进的前沿判断：
 
 1. Prompt 优化的主要瓶颈正在从「prompt 文案」转向「eval 质量、失败轨迹、上下文组织和版本治理」。
 2. 自然语言反思可能比纯标量 reward 更适合 prompt 级优化，因为 prompt 本身是可读、可编辑、可审计的文本对象。
 3. 真正有生产价值的自进化系统必须包含约束搜索、候选隔离、离线评测、人工审核、版本回滚和持续监控。
 4. 对 agent 系统而言，优化目标不应只包含最终答案准确率，还要包含工具调用正确性、拒答边界、成本、延迟、稳定性和跨模型迁移。
 
-这些判断还不是最终结论。后续必须通过可复现实验、失败案例和指标对比来支持或修正。
+这些判断还不是最终结论。最终报告必须为每条判断标注证据等级，并通过资料来源、初步实验、失败案例或反例说明支撑强度。
 
 ## 当前分析经过
 
 本项目目前按以下路线推进：
 
 1. 先界定研究问题：prompt 不是孤立文本，而是 instruction、examples、context、tool policy、model parameters 和 evaluator 的组合。
-2. 再整理方法脉络：从 APE、ProTeGi、OPRO、PromptBreeder、DSPy/MIPROv2 到 GEPA、Memory APO 等方向，拆解候选生成、反馈信号、候选选择和记忆机制。
-3. 然后建立工程纪律：每轮实验记录 prompt diff、模型、参数、数据集、评分器、成本、失败模式和回滚点。
-4. 最后做最小实验：先选评分清晰、成本低、失败可解释的任务，避免一开始引入 RAG 或复杂 agent 噪声。
+2. 再做资料搜集：广泛收集学术论文、工程框架、产品文档、行业案例和反面经验，并记录筛选标准。
+3. 然后整理前沿状态：从 APE、ProTeGi、OPRO、PromptBreeder、DSPy/MIPROv2 到 GEPA、MemAPO、SePO、MASPO 等方向，拆解候选生成、反馈信号、候选选择、记忆机制和 agent/context 扩展。
+4. 再形成方案建议：把论文方法和行业实践转化为可执行的架构、流程、评估和治理建议。
+5. 最后做最小实验：只验证对方案选择影响最大的 1-2 个判断，并记录 prompt diff、模型、参数、数据集、评分器、成本、失败模式和回滚点。
 
 ## 阶段结果
 
 已经完成：
 
-- 建立研究框架、文献地图、行业实践、实验计划和论文笔记模板。
+- 建立研究框架、文献地图、行业实践、实验计划、论文笔记模板和行业经验笔记模板。
+- 建立资料搜集计划，用于指导论文、产品文档、工程框架和行业案例的系统化收集。
+- 建立最终报告结构，用于约束最终交付必须包含前沿状态、经验总结、方案建议和初步验证。
 - 建立项目构建原则，并写入 `AGENTS.md` / `CLAUDE.md`，方便 Codex 和 Claude Code 读取。
 - 建立企业微信通知入口，用于后续脚本、实验任务、定时任务和 CI 的统一消息通知。
 - 建立 OpenAI / OpenRouter 最小 LLM API 客户端和 dry-run smoke test，用于后续实验前的 provider 配置检查。
-- 明确第一批实验优先从“结构化信息抽取”或“文本分类”开始。
+- 建立第一批实验候选方向，但尚未冻结具体任务。
 
 尚未完成：
 
+- 尚未完成核心来源的深读笔记、前沿状态图和证据等级标注。
+- 尚未把资料综述转化为 2-3 个可执行方案或建议。
 - 尚未实现 benchmark harness。
 - 尚未冻结第一版数据集和评分器。
 - 尚未跑出 manual、few-shot、APE-style、ProTeGi-style 的可比实验结果。
@@ -55,11 +70,25 @@
 
 ## 下一步
 
-1. 冻结首个任务、数据切分和评分器。
-2. 实现 manual prompt 与 few-shot baseline。
-3. 加入 APE-style 候选生成和 ProTeGi-style 失败反思。
-4. 为每次运行生成 artifact，记录指标、成本、失败案例和 prompt diff。
-5. 用 validation split 和 hidden test set 检查是否过拟合。
+1. 按 [资料搜集计划](docs/source_collection_plan.md) 完成来源快筛、核心来源深读和证据等级标注。
+2. 扩充 [文献地图](docs/literature_map.md) 与 [行业实践整理](docs/industry_practices.md)，优先提炼当前前沿状态和可落地经验。
+3. 汇总 2-3 个可执行方案或建议，说明适用场景、实现步骤、成本、风险和回滚点。
+4. 为最重要的 1-2 个判断设计最小实验，避免为了完整性实现过大的 benchmark harness。
+5. 按 [最终报告结构](docs/final_report_outline.md) 输出完整说明和报告。
+
+## 公共共创机制
+
+本项目后续会按 public 项目方式接受外部线索和 PR。共创机制的基本思路是：低门槛接收“我读到一个有价值的点”，高标准沉淀“项目可以采信的研究结论”。
+
+推荐流转：
+
+```text
+Research Signal issue -> 项目内新颖性判断 -> 结构化笔记 -> 实验候选 -> 有证据的结论
+```
+
+贡献者可以只提交线索，不必承担完整深读或实验；维护者会把线索标记为 `duplicate`、`extension`、`contradiction`、`new-hypothesis` 或 `experiment-candidate`。只有经过来源记录、证据整理和必要验证后，观点才会进入 README、最终报告或项目原则。
+
+参与方式见 [参与贡献指南](CONTRIBUTING.md)，完整管理流程见 [共创工作流](docs/contribution_workflow.md)。
 
 ## 研究目标
 
@@ -84,9 +113,15 @@
 ## 当前文档
 
 - [项目构建原则](docs/project_principles.md)：prompt 优化/自进化研究的基本工作原则和代理执行约束。
+- [参与贡献指南](CONTRIBUTING.md)：外部贡献者提交线索、笔记、实验和 PR 的入口说明。
+- [共创工作流](docs/contribution_workflow.md)：线索查重、新颖性判断、深读、实验和结论沉淀的管理流程。
+- [资料搜集计划](docs/source_collection_plan.md)：论文、行业经验、工程框架和反面案例的收集范围、字段和阶段门槛。
+- [来源清单](docs/source_inventory.md)：资料搜集阶段的候选论文、行业实践、工具文档和待补缺口。
 - [研究框架](docs/research_brief.md)：问题定义、研究假设、技术路线和风险。
+- [最终报告结构](docs/final_report_outline.md)：最终说明和报告的内容边界、证据等级和验收标准。
 - [文献地图](docs/literature_map.md)：自动 prompt 优化、自进化、上下文工程相关论文脉络。
-- [行业实践](docs/industry_practices.md)：OpenAI、Anthropic、Google、DSPy、LangSmith、Promptfoo 等实践整理。
+- [行业实践](docs/industry_practices.md)：OpenAI、Anthropic、Google、DSPy、LangSmith、Promptfoo 等跨来源实践整理。
+- [行业经验笔记模板](docs/industry_notes/template.md)：后续深读知乎、Twitter/X、工程博客、事故复盘等行业来源时统一记录。
 - [实验计划](docs/experiment_plan.md)：MVP 实验设计、基线、指标、日志字段和里程碑。
 - [论文笔记模板](docs/paper_notes/template.md)：后续阅读论文时统一记录。
 - [企业微信通知](docs/wecom_notification.md)：统一的企业微信机器人通知入口、配置和调用方式。
@@ -95,14 +130,19 @@
 
 ## 后续工作流
 
-1. 新论文放到 `docs/paper_notes/`，按模板写 1-2 页摘要。
-2. 新实验先更新 [实验计划](docs/experiment_plan.md)，再写代码。
-3. 每个 prompt 变体都要记录模型、参数、数据集、评分器、成本和失败案例。
-4. 任何「自动改 prompt」的实验都必须保留原 prompt、候选 prompt、优化原因、评测结果和回滚点。
+1. 外部贡献优先通过 `Research Signal` issue 提交线索；维护者按 [共创工作流](docs/contribution_workflow.md) 做项目内新颖性判断。
+2. 新来源先按 [资料搜集计划](docs/source_collection_plan.md) 登记分类，再决定是否进入深读。
+3. 新论文放到 `docs/paper_notes/`，按模板写 1-2 页摘要。
+4. 新行业经验放到 `docs/industry_notes/`，按模板记录来源背景、核心主张、证据等级和可转化实验。
+5. 新实验先更新 [实验计划](docs/experiment_plan.md)，再写代码。
+6. 每个 prompt 变体都要记录模型、参数、数据集、评分器、成本和失败案例。
+7. 任何「自动改 prompt」的实验都必须保留原 prompt、候选 prompt、优化原因、评测结果和回滚点。
 
 ## 消息通知
 
 所有脚本、实验任务、定时任务和 CI 流程的消息通知统一调用 `scripts/wecom_notify.py`，由它发送到企业微信机器人。真实 webhook 放在本地 `.env` 的 `WECOM_BOT_WEBHOOK` 中，不提交到仓库。
+
+命令行和 Git hook 通知默认会附带 git 的“主要修改内容”，包含工作区变更文件和 diff 统计；工作区干净时展示最近一次提交摘要。
 
 ```bash
 python scripts/wecom_notify.py "### Prompt Evolution 通知通道测试"
@@ -117,3 +157,7 @@ python scripts/llm_smoke_test.py
 ```
 
 填好本地 `.env` 后，可用 `--live` 检查 provider 连通性。该检查只验证配置和基础响应解析，不作为 prompt 实验结论。
+
+## License
+
+本项目采用 MIT License。详见 [LICENSE](LICENSE)。

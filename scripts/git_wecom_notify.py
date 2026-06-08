@@ -12,9 +12,9 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 try:
-    from scripts.wecom_notify import NotificationError, load_dotenv, send_wecom_notification
+    from scripts.wecom_notify import NotificationError, load_dotenv, send_repository_notification
 except ModuleNotFoundError:
-    from wecom_notify import NotificationError, load_dotenv, send_wecom_notification
+    from wecom_notify import NotificationError, load_dotenv, send_repository_notification
 
 ZERO_SHA = "0" * 40
 
@@ -66,7 +66,7 @@ def send_commit_notification(dry_run: bool = False) -> dict:
             f"- full_sha: `{commit_hash}`",
         ]
     )
-    return send_wecom_notification(content, dry_run=dry_run)
+    return send_repository_notification(content, dry_run=dry_run, repo=root)
 
 
 def watch_push_and_notify(
@@ -88,7 +88,7 @@ def watch_push_and_notify(
     while time.monotonic() < deadline:
         if all(remote_ref_matches(remote, update.remote_ref, update.local_sha) for update in updates):
             content = build_push_notification(root.name, remote, remote_url, updates)
-            return send_wecom_notification(content, dry_run=dry_run)
+            return send_repository_notification(content, dry_run=dry_run, repo=root)
         time.sleep(interval_seconds)
 
     return None

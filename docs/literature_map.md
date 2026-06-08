@@ -2,6 +2,8 @@
 
 更新时间：2026-06-08
 
+状态：初始种子清单，尚未完成系统性搜集。新增来源应先按 [资料搜集计划](source_collection_plan.md) 登记和分类，再决定是否进入深读笔记。
+
 筛选标准：优先收录直接讨论 automatic prompt optimization、prompt evolution、self-improving/self-evolving prompts、prompt-as-program、context engineering、eval-driven prompt iteration 的论文或框架。
 
 ## 快速脉络
@@ -13,6 +15,17 @@
 5. 反思式进化：GEPA 等方法利用执行轨迹做自然语言诊断和 Pareto 搜索。
 6. 记忆与自进化：MemAPO、SePO 把成功经验、失败模式、优化器自身 prompt 纳入长期改进。
 7. 上下文工程：研究对象从 prompt 字符串扩展到检索、记忆、工具、agent workflow 的整体上下文。
+
+## 当前前沿关注点
+
+截至 2026-06-08，初步核验后优先跟进这些方向：
+
+- 反思式 prompt evolution：GEPA 等方法把完整执行轨迹作为自然语言反馈，用反思和 Pareto/进化搜索改写 prompt。
+- 记忆型自进化：MemAPO 等方法把成功策略和失败模式沉淀为可复用记忆，目标是降低每次从零优化的成本。
+- 优化器自进化：SePO 等方法开始把 prompt agent 自身的 system prompt 也纳入优化对象。
+- 多 agent / 系统级优化：MASPO、AutoPDL 等方向把优化对象从单 prompt 扩展到 agent 配置或多 agent prompt。
+- 模块化 prompt 优化：把 prompt 拆成可局部编辑和约束保护的结构，降低漂移和无边界增长风险。
+- context engineering：行业和论文都在把问题从“写好 prompt”推进到“控制模型在每一步看到什么上下文”。
 
 ## 核心论文
 
@@ -31,7 +44,9 @@
 | 2025 | [Promptomatix](https://arxiv.org/abs/2507.14241) | 从任务描述生成高质量 prompt，包含 meta-prompt optimizer 和 DSPy compiler。 | 低门槛自动优化框架设计参考。 |
 | 2025 | [A Survey of Context Engineering for LLMs](https://arxiv.org/abs/2507.13334) | 把上下文检索、生成、处理、管理纳入统一 taxonomy。 | 提醒本项目不要只优化 prompt 字符串。 |
 | 2026 | [MemAPO](https://arxiv.org/abs/2603.21520) | 用双记忆机制积累成功策略和失败模式，实现跨任务自进化 APO。 | 本项目“长期记忆 + 经验复用”的核心参考。 |
+| 2026 | [Modular Prompt Optimization](https://arxiv.org/abs/2601.04055) | 用 section-local textual gradients 优化结构化 prompt，避免把 prompt 当成单块文本。 | 适合转化为“可变层/不可变层”的工程方案。 |
 | 2026 | [promptolution](https://aclanthology.org/2026.eacl-demo.21/) | 统一、模块化、框架无关的 prompt optimization 工具。 | 工具架构与可复现 benchmark 参考。 |
+| 2026 | [MASPO](https://arxiv.org/abs/2605.06623) | 面向 LLM 多 agent 系统的联合 prompt 优化。 | 系统级和 agent workflow 优化参考。 |
 | 2026 | [SePO](https://arxiv.org/abs/2606.04465) | 同时优化 task agent 和 prompt agent 自身的 system prompt。 | 截至 2026-06-08 检索到的最新直接相关自进化论文。 |
 
 ## 读论文时重点抽取

@@ -2,6 +2,8 @@
 
 本仓库的消息通知统一走 `scripts/wecom_notify.py`。后续新增任何脚本、实验任务、定时任务或 CI 流程时，都应调用这个入口发送企业微信机器人提醒，避免在多个位置直接拼 webhook 请求。
 
+命令行入口和 Git hook 通知默认会在消息正文后追加 git “主要修改内容”，包括工作区变更文件、diff 统计，或在工作区干净时展示最近一次提交摘要。
+
 ## 配置
 
 复制 `.env.example` 为本地 `.env`，然后填入企业微信机器人 webhook：
@@ -17,6 +19,12 @@ WECOM_NOTIFY_ENABLED=true
 
 ```bash
 python scripts/wecom_notify.py "### Prompt Evolution 通知通道测试"
+```
+
+不需要附带 git 摘要时：
+
+```bash
+python scripts/wecom_notify.py --no-git-summary "只发送这条消息"
 ```
 
 也可以从文件读取消息内容：
@@ -41,6 +49,16 @@ load_dotenv()
 send_wecom_notification("### 实验完成\n- run_id: 20260608-001")
 ```
 
+如果希望 Python 调用也附带 git 主要修改内容，使用仓库级入口：
+
+```python
+from scripts.wecom_notify import load_dotenv, send_repository_notification
+
+load_dotenv()
+
+send_repository_notification("### 实验完成")
+```
+
 企业微信机器人异常、网络异常或 webhook 未配置时会抛出 `NotificationError`。调用方如果有自己的重试或降级策略，应捕获这个异常并记录失败原因。
 
 ## Git 自动通知
@@ -62,6 +80,6 @@ git config core.hooksPath .githooks
 git config --get core.hooksPath
 ```
 
-通知仍然读取本地 `.env`，并统一调用 `scripts/wecom_notify.py`。如果 `WECOM_NOTIFY_ENABLED=false`，commit/push hook 也会跳过发送。
+通知仍然读取本地 `.env`，并统一调用 `scripts/wecom_notify.py`。如果 `WECOM_NOTIFY_ENABLED=false`，commit/push hook 也会跳过发送。hook 消息会附带“主要修改内容”，用于在企业微信里直接查看本次提交或推送的核心改动。
 
 push watcher 在后台运行，异常输出写入本地 `.git/wecom_notify.log`，该日志不会提交到仓库。

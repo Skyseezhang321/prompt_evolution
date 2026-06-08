@@ -12,13 +12,14 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
 ENV_OPENAI_API_KEY = "OPENAI_API_KEY"
 ENV_OPENAI_BASE_URL = "OPENAI_BASE_URL"
 ENV_OPENAI_MODEL = "OPENAI_MODEL"
+ENV_OPENAI_MODELS = "OPENAI_MODELS"
 ENV_OPENAI_TIMEOUT_SECONDS = "OPENAI_TIMEOUT_SECONDS"
 ENV_OPENAI_MAX_OUTPUT_TOKENS = "OPENAI_MAX_OUTPUT_TOKENS"
 ENV_OPENAI_REASONING_EFFORT = "OPENAI_REASONING_EFFORT"
@@ -27,6 +28,7 @@ ENV_OPENAI_TEXT_VERBOSITY = "OPENAI_TEXT_VERBOSITY"
 ENV_OPENROUTER_API_KEY = "OPENROUTER_API_KEY"
 ENV_OPENROUTER_BASE_URL = "OPENROUTER_BASE_URL"
 ENV_OPENROUTER_MODEL = "OPENROUTER_MODEL"
+ENV_OPENROUTER_MODELS = "OPENROUTER_MODELS"
 ENV_OPENROUTER_TIMEOUT_SECONDS = "OPENROUTER_TIMEOUT_SECONDS"
 ENV_OPENROUTER_MAX_TOKENS = "OPENROUTER_MAX_TOKENS"
 ENV_OPENROUTER_TEMPERATURE = "OPENROUTER_TEMPERATURE"
@@ -34,14 +36,29 @@ ENV_OPENROUTER_HTTP_REFERER = "OPENROUTER_HTTP_REFERER"
 ENV_OPENROUTER_APP_TITLE = "OPENROUTER_APP_TITLE"
 
 DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1"
-DEFAULT_OPENAI_MODEL = "gpt-5.2"
+DEFAULT_OPENAI_MODEL = "gpt-5.5"
+DEFAULT_OPENAI_MODELS = (
+    "gpt-5.5",
+    "gpt-5.5-pro",
+    "gpt-5.4",
+    "gpt-5.4-pro",
+    "gpt-5.4-mini",
+    "gpt-5.4-nano",
+)
 DEFAULT_OPENAI_TIMEOUT_SECONDS = 60.0
 DEFAULT_OPENAI_MAX_OUTPUT_TOKENS = 512
 DEFAULT_OPENAI_REASONING_EFFORT = "none"
 DEFAULT_OPENAI_TEXT_VERBOSITY = "low"
 
 DEFAULT_OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-DEFAULT_OPENROUTER_MODEL = "openai/gpt-5.2"
+DEFAULT_OPENROUTER_MODEL = "deepseek/deepseek-v4-pro"
+DEFAULT_OPENROUTER_MODELS = (
+    "deepseek/deepseek-v4-pro",
+    "qwen/qwen3.7-max",
+    "z-ai/glm-5.1",
+    "minimax/minimax-m3",
+    "moonshotai/kimi-k2.6",
+)
 DEFAULT_OPENROUTER_TIMEOUT_SECONDS = 60.0
 DEFAULT_OPENROUTER_MAX_TOKENS = 512
 DEFAULT_OPENROUTER_TEMPERATURE = 0.2
@@ -135,6 +152,11 @@ def resolve_openai_config(require_api_key: bool = True) -> OpenAIConfig:
     )
 
 
+def resolve_openai_models() -> list[str]:
+    """Read the OpenAI model matrix from OPENAI_MODELS."""
+    return _read_csv_env(ENV_OPENAI_MODELS, DEFAULT_OPENAI_MODELS)
+
+
 def resolve_openrouter_config(require_api_key: bool = True) -> OpenRouterConfig:
     """Read OpenRouter settings from environment variables."""
     api_key = os.getenv(ENV_OPENROUTER_API_KEY, "").strip()
@@ -169,6 +191,11 @@ def resolve_openrouter_config(require_api_key: bool = True) -> OpenRouterConfig:
     )
 
 
+def resolve_openrouter_models() -> list[str]:
+    """Read the OpenRouter model matrix from OPENROUTER_MODELS."""
+    return _read_csv_env(ENV_OPENROUTER_MODELS, DEFAULT_OPENROUTER_MODELS)
+
+
 def build_openai_response_payload(
     prompt: str,
     config: Optional[OpenAIConfig] = None,
@@ -200,9 +227,12 @@ def call_openai_response(
     instructions: Optional[str] = None,
     dry_run: bool = False,
     config: Optional[OpenAIConfig] = None,
+    model: Optional[str] = None,
 ) -> dict[str, Any]:
     """Call OpenAI's Responses API, or return request details in dry-run mode."""
     resolved_config = config or resolve_openai_config(require_api_key=not dry_run)
+    if model:
+        resolved_config = replace(resolved_config, model=model)
     payload = build_openai_response_payload(
         prompt=prompt,
         config=resolved_config,
@@ -254,6 +284,7 @@ def call_openrouter_chat(
     system_prompt: Optional[str] = None,
     dry_run: bool = False,
     config: Optional[OpenRouterConfig] = None,
+    model: Optional[str] = None,
 ) -> dict[str, Any]:
     """Call OpenRouter chat completions, or return request details in dry-run mode."""
     if messages is not None and prompt is not None:
@@ -264,6 +295,8 @@ def call_openrouter_chat(
         messages = build_chat_messages(prompt, system_prompt=system_prompt)
 
     resolved_config = config or resolve_openrouter_config(require_api_key=not dry_run)
+    if model:
+        resolved_config = replace(resolved_config, model=model)
     payload = build_openrouter_chat_payload(messages, config=resolved_config)
     url = _join_url(resolved_config.base_url, OPENROUTER_CHAT_COMPLETIONS_PATH)
     headers = _build_headers(
@@ -424,6 +457,18 @@ def _join_url(base_url: str, path: str) -> str:
 
 def _read_str_env(env_name: str, default: str) -> str:
     return os.getenv(env_name, "").strip() or default
+
+
+def _read_csv_env(env_name: str, default: Sequence[str]) -> list[str]:
+    raw_value = os.getenv(env_name, "").strip()
+    if not raw_value:
+        return list(default)
+
+    values = [part.strip() for part in raw_value.split(",") if part.strip()]
+    if not values:
+        raise LLMConfigError(f"{env_name} must contain at least one model id")
+
+    return values
 
 
 def _read_int_env(env_name: str, default: int, minimum: int) -> int:

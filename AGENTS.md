@@ -35,6 +35,8 @@
 ## 工作流约束
 
 - 新论文笔记放在 `docs/paper_notes/`，使用 `docs/paper_notes/template.md`。
+- 新行业经验笔记放在 `docs/industry_notes/`，使用 `docs/industry_notes/template.md`；不要整篇转载受版权保护内容。
+- 登录后可见、用户粘贴或可能失效的原文快照放在本地忽略目录 `local_sources/raw/`，只在仓库文档中记录路径、SHA256 和结构化摘要。
 - 新实验先更新 `docs/experiment_plan.md`，再实现脚本或运行实验。
 - 每个 prompt 变体都要记录模型、参数、数据集、评分器、成本和失败案例。
 - 自动改 prompt 的实验必须保留原 prompt、候选 prompt、优化原因、评测结果和回滚点。

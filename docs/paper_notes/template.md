@@ -4,7 +4,17 @@
 
 链接：
 
+source_id：
+
+关联 issue：
+
+线索贡献者：
+
+新颖性判断：unknown | duplicate | extension | contradiction | new-hypothesis | actionable-experiment
+
 阅读日期：
+
+reviewed_by：
 
 ## 一句话结论
 
