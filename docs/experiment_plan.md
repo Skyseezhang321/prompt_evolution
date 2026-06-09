@@ -26,7 +26,7 @@ M0 完成标准：
 
 初步实验不承担“证明某方法长期有效”的任务，只用于支持、修正或演示最终报告中的洞见与可复用方法。
 
-当前验证候选以 [Insight / Conclusion / Helpful Method 候选清单](insight_method_catalog_20260609.md) 为主入口。实验优先服务以下方法卡片，而不是追求完整 benchmark 覆盖：
+当前验证候选以 [Insight / Conclusion / Helpful Method 候选清单](insight_method_catalog_20260609.md) 为结构化主入口；面向读者的同口径说明见 [读者向洞见手册](insight_handbook_20260609.md)，其「首批最小验证」表与本文 P0–P2 优先级一致。实验优先服务以下方法卡片，而不是追求完整 benchmark 覆盖：
 
 - HM-01：Pre-Optimization Gate，验证自动优化前是否存在可利用 headroom。
 - HM-02：Trace-First Critique Rewrite，验证失败 trace / 根因假设是否优于直接 rewrite。

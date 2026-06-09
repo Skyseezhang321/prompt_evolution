@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt 优化与自进化：读者向洞见报告 v2</title>
+  <style>
+    :root {
+      --bg: #f5f7f5;
+      --paper: #ffffff;
+      --ink: #202329;
+      --muted: #626b74;
+      --line: #d8ded8;
+      --soft: #edf1ed;
+      --teal: #257d72;
+      --blue: #2d67ad;
+      --amber: #af6b08;
+      --rose: #b44a5c;
+      --violet: #665bb4;
+      --green: #4f7e33;
+      --slate: #46525f;
+      --shadow: 0 14px 34px rgba(29, 35, 40, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--blue); text-underline-offset: 3px; }
+
+    .page { max-width: 1180px; margin: 0 auto; padding: 28px 24px 72px; }
+
+    header, section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    header { overflow: hidden; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.28fr 0.72fr;
+      gap: 30px;
+      padding: 38px;
+      border-top: 6px solid var(--teal);
+    }
+
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1 { margin-bottom: 16px; font-size: 34px; line-height: 1.18; font-weight: 760; }
+    h2 { margin-bottom: 14px; font-size: 24px; line-height: 1.3; }
+    h3 { margin-bottom: 9px; font-size: 18px; line-height: 1.4; }
+    h4 { margin-bottom: 6px; font-size: 14px; color: var(--muted); font-weight: 720; letter-spacing: .02em; }
+
+    .lead { max-width: 780px; color: #3f464e; font-size: 18px; line-height: 1.75; }
+
+    .meta-grid { display: grid; gap: 10px; align-content: start; }
+    .meta { padding: 13px 14px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); }
+    .meta strong { display: block; margin-bottom: 3px; color: var(--muted); font-size: 13px; }
+    .meta span { display: block; font-weight: 640; line-height: 1.5; }
+
+    nav {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 16px 38px 22px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfa;
+    }
+    nav a {
+      display: inline-flex; align-items: center; min-height: 34px;
+      padding: 5px 11px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; color: var(--ink); font-size: 14px; text-decoration: none;
+    }
+    nav a:hover { border-color: var(--teal); color: var(--teal); }
+
+    section { margin-top: 22px; padding: 30px; }
+    .section-intro { max-width: 900px; color: var(--muted); }
+
+    .part-label {
+      display: inline-block; margin-bottom: 6px; padding: 2px 10px;
+      border-radius: 999px; background: var(--soft); border: 1px solid var(--line);
+      color: var(--slate); font-size: 13px; font-weight: 700;
+    }
+
+    .grid { display: grid; gap: 18px; margin-top: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .insight {
+      padding: 20px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-top: 4px solid var(--teal);
+    }
+    .insight.blue { border-top-color: var(--blue); }
+    .insight.amber { border-top-color: var(--amber); }
+    .insight.rose { border-top-color: var(--rose); }
+    .insight.violet { border-top-color: var(--violet); }
+    .insight.green { border-top-color: var(--green); }
+    .insight.slate { border-top-color: var(--slate); }
+
+    .insight .badge-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .id-badge { font-size: 13px; font-weight: 760; color: var(--slate); }
+
+    .tag {
+      display: inline-flex; align-items: center; min-height: 24px;
+      padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px;
+      background: var(--soft); color: #3d444b; font-size: 12px; font-weight: 650;
+    }
+    .tag.a { background: #e8f3ee; border-color: #b8d9cb; color: #17614f; }
+    .tag.b { background: #e9f0fb; border-color: #b9caeb; color: #214f95; }
+    .tag.pre { background: #fbe8ed; border-color: #e6b6c2; color: #96364c; }
+
+    .hook { font-weight: 600; color: #2a2f36; }
+
+    .block { margin-top: 14px; }
+    .block h4 .em { color: var(--ink); }
+
+    .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+    .code {
+      margin: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px;
+      background: #fbfcfa; color: #2a2f36;
+      font-family: "Cascadia Code", "Consolas", "SFMono-Regular", monospace;
+      font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word;
+    }
+    .code.bad { border-left: 3px solid var(--rose); }
+    .code.good { border-left: 3px solid var(--green); }
+    .code .cmt { color: var(--rose); }
+
+    .stat { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
+    .stat .num {
+      flex: 1; min-width: 150px; padding: 10px 12px;
+      border: 1px solid var(--line); border-radius: 6px; background: #fff;
+    }
+    .stat .num b { display: block; font-size: 24px; line-height: 1.1; font-weight: 770; color: var(--ink); }
+    .stat .num small { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+
+    .howto { margin: 6px 0 0; padding-left: 18px; }
+    .howto li { margin-bottom: 4px; }
+
+    .src { margin-top: 8px; color: var(--muted); font-size: 12.5px; }
+    .limit { margin-top: 10px; padding: 9px 12px; border-left: 3px solid var(--amber); background: #fff8ea; border-radius: 6px; font-size: 13.5px; color: #5a4a2a; }
+
+    .callout { margin-top: 18px; padding: 16px 18px; border-left: 4px solid var(--blue); border-radius: var(--radius); background: #eef4fc; }
+
+    .matrix { width: 100%; border: 1px solid var(--line); border-collapse: collapse; border-radius: var(--radius); overflow: hidden; margin-top: 16px; }
+    .matrix th, .matrix td { padding: 11px 13px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-size: 14px; }
+    .matrix th { background: #eef1ed; color: #3d444b; font-weight: 720; }
+    .matrix tr:last-child td { border-bottom: 0; }
+
+    .source-list { columns: 2; column-gap: 34px; padding-left: 18px; }
+    .source-list li { break-inside: avoid; margin-bottom: 8px; }
+
+    footer { margin-top: 22px; padding: 18px 4px 0; color: var(--muted); font-size: 13.5px; }
+
+    @media (max-width: 920px) {
+      .hero, .grid.two { grid-template-columns: 1fr; }
+      .ba { grid-template-columns: 1fr; }
+      .source-list { columns: 1; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 14px 12px 42px; }
+      .hero, nav, section { padding: 22px; }
+      h1 { font-size: 27px; }
+      .matrix { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="hero">
+        <div>
+          <h1>Prompt 优化与自进化：读者向洞见报告 v2</h1>
+          <p class="lead">这版报告换了写法：不再罗列「哪个渠道贡献了什么」，而是按你实际会遇到的顺序，讲 12 条洞见——每条都配一个看得懂的例子、一个带出处的真实数字、一组可照抄的步骤和一条诚实的边界。它是 <a href="./insight_handbook_20260609.md">读者向洞见手册</a> 的可视化摘要。</p>
+          <div class="badge-row" style="margin-top:12px">
+            <span class="tag">12 条洞见</span>
+            <span class="tag a">真实数字带出处</span>
+            <span class="tag b">可照抄步骤</span>
+            <span class="tag pre">诚实标注边界</span>
+          </div>
+        </div>
+        <div class="meta-grid">
+          <div class="meta">
+            <strong>一句话总结论</strong>
+            <span>自动优化 prompt 不是「让模型把 prompt 改好」，而是一套「先判断值不值得 → 把失败变成可编辑证据 → 多候选 + 验证集筛选 → 可回滚」的工程纪律。</span>
+          </div>
+          <div class="meta">
+            <strong>怎么读这里的数字</strong>
+            <span>「论文怎么说」里的数字 = 论文设置下成立，不等于在你的任务上成立。带「示意」的 prompt/对话是讲解虚构，非实验数据。</span>
+          </div>
+          <div class="meta">
+            <strong>本项目验证状态</strong>
+            <span>截至 2026-06-09，以下 12 条均「尚未在本项目复现验证」。2026 新稿（recent-preprint）需独立复现后才能采信。</span>
+          </div>
+        </div>
+      </div>
+      <nav aria-label="页面导航">
+        <a href="#partA">A · 值不值得优化</a>
+        <a href="#partB">B · 从失败里学</a>
+        <a href="#partC">C · 别被模型骗</a>
+        <a href="#partD">D · 到底改什么</a>
+        <a href="#partE">E · 记忆与多 agent</a>
+        <a href="#partF">F · 听来的方法</a>
+        <a href="#roadmap">首批验证</a>
+        <a href="#sources">证据索引</a>
+      </nav>
+    </header>
+
+    <section>
+      <div class="callout">
+        <strong>这版相对 v1 改了什么：</strong> v1 把所有结论压成了标签（pre-optimization gate、artifact graph……），读起来像目录、没有例子。v2 把每条洞见**还原成一个具体场景 + 真实数字**，并按读者的学习顺序（先判断要不要优化 → 怎么诊断失败 → 改什么 → 怎么不被过拟合和热度骗）重排。<a href="./analysis_report_v1_20260608.html">v1 旧版</a> 保留作对照与回滚。
+      </div>
+    </section>
+
+    <!-- PART A -->
+    <section id="partA">
+      <span class="part-label">Part A</span>
+      <h2>动手之前：这个任务值不值得优化？</h2>
+      <p class="section-intro">最容易被跳过、也最省钱的一步：在花钱跑优化器之前，先确认有没有提升空间、以及任务类型能不能让你看清效果。</p>
+      <div class="grid two">
+
+        <div class="insight">
+          <div class="badge-row"><span class="id-badge">洞见 01</span><span class="tag a">证据 A</span></div>
+          <h3>先确认有没有提升空间，再花钱跑优化器</h3>
+          <p class="hook">自动优化不是稳赚的——某些设置下，它有近一半概率让 prompt 比 zero-shot 还差。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code">工单三分类，初版 prompt：
+「把工单分到：投诉/咨询/退款」
+30 条样本测：准确率 82%</pre>
+              <pre class="code bad">优化器跑 6 轮 → 又长又"专业"的新 prompt
+dev：87% ↑（看起来涨了）
+<span class="cmt">100 条测试集：79% ↓ 比最初还低</span>
+那 5 分是小样本噪声里捡的</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>49%</b><small>Coin Flip：72 次优化里 49% 低于 zero-shot（Haiku 4.5）</small></div>
+              <div class="num"><b>~3 步</b><small>ProTeGi：约 3 步达峰，之后多在训练集过拟合</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>（recent-preprint）、<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ol class="howto">
+              <li>跑 zero-shot + 手写 baseline，各记一分。</li>
+              <li>生成 10–20 个候选，用同一批 20 条留出样本打分。</li>
+              <li>看 headroom（最高候选 − zero-shot）和 noise floor（候选间抖动）。</li>
+              <li>headroom 没超过 noise floor → 停，别优化。</li>
+            </ol>
+          </div>
+          <div class="limit">边界：靠多轮搜索才能发现组合结构的任务会被这个体检低估；阈值要按样本量和评分器重校准。</div>
+        </div>
+
+        <div class="insight blue">
+          <div class="badge-row"><span class="id-badge">洞见 02</span><span class="tag b">证据 A/B</span></div>
+          <h3>第一批先选「能客观打分」的任务</h3>
+          <p class="hook">任务类型决定你能不能看清优化有没有用。开放写作就算优化了，你也分不清是真变好还是评委口味变了。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">任务甲：把工单总结成一句话
+只能靠另一个模型当评委打分
+评委口味天天变 → 分数变化无法归因</pre>
+              <pre class="code good">任务乙：抽成 {intent, entities, urgency} JSON
+漏抽 urgency → field F1 该列直接掉
+失败能拆成 漏抽/标错/格式坏/过度推断</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>+6.8</b><small>Coin Flip：唯一让 6 种方法全超 zero-shot 的是结构化 JSON 任务 HelpSteer2</small></div>
+              <div class="num"><b>+16% → ~1%</b><small>KG 抽取：同数据集 triple F1 +16%，换数据集只剩约 1%</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>、<a href="./paper_notes/paper-apo-kg-construction-2025.md">apo-kg-construction-2025</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>第一批验证选：信息抽取（JSON）、文本分类、工具调用。</li>
+              <li>暂时别用开放生成当第一块试验田——因果最难看清。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：开放生成很重要，只是不适合作为「因果清晰」的首批验证。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART B -->
+    <section id="partB">
+      <span class="part-label">Part B</span>
+      <h2>怎么从失败里学到东西</h2>
+      <p class="section-intro">分数告诉你「坏了」，文字诊断和根因假设才告诉你「该改哪里」。这是 prompt 改进真正的燃料。</p>
+      <div class="grid two">
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">洞见 03</span><span class="tag a">证据 A</span></div>
+          <h3>把失败样本变成「可编辑的证据」，不只是一个分数</h3>
+          <p class="hook">accuracy 那个数字无从下手；一句具体的失败诊断才直接指向 prompt 该补什么。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code">工单：「我要退货并且投诉客服态度」
+模型抽出 intent: 投诉（漏了 退款）
+
+只记分数 → 这条 = 错（一个红叉，没线索）
+记成证据 → "当一条工单同时含『动作请求』和『情绪』时，
+            模型只抓情绪、漏掉动作" ← 直接告诉你该补哪条规则</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>+15.3% / 最高 +31%</b><small>ProTeGi：用失败样本生成文字"梯度"再改写，比原始 prompt</small></div>
+              <div class="num"><b>越改越差</b><small>同论文：让 AutoGPT 自己反馈改 6 轮，反而把起始 prompt 改差</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">textual-gradients-flawed-metaphor-2025</a>（文字"梯度"是比喻，非真梯度）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>每个失败 case 记：prediction、gold、error_type、critique、candidate_id。</li>
+              <li>先把 20 条失败整理成「失败类型表」，再让优化器只基于这张表改。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：critique 会带评委偏见，必须绑定样本和指标，不能当成真实因果。</div>
+        </div>
+
+        <div class="insight rose">
+          <div class="badge-row"><span class="id-badge">洞见 04</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>先列「失败根因假设」，再改 prompt</h3>
+          <p class="hook">反思式优化器最常见的翻车，是一开始就猜错方向，然后在错误方向上越改越自信。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code">urgency 判错 30%。不要直接"让模型改好"，先列假设：
+ A 缺判定标准   → 候选A：补 urgency 判定规则
+ B 缺边界示例   → 候选B：加 2 个"看似急其实不急"的例子
+ C 中性词误判   → 候选C：声明"尽快/马上"不单独构成紧急
+三个候选都在 minibatch 验证，谁真把 30% 拉回来用谁</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>23.81% → 13.50% → 87.57%</b><small>VISTA：GEPA 在缺陷种子上反而掉到 13.50%；解耦"假设生成/改写"后恢复 87.57%</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-vista-reflection-dark-2026.md">vista-reflection-dark-2026</a>、<a href="./paper_notes/paper-llm-prompt-optimizers-2024.md">llm-prompt-optimizers-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>对同一批失败，强制生成 2–3 个互斥根因假设（缺规则/缺示例/格式冲突）。</li>
+              <li>每个假设生成一个候选，分别评分；运行记录存 failure_hypothesis 而不只 critique。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：开放写作任务根因模糊，多假设验证可能成本大于收益。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART C -->
+    <section id="partC">
+      <span class="part-label">Part C</span>
+      <h2>别让模型骗你：候选选择与防膨胀</h2>
+      <p class="section-intro">LLM 候选方差极大。怎么"选"和怎么防"越改越长"，是把伪提升挡在门外的两道闸。</p>
+      <div class="grid two">
+
+        <div class="insight violet">
+          <div class="badge-row"><span class="id-badge">洞见 05</span><span class="tag a">证据 A</span></div>
+          <h3>不要采用第一版，多生几个再用验证集选</h3>
+          <p class="hook">「怎么选候选」和「怎么生成候选」一样重要。把选择权交给验证集，别让模型自评"我这版最好"。</p>
+          <div class="block">
+            <h4>一个例子（示意）：一张候选账</h4>
+            <pre class="code">候选  dev分  格式错  长度   选不选
+C1   0.86   0%    1.0x   ✔候选
+C2   0.88   6%    1.2x   ✗弃（格式错升高）
+C3   0.87   0%    2.4x   ✗弃（太长，疑似过拟合）
+C5   0.86   0%    1.0x   ✔候选
+不是只挑 dev 最高的 C2，而是综合三维选；best-seen 永不被直接覆盖</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>0.85 / 0.67 / 0.88</b><small>ProTeGi：beam 选择在 Jailbreak/Liar/Sarcasm 明显优于贪心；bandit &gt; 均匀选</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-gepa-2026.md">gepa-2026</a>、<a href="./paper_notes/paper-promptbreeder-2023.md">promptbreeder-2023</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>每轮存 seed/candidates/scores/selection_policy/rejected_reason/best_seen/rollback_point。</li>
+              <li>生成 5 个候选，按 dev 分 + 格式错误 + 长度三维选 Pareto 候选。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：搜索预算越大越容易 dev 过拟合，必须有 validation/test 分层兜底。</div>
+        </div>
+
+        <div class="insight green">
+          <div class="badge-row"><span class="id-badge">洞见 06</span><span class="tag a">证据 A</span></div>
+          <h3>prompt 变长、变复杂，往往是过拟合不是进步</h3>
+          <p class="hook">优化后更长、规则更多、看起来更专业，很可能是在给训练样本打补丁。</p>
+          <div class="block">
+            <h4>一个例子（示意）：优化器加的"伪规律"</h4>
+            <pre class="code bad">- 若提到「发票」且含数字，intent 一定是退款   <span class="cmt">← 某条样本的补丁</span>
+- 若出现「经理/投诉」，urgency 一律 high      <span class="cmt">← 局部特例当全局规则</span>
+- 感叹号超过两个 → 倾向 high                 <span class="cmt">← 在拟合标注者习惯</span>
+dev +5，压力测试集 −8</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>14.7x / 86%</b><small>PrefPO：放任时 TextGrad 撑到 14.7 倍长、86% 在偷改任务本身（PrefPO 仅 37%）</small></div>
+              <div class="num"><b>+10.0 / +9.9</b><small>TextReg：加正则化管住膨胀，反而比 TextGrad 更高</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-prefpo-2026.md">prefpo-2026</a>、<a href="./paper_notes/paper-textreg-2026.md">textreg-2026</a>、<a href="./paper_notes/paper-causal-edit-level-2026.md">causal-edit-level-2026</a>（均 recent-preprint）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>候选选择记录 length_ratio、repetition、edit_family、dev_test_gap、OOD/stress_delta。</li>
+              <li>候选若变长，必须说明每条新规则绑定哪些失败样本并通过压力测试，否则拒绝。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：有些复杂任务确实需要更明确约束——标准是「必要、可追溯、不过拟合」，不是「短」。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART D -->
+    <section id="partD">
+      <span class="part-label">Part D</span>
+      <h2>到底该改什么（不只是那段 prompt）</h2>
+      <p class="section-intro">真实系统里失败可能来自示例、prompting 模式、工具描述——先标清你改的是哪个部件，否则无法归因。</p>
+      <div class="grid two">
+
+        <div class="insight">
+          <div class="badge-row"><span class="id-badge">洞见 07</span><span class="tag a">证据 A</span></div>
+          <h3>有开发集时，选「给模型看的例子」常比改 instruction 更有效</h3>
+          <p class="hook">大家本能去改 instruction 措辞，却忽略了常更有效的变量——给模型看哪几个示例。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code good">instruction 不动，只换 3 个精选示例（覆盖易错边界）：
+ 例1 动作+情绪并存：要退货还要投诉 → intent:[退款,投诉]
+ 例2 看似急其实不急：方便时帮我看下 → urgency: low
+ 例3 多实体：订单 123 和 456 都改地址 → entities:[123,456]
+往往比绞尽脑汁重写 instruction 收益更大</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>+12.63</b><small>Teach Better：不改 instruction、只优化示例就达 72.92（PaLM 2 / BBH）</small></div>
+              <div class="num"><b>75.77 &gt; 65.91</b><small>Gemini 1.0 Pro：优化示例 &gt; 只优化 instruction；且精选 3 个 &gt; 全部示例</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-teach-better-show-smarter-2024.md">teach-better-show-smarter-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>至少比较 no-example / random-example / optimized-example / instruction+optimized。</li>
+              <li>固定 instruction，从候选池搜 3 个示例看留出表现。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：上下文紧张、示例分布偏、示例可能泄漏答案时，会伤害泛化。</div>
+        </div>
+
+        <div class="insight blue">
+          <div class="badge-row"><span class="id-badge">洞见 08</span><span class="tag b">证据 A/B</span></div>
+          <h3>先标清楚你改的是哪个「部件」</h3>
+          <p class="hook">失败可能来自示例、prompting 模式、工具 schema、agent 角色、记忆或评委，不只是 system prompt。</p>
+          <div class="block">
+            <h4>一个例子（示意）：artifact 清单</h4>
+            <pre class="code">task_prompt        v3   [mutable]
+examples           v2   [mutable]
+prompting_pattern  Zero-Shot [mutable]  ← 真 bug 常在这：该用 CoT/ReAct 却用 Zero-Shot
+tool_schema        v1   [mutable]
+evaluator          v1   [FROZEN]  ← 评委不许改（防作弊）
+safety_rules       v1   [FROZEN]  ← 安全/权限不进搜索空间</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>6.5% → 74.0%</b><small>AutoPDL：只把 prompting 模式换对（非重写措辞），FEVER 跳 +67.5pp</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-autopdl-2025.md">autopdl-2025</a>、<a href="./paper_notes/paper-jtpro-2026.md">jtpro-2026</a>、<a href="./paper_notes/paper-prompt-codebooks-2026.md">prompt-codebooks-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>每次优化生成 artifact manifest，拆出各部件并标 mutable/frozen。</li>
+              <li>评委、测试集、安全规则必须 frozen——防 reward hacking 的底线。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：简单一次性任务不需要完整 manifest，研究/生产级才需要。</div>
+        </div>
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">洞见 09</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>工具调错时，改的常是「工具说明」，不是 agent 指令</h3>
+          <p class="hook">失败常来自工具描述和参数语义本身；改 agent 的 system prompt 再多遍也没用。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">改 agent 指令（无效）：
+"请正确填写金额"
+→ 模型仍不知道单位，传 amount: 99.5</pre>
+              <pre class="code good">改工具 schema（有效）：
+amount: integer
+// 单位「分」，99 元应填 9900，不接受小数</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>51.27% → 64.46%</b><small>JTPRO：联合优化全局指令 + 每工具 schema，o3-mini 整体成功率（ToolACE 1000 工具）</small></div>
+              <div class="num"><b>选对≠成功</b><small>ETID：工具选得准但成功率低，瓶颈是 slot-filling 不是选择</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-jtpro-2026.md">jtpro-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>工具 eval 拆成 Tool Selection / Slot Filling / Overall Success 三个指标分别记。</li>
+              <li>分别测「只改全局指令 / 只改 schema / 联合」，看瓶颈在哪层。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：外部 API schema 不可改时，用 wrapper 文档或检索上下文承载局部规则。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART E -->
+    <section id="partE">
+      <span class="part-label">Part E</span>
+      <h2>记忆与多 agent：更多 ≠ 更好</h2>
+      <p class="section-intro">加记忆、加 agent 听起来总是好的，但未经筛选的记忆会污染优化，整体重写会让你无法归因。</p>
+      <div class="grid two">
+
+        <div class="insight slate">
+          <div class="badge-row"><span class="id-badge">洞见 10</span><span class="tag b">证据 A/B</span></div>
+          <h3>只有「过滤后的记忆」才有用</h3>
+          <p class="hook">未经筛选地堆历史，会造成跨任务负迁移，还更贵。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">无界记忆：把所有历史对话塞进上下文
+→ 把 A 产品线的退款规则错套到 B 产品线工单</pre>
+              <pre class="code good">过滤记忆：每条带元数据
+ content / source_task / applicability
+ quality_score / retrieval_reason / forget_after
+只取 3–5 条已验证、且适用条件匹配的</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>70.7% vs 63.6%｜$0.31 vs $0.70</b><small>MemAPO：双记忆比 TextGrad 更好且更便宜</small></div>
+              <div class="num"><b>第7步 68.6 vs 第13步 58.5</b><small>ERM：过滤记忆收敛近两倍速；原始记忆无收益</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-memapo-2026.md">memapo-2026</a>（recent-preprint）、<a href="./paper_notes/paper-erm-memory-2024.md">erm-memory-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>记忆 schema 含 success_template/error_pattern、source_task、applicability、quality、forget_reason。</li>
+              <li>别塞历史对话，只检索已验证、匹配当前任务的 3–5 条。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：非平稳/安全敏感任务里，遗忘策略和 opt-out 比「记得多」更重要。</div>
+        </div>
+
+        <div class="insight rose">
+          <div class="badge-row"><span class="id-badge">洞见 11</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>多 agent 出错，先找「是谁的责任」，别整个重写</h3>
+          <p class="hook">核心难题不是加更多 agent，而是 credit assignment——一个 agent 局部完全正确，却可能让整体失败。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code">抽取 → 补全 → 回复，最终回复错了。看 trace：
+ agent_1 抽取  local_valid ✗  ← urgency 在这里就丢了
+ agent_2 补全  local_valid ✓  （基于错误输入 = local_pass_global_fail）
+ agent_3 回复  local_valid ✓
+根因在 agent_1，只改 agent_1，别动另两个</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>55.13 → 64.63</b><small>Temporal/Structural Credit：credit-guided 在 MedMCQA（+9.50）；无差别更新所有轮反而掉分</small></div>
+              <div class="num"><b>70.39 vs 65.31</b><small>MASPO：联合优化平均优于顺序 baseline</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-temporal-structural-credit-mas-2026.md">temporal-structural-credit-mas-2026</a>、<a href="./paper_notes/paper-maspo-2026.md">maspo-2026</a>、<a href="./paper_notes/paper-mapro-2025.md">mapro-2025</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>trace 存 role_id/round_id/local_validity/successor_utility/global_outcome。</li>
+              <li>标出首次引入错误的 role/round，只改那一块；耦合弱时先做 coupling test。</li>
+            </ul>
+          </div>
+          <div class="limit">边界：agent 交互很弱时，联合优化成本可能不划算——先测耦合再决定。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART F -->
+    <section id="partF">
+      <span class="part-label">Part F</span>
+      <h2>怎么对待「听来的」方法</h2>
+      <p class="section-intro">热度只说明传播，不说明有效。二手传播会放大结论、丢掉边界和版本。</p>
+      <div class="grid">
+        <div class="insight green">
+          <div class="badge-row"><span class="id-badge">洞见 12</span><span class="tag b">证据 B</span></div>
+          <h3>社媒和二手文章是「线索」，不是「证据」</h3>
+          <p class="hook">一个方法被反复转发，只能说明它热，不能说明它有效。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">爆款：「GEPA 用少 35 倍 rollout 吊打 RL！」
+当证据 → 直接信「GEPA 能替代 RL」</pre>
+              <pre class="code good">当线索 → 翻原论文发现：
+GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
+根本不是 RL 系统；"替代 RL"是传播简化出的口号</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>读到技巧先抽六字段：dataset / metric / baseline / model / cost / failure_cases。</li>
+              <li>缺任一字段就降级为「线索」，进结论前必须追溯论文/官方文档/代码/本项目实验。</li>
+            </ul>
+          </div>
+          <p class="src">来源：<a href="./source_batches/twitter_web_analysis_20260608.md">twitter_web_analysis_20260608</a></p>
+          <div class="limit">边界：自带代码、数据、可复现实验的高质量工程博客可升级为更强证据——看细节，不看平台。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap">
+      <h2>把这些用起来：首批最小验证</h2>
+      <p class="section-intro">最值得本项目先动手验证的几条——成本低、错误可解释、跨渠道支撑强。详细设计见 <a href="./experiment_plan.md">实验计划</a>。</p>
+      <table class="matrix" aria-label="首批验证">
+        <thead><tr><th>优先级</th><th>验证什么</th><th>对应洞见</th><th>最小任务</th><th>无论成败都能产出</th></tr></thead>
+        <tbody>
+          <tr><td>P0</td><td>优化前体检（headroom / noise floor）</td><td>01、02</td><td>100–300 条 JSON 抽取</td><td>判断有无优化空间，校准噪声地板</td></tr>
+          <tr><td>P0</td><td>示例优化 vs 指令优化</td><td>07</td><td>同一抽取任务</td><td>防止把示例收益误记成指令收益</td></tr>
+          <tr><td>P1</td><td>直接改写 vs 根因假设改写</td><td>03、04</td><td>失败清晰的抽取/分类</td><td>判断根因假设是否改善留出表现</td></tr>
+          <tr><td>P1</td><td>只看性能 vs 加卫生门</td><td>06</td><td>同一候选池</td><td>判断防膨胀门是否减少伪提升</td></tr>
+          <tr><td>P2</td><td>工具 schema 优化</td><td>09</td><td>20–50 个相似工具</td><td>判断改 schema 是否优于只改全局指令</td></tr>
+          <tr><td>P2</td><td>过滤记忆 vs 原始记忆</td><td>10</td><td>两个相近 + 一个异质任务</td><td>判断记忆是否降本或带来负迁移</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>给读者的三条总结：</strong>① 优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱；② 改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色；③ 更长、更多、更复杂都不是默认的好，先证明它没带来过拟合、污染或归因困难。
+      </div>
+    </section>
+
+    <!-- SOURCES -->
+    <section id="sources">
+      <h2>证据索引</h2>
+      <p class="section-intro">本页是可视化摘要，完整论述见读者向手册，结构化证据卡见候选清单；二者再追溯到论文笔记原文。</p>
+      <ul class="source-list">
+        <li><a href="./insight_handbook_20260609.md">读者向洞见手册（本页完整版）</a></li>
+        <li><a href="./insight_method_catalog_20260609.md">Insight / Method 候选清单（结构化）</a></li>
+        <li><a href="./arxiv_deep_reading_batch3_synthesis.md">arXiv 深读 Batch 3 综合</a></li>
+        <li><a href="./github_repo_channel_synthesis_20260609.md">GitHub 渠道洞见综合</a></li>
+        <li><a href="./industry_practices.md">行业实践整理</a></li>
+        <li><a href="./source_batches/twitter_web_analysis_20260608.md">Twitter/X 批次分析</a></li>
+        <li><a href="./experiment_plan.md">实验计划</a></li>
+        <li><a href="./final_report_outline.md">最终报告结构</a></li>
+        <li><a href="./analysis_report_v1_20260608.html">v1 旧版报告（对照/回滚）</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>报告 v2 当前定位：按洞见组织、以具体例子和真实数字为主的读者向调研摘要。所有标「示意」的 prompt/对话为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；recent-preprint 结论需独立复现后才能采信。实验用于验证、演示和校准这些经验，不作为项目主线本身。</p>
+    </footer>
+  </div>
+</body>
+</html>
