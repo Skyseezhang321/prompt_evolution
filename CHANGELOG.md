@@ -35,9 +35,36 @@
 - 新增本地原文快照留存规范，使用 `local_sources/raw/` 保存不提交的原文，并在笔记中记录路径和 SHA256。
 - 新增 Karpathy-inspired Claude Code guidelines 仓库的行业笔记和来源条目，用于后续 coding-agent 行为规则 eval 设计。
 - 新增最终报告结构，明确最终交付需要覆盖前沿状态、证据等级、可执行方案、初步实验和风险治理。
+- 新增并重构第一版 HTML 多渠道洞见报告页，按 arXiv 论文、GitHub 源码、行业工具、Twitter/X、知乎和其它平台拆解证据贡献，优先呈现有效 insights、可信 conclusions、可复用 helpful methods、反模式和最小验证方式。
 - 新增企业微信机器人通知脚本、配置示例、使用文档和单元测试，后续消息通知统一通过该入口发送。
 - 新增本地 Git hook 自动通知，commit 后发送提交消息，push 成功后发送远程更新消息。
 - 新增 OpenAI / OpenRouter 最小 LLM API 客户端、dry-run/live smoke test、配置示例、使用文档和单元测试，用于后续实验前检查 provider 配置。
+- 新增按渠道广搜通用 posts 候选来源的 `scripts/collect_sources.py`、可选环境变量示例和资料搜集计划说明，支持从 Hacker News、DEV、Stack Exchange、RSS、Brave Web Search、X API 和 Reddit OAuth 收集候选元数据，并输出到本地 ignored artifacts 供人工快筛；GitHub 和 arXiv 暂由独立渠道处理。
+- 新增 GitHub 仓库发现脚本、使用文档和单元测试，用于通过 GitHub Search API 批量搜集 prompt optimization / prompt self-evolution 相关候选仓库。
+- 新增首批 GitHub 仓库候选快筛，解释 raw candidate 噪声来源，并把 85 个候选分为核心深读、周边参考和暂不处理，同时补充创建时间和最近 push 时间分布。
+- 新增 GitHub 仓库三层分析文档、结构化 catalog、重点仓库深读和证据矩阵，并将 8 个严格保留仓库登记到来源清单。
+- 新增 GitHub 仓库 clone / audit 脚本、单元测试和源码审计流程文档，已对 core4 仓库固定 commit 并生成审计草稿，用于把 GitHub 渠道 insight 提炼从 README 快筛推进到源码证据层。
+- 新增 GitHub 仓库候选 insight 证据卡，从 core4 源码审计中提炼 12 条候选方法/经验，并标注证据等级、适用边界和最小实验候选。
+- 新增 GitHub 渠道洞见综合文档，按 insight-first 内容整理原则重写 GitHub 渠道 conclusions、helpful methods、反模式、证据边界和最小验证候选。
+- 新增 arXiv 候选论文搜索脚本、说明文档和单元测试，用于按渠道广搜 prompt optimization / prompt evolution 相关论文元数据并生成待粗筛清单。
+- 新增 arXiv 聚焦筛选脚本和单元测试，用于把广搜候选重排为 100 篇以内的人工快筛优先清单。
+- 新增 arXiv top80 论文三层一读分析，包括简要概述、分类 taxonomy / 横向证据矩阵和重点论文详细介绍，用于指导后续深读笔记与最小实验候选选择。
+- 新增 arXiv top80 行动手册，把主要论文问题转化为具体工程例子、解决方案、记录字段和 3 个最小实验候选。
+- 新增 arXiv top80 洞见与经验总结，把重点论文从方法索引进一步提炼为可复用的现象、机制、经验规则、边界条件和最小验证方式。
+- 新增 arXiv 重点论文下载脚本、manifest 和单元测试，把 15 篇优先深读论文的 PDF 与文本抽取结果保存到本地 ignored artifacts，并记录 SHA256、页数和文本长度。
+- 新增 arXiv 重点论文全文深读框架，以及 ProTeGi 和 Modular Prompt Optimization 两篇证据化论文笔记，用于把摘要级判断推进到方法、实验、局限和可复现洞见层面。
+- 新增 GEPA、SePO 和 SPEAR 三篇重点论文全文深读笔记，并补充首批深读综合判断，把错误信号质量、候选选择、optimizer artifact 管理和最小复现实验变量沉淀为可执行结论。
+- 新增 PromptBreeder、EvoPrompt、Scaling Textual Gradients、Textual Gradients are a Flawed Metaphor、PrefPO 和 TextReg 六篇重点论文全文深读笔记，并补充第二批综合判断，用于校正 textual-gradient 机制解释、扩展演化搜索证据、纳入 prompt hygiene / hacking / OOD overfitting 指标。
+- 新增 CriSPO、MemAPO、AutoPDL、MASPO、VISTA、Prompt Codebooks、MAPRO、DistillPrompt、JTPRO 等 16 篇 arXiv 重点论文全文深读笔记，并补充第三批综合判断，把 pre-optimization gate、根因假设、exemplar optimization、tool/schema artifact、multi-agent credit assignment、edit-family hygiene 和 memory 过滤沉淀为后续最小实验约束。
+- 新增 `insight_method_catalog_20260609.md`，按最新 insight-first 内容整理原则聚合论文、源码和行业材料，形成 12 条核心洞见候选、6 条当前可采信 conclusions、4 个 helpful methods、反模式清单和首批验证优先级，并同步 README 与实验计划入口。
+- 新增知乎、Twitter/X 和其它平台候选 posts 的批次快筛与并发分析包，明确 artifact 路径、证据边界、优先候选、追溯字段和后续处理建议，便于多 session 并行分析。
+- 新增 Twitter/X 候选 posts 结构化分析，完成 GEPA/DSPy/MIPRO 社媒线索分层、24 条 source card、X 到一手来源追溯表和排除清单，并将 Pydantic GEPA、Promptim、PromptWizard、DSPyground、Promptomatix 等稳定来源回填到来源清单。
+- 新增 Twitter/X 社媒线索洞见卡，按 insight-first 原则把 X/Twitter 线索转成 8 条 insight candidates、3 个 helpful method candidates、反模式和最小验证/演示候选。
+- 新增其它平台候选来源结构化分析，完成 high/medium 候选证据分层、source cards、工具与工程实践地图，并将 Hugging Face、Arize、LangChain、Langfuse、Humanloop、Weaviate、OPIK 等稳定来源回填到来源清单和行业实践整理。
+- 新增其它平台 insight / method cards，把官方文档、cookbook、工具平台和二手博客线索转写为 optimizer intake、prompt version ledger、context-first diagnosis、source triage 等可复用方法、反模式和最小验证候选。
+- 新增知乎候选材料三层分析，基于 99 条搜索候选整理快速概述、主题详细分析、重点论文/框架追溯、深读优先级和排除建议。
+- 新增知乎候选材料洞见与方法卡片，将知乎批次按最新 insight-first 原则重写为 insight cards、helpful methods、anti-patterns、重点追溯对象和最小验证候选，并明确知乎材料主要作为中文社区理解与误区线索。
+- 新增 `pytest.ini`，将项目测试入口限定到 `tests/`，避免本地忽略目录 `local_sources/raw/` 中的第三方源码快照被 pytest 误收集。
 
 ### Changed
 
@@ -45,6 +72,8 @@
 - 明确本轮流程规则变更提交并推送后，后续代码、文档、实验和配置改动必须先在个人/任务分支完成，再通过 PR/合入请求进入 `main`，用于保护 `main` 的可复现基线和 review/回滚边界。
 - 将当前路线从“准备进入最小可复现实验”前移到“M0 资料搜集与综述冻结”，实验计划暂作为后续候选设计。
 - 将 M0 资料搜集和实验计划调整为五天交付版，强调前沿状态跟踪、可执行方案产出和 1-2 个关键判断的最小实验验证。
+- 将项目主线调整为 insight-first：优先沉淀有效 insights、可信 conclusions、可复用 helpful methods、反模式和风险边界，实验仅作为验证关键洞见、演示方法和校准边界的手段，并同步更新 README、研究框架、资料搜集计划、最终报告结构、实验计划、项目原则、共创工作流和笔记模板。
+- 将各渠道总结文档补充为“具体洞见优先”的写作口径，在 arXiv、GitHub、行业实践、Twitter/X、其它平台和知乎分析中新增普通用户可理解的方法卡片、最小验证方式和证据边界，并同步最终报告结构，同时保留原有论文、源码和工具证据层。
 - 企业微信命令行和 Git hook 通知默认附带自然语言版 git 主要修改内容，并把涉及文件作为次级明细展示。
 
 ## 2026-06-08

@@ -26,7 +26,7 @@ source_id：
 
 证据等级：strong | medium | weak
 
-新颖性判断：unknown | duplicate | extension | contradiction | new-hypothesis | actionable-experiment
+新颖性判断：unknown | duplicate | extension | contradiction | new-hypothesis | actionable-method | actionable-experiment
 
 reviewed_by：
 
@@ -65,7 +65,12 @@ reviewed_by：
 ## 对本项目的启发
 
 - 可转化假设：
-- 最小 eval：
+- insight：
+- conclusion：
+- helpful method：
+- anti-pattern / limit：
+- 适用场景：
+- 最小验证 / 演示：
 - 需要新增的数据或脚本：
 - 风险：
 

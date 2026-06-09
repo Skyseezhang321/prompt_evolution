@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt 优化与自进化多渠道洞见报告 v1</title>
+  <style>
+    :root {
+      --bg: #f5f7f5;
+      --paper: #ffffff;
+      --ink: #202329;
+      --muted: #626b74;
+      --line: #d8ded8;
+      --soft: #edf1ed;
+      --teal: #257d72;
+      --blue: #2d67ad;
+      --amber: #af6b08;
+      --rose: #b44a5c;
+      --violet: #665bb4;
+      --green: #4f7e33;
+      --slate: #46525f;
+      --shadow: 0 14px 34px rgba(29, 35, 40, 0.08);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--blue);
+      text-underline-offset: 3px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 24px 72px;
+    }
+
+    header,
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      overflow: hidden;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.28fr 0.72fr;
+      gap: 30px;
+      padding: 38px;
+      border-top: 6px solid var(--teal);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 16px;
+      font-size: 35px;
+      line-height: 1.18;
+      font-weight: 760;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    h3 {
+      margin-bottom: 9px;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 780px;
+      color: #3f464e;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .meta-grid {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .meta {
+      padding: 13px 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .meta strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .meta span {
+      display: block;
+      font-weight: 680;
+      line-height: 1.46;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px 38px 22px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfa;
+    }
+
+    nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 5px 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    section {
+      margin-top: 22px;
+      padding: 30px;
+    }
+
+    .section-intro {
+      max-width: 890px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .card.teal { border-top: 4px solid var(--teal); }
+    .card.blue { border-top: 4px solid var(--blue); }
+    .card.amber { border-top: 4px solid var(--amber); }
+    .card.rose { border-top: 4px solid var(--rose); }
+    .card.violet { border-top: 4px solid var(--violet); }
+    .card.green { border-top: 4px solid var(--green); }
+    .card.slate { border-top: 4px solid var(--slate); }
+
+    .card p:last-child,
+    .card ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 760;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--soft);
+      color: #3d444b;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .tag.a {
+      background: #e8f3ee;
+      border-color: #b8d9cb;
+      color: #17614f;
+    }
+
+    .tag.b {
+      background: #e9f0fb;
+      border-color: #b9caeb;
+      color: #214f95;
+    }
+
+    .tag.c {
+      background: #fff1d9;
+      border-color: #e7c37e;
+      color: #875006;
+    }
+
+    .tag.d {
+      background: #fbe8ed;
+      border-color: #e6b6c2;
+      color: #96364c;
+    }
+
+    .matrix {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-collapse: collapse;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .matrix th {
+      background: #eef1ed;
+      color: #3d444b;
+      font-size: 14px;
+      font-weight: 720;
+    }
+
+    .matrix tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .matrix td:first-child {
+      width: 23%;
+      font-weight: 700;
+    }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      min-width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .score.a { background: var(--teal); }
+    .score.b { background: var(--blue); }
+    .score.c { background: var(--amber); }
+    .score.d { background: var(--rose); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .step {
+      min-height: 128px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfa;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--teal);
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--amber);
+      border-radius: var(--radius);
+      background: #fff8ea;
+    }
+
+    .mini-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .mini-list li {
+      margin-bottom: 6px;
+    }
+
+    .source-list {
+      columns: 2;
+      column-gap: 34px;
+      padding-left: 18px;
+    }
+
+    .source-list li {
+      break-inside: avoid;
+      margin-bottom: 8px;
+    }
+
+    footer {
+      margin-top: 22px;
+      padding: 18px 4px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .grid.two,
+      .grid.three,
+      .grid.four {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .source-list {
+        columns: 1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 12px 42px;
+      }
+
+      .hero,
+      nav,
+      section {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="hero">
+        <div>
+          <h1>Prompt 优化与自进化：多渠道洞见报告 v1</h1>
+          <p class="lead">本页把 arXiv 论文深读、GitHub 源码审计、行业工具文档、Twitter/X 线索、知乎中文社区材料和其它平台批次压缩成一个可读的调研结论页。重点不是列来源，而是说明各渠道分别贡献了什么、哪些结论互相印证、哪些 helpful methods 现在最值得沉淀。</p>
+          <div class="tag-row">
+            <span class="tag a">27 篇论文深读</span>
+            <span class="tag b">core4 源码审计</span>
+            <span class="tag c">工具生态地图</span>
+            <span class="tag d">社媒与中文线索分层</span>
+          </div>
+        </div>
+        <div class="meta-grid">
+          <div class="meta">
+            <strong>总判断</strong>
+            <span>自动优化 prompt 的可采信路径，正在收敛为“失败证据 -> 候选池 -> 选择器 -> 版本治理 -> 必要验证”。</span>
+          </div>
+          <div class="meta">
+            <strong>最有用方法</strong>
+            <span>pre-optimization gate、failure hypothesis、section-local rewrite、candidate archive、prompt hygiene、trace summary、evidence-backed memory。</span>
+          </div>
+          <div class="meta">
+            <strong>证据边界</strong>
+            <span>论文给方法证据，源码给工程结构，工具文档给治理闭环，社媒/知乎主要给线索和传播视角。</span>
+          </div>
+        </div>
+      </div>
+      <nav aria-label="页面导航">
+        <a href="#executive">综合结论</a>
+        <a href="#channels">渠道贡献</a>
+        <a href="#cross">交叉洞见</a>
+        <a href="#methods">方法 Playbook</a>
+        <a href="#matrix">证据矩阵</a>
+        <a href="#anti">反模式</a>
+        <a href="#roadmap">验证路线</a>
+        <a href="#sources">证据索引</a>
+      </nav>
+    </header>
+
+    <section id="executive">
+      <h2>综合结论</h2>
+      <p class="section-intro">各渠道的共同信号很清楚：本项目不应该追逐“自动改 prompt”的口号，而应该沉淀一套能解释、选择、回滚和复用 prompt 改进的经验系统。</p>
+      <div class="grid three">
+        <div class="card teal">
+          <h3>1. 先判断是否值得优化</h3>
+          <p>Batch3 论文显示 prompt optimization 并非总有收益，甚至可能低于 zero-shot。首要方法是 pre-optimization gate：zero-shot、候选 spread、noise floor、headroom 和 go/stop reason。</p>
+          <div class="tag-row"><span class="tag a">arXiv 强证据</span><span class="tag c">首批落地</span></div>
+        </div>
+        <div class="card blue">
+          <h3>2. 错误信号比优化算法更先决定上限</h3>
+          <p>从 ProTeGi 到 GEPA、SPEAR、VISTA，最稳的结论是：只看分数不够，要把失败样本、trace、rubric 失败和结构化错误分析转成可编辑证据。</p>
+          <div class="tag-row"><span class="tag a">论文互证</span><span class="tag b">工具实践支持</span></div>
+        </div>
+        <div class="card amber">
+          <h3>3. 候选选择和回滚是方法核心</h3>
+          <p>beam、bandit、Pareto、archive、best-seen rollback 不是工程装饰，而是应对 LLM 候选方差、dev 过拟合和 prompt 漂移的必要结构。</p>
+          <div class="tag-row"><span class="tag a">arXiv</span><span class="tag b">GitHub ledger</span></div>
+        </div>
+        <div class="card rose">
+          <h3>4. 优化对象已变成 artifact graph</h3>
+          <p>prompt 文本只是一个节点。examples、tool schema、slot semantics、agent role、context packaging、memory、judge rubric、selection policy 都需要版本和归因。</p>
+          <div class="tag-row"><span class="tag a">Batch3</span><span class="tag b">行业工具</span></div>
+        </div>
+        <div class="card green">
+          <h3>5. 工程平台的价值是治理，不是替代证据</h3>
+          <p>LangSmith、Promptfoo、Langfuse、Humanloop、Arize、OPIK 等材料共同说明：版本、trace、dataset、evaluator、rollback 是自动优化的前置条件。</p>
+          <div class="tag-row"><span class="tag b">行业收敛</span><span class="tag">可复用流程</span></div>
+        </div>
+        <div class="card violet">
+          <h3>6. 社媒与中文社区是线索层</h3>
+          <p>Twitter/X 和知乎很适合发现 GEPA/DSPy/OPIK/Hermes 等方向的传播、误读和本土实践，但性能主张必须回到论文、代码、官方文档或本项目验证。</p>
+          <div class="tag-row"><span class="tag d">证据边界</span><span class="tag">传播地图</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="channels">
+      <h2>渠道贡献</h2>
+      <p class="section-intro">不同渠道不应该混用证据等级。新版报告的核心改动是：先说清每个渠道“能贡献什么”和“不能证明什么”。</p>
+      <div class="grid three">
+        <div class="card teal">
+          <div class="metric">arXiv</div>
+          <h3>方法证据和失败边界</h3>
+          <p>Top80 给 taxonomy，27 篇全文深读给方法、消融、失败和边界。最强贡献是错误信号质量、候选选择、pre-optimization gate、prompt hygiene、exemplar optimization、memory filtering、multi-agent credit assignment。</p>
+          <p class="metric-label">不要用法：不要把单篇论文结果直接写成项目结论；尤其是 2026 新稿需要复核。</p>
+        </div>
+        <div class="card blue">
+          <div class="metric">GitHub</div>
+          <h3>工程结构和审计字段</h3>
+          <p>85 个 raw candidates 快筛到严格保留 8 个，core4 固定 commit 审计。最强贡献是 compare/synthesis/rewrite、frozen harness、candidate ledger、context ownership、bounded memory、trace/verifier/playbook。</p>
+          <p class="metric-label">不要用法：GitHub 上有 tests 或 star 高，不等于方法有效。</p>
+        </div>
+        <div class="card amber">
+          <div class="metric">行业工具</div>
+          <h3>治理闭环和产品化字段</h3>
+          <p>OpenAI、Google、DSPy、Promptfoo、LangSmith、Langfuse、Humanloop、Arize、OPIK、Weaviate 等共同指向：dataset/evaluator、prompt version、trace、experiment、rollback、human review。</p>
+          <p class="metric-label">不要用法：厂商 benchmark 提升比例只作线索，不作项目效果结论。</p>
+        </div>
+        <div class="card rose">
+          <div class="metric">Twitter/X</div>
+          <h3>一手来源发现和术语校正</h3>
+          <p>120 条候选把 GEPA、DSPy、MIPRO、Pydantic GEPA、PromptWizard、Promptomatix、Promptim、Vertex Prompt Optimizer 等连接到作者、维护者和官方来源。</p>
+          <p class="metric-label">不要用法：不把 X 热度、转发数量或二手摘要当成证据强度。</p>
+        </div>
+        <div class="card green">
+          <div class="metric">知乎</div>
+          <h3>中文传播、语境和本土工具线索</h3>
+          <p>99 条候选显示中文社区关注 GEPA/DSPy、Context Engineering、Hermes Agent、OPIK/Coze/Prompt Optimizer。它揭示了实践者如何理解“从 prompt 到 context/workflow”。</p>
+          <p class="metric-label">不要用法：知乎多数是二手解读，必须追溯原论文、官方文档、代码或快照。</p>
+        </div>
+        <div class="card violet">
+          <div class="metric">其它平台</div>
+          <h3>工具生态地图</h3>
+          <p>465 条候选快筛出 Hugging Face、Arize/Phoenix、OPIK、LangChain/Promptim、Langfuse、Humanloop、Weaviate 等 strong/medium source cards，补足工程实践维度。</p>
+          <p class="metric-label">不要用法：Medium/Substack 只有在含数据、metric、配置、成本或失败案例时才深读。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cross">
+      <h2>交叉洞见</h2>
+      <p class="section-intro">这些洞见不是来自单一渠道，而是多渠道互相校正后更稳定的经验。它们是最终报告最应该展开的主体。</p>
+      <table class="matrix" aria-label="交叉洞见">
+        <thead>
+          <tr>
+            <th>洞见</th>
+            <th>跨渠道支撑</th>
+            <th>结论和用法</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>不是所有任务都值得自动优化</td>
+            <td>Batch3 的 Coin Flip 论文给反例；行业工具强调先有 dataset/evaluator；Promptfoo 提醒 validation split。</td>
+            <td>所有自动优化前先做 pre-optimization gate，候选 spread 没超过 noise floor 就停止。</td>
+          </tr>
+          <tr>
+            <td>失败分析要先有根因假设</td>
+            <td>VISTA 显示 GEPA 可能错过真实根因；SPEAR 支持结构化错误分析；GitHub compare/synthesis/rewrite 支持证据分层。</td>
+            <td>每轮保存 `failure_hypothesis`，一个 hypothesis 生成一个 candidate，用 validation 选择 hypothesis。</td>
+          </tr>
+          <tr>
+            <td>Prompt optimization 的对象是 artifact graph</td>
+            <td>AutoPDL/JTPRO/MASPO/Codebooks 扩展优化对象；Humanloop/Langfuse/OPIK 把 template、model、tools、schema 纳入版本。</td>
+            <td>保存 prompt 文本还不够，要保存 prompting pattern、examples、tool schema、context、memory、selection policy。</td>
+          </tr>
+          <tr>
+            <td>Exemplar selection 是一等变量</td>
+            <td>Batch3 的 Teach Better or Show Smarter、ERM、DistillPrompt 支持；DSPy/MIPRO 社区和工具生态强调 demos/metrics。</td>
+            <td>实验至少比较 no-example、random-example、optimized-example；不要把 exemplar 当附属细节。</td>
+          </tr>
+          <tr>
+            <td>Prompt hygiene 是质量指标</td>
+            <td>TextReg/PrefPO/Edit-Level/Coin Flip 警告 prompt bloat；GitHub ledger 强调复杂度；行业工具强调可审查 diff。</td>
+            <td>候选选择要加入 prompt length、repetition、edit family、meta instruction、rule specificity、dev-test gap。</td>
+          </tr>
+          <tr>
+            <td>Agent 和 multi-agent 优化看的是 credit assignment</td>
+            <td>GEPA/SPEAR/AutoPDL/JTPRO/MASPO/MAPRO 指向 trace、tool schema、role/round/topology；知乎和 X 把问题传播到 agent/context。</td>
+            <td>不要一次改全系统；记录 local validity、downstream utility、local_pass_global_fail 和 topology。</td>
+          </tr>
+          <tr>
+            <td>Memory 必须过滤、遗忘和带边界</td>
+            <td>MemAPO/ERM/Prompt Codebooks 支持 filtered memory；ECC 源码给 lifecycle hooks；行业工具强调 opt-out / scoped context。</td>
+            <td>memory entry 至少记录 source task、applicability、quality、stale reason、negative transfer flag。</td>
+          </tr>
+          <tr>
+            <td>社媒/社区材料用于发现问题和误读</td>
+            <td>X 暴露 GEPA 被简化成 RL 替代品；知乎显示中文社区把 prompt 迅速扩展到 context/Hermes/工具化实践。</td>
+            <td>报告中把这些渠道标为“传播与线索层”，用于补充语境，不用于证明方法有效。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="methods">
+      <h2>Helpful Methods Playbook</h2>
+      <p class="section-intro">这些方法是当前最值得沉淀的可复用工作法。它们不是完整系统，而是可以直接进入研究记录、笔记模板、实验设计和报告正文的操作模块。</p>
+      <div class="grid two">
+        <div class="card teal">
+          <h3>1. Pre-optimization Gate</h3>
+          <p>先估计任务有没有优化空间，再决定是否跑 optimizer。</p>
+          <ul class="mini-list">
+            <li>跑 zero-shot / manual baseline。</li>
+            <li>生成 10-20 个低成本候选，估计 headroom。</li>
+            <li>记录 noise floor、candidate spread、go_or_stop_reason。</li>
+          </ul>
+        </div>
+        <div class="card blue">
+          <h3>2. Failure Hypothesis Before Rewrite</h3>
+          <p>把失败归因和 prompt 改写拆开，避免 optimizer 没进入正确 hypothesis space。</p>
+          <ul class="mini-list">
+            <li>每轮先写 `failure_hypothesis`。</li>
+            <li>每个 hypothesis 单独生成 candidate。</li>
+            <li>用 validation 选择 hypothesis，而不是让反思器自评。</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <h3>3. Artifact Graph Versioning</h3>
+          <p>把 prompt program 的各个节点分别版本化。</p>
+          <ul class="mini-list">
+            <li>记录 task prompt、examples、schema、tool policy、context packing。</li>
+            <li>记录 optimizer prompt、operator、selection policy。</li>
+            <li>变化来自哪个节点，结论就写哪个节点。</li>
+          </ul>
+        </div>
+        <div class="card rose">
+          <h3>4. Candidate Archive + Best-seen</h3>
+          <p>候选池、淘汰原因和回滚点是方法核心，不是日志附件。</p>
+          <ul class="mini-list">
+            <li>保留 seed、parent、operator、score、cost、reject_reason。</li>
+            <li>支持 beam / Pareto / bandit / archive。</li>
+            <li>best-seen prompt 永不被直接覆盖。</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>5. Prompt Hygiene Selector</h3>
+          <p>性能提升必须同时通过 hygiene gate。</p>
+          <ul class="mini-list">
+            <li>prompt_length_ratio、repetition_ratio、rule_specificity_score。</li>
+            <li>edit_family、meta_instruction_added、dev_test_gap。</li>
+            <li>拒绝“涨分但更长、更脆、更难审”的候选。</li>
+          </ul>
+        </div>
+        <div class="card violet">
+          <h3>6. Exemplar Optimization Track</h3>
+          <p>有 labeled dev set 时，examples 不是附属品。</p>
+          <ul class="mini-list">
+            <li>比较 no-example、random-example、optimized-example。</li>
+            <li>记录 exemplar_source、selector、k、budget。</li>
+            <li>必要时把 examples 蒸馏成 task-solving principles。</li>
+          </ul>
+        </div>
+        <div class="card slate">
+          <h3>7. Trace-summary Agent Optimization</h3>
+          <p>agent 优化不要只看最终答案，也不要把原始 trace 整段塞给 optimizer。</p>
+          <ul class="mini-list">
+            <li>聚合 wrong_tool、bad_args、ignored_error、unsupported_claim。</li>
+            <li>只改 tool policy、context format 或 role prompt 之一。</li>
+            <li>记录 tool error rate、cost、latency 和 downstream utility。</li>
+          </ul>
+        </div>
+        <div class="card teal">
+          <h3>8. Evidence-backed Memory</h3>
+          <p>memory 不是长历史缓存，而是有证据、有边界、有遗忘机制的经验库。</p>
+          <ul class="mini-list">
+            <li>拆成 success template 和 error pattern。</li>
+            <li>记录 applicability、quality、retrieval reason、negative transfer。</li>
+            <li>每条 memory 可禁用、可过期、可回滚。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="matrix">
+      <h2>证据矩阵</h2>
+      <p class="section-intro">下面不是打分游戏，而是帮助读者快速判断：某个结论来自哪些渠道，应该怎么写才不过度。</p>
+      <table class="matrix" aria-label="证据矩阵">
+        <thead>
+          <tr>
+            <th>结论类型</th>
+            <th>最强来源</th>
+            <th>可以写成</th>
+            <th>不能写成</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="score a">A</span> 方法有效性</td>
+            <td>arXiv 全文深读、原论文实验、官方 cookbook 可复现配置。</td>
+            <td>“在论文设置中，X 方法相对 Y baseline 表现更好/更稳，并有这些限制。”</td>
+            <td>“X 方法在所有 prompt 优化任务中有效。”</td>
+          </tr>
+          <tr>
+            <td><span class="score b">B</span> 工程方法</td>
+            <td>GitHub 固定 commit 源码审计、行业工具官方文档、产品化 eval/prompt management 流程。</td>
+            <td>“这是可复用工程结构或治理字段，适合转成项目 playbook。”</td>
+            <td>“这个开源仓库/工具已经证明了 prompt self-evolution 有效。”</td>
+          </tr>
+          <tr>
+            <td><span class="score c">C</span> 生态趋势</td>
+            <td>X 作者/维护者线索、知乎中文社区、其它平台批次。</td>
+            <td>“社区正在把 GEPA/DSPy/context engineering 连接到这些实践场景。”</td>
+            <td>“因为社媒讨论很多，所以方法效果更强。”</td>
+          </tr>
+          <tr>
+            <td><span class="score d">D</span> 本项目待验证</td>
+            <td>交叉综合后的推测，例如中文任务迁移、memory 长期收益、agent prompt optimization 成本收益。</td>
+            <td>“这是待验证假设，下一步用最小演示检查边界。”</td>
+            <td>“这是当前项目已经验证的结论。”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="anti">
+      <h2>反模式</h2>
+      <p class="section-intro">各渠道共同暴露了一批高风险误用。把这些反模式写进报告，和写正向方法同样重要。</p>
+      <div class="grid three">
+        <div class="card rose">
+          <h3>One-shot Rewrite 崇拜</h3>
+          <p>直接让模型“改好 prompt”，没有候选池、失败假设、validation 和 rollback。它可能只是润色，而不是优化。</p>
+        </div>
+        <div class="card rose">
+          <h3>只看平均分</h3>
+          <p>忽略 minority class、schema violation、prompt bloat、OOD 和人工审查风险，会把伪提升写成结论。</p>
+        </div>
+        <div class="card rose">
+          <h3>把 context 和 prompt 混成一个变量</h3>
+          <p>同时改 prompt、retrieval、memory 和 tools，最后无法判断变化来自哪里。</p>
+        </div>
+        <div class="card rose">
+          <h3>无界 memory</h3>
+          <p>把所有历史、反馈、成功 prompt 都塞进上下文，会制造污染和错误迁移。</p>
+        </div>
+        <div class="card rose">
+          <h3>采信厂商 benchmark</h3>
+          <p>Arize、OPIK、Google、OpenAI 等工具文档很有价值，但提升比例必须重跑或标注 vendor caveat。</p>
+        </div>
+        <div class="card rose">
+          <h3>把社媒传播当证据</h3>
+          <p>X/知乎可以发现方向、误读和一手来源，但不能直接支撑性能结论。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <h2>验证路线</h2>
+      <p class="section-intro">实验仍然重要，但它的角色是验证 insight 和演示 method。当前最合理的第一组验证不是大 benchmark，而是一个结构化任务上的四阶段小闭环。</p>
+      <div class="flow" aria-label="验证路线">
+        <div class="step"><strong>1. 结构化任务</strong><span>选 100-300 条严格 schema 抽取或工具调用样本，避免开放生成先行。</span></div>
+        <div class="step"><strong>2. Gate</strong><span>zero-shot、20 candidates、headroom、noise floor、go/stop reason。</span></div>
+        <div class="step"><strong>3. 对照变量</strong><span>instruction-only、exemplar-only、instruction+exemplar、multi-aspect critique、filtered memory。</span></div>
+        <div class="step"><strong>4. 安全阀</strong><span>length/repetition、edit family、dev-test gap、stress/OOD、best-seen rollback。</span></div>
+        <div class="step"><strong>5. 回填报告</strong><span>把结果写回 insight、method、反模式和边界，不只报告分数。</span></div>
+      </div>
+      <div class="callout">
+        <strong>首批验证优先级：</strong> 先验证 pre-optimization gate、failure hypothesis、section-local rewrite、prompt hygiene selector。它们跨渠道支撑最强，成本最低，也最符合“调研与经验总结”的项目目标。
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2>证据索引</h2>
+      <p class="section-intro">本页只引用仓库内已经整理过的渠道总结。后续正式报告应继续从这些入口追溯到论文、源码、官方文档或本项目验证记录。</p>
+      <ul class="source-list">
+        <li><a href="./arxiv_top80_insights.md">arXiv Top80 洞见</a></li>
+        <li><a href="./arxiv_top80_action_playbook.md">arXiv 行动手册</a></li>
+        <li><a href="./arxiv_deep_reading_batch1_synthesis.md">arXiv 深读 Batch 1</a></li>
+        <li><a href="./arxiv_deep_reading_batch2_synthesis.md">arXiv 深读 Batch 2</a></li>
+        <li><a href="./arxiv_deep_reading_batch3_synthesis.md">arXiv 深读 Batch 3</a></li>
+        <li><a href="./github_repo_channel_synthesis_20260609.md">GitHub 渠道洞见综合</a></li>
+        <li><a href="./github_repo_insight_cards_20260608.md">GitHub insight 证据卡</a></li>
+        <li><a href="./github_repo_evidence_matrix_20260608.md">GitHub 证据矩阵</a></li>
+        <li><a href="./industry_practices.md">行业实践整理</a></li>
+        <li><a href="./source_batches/twitter_web_analysis_20260608.md">Twitter/X 批次分析</a></li>
+        <li><a href="./source_batches/web_search_platform_analysis_20260608.md">其它平台批次分析</a></li>
+        <li><a href="./source_batches/zhihu_three_layer_analysis_20260608.md">知乎三层分析</a></li>
+        <li><a href="./source_batches/zhihu_quickscreen_20260608.md">知乎快筛框架</a></li>
+        <li><a href="./final_report_outline.md">最终报告结构</a></li>
+        <li><a href="./experiment_plan.md">实验计划</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>报告 v1 当前定位：多渠道调研洞见与 helpful methods 综合页。实验用于验证、演示和校准这些经验，不作为项目主线本身。</p>
+    </footer>
+  </div>
+</body>
+</html>

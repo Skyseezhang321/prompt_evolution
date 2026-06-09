@@ -10,7 +10,7 @@ source_id：
 
 线索贡献者：
 
-新颖性判断：unknown | duplicate | extension | contradiction | new-hypothesis | actionable-experiment
+新颖性判断：unknown | duplicate | extension | contradiction | new-hypothesis | actionable-method | actionable-experiment
 
 阅读日期：
 
@@ -50,9 +50,17 @@ reviewed_by：
 
 ## 对本项目的启发
 
+- insight：
+- conclusion：
+- helpful method：
+- anti-pattern / limit：
+- 适用场景：
+- 误用风险：
 
-## 可复现计划
+## 最小验证或演示计划
 
-- 最小复现任务：
+- 要验证的 insight / method：
+- 最小验证任务：
 - 需要实现的模块：
+- 观察指标：
 - 预计风险：
