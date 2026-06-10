@@ -45,6 +45,8 @@
 
 ## 可执行方案字段
 
+> 本节及下方「Insight 字段」的字段定义与各类型必填项以 `docs/insight_field_standard.md` 为准；该文同时给出本仓库尚缺的 `conclusion` 独立字段 schema。
+
 每个 helpful method 或方案至少写清：
 
 ```yaml

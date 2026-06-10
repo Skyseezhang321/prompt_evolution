@@ -12,6 +12,8 @@
 
 ## 使用方式
 
+字段定义与 insight / conclusion / helpful method 的区分口径以 `docs/insight_field_standard.md` 为准；下方精简 schema 缺 `phenomenon` / `mechanism` / `actionable_rule`（正文各条已含），且 `next_validation` 应按规范统一为 `validation_or_demo`。
+
 最终报告应先展示读者能立刻理解的洞见和方法，再展开论文、源码、行业来源证据。每条进入最终报告的判断至少要保留：
 
 ```yaml

@@ -26,6 +26,8 @@
 
 ### Added
 
+- 新增 `docs/insight_field_standard.md` 字段定义规范：把此前散落在 `research_brief.md`、两个深读模板、`insight_method_catalog` 和 `final_report_outline` 里、只有字段名而无统一口径的 insight / conclusion / helpful method / anti-pattern 四类产出，收敛为单一权威——给出区分口径（含 insight↔conclusion↔method 的判别问句）、各类型必填/可选字段、补齐此前缺失的 `conclusion` 独立 schema、统一字段命名映射并标注 catalog 的待收敛点；影响范围：上述四个文档各加一行指向该规范，证据等级仍沿用 `final_report_outline` 的 A/B/C/D，不改动任何已有结论。
+
 - 新增 `docs/insight_handbook_20260609.md` 读者向洞见手册：面向非本领域读者，按学习顺序（要不要优化 → 怎么诊断失败 → 改什么 → 怎么防过拟合和热度误导）把 12 条核心洞见各写成「反直觉点 + 具体示意例子 + 带出处真实数字 + 可照抄步骤 + 边界」，所有 prompt 例子标注示意、数字标注论文出处，并保留与 insight_method_catalog 的对应关系。
 - 新增 `docs/analysis_report_v2_20260609.html` 多渠道洞见报告 v2：按洞见而非渠道组织，把 v1 的标签式结论还原为具体 before/after 例子和带出处数字（如 Coin Flip 49% 低于 zero-shot、VISTA 23.81%→13.50%→87.57%、AutoPDL FEVER 6.5%→74.0%、PrefPO 14.7x 长度）；v1 保留作对照与回滚点。
 - 新增 MIT 开源协议文件，明确公开仓库的代码和配套文档可复用边界。

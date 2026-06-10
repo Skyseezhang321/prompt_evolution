@@ -64,6 +64,8 @@ reviewed_by：
 
 ## 对本项目的启发
 
+> 字段定义与 insight / conclusion / helpful method 的区分口径见 `docs/insight_field_standard.md`。
+
 - 可转化假设：
 - insight：
 - conclusion：
