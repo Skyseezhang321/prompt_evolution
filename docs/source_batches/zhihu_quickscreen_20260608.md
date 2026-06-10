@@ -1,6 +1,8 @@
 # 知乎候选材料快筛与三层分析框架
 
-更新时间：2026-06-09
+更新时间：2026-06-10
+
+本文件是知乎批次的**快筛底稿**：三层产出框架定义 + 原始分类 + 优先深读候选清单。执行层的三层分析见 [三层分析](zhihu_three_layer_analysis_20260608.md)，面向报告的洞见/方法卡片见 [洞见与方法卡片](zhihu_insight_cards_20260609.md)。为避免三处重复漂移，**第一层概述与后续任务以那两份为准，本文件不再单独维护**。
 
 ## 批次信息
 
@@ -101,20 +103,10 @@ specific_insight_card:
 | P3 | Prompt-Optimizer: AI 提示词优化神器全攻略 | https://zhuanlan.zhihu.com/p/1892351710292332883 | 工具体验，证据等级待定 |
 | P3 | 结构化提示词（三）：字节跳动Coze提示词优化器！ | https://zhuanlan.zhihu.com/p/701894071 | 本土工具链线索 |
 
-## 第一层概述草案
+## 第一层概述
 
-从标题和搜索摘要看，知乎候选材料呈现三个明显趋势。
+已迁移并细化到 [三层分析 · 第 1 层简要概述](zhihu_three_layer_analysis_20260608.md) 与 [洞见与方法卡片 · 快速结论](zhihu_insight_cards_20260609.md)，此处不再保留重复草案。
 
-第一，中文社区已从传统 prompt 技巧转向自动化 prompt 优化和上下文工程。高相关候选集中在 GEPA、DSPy/MIPROv2、OPRO、APE/APO、PromptBreeder 以及 Context Engineering，这与项目当前文献地图一致。
+## 后续任务
 
-第二，知乎材料更适合补“传播路径、工程理解和中文工具生态”，不适合直接支撑方法有效性的结论。多数候选看起来是论文或英文博客的中文转述，真正有价值的是带代码、带工具配置、带 eval 对比或包含失败案例的文章。
-
-第三，上下文工程在知乎候选中占比很高，说明中文实践者已经把 prompt 优化问题扩展到 agent context、memory、workflow 和检索组织。这一部分应与论文中的 context engineering taxonomy、Anthropic/LangChain 等官方实践互相校验。
-
-## 后续任务建议
-
-1. 先从 P1/P2 候选中选 15-20 篇打开核验，标记为 `深读`、`仅作线索` 或 `排除`。
-2. 对进入深读的行业材料，按 `docs/industry_notes/template.md` 写结构化笔记。
-3. 对涉及论文的文章，先建立“知乎文章 -> 原论文/官方来源”的追溯表。
-4. 将稳定线索更新到 `docs/source_inventory.md`，不要直接把全部 99 条导入正式清单。
-5. 从知乎材料中抽取中文任务、中文工具和本土 agent 经验，作为英文论文和官方文档之外的补充维度。
+后续任务以 [三层分析 · 下一步](zhihu_three_layer_analysis_20260608.md) 和 [洞见与方法卡片 · 后续处理建议](zhihu_insight_cards_20260609.md) 为准，不在本文件重复维护。其中"知乎文章 → 原论文/官方来源"追溯表已在 [洞见与方法卡片 · 重点追溯对象](zhihu_insight_cards_20260609.md) 接上仓库内 source_id；保留候选登记进 `docs/source_inventory.md` 待该文件并发编辑结束后补。
