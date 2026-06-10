@@ -75,7 +75,7 @@
 
 ## 初步判断
 
-1. GitHub 上直接面向 prompt optimization 的高相关仓库并不多。首轮严格保留样本里，真正直接做 prompt optimizer 的主要是 `linshenkx/prompt-optimizer`。
+1. GitHub 上直接面向 prompt optimization 的高相关仓库并不多。首轮严格保留样本里，真正直接做 prompt optimizer 的主要是 `linshenkx/prompt-optimizer`。（边界：本判断来自一次无 token、8 查询的受限召回 + core4-only 审计；`gepa-ai/gepa`、`microsoft/PromptWizard`、`SalesforceAIResearch/promptomatix` 等正典 optimizer 仓库尚未审计，"不多"可能是覆盖不足所致，详见 [渠道洞见综合 · 渠道覆盖与已知偏差](github_repo_channel_synthesis_20260609.md)。）
 
 2. 工程侧的主线正在从“优化 prompt 字符串”转向“管理 prompt/context/agent workflow 的整体行为”。`humanlayer/12-factor-agents`、`shanraisshan/claude-code-best-practice` 和 `affaan-m/ECC` 都把 prompt 放在 context、memory、tool、subagent、verification loop 的系统中讨论。
 

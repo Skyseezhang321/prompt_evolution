@@ -37,6 +37,20 @@ python scripts/github_repo_audit.py --clone-root local_sources\raw\github_repo_c
 
 第一轮 audit manifest：`local_sources/raw/github_repo_audits/github_repo_audit_manifest_20260608T141030Z.md`。
 
+## 第二轮待审仓库（正典 prompt optimizer，未 clone/audit）
+
+下列仓库已在 `docs/source_inventory.md` 登记（多数经 Twitter/X 渠道回填），但尚未进入 clone/audit。它们比 strict8 剩余的资料 / 资产型仓库更直接决定"GitHub 渠道是否真有效果证据"，应作为下一轮 clone/audit 的优先对象。审计时同样先固定 commit、README SHA256、license，再做机器扫描和人工审计。
+
+| source_id | repository | 关联论文 / arXiv | 优先级 | 审计重点 |
+| --- | --- | --- | --- | --- |
+| `repo-gepa-ai-gepa` | `gepa-ai/gepa` | GEPA（2507.19457，已深读 `paper-gepa-2026`） | 高 | 论文 ↔ 源码互证：reflective evolution、Pareto / validation 选择、rollout 与 cost 是否与论文一致（L4 候选）。 |
+| `repo-microsoft-promptwizard` | `microsoft/PromptWizard` | PromptWizard（2405.18369，未登记笔记） | 高 | instruction / example 联合优化、self-evolving refinement、API 依赖；先补论文笔记。 |
+| `repo-salesforce-promptomatix` | `SalesforceAIResearch/promptomatix` | Promptomatix（2507.14241，skimmed） | 高 | DSPy 依赖、synthetic data、feedback、CLI/API；先深读论文。 |
+| `repo-eladlev-autoprompt` | `Eladlev/AutoPrompt` | Intent-based Prompt Calibration（2402.03099，candidate） | 中 | 是否有可复现 eval；与 LangChain Promptim 区分名称，避免混淆。 |
+| `repo-scale3-dspyground` | `Scale3-Labs/dspyground` | 无独立论文（GEPA harness） | 中 | samples / metrics / runs history、AI SDK agent porting，作为 agent prompt optimizer 工程案例。 |
+
+这些 source_id 与 `docs/source_inventory.md` 一致；审计完成后回填审计草稿到 `docs/github_repo_audit_notes/` 并按下表证据等级升级。
+
 ## 证据等级
 
 后续 GitHub 渠道 insight 按以下门槛处理：
