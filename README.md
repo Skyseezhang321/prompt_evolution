@@ -14,7 +14,7 @@
 | 当前主线 | 建立从 source -> note -> insight card -> conclusion -> helpful method -> validation/demo -> final report 的可追溯链路。 |
 | 第一批实验方向 | 不追求完整 benchmark；只选择 1-2 个能验证洞见或演示方法的最小任务。 |
 | 主要风险 | eval 过拟合、LLM-as-judge 偏差、prompt 漂移、成本失控、自动优化破坏安全边界。 |
-| 想快速理解结论 | 直接读 [读者向洞见手册](docs/insight_handbook_20260609.md) 或打开 [可视化报告 v2](docs/analysis_report_v2_20260609.html)：12 条核心洞见，每条配一个看得懂的例子、一个带出处的真实数字、一组可照抄步骤和一条诚实边界。 |
+| 想快速理解结论 | 直接打开 [跨渠道综合论述报告 v3](docs/analysis_report_v3_20260610.html)：含全景脑图、跨渠道证据金字塔、12 条核心洞见、分渠道速览和覆盖诚实清点；脑图可编辑源见 [Mermaid 脑图](docs/prompt_evolution_mindmap_20260610.md)。只想读 12 洞见可看 [读者向洞见手册](docs/insight_handbook_20260609.md)。 |
 | 阅读路径 | 先读本 README；想快速理解结论读 [读者向洞见手册](docs/insight_handbook_20260609.md)；想参与共创先读 [参与贡献指南](CONTRIBUTING.md) 和 [共创工作流](docs/contribution_workflow.md)；继续研究细节再读 [资料搜集计划](docs/source_collection_plan.md)、[来源清单](docs/source_inventory.md)、[研究框架](docs/research_brief.md)、[实验计划](docs/experiment_plan.md)、[最终报告结构](docs/final_report_outline.md) 和 [变更记录](CHANGELOG.md)。 |
 
 ## 五天交付目标
@@ -133,7 +133,7 @@ Research Signal issue -> 项目内新颖性判断 -> 结构化笔记 -> insight/
 - [研究框架](docs/research_brief.md)：问题定义、研究假设、技术路线和风险。
 - [最终报告结构](docs/final_report_outline.md)：最终说明和报告的内容边界、证据等级和验收标准。
 - [读者向洞见手册](docs/insight_handbook_20260609.md)：面向非本领域读者，按学习顺序把 12 条核心洞见写成「反直觉点 + 具体例子 + 真实数字 + 可照抄步骤 + 边界」，所有 prompt 例子均标注示意、所有数字标注出处。
-- [多渠道洞见报告 v2](docs/analysis_report_v2_20260609.html)：读者向洞见手册的可视化摘要，按洞见而非渠道组织，每条带 before/after 例子和带出处数字；旧版 [报告 v1](docs/analysis_report_v1_20260608.html) 保留作对照与回滚。
+- [跨渠道综合论述报告 v3](docs/analysis_report_v3_20260610.html)：当前主报告。在 v2 的 12 洞见主干上叠加全景脑图、跨渠道证据金字塔（arXiv·A → GitHub·B → 其它平台·B → Twitter·B* → 知乎·D）、分渠道速览和覆盖诚实清点；脑图可编辑源见 [Mermaid 脑图](docs/prompt_evolution_mindmap_20260610.md)。旧版 [报告 v2](docs/analysis_report_v2_20260609.html)（按洞见组织、arXiv 为主）与 [报告 v1](docs/analysis_report_v1_20260608.html)（按渠道组织）保留作对照与回滚。
 - [Insight / Conclusion / Helpful Method 候选清单](docs/insight_method_catalog_20260609.md)：按最新 insight-first 原则，把论文、源码和行业材料聚合成可复用洞见、核心结论、helpful methods、反模式和验证候选（结构化中间层，供研究者和最终报告使用）。
 - [文献地图](docs/literature_map.md)：自动 prompt 优化、自进化、上下文工程相关论文脉络。
 - [行业实践](docs/industry_practices.md)：OpenAI、Anthropic、Google、DSPy、LangSmith、Promptfoo 等跨来源实践整理。
