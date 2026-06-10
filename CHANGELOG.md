@@ -26,6 +26,7 @@
 
 ### Added
 
+- 新增 APE、OPRO、DSPy、MIPROv2、TextGrad 五篇经典锚点论文的全文证据级深读笔记（`docs/paper_notes/paper-ape-2022.md`、`paper-opro-2023.md`、`paper-dspy-2023.md`、`paper-miprov2-2024.md`、`paper-textgrad-2024.md`），闭合 `arxiv_top80_taxonomy.md` 自标的"经典锚点未深读"缺口；每篇含本地 PDF/文本 SHA256、方法机制、主结果数字、消融、失败案例、洞见卡片和最小验证计划，并与已有 ProTeGi/EvoPrompt/PromptBreeder/GEPA 等笔记交叉链接，形成 APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA 的基线主干。影响范围：`docs/source_inventory.md` 对应 5 行状态由 candidate/skimmed 升为 noted；`docs/arxiv_top80_taxonomy.md` 缺口条目标记闭合；论文级证据，非本项目复现结论。仍待补更早锚点 AutoPrompt/RLPrompt/GrIPS。
 - 新增 `docs/insight_field_standard.md` 字段定义规范：把此前散落在 `research_brief.md`、两个深读模板、`insight_method_catalog` 和 `final_report_outline` 里、只有字段名而无统一口径的 insight / conclusion / helpful method / anti-pattern 四类产出，收敛为单一权威——给出区分口径（含 insight↔conclusion↔method 的判别问句）、各类型必填/可选字段、补齐此前缺失的 `conclusion` 独立 schema、统一字段命名映射并标注 catalog 的待收敛点；影响范围：上述四个文档各加一行指向该规范，证据等级仍沿用 `final_report_outline` 的 A/B/C/D，不改动任何已有结论。
 
 - 新增 `docs/insight_handbook_20260609.md` 读者向洞见手册：面向非本领域读者，按学习顺序（要不要优化 → 怎么诊断失败 → 改什么 → 怎么防过拟合和热度误导）把 12 条核心洞见各写成「反直觉点 + 具体示意例子 + 带出处真实数字 + 可照抄步骤 + 边界」，所有 prompt 例子标注示意、数字标注论文出处，并保留与 insight_method_catalog 的对应关系。
@@ -72,9 +73,13 @@
 
 ### Changed
 
+- 将其它平台（web_search/工具 + 通用社区广搜）渠道对齐到 `docs/insight_field_standard.md` 并补齐覆盖缺口：在 `docs/source_batches/web_search_platform_insight_cards_20260609.md` 把证据等级从自定义 `L1–L4` 收敛到规范 `A/B/C/D`（多源官方工具实践判为 B，仅搜索摘要线索判为 D，并保留 L→A/B/C/D 换算表）；把 WHM-01..04 从散文改写为字段规范的标准 YAML（补齐 `not_recommended_when`、`evaluation_metrics`、`misuse_or_anti_pattern`、`rollback_plan` 等必填具名字段）；新增「结论总览」「反模式」两节做成清晰渠道入口；新增「广搜渠道覆盖与缺口」节，按 artifact 真实清点 web_search(465)/hackernews(~24)/stackexchange(1)/rss(1)/reddit·dev.to(0)/x_api(未跑)，判定通用社区批次以 GEPA 转贴和 Show HN 产品发布为主、净新增有限，并诚实标注真实失败案例/事故复盘覆盖不足（低于覆盖矩阵要求）。同步在 `docs/source_inventory.md` 登记 3 条净新增候选（AWS Bedrock optimizer、Vertex 锁定 prompt 段落 SO 问答、Ask HN「AI evals 半成品」痛点信号），并在 `README.md` 把 insight cards 标为渠道综合入口、analysis 标为证据层。影响范围：仅其它平台渠道相关文档与来源清单，未改动其它渠道证据与结论。
+- 将 Twitter/X 渠道三份产出对齐到 `docs/insight_field_standard.md`（该规范晚于这批产出定稿，故此前未对齐）：字段名 `source_trace`→`main_sources`、证据取值 `B-candidate`→规范 `A/B/C/D`（候选状态在证据边界处单独说明，不污染 `evidence_strength`）、反模式表补必填列 `trigger_condition`；新增 5 条 Conclusion Candidates（按 conclusion schema 填 scope/evidence_strength/counterexample，并标注 main_sources 待补与单源不得直接升格）；补齐 `prompt_as_program_spec`、`social_signal_triage`、`vendor_optimizer_evidence_filter` 三张缺失方法卡，将 `tw-insight-02` 的 trace-aware 方法并入 `method-01`、`tw-insight-07` 的 safety 方法标记为 D 级待补；`twitter_web_analysis` 补「候选去向账目」闭合 120 条候选覆盖、补 next_action 核验进度（均 pending）；`twitter_web_parallel_brief` 补 source card `evidence_level`(strong/medium/weak) 与 insight `evidence_strength`(A/B/C/D) 的映射口径。影响范围：仅 Twitter/X 三份文档，未改动其它渠道证据与结论。
+- 为 GitHub 渠道补充覆盖边界与跨源互证：在 `docs/github_repo_channel_synthesis_20260609.md` 新增「渠道覆盖与已知偏差」「repo ↔ paper 对照」两节，把"直接 prompt optimizer 效果证据稀缺"结论降级标注为受限召回（无 token、8 查询的冒烟 discovery）+ core4-only 审计造成的选择偏差，并把 3 个 helpful method 归一到统一目录 `insight_method_catalog_20260609.md` 的 HM-* 命名；同步在 `docs/github_repo_insight_cards_20260608.md` 的 GHI-12 补「覆盖边界」。影响范围：仅文档与证据边界标注，不改动既有 insight / conclusion 内容。
+- 重排 GitHub 源码审计流程「下一步」：在 `docs/github_repo_source_audit_workflow_20260608.md` 把 `gepa-ai/gepa`、`microsoft/PromptWizard`、`SalesforceAIResearch/promptomatix`、`Eladlev/AutoPrompt` 等正典 optimizer 仓库列为高优先审计对象（高于 strict8 剩余资料型仓库），标注 strict8 剩余项为有意延后，并补充"配 token 重跑完整 discovery"作为校正低召回的步骤。
 - 新增「读者向内容层」并据此更新入口：诊断 v1 报告过度标签化、缺例子、按渠道组织不利于读者理解，改为按读者学习顺序、以具体例子和真实数字为主的洞见手册 + 报告 v2；同步在 README 看板和文档列表前置手册入口，在实验计划中说明手册「首批最小验证」表与 P0–P2 优先级同口径。各渠道文档与论文笔记保持现状作为证据底座，不改动。
 - 调整 README 为公开构建首页，将重要分析、分析经过、阶段结果和下一步计划前置展示。
-- 明确本轮流程规则变更提交并推送后，后续代码、文档、实验和配置改动必须先在个人/任务分支完成，再通过 PR/合入请求进入 `main`，用于保护 `main` 的可复现基线和 review/回滚边界。
+- 明确本轮流程规则变更提交并推送后，后续代码、文档、实验和配置改动必须先在个人/任务分支完成，再通过 PR/合入请求进入 `main`，用于保护 `main` 的可复现基线和 review/回滚边界；并澄清分支粒度为「每个任务/每位贡献者一条」，单条分支可承载多 session、多次批量改动与多次提交，而非每次改动都新建分支。
 - 将当前路线从“准备进入最小可复现实验”前移到“M0 资料搜集与综述冻结”，实验计划暂作为后续候选设计。
 - 将 M0 资料搜集和实验计划调整为五天交付版，强调前沿状态跟踪、可执行方案产出和 1-2 个关键判断的最小实验验证。
 - 将项目主线调整为 insight-first：优先沉淀有效 insights、可信 conclusions、可复用 helpful methods、反模式和风险边界，实验仅作为验证关键洞见、演示方法和校准边界的手段，并同步更新 README、研究框架、资料搜集计划、最终报告结构、实验计划、项目原则、共创工作流和笔记模板。

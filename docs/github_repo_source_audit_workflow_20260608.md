@@ -69,8 +69,10 @@ python scripts/github_repo_audit.py --clone-root local_sources\raw\github_repo_c
 
 已完成：从 4 份 audit note 中提取 12 条候选 insight，并在 [GitHub 仓库候选 insight 证据卡](github_repo_insight_cards_20260608.md) 中标注证据等级、适用边界和可转实验。
 
-后续继续：
+后续继续（2026-06-10 重排优先级）：
 
-1. 继续对 strict8 剩余仓库做相同 clone/audit，而不是直接扩写概述。
-2. 从 12 条候选 insight 中选择 2-4 条进入 `docs/experiment_plan.md`，优先冻结 evaluator / data / ledger schema。
-3. 选择 1 个最小实验，把 `autoresearch` 的“只允许修改目标对象、不允许修改 evaluator/data”迁移为 prompt/context 优化闭环。
+1. （高）优先 clone/audit 正典 prompt optimizer 仓库：`gepa-ai/gepa`、`microsoft/PromptWizard`、`SalesforceAIResearch/promptomatix`、`Eladlev/AutoPrompt`（均已在 `docs/source_inventory.md` 登记但未审计）。它们比 strict8 剩余资料型仓库更直接决定”GitHub 渠道是否真有效果证据”；其中 `gepa-ai/gepa` 同时是已深读论文 GEPA 的官方实现，可做论文 ↔ 源码互证（L4 候选）。
+2. （高）配 `GITHUB_TOKEN` 重跑完整 discovery，并按本流程关联快筛文档的”核心 / 周边双线”建议修正脚本召回，验证”optimizer 仓库不多”是否为低召回产物。
+3. （低，有意延后）strict8 剩余 4 个资料 / 资产型仓库（`dair-ai/Prompt-Engineering-Guide`、`shanraisshan/claude-code-best-practice`、`f/prompts.chat`、`pathwaycom/llm-app`）按需再审，不阻塞结论。
+4. 从 12 条候选 insight 中选择 2-4 条进入 `docs/experiment_plan.md`，优先冻结 evaluator / data / ledger schema。
+5. 选择 1 个最小实验，把 `autoresearch` 的”只允许修改目标对象、不允许修改 evaluator/data”迁移为 prompt/context 优化闭环。

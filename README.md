@@ -137,8 +137,8 @@ Research Signal issue -> 项目内新颖性判断 -> 结构化笔记 -> insight/
 - [Insight / Conclusion / Helpful Method 候选清单](docs/insight_method_catalog_20260609.md)：按最新 insight-first 原则，把论文、源码和行业材料聚合成可复用洞见、核心结论、helpful methods、反模式和验证候选（结构化中间层，供研究者和最终报告使用）。
 - [文献地图](docs/literature_map.md)：自动 prompt 优化、自进化、上下文工程相关论文脉络。
 - [行业实践](docs/industry_practices.md)：OpenAI、Anthropic、Google、DSPy、LangSmith、Promptfoo 等跨来源实践整理。
-- [其它平台候选来源结构化分析](docs/source_batches/web_search_platform_analysis_20260608.md)：对 Hugging Face、Arize、Promptfoo、Langfuse、Humanloop、LangChain、OPIK、Weaviate 等来源做证据分层。
-- [其它平台 insight / method cards](docs/source_batches/web_search_platform_insight_cards_20260609.md)：把其它平台来源转写为可复用洞见、helpful methods、反模式和验证候选。
+- [其它平台渠道洞见综合](docs/source_batches/web_search_platform_insight_cards_20260609.md)：其它平台（web_search/工具 + 通用社区广搜）渠道入口，按 A/B/C/D 等级给出结论总览、insight/helpful method 卡片、反模式、广搜渠道覆盖与缺口和验证候选。
+- [其它平台候选来源结构化分析](docs/source_batches/web_search_platform_analysis_20260608.md)：证据层，对 Hugging Face、Arize、Promptfoo、Langfuse、Humanloop、LangChain、OPIK、Weaviate 等来源做快筛分层和证据索引。
 - [行业经验笔记模板](docs/industry_notes/template.md)：后续深读知乎、Twitter/X、工程博客、事故复盘等行业来源时统一记录。
 - [实验计划](docs/experiment_plan.md)：用于验证关键洞见和演示 helpful methods 的最小实验设计、基线、指标、日志字段和里程碑。
 - [论文笔记模板](docs/paper_notes/template.md)：后续阅读论文时统一记录。

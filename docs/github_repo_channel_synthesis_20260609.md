@@ -2,17 +2,42 @@
 
 本文件按最新内容整理原则重写 GitHub 渠道输出：优先沉淀有效 insights、可信 conclusions、可复用 helpful methods、反模式和最小验证方式。旧的快筛、catalog、源码审计和证据卡继续作为证据层，不在本文件重复展开仓库介绍。
 
+2026-06-10 补充：新增「渠道覆盖与已知偏差」和「repo ↔ paper 对照」两节，并把效果类结论的边界写明为受限召回 + core4-only 审计；helpful methods 补充与统一目录 `insight_method_catalog_20260609.md` 的 HM-* 命名归一。本次只补充覆盖边界与交叉引用，不改动既有 insight / conclusion 内容。
+
 ## 结论总览
 
 | conclusion | 当前判断 | 证据等级 | 边界 |
 | --- | --- | --- | --- |
 | GitHub 渠道最适合提供工程结构和治理方法。 | 公开仓库能展示 prompt/context/eval/versioning 如何组织成代码和流程。 | B/D | 不能直接证明某种 prompt optimizer 稳定涨分。 |
-| 直接 prompt optimizer 强证据较少。 | core4 中只有 `linshenkx/prompt-optimizer` 直接属于 prompt optimizer；其价值主要是 compare/evaluation/rewrite 工程结构。 | B | 仍需本项目最小实验验证效果。 |
+| 直接 prompt optimizer 强证据较少。 | core4 中只有 `linshenkx/prompt-optimizer` 直接属于 prompt optimizer；其价值主要是 compare/evaluation/rewrite 工程结构。 | B | 受限于一次低召回 discovery + core4-only 审计，正典 optimizer 仓库（gepa / PromptWizard / promptomatix 等）尚未审计；"证据稀缺"不能排除是覆盖不足所致，见下文「渠道覆盖与已知偏差」。 |
 | 自进化最重要的护栏是冻结 evaluator/data。 | `karpathy/autoresearch` 给出“可变对象”和“固定评估器”隔离的清晰结构，可迁移到 prompt-only optimizer。 | B/D | 它优化的是训练代码，不是 prompt；迁移后仍需验证。 |
 | Prompt 优化边界应包含 context packaging。 | `12-factor-agents` 明确把 prompt、RAG、history、tool calls、memory 和输出结构都视为 context 工程对象。 | B/D | 工程原则不是 benchmark 证据。 |
 | Memory 不能当作无界历史缓存。 | ECC 的 memory hooks 和 evaluator/RAG prototype 更适合作为 bounded memory、trace、verifier、playbook 的结构参考。 | D | ECC 的方法效果仍需运行核验。 |
 
 证据等级说明：这里的 B 表示来自固定 commit 的开源项目文档/源码审计，D 表示本项目基于源码观察形成的待验证推断。它们不是本项目实验结论。
+
+## 渠道覆盖与已知偏差
+
+本渠道当前结论建立在一次受限搜索 + core4 源码审计之上，使用时必须带以下边界，避免把"覆盖不足"误读成"领域里就这么多"。
+
+- **广搜未跑满（低召回）**：唯一一次 discovery 是无 token 的冒烟批次（`--query-limit 8 --max-pages 1 --per-page 30`，240 → 85 去重 → 6 高分），见 [discovery 文档](github_repo_discovery.md)。"GitHub 上直接做 prompt optimizer 的仓库不多" 应降级为"在本次受限召回下命中不多"。完整广搜需配 `GITHUB_TOKEN`，并按 [快筛文档](github_repo_triage_20260608.md) 的核心 / 周边双线建议重跑。
+- **正典 optimizer 仓库尚未审计（选择偏差）**：`gepa-ai/gepa`、`microsoft/PromptWizard`、`SalesforceAIResearch/promptomatix`、`Eladlev/AutoPrompt`、`Scale3-Labs/dspyground` 已在 [来源清单](source_inventory.md) 登记（经 Twitter/X 渠道回填），但都未进入 clone/audit；core4 中真正属于 prompt optimizer 的只有产品工具 `linshenkx/prompt-optimizer`。因此"直接效果证据稀缺"部分是"还没审到正确对象"造成的，补审优先级高于 strict8 剩余仓库。
+- **issues / PR / release notes 未挖掘（失败案例缺口）**：[证据矩阵](github_repo_evidence_matrix_20260608.md) 指出版本 / 回滚 / 失败案例是最大缺口，但本渠道只扫了源码树和 docs，未挖 issues、PR、discussions、release notes——真实漂移、回退和事故通常活在那里。
+- **strict8 仅审 core4**：其余 4 个（`dair-ai/Prompt-Engineering-Guide`、`shanraisshan/claude-code-best-practice`、`f/prompts.chat`、`pathwaycom/llm-app`）为低优先资料 / 资产型仓库，**有意延后**，不阻塞渠道结论。
+
+## repo ↔ paper 对照（跨源互证候选）
+
+`source_collection_plan.md` 要求合并"同一方法的论文与代码仓库"。下表把 GitHub 仓库与已登记论文 join，标出当前可做的互证；标 **待审** 的仓库一旦完成源码审计，可把对应论文 insight 从"论文主张"升级为"源码确认"（L4）。
+
+| GitHub 仓库 | 对应论文 / arXiv | 论文笔记状态 | 仓库审计状态 | 可做的互证 |
+| --- | --- | --- | --- | --- |
+| `gepa-ai/gepa` | GEPA（2507.19457） | 已深读 [paper-gepa-2026](paper_notes/paper-gepa-2026.md)（A） | 待审 | 用官方实现核验论文的 reflective evolution / Pareto 选择是否与源码一致 → L4 候选 |
+| `SalesforceAIResearch/promptomatix` | Promptomatix（2507.14241） | skimmed，未深读 | 待审 | 先补论文笔记 + audit，核验 DSPy 依赖与 synthetic data 流程 |
+| `microsoft/PromptWizard` | PromptWizard（2405.18369） | 未登记笔记 | 待审 | 补论文笔记 + audit，核验 instruction / example 联合优化 |
+| `Eladlev/AutoPrompt` | Intent-based Prompt Calibration（2402.03099） | candidate，未深读 | 待审 | 核验是否有可复现 eval；注意与 LangChain Promptim 区分名称 |
+| `Scale3-Labs/dspyground` | （无独立论文，GEPA harness） | n/a | 待审 | 作为 agent prompt optimizer 工程案例 |
+| `linshenkx/prompt-optimizer` | （无，产品工具） | n/a | 已审 L2 | 无论文可互证；靠本项目 smoke run / 最小实验升级 |
+| `karpathy/autoresearch` | （无，自进化案例） | n/a | 已审 L2 | 结构参考；靠本项目 prompt 版复现升级 |
 
 ## 一眼看懂的洞见
 
@@ -28,6 +53,8 @@
 ## Helpful Methods
 
 ### Method 1：Frozen Evaluator Prompt Loop
+
+> 统一目录归一：对应 `insight_method_catalog_20260609.md` 的 HM-04 Prompt Artifact Ledger（账本 / 隔离部分）与 frozen-evaluator 反模式；本卡是其 GitHub 源码视角的具体化。
 
 ```yaml
 name: Frozen Evaluator Prompt Loop
@@ -65,6 +92,8 @@ next_experiment: 在一个结构化抽取或工具调用小任务上实现 promp
 
 ### Method 2：Compare-First Rewrite
 
+> 统一目录归一：等价于 `insight_method_catalog_20260609.md` 的 HM-02 Trace-First Critique Rewrite；"compare-first" 是其 GitHub 源码视角的命名，后续以 HM-02 为准。
+
 ```yaml
 name: Compare-First Rewrite
 insight_supported: 失败证据比直接改写更可审计
@@ -99,6 +128,8 @@ next_experiment: 对比 direct rewrite 与 compare-first rewrite
 ```
 
 ### Method 3：Bounded Memory And Trace Playbook
+
+> 统一目录归一：`insight_method_catalog_20260609.md` 暂无对应 HM，属于 M5 记忆 / 自进化阶段方法；待 catalog 补充记忆类 HM 时再归一命名。
 
 ```yaml
 name: Bounded Memory And Trace Playbook

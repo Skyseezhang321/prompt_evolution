@@ -100,6 +100,8 @@ Twitter/X 批次的中心是 GEPA、DSPy 和 MIPRO。高相关候选中，Omar K
 | `GEPA` 同名误召回 | `candidate-twitter-web-4a225a5f5c`, `candidate-twitter-web-1a6a1db4d2`, `candidate-twitter-web-c815bfc2a7`, `candidate-twitter-web-b2d1f9c6c8` | 排除 |
 | 泛 context engineering / agent 热点但无 prompt optimizer 关系 | `candidate-twitter-web-172c6e920f`, `candidate-twitter-web-98008fe94e`, `candidate-twitter-web-1e0dc10f30`, 多个低相关 `meng shao` posts | 只在 context engineering 章节作为背景，不进入 APO 核心 |
 
+> 候选去向账目（避免静默截断）：120 条候选中，§2 转出 21 张 source card（覆盖可追溯到一手来源的 high/medium 条目）；本节显式排除/降级约 34 条 + `meng shao` 等低相关簇。其余约 60 条为同一 arXiv / 同一发布的重复页、二次转发或片段不可读，统一计入传播热度、不单独成卡。若后续需要更细的逐条账目，可回到原始 artifact `artifacts/source_search/source_candidates_20260608_133117.jsonl` 复核。
+
 ## 5. 后续动作
 
 1. 优先写 GEPA、MIPROv2、PromptBreeder 的 paper notes，形成 prompt evolution / prompt-as-program 基线链路。
@@ -107,3 +109,4 @@ Twitter/X 批次的中心是 GEPA、DSPy 和 MIPRO。高相关候选中，Omar K
 3. 对 DSPy AI safety/control 线索做单独核验：确认 benchmark、audit budget、baseline、learned prompts 和限制。
 4. 对 Sentient ROMA V2 只保留为 agent prompt optimizer 线索，待代码深读后再判断是否进入正式证据。
 5. 最终报告中将 Twitter/X 批次标为“社媒传播与一手来源发现层”，不把 X post 数量或互动热度当成证据强度。
+6. 核验进度（status）：截至本次整理，§2 source card 的 `next_action`（trace_primary / write_note / source_inventory）与 [并发分析包](twitter_web_parallel_brief_20260608.md) 的 7 个 P1 核验项**均为 pending**；尚无 paper note 写出，故洞见卡 `main_sources` 暂填外部一手来源，待结构化笔记完成后替换为仓库内文件路径，并据此把证据等级从 B/D 升级或标注待验证。

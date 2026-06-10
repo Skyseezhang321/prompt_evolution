@@ -55,7 +55,11 @@ project_value:
 next_action: trace_primary | write_note | cite_as_social_signal | exclude
 ```
 
+> 两层证据刻度的关系：source card 层用 `evidence_level: strong/medium/weak`，表示「该 X 线索 + 已追溯来源」的强度；进入 insight/conclusion 层后改用规范的 `evidence_strength: A/B/C/D`。映射口径：strong 且已做结构化笔记≈A、strong 未做笔记或多源工程实践≈B、仅本项目初步观察≈C、weak/纯推测≈D；weak 一般不直接升级，须以一手来源与结构化笔记最终判定。
+
 ## 洞见/方法字段
+
+> 字段以 [insight_field_standard.md](../insight_field_standard.md) 为权威；下列为本批草拟，已对齐字段名（`source_trace` 统一改为 `main_sources`，`evidence_strength` 取值用 A/B/C/D）。新增 insight/method 时以规范的必填项为准。
 
 ```yaml
 insight:
@@ -67,7 +71,7 @@ helpful_method:
 exact_action_to_try:
 counterexample_or_limit:
 evidence_strength:
-source_trace:
+main_sources:
 validation_or_demo:
 ```
 

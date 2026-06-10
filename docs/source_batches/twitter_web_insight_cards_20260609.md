@@ -12,20 +12,21 @@
 
 - X/Twitter 片段只用于发现线索、误读、传播路径和一手来源，不直接支撑方法有效性结论。
 - 每条洞见进入最终报告前，必须追溯到论文、官方文档、代码、结构化笔记、实验记录或失败案例。
-- 当前 `evidence_strength` 是临时判断：`B-candidate` 表示已有多个一手或官方来源可追溯，但结构化深读尚未全部完成；`D` 表示主要是综合推测，必须验证或补证据。
+- `evidence_strength` 统一用规范的 A/B/C/D（见 [insight_field_standard.md](../insight_field_standard.md)）：本批多数洞见有多源一手/官方来源支撑记为 `B`，少数仍属综合推测待验证记为 `D`；不使用 `B-candidate` 等非规范取值。
+- 注意：结构化深读（paper notes）尚未全部完成，整批仍处 candidate 状态；各卡 `main_sources` 暂填外部一手来源，须在写出仓库内结构化笔记后替换为文件路径，补齐前这些洞见不得进入最终报告。
 
 ## Insight Candidates
 
 | id | insight | user_facing_one_liner | evidence_strength | status |
 | --- | --- | --- | --- | --- |
-| tw-insight-01 | 自动 prompt optimization 的价值不在“让模型自由改写”，而在 metric、trace 和版本约束下产生可比较候选。 | 先有测试集和评分器，再谈自动改 prompt。 | B-candidate | 可进入 helpful method 候选 |
-| tw-insight-02 | GEPA 的社媒传播容易被简化成“替代 RL”，但更可迁移的机制是 trace-aware reflection + population/Pareto selection。 | 不要只看最终分数；让优化器读失败轨迹。 | B-candidate | 需要 GEPA paper note 支撑 |
-| tw-insight-03 | DSPy 在社媒上常被叫作 prompt optimizer，但原作者线索更支持把它看成 prompt-as-program 编程模型。 | 把任务写成 program，再让 optimizer 编译。 | B-candidate | 可进入前沿状态地图 |
-| tw-insight-04 | Prompt versioning、diff、owner、environment 和 rollback 是自动优化进入生产前的基础设施。 | Prompt 要像代码一样能比较、审核和回滚。 | B-candidate | 可进入行业实践方法 |
-| tw-insight-05 | Context engineering 与 prompt optimization 必须分开记变量；很多“prompt 变好”其实来自检索、memory、tool output 或上下文组织变化。 | 先判断该改 prompt，还是该改 context。 | B-candidate | 可进入反模式和实验设计 |
-| tw-insight-06 | 社媒热度能发现方向和误读，但不能排序方法有效性。 | 转发多不等于更有效。 | B-candidate | 可进入证据等级说明 |
+| tw-insight-01 | 自动 prompt optimization 的价值不在“让模型自由改写”，而在 metric、trace 和版本约束下产生可比较候选。 | 先有测试集和评分器，再谈自动改 prompt。 | B | 可进入 helpful method 候选 |
+| tw-insight-02 | GEPA 的社媒传播容易被简化成“替代 RL”，但更可迁移的机制是 trace-aware reflection + population/Pareto selection。 | 不要只看最终分数；让优化器读失败轨迹。 | B | 需要 GEPA paper note 支撑 |
+| tw-insight-03 | DSPy 在社媒上常被叫作 prompt optimizer，但原作者线索更支持把它看成 prompt-as-program 编程模型。 | 把任务写成 program，再让 optimizer 编译。 | B | 可进入前沿状态地图 |
+| tw-insight-04 | Prompt versioning、diff、owner、environment 和 rollback 是自动优化进入生产前的基础设施。 | Prompt 要像代码一样能比较、审核和回滚。 | B | 可进入行业实践方法 |
+| tw-insight-05 | Context engineering 与 prompt optimization 必须分开记变量；很多“prompt 变好”其实来自检索、memory、tool output 或上下文组织变化。 | 先判断该改 prompt，还是该改 context。 | B | 可进入反模式和实验设计 |
+| tw-insight-06 | 社媒热度能发现方向和误读，但不能排序方法有效性。 | 转发多不等于更有效。 | B | 可进入证据等级说明 |
 | tw-insight-07 | AI safety/control 场景中的 prompt optimization 更应关注 audit budget、monitor failure 和安全回归，而不是普通准确率。 | 安全监控 prompt 不能只优化平均分。 | D | 需深读 DSPy AI control 来源 |
-| tw-insight-08 | 产品化 prompt optimizer 的可采信信息是流程字段，而不是厂商提升百分比。 | 采信 dataset、metric、baseline、cost、rollback；降级营销数字。 | B-candidate | 可进入行业实践方法 |
+| tw-insight-08 | 产品化 prompt optimizer 的可采信信息是流程字段，而不是厂商提升百分比。 | 采信 dataset、metric、baseline、cost、rollback；降级营销数字。 | B | 可进入行业实践方法 |
 
 ## Detailed Cards
 
@@ -41,8 +42,8 @@ helpful_method: metric_trace_constrained_prompt_iteration
 exact_action_to_try: 为一个现有 prompt 建 20-50 条开发样本，记录 baseline 输出和失败类型，再让模型只基于失败样本提出 3 个候选 prompt。
 before_after_example: "Before: 帮我优化这个 prompt。After: 在 validation set v0.1 上，把格式错误率从 18% 降到 8% 以下，成本不超过 baseline 1.5x。"
 counterexample_or_limit: 创意写作、探索性 brainstorming 或一次性临时任务可能不值得搭建完整 eval。
-evidence_strength: B-candidate
-source_trace: Pydantic GEPA article; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; GEPA/DSPy docs.
+evidence_strength: B
+main_sources: Pydantic GEPA article; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; GEPA/DSPy docs.
 validation_or_demo: 对比“无 eval 改写”与“失败样本 + metric 约束改写”，观察 validation set 和 hidden sample 上的差异。
 ```
 
@@ -54,12 +55,12 @@ user_facing_one_liner: 让优化器读失败过程，而不只是读最终分数
 phenomenon: 作者和维护者 posts 反复强调 natural-language reflection、rollout/trajectory、MIPRO/GRPO/GEPA taxonomy 和 Pareto-style candidate selection。
 mechanism: Prompt 是可读文本，失败轨迹中的 tool calls、intermediate reasoning、judge explanation 和错误日志能提供比标量 reward 更可编辑的反馈。
 actionable_rule: 对 agent/tool-use 任务，prompt optimizer 的输入至少包含失败输入、输出、关键中间步骤、错误类型和评分理由。
-helpful_method: trace_aware_prompt_editing
+helpful_method: metric_trace_constrained_prompt_iteration
 exact_action_to_try: 在一个 tool-use 小任务中保存 10 个失败轨迹，让模型先归纳失败根因，再提出局部 prompt edit。
 before_after_example: "Before: 只给 optimizer 一个 0/1 分数。After: 给 optimizer 失败输入、工具调用、错误输出、judge 解释和禁止改写的约束。"
 counterexample_or_limit: 如果任务没有可解释中间过程，或者 judge 解释质量很差，trace-aware 方法可能只会放大噪声。
-evidence_strength: B-candidate
-source_trace: GEPA arXiv; GEPA repo; DSPy GEPA docs; Omar Khattab / Lakshya A Agrawal X 线索。
+evidence_strength: B
+main_sources: GEPA arXiv; GEPA repo; DSPy GEPA docs; Omar Khattab / Lakshya A Agrawal X 线索。
 validation_or_demo: scalar-only rewrite vs trace-aware rewrite，控制候选数量和模型参数，只比较反馈信号差异。
 ```
 
@@ -75,8 +76,8 @@ helpful_method: prompt_as_program_spec
 exact_action_to_try: 对一个多步骤 prompt，先写输入字段、输出字段、评分器和可变组件，再决定是否用 DSPy/Promptim/手写脚本优化。
 before_after_example: "Before: 一段 800 字系统 prompt。After: task signature + output schema + metric + fixed examples + versioned instruction。"
 counterexample_or_limit: 单轮简单问答或低价值临时任务使用 prompt-as-program 可能过度工程。
-evidence_strength: B-candidate
-source_trace: DSPy docs; DSPy paper; Drew Breunig writeup; Simon Willison X 线索。
+evidence_strength: B
+main_sources: DSPy docs; DSPy paper; Drew Breunig writeup; Simon Willison X 线索。
 validation_or_demo: 选择一个多步骤任务，对比纯 prompt 模板和结构化 spec 在模型切换、错误定位和版本 diff 上的可维护性。
 ```
 
@@ -92,8 +93,8 @@ helpful_method: prompt_release_gate
 exact_action_to_try: 为 prompt 变体记录 prompt_id、parent_id、diff、reason、dataset_version、metric_delta、cost_delta 和 rollback_target。
 before_after_example: "Before: 直接替换线上 prompt。After: candidate -> offline eval -> reviewer approval -> production tag -> rollback pointer。"
 counterexample_or_limit: 离线个人任务可以简化，但仍应保存原 prompt 和候选。
-evidence_strength: B-candidate
-source_trace: LangSmith manage prompts; Langfuse prompt management/tracing; Promptfoo optimization; Humanloop docs; OpenAI/Google prompt optimizer docs.
+evidence_strength: B
+main_sources: LangSmith manage prompts; Langfuse prompt management/tracing; Promptfoo optimization; Humanloop docs; OpenAI/Google prompt optimizer docs.
 validation_or_demo: 对一次 prompt 优化运行生成 release record，检查是否能复现采用原因和回滚点。
 ```
 
@@ -109,8 +110,8 @@ helpful_method: prompt_context_variable_audit
 exact_action_to_try: 对失败样本先标注 failure owner：instruction / example / retrieval / memory / tool policy / schema / model。
 before_after_example: "Before: 把所有失败归因于 prompt 不好。After: 10 个失败中 4 个是检索缺失，3 个是 schema 不清，2 个是 tool output 格式，1 个才是 instruction。"
 counterexample_or_limit: 早期探索阶段可以多因素试错，但不能写成单变量结论。
-evidence_strength: B-candidate
-source_trace: LangChain context engineering blog/docs; 12-factor agents; Anthropic context engineering; Twitter/X context engineering posts.
+evidence_strength: B
+main_sources: LangChain context engineering blog/docs; 12-factor agents; Anthropic context engineering; Twitter/X context engineering posts.
 validation_or_demo: 对一组 agent 失败案例做 failure owner 标注，再决定最小改动层。
 ```
 
@@ -126,8 +127,8 @@ helpful_method: social_signal_triage
 exact_action_to_try: 给每条社媒线索打标签：primary_author / official_release / practitioner_case / media_repost / marketing / unrelated。
 before_after_example: "Before: 多个账号都说 GEPA 超过 RL。After: 多个账号都指向同一 GEPA paper；性能主张只引用论文表格和后续复现。"
 counterexample_or_limit: 作者 post 可以提供方法解释和限制，但仍需追溯论文或官方材料。
-evidence_strength: B-candidate
-source_trace: Twitter/X candidate batch; GEPA repost exclusion list; source_collection_plan evidence boundary.
+evidence_strength: B
+main_sources: Twitter/X candidate batch; GEPA repost exclusion list; source_collection_plan evidence boundary.
 validation_or_demo: 不需要实验；在最终报告证据等级中强制标注社媒用途。
 ```
 
@@ -139,12 +140,12 @@ user_facing_one_liner: 安全 prompt 优化不能只追求更高分。
 phenomenon: DSPy 官方线索提到 prompt-optimized monitors、audit budget 和 baseline monitor，对本项目的 eval/governance 维度有价值。
 mechanism: 安全监控器的失败成本和普通任务不同；optimizer 可能提升表面分数，但损害关键边界或被 judge/rubric 利用。
 actionable_rule: 安全相关 prompt 只能在有 adversarial/safety regression set 和人工审核门槛时自动优化。
-helpful_method: safety_prompt_optimizer_gate
+helpful_method: safety_prompt_optimizer_gate（待补：证据为 D，需先深读 DSPy AI control 来源后再成卡）
 exact_action_to_try: 对安全 monitor prompt 记录 false_negative_rate、audit_budget、critical_failure_examples 和 rollback rule。
 before_after_example: "Before: monitor accuracy 提高。After: audit budget 固定为 1%，critical false negatives 不增加，拒答/误报成本可解释。"
 counterexample_or_limit: 当前 Twitter 批次只提供线索，必须深读 DSPy AI control 来源后才能形成结论。
 evidence_strength: D
-source_trace: DSPy AI safety X post; Prompt optimization can enable AI control research; DSPy GEPA docs.
+main_sources: DSPy AI safety X post; Prompt optimization can enable AI control research; DSPy GEPA docs.
 validation_or_demo: 设计小型安全分类/monitor demo，比较普通 accuracy 与 critical failure 指标的冲突。
 ```
 
@@ -160,9 +161,51 @@ helpful_method: vendor_optimizer_evidence_filter
 exact_action_to_try: 对每个产品来源填一张 evidence checklist；缺少 eval 或 rollback 的条目降级为线索。
 before_after_example: "Before: 某工具提升 20%。After: 该工具使用什么样本、什么 metric、多少候选、如何避免 overfit、失败时怎么回滚。"
 counterexample_or_limit: 有些官方文档只说明产品流程，不提供实验细节；这类来源只能作为工程实践，不作为性能证据。
-evidence_strength: B-candidate
-source_trace: Pydantic GEPA; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; Salesforce Promptomatix; Sentient ROMA.
+evidence_strength: B
+main_sources: Pydantic GEPA; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; Salesforce Promptomatix; Sentient ROMA.
 validation_or_demo: 用同一 checklist 审核 5 个工具来源，筛出能支撑 helpful method 的字段。
+```
+
+## Conclusion Candidates
+
+以下是把上述洞见升格为「可被采纳或反驳的判断」的候选，按 [insight_field_standard.md](../insight_field_standard.md) 的 conclusion schema 填写。注意：这些均为**候选结论**，多数 `main_sources` 仍待补齐为仓库内结构化笔记路径，且未完成跨源核验，进入最终报告前不得直接采纳（见 `docs/project_principles.md` 第 4 条：单源不得直接升格为结论）。
+
+```yaml
+# conclusion-01
+conclusion: 在有可客观打分留出集、且 prompt 会重复使用的任务上，自动 prompt optimization 只有在 eval + trace + 版本约束下才能产生可比较、可回滚的收益；缺 eval 时它等价于风格化改写。
+scope: 有留出集、可分类失败、prompt 重复使用的任务；不含一次性创作或探索性任务。
+evidence_strength: B
+main_sources: 待补（DSPy / GEPA / Pydantic GEPA / Promptim 文档，结构化笔记未完成）。
+counterexample_or_limit: 创意写作、探索性 brainstorming 或一次性临时任务可能不值得搭建完整 eval。
+supersedes_or_conflicts: 与“自动优化默认有收益”的口号冲突。
+
+# conclusion-02
+conclusion: GEPA 更准确的定位是 trace-aware reflective prompt evolution（执行轨迹 + 自然语言反思 + Pareto 选择），而非“RL 替代品”。
+scope: 有可解释中间过程或 judge 解释的 agent、tool-use、结构化输出任务。
+evidence_strength: D
+main_sources: 待补（GEPA arXiv / repo / DSPy GEPA docs，paper note 未写）。
+counterexample_or_limit: 无可解释中间过程或 judge 质量差时 trace-aware 可能只放大噪声；当前仅社媒 + 文档线索，未做结构化深读。
+
+# conclusion-03
+conclusion: DSPy 在本项目中应按 prompt-as-program / LM program framework 定位，而不是单纯 prompt optimizer。
+scope: 多步骤 / 多模块、需换模型或长期维护的任务。
+evidence_strength: B
+main_sources: 待补（DSPy arXiv / docs，Drew Breunig writeup）。
+counterexample_or_limit: 单轮简单任务用 program 框架可能过度工程；定位判断主要来自作者线索与文档，非效果实证。
+
+# conclusion-04
+conclusion: 工程化自动 prompt optimization 的发布前置条件是 prompt versioning/diff/owner/rollback 与“prompt 与 context 分变量”，缺这两项则指标无法归因、失败无法回滚。
+scope: prompt 影响生产系统、agent 工具调用、安全监控或成本的场景。
+evidence_strength: B
+main_sources: 待补（LangSmith / Langfuse / Humanloop / Promptfoo 文档；LangChain context engineering / 12-factor agents）。
+counterexample_or_limit: 离线个人任务可简化流程，但仍应保存原 prompt 与候选。
+
+# conclusion-05
+conclusion: 社媒与厂商材料只能作为发现层（source discovery / adoption signal / 流程字段），不能直接支撑性能或有效性结论。
+scope: 所有来自 X / 媒体转发 / 厂商 benchmark 的性能主张。
+evidence_strength: B
+main_sources: 本批 Twitter 候选、排除清单、source_collection_plan 证据边界。
+counterexample_or_limit: 作者 post 可提供方法解释与限制，但仍需追溯论文 / 官方材料。
 ```
 
 ## Helpful Method Candidates
@@ -227,16 +270,78 @@ evidence: LangChain context engineering, 12-factor agents, Anthropic context eng
 next_experiment: 对 20 个 agent 失败样本做 owner 标注，再比较 prompt-only fix 与 owner-guided fix。
 ```
 
+### method-04: Prompt-as-Program Spec
+
+```yaml
+name: prompt_as_program_spec
+insight_supported: tw-insight-03
+problem: 多步骤任务把逻辑堆在一段长 system prompt 里，换模型、定位失败和做版本 diff 都困难。
+recommended_when: 多步骤 / 多模块任务，prompt 会长期维护、需要换模型或交接。
+not_recommended_when: 单轮简单问答或一次性低价值任务，结构化反而过度工程。
+required_inputs: 任务输入/输出字段定义、评分器、可变组件清单（instruction / examples / module 组合）、目标模型。
+implementation_steps: 写出 signature（输入/输出字段）→ 定义 metric 与 split → 标出可优化组件 → 决定手写或用 DSPy/Promptim 编译 → 固定示例与 instruction 版本。
+evaluation_metrics: 换模型后的迁移成本、失败定位时间、版本 diff 可读性、任务主指标。
+risks: 结构化抽象本身有学习与维护成本；签名/指标定义错会传导到全流程。
+misuse_or_anti_pattern: 把简单任务硬套 program 框架；或只换框架不定义 metric。
+rollback_plan: 保留原始整段 prompt 作为 baseline，可随时回退到非结构化版本。
+evidence: DSPy paper/docs；Drew Breunig writeup（B，工程可维护性线索，非效果结论）。
+cost_and_latency: 前期结构化有一次性投入；长期降低维护与换模型成本。
+expected_benefit: prompt 可维护、可换模型、可复评。
+next_experiment: 选一个多步骤任务，对比纯模板与结构化 spec 在换模型/版本 diff 上的可维护性。
+```
+
+### method-05: Social Signal Triage
+
+```yaml
+name: social_signal_triage
+insight_supported: tw-insight-06
+problem: 社媒线索容易被当成方法有效性证据，污染结论。
+recommended_when: 处理来自 X / 社媒 / 媒体转发的线索，需要判断其证据角色。
+not_recommended_when: 已有论文 / 官方文档 / 代码的一手来源，无需再经社媒分流。
+required_inputs: 社媒线索 URL、作者或机构、是否指向一手来源。
+implementation_steps: 给每条线索打标签 primary_author / official_release / practitioner_case / media_repost / marketing / unrelated → 仅前三类进入 source card → 性能主张一律回到一手来源 → 转发与营销只计传播热度。
+evaluation_metrics: 进入 source card 的线索可追溯率、被误当证据的比例（目标为 0）。
+risks: 标签判断主观；作者账号也可能过度简化，仍需追溯原文。
+misuse_or_anti_pattern: 用 post 热度 / 转发数排序方法有效性。
+rollback_plan: 标签有误时降级为 weak social signal 并重新追溯。
+evidence: 本批 Twitter 候选与排除清单；source_collection_plan 证据边界（B）。
+cost_and_latency: 仅人工或 LLM 辅助打标签，成本低。
+expected_benefit: 把社媒从“伪证据”降为“发现层”，避免热度污染结论。
+next_experiment: 无需实验；在最终报告证据等级中强制标注社媒用途。
+```
+
+### method-06: Vendor Optimizer Evidence Filter
+
+```yaml
+name: vendor_optimizer_evidence_filter
+insight_supported: tw-insight-08
+problem: 厂商 optimizer 的提升百分比可能因任务/指标/展示选择而有偏，直接采信会误导结论。
+recommended_when: 评估产品化 prompt optimizer（Pydantic / Google / Microsoft / Salesforce / OpenAI 等）来源。
+not_recommended_when: 已有可复现实验或论文给出完整设置的来源。
+required_inputs: 厂商文档/blog、其声称的指标、是否披露 dataset / metric / baseline / cost / rollback。
+implementation_steps: 对每个来源填 evidence checklist（dataset、metric、baseline、candidate generation、selection、cost、failure cases、versioning、rollback）→ 抽取流程字段进入 helpful method → 缺 eval 或 rollback 的数字主张降级为线索。
+evaluation_metrics: checklist 字段完整度、被降级的营销数字数量、可迁移流程字段数量。
+risks: 部分官方文档只给流程不给实验，易被误判为强证据；需区分“流程可信”与“数字可信”。
+misuse_or_anti_pattern: 直接引用厂商提升百分比作为本项目预期收益。
+rollback_plan: 若后续发现披露不实，将该来源从工程实践降级为传播信号。
+evidence: Pydantic GEPA、Vertex AI、PromptWizard、Promptomatix、OpenAI/Google docs（B，流程字段）。
+cost_and_latency: 仅文档审阅成本。
+expected_benefit: 只迁移可信流程，过滤不可验证数字。
+next_experiment: 用同一 checklist 审核 5 个工具来源，筛出能支撑 helpful method 的字段。
+```
+
+> 方法引用处理说明：`tw-insight-02` 的 trace-aware 编辑已并入 `method-01`（其 `insight_supported` 同时覆盖 tw-insight-01/02），不另立卡；`tw-insight-07` 的 `safety_prompt_optimizer_gate` 证据仅为 D，待深读 DSPy AI control 来源后再补完整卡，暂不成卡以免在弱证据上编造步骤。
+
 ## Anti-patterns And Limits
 
-| anti_pattern | 为什么危险 | 更好的处理 |
-| --- | --- | --- |
-| 把热门 X thread 写成研究结论 | 社媒热度不能证明方法有效，且可能重复同一来源。 | 只作为 source discovery 或 adoption signal，结论回到论文/代码/实验。 |
-| 没有 eval 就让模型“优化 prompt” | 只能得到更像 prompt 的文本，无法判断是否变好。 | 先冻结样本、指标、失败类型和成本预算。 |
-| 把 GEPA 写成“RL 替代品” | 过度简化会忽略 trace、reflection、candidate selection 和任务边界。 | 写成 reflective prompt evolution，并追溯具体实验设置。 |
-| 同时改 prompt、context、model 和 evaluator | 指标变化无法归因，容易形成伪结论。 | 一次只改一层；多因素改动只写观察。 |
-| 采信厂商提升百分比 | 任务选择、指标和展示可能偏向产品叙事。 | 采信流程字段，降级未公开 eval 的数字主张。 |
-| 只优化平均分，不看 critical failures | 自动优化可能牺牲安全边界、格式稳定性或特定少数场景。 | 记录 critical failure set、regression set 和 rollback gate。 |
+| anti_pattern | why_harmful（为什么危险） | trigger_condition（触发条件） | instead_do（更好的处理） |
+| --- | --- | --- | --- |
+| 把热门 X thread 写成研究结论 | 社媒热度不能证明方法有效，且可能重复同一来源。 | 直接用 post 热度 / 转发数排序方法，未追溯一手来源。 | 只作为 source discovery 或 adoption signal，结论回到论文/代码/实验。 |
+| 没有 eval 就让模型“优化 prompt” | 只能得到更像 prompt 的文本，无法判断是否变好。 | 无留出集、无评分器、无失败样本时就调用优化器。 | 先冻结样本、指标、失败类型和成本预算。 |
+| 把 GEPA 写成“RL 替代品” | 过度简化会忽略 trace、reflection、candidate selection 和任务边界。 | 仅凭社媒一句话概括 GEPA，未读其实验设置与任务边界。 | 写成 reflective prompt evolution，并追溯具体实验设置。 |
+| 同时改 prompt、context、model 和 evaluator | 指标变化无法归因，容易形成伪结论。 | 一轮内同时改动多个变量层后比较指标。 | 一次只改一层；多因素改动只写观察。 |
+| 采信厂商提升百分比 | 任务选择、指标和展示可能偏向产品叙事。 | 引用厂商 benchmark 数字而无 dataset / metric / baseline 披露。 | 采信流程字段，降级未公开 eval 的数字主张。 |
+| 只优化平均分，不看 critical failures | 自动优化可能牺牲安全边界、格式稳定性或特定少数场景。 | 优化目标只设平均分，未建立 regression / critical failure set。 | 记录 critical failure set、regression set 和 rollback gate。 |
 
 ## Validation / Demo Candidates
 
@@ -255,3 +360,5 @@ next_experiment: 对 20 个 agent 失败样本做 owner 标注，再比较 promp
 3. Prompt-as-program 和 prompt versioning 是工程化 prompt optimizer 的基础设施。
 4. Context engineering 和 prompt optimization 必须分变量，否则无法归因。
 5. 社媒和厂商材料只提供线索或流程字段，不能直接支撑性能结论。
+
+上述 5 条判断已在本页「Conclusion Candidates」段按 conclusion schema 形式化（含 scope、evidence_strength、counterexample_or_limit）。进入最终报告前需：① 把 `main_sources` 从外部一手来源替换为仓库内结构化笔记路径；② 完成跨源核验，把 D 级判断升级或标注待验证。
