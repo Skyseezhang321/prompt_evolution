@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub 渠道洞见综合 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4f7e33">GitHub 渠道</span><span class="doctitle">GitHub 渠道洞见综合</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="github-2026-06-09">GitHub 渠道洞见综合：2026-06-09</h1>
+<p>本文件按最新内容整理原则重写 GitHub 渠道输出：优先沉淀有效 insights、可信 conclusions、可复用 helpful methods、反模式和最小验证方式。旧的快筛、catalog、源码审计和证据卡继续作为证据层，不在本文件重复展开仓库介绍。</p>
+<p>2026-06-10 补充：新增「渠道覆盖与已知偏差」和「repo ↔ paper 对照」两节，并把效果类结论的边界写明为受限召回 + core4-only 审计；helpful methods 补充与统一目录 <code>insight_method_catalog_20260609.md</code> 的 HM-* 命名归一。本次只补充覆盖边界与交叉引用，不改动既有 insight / conclusion 内容。</p>
+<h2 id="_1">结论总览</h2>
+<table>
+<thead>
+<tr>
+<th>conclusion</th>
+<th>当前判断</th>
+<th>证据等级</th>
+<th>边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GitHub 渠道最适合提供工程结构和治理方法。</td>
+<td>公开仓库能展示 prompt/context/eval/versioning 如何组织成代码和流程。</td>
+<td>B/D</td>
+<td>不能直接证明某种 prompt optimizer 稳定涨分。</td>
+</tr>
+<tr>
+<td>直接 prompt optimizer 强证据较少。</td>
+<td>core4 中只有 <code>linshenkx/prompt-optimizer</code> 直接属于 prompt optimizer；其价值主要是 compare/evaluation/rewrite 工程结构。</td>
+<td>B</td>
+<td>受限于一次低召回 discovery + core4-only 审计，正典 optimizer 仓库（gepa / PromptWizard / promptomatix 等）尚未审计；"证据稀缺"不能排除是覆盖不足所致，见下文「渠道覆盖与已知偏差」。</td>
+</tr>
+<tr>
+<td>自进化最重要的护栏是冻结 evaluator/data。</td>
+<td><code>karpathy/autoresearch</code> 给出“可变对象”和“固定评估器”隔离的清晰结构，可迁移到 prompt-only optimizer。</td>
+<td>B/D</td>
+<td>它优化的是训练代码，不是 prompt；迁移后仍需验证。</td>
+</tr>
+<tr>
+<td>Prompt 优化边界应包含 context packaging。</td>
+<td><code>12-factor-agents</code> 明确把 prompt、RAG、history、tool calls、memory 和输出结构都视为 context 工程对象。</td>
+<td>B/D</td>
+<td>工程原则不是 benchmark 证据。</td>
+</tr>
+<tr>
+<td>Memory 不能当作无界历史缓存。</td>
+<td>ECC 的 memory hooks 和 evaluator/RAG prototype 更适合作为 bounded memory、trace、verifier、playbook 的结构参考。</td>
+<td>D</td>
+<td>ECC 的方法效果仍需运行核验。</td>
+</tr>
+</tbody>
+</table>
+<p>证据等级说明：这里的 B 表示来自固定 commit 的开源项目文档/源码审计，D 表示本项目基于源码观察形成的待验证推断。它们不是本项目实验结论。</p>
+<h2 id="_2">渠道覆盖与已知偏差</h2>
+<p>本渠道当前结论建立在一次受限搜索 + core4 源码审计之上，使用时必须带以下边界，避免把"覆盖不足"误读成"领域里就这么多"。</p>
+<ul>
+<li><strong>广搜未跑满（低召回）</strong>：唯一一次 discovery 是无 token 的冒烟批次（<code>--query-limit 8 --max-pages 1 --per-page 30</code>，240 → 85 去重 → 6 高分），见 <a href="github_repo_discovery.md">discovery 文档</a>。"GitHub 上直接做 prompt optimizer 的仓库不多" 应降级为"在本次受限召回下命中不多"。完整广搜需配 <code>GITHUB_TOKEN</code>，并按 <a href="github_repo_triage_20260608.md">快筛文档</a> 的核心 / 周边双线建议重跑。</li>
+<li><strong>正典 optimizer 仓库尚未审计（选择偏差）</strong>：<code>gepa-ai/gepa</code>、<code>microsoft/PromptWizard</code>、<code>SalesforceAIResearch/promptomatix</code>、<code>Eladlev/AutoPrompt</code>、<code>Scale3-Labs/dspyground</code> 已在 <a href="source_inventory.md">来源清单</a> 登记（经 Twitter/X 渠道回填），但都未进入 clone/audit；core4 中真正属于 prompt optimizer 的只有产品工具 <code>linshenkx/prompt-optimizer</code>。因此"直接效果证据稀缺"部分是"还没审到正确对象"造成的，补审优先级高于 strict8 剩余仓库。</li>
+<li><strong>issues / PR / release notes 未挖掘（失败案例缺口）</strong>：<a href="github_repo_evidence_matrix_20260608.md">证据矩阵</a> 指出版本 / 回滚 / 失败案例是最大缺口，但本渠道只扫了源码树和 docs，未挖 issues、PR、discussions、release notes——真实漂移、回退和事故通常活在那里。</li>
+<li><strong>strict8 仅审 core4</strong>：其余 4 个（<code>dair-ai/Prompt-Engineering-Guide</code>、<code>shanraisshan/claude-code-best-practice</code>、<code>f/prompts.chat</code>、<code>pathwaycom/llm-app</code>）为低优先资料 / 资产型仓库，<strong>有意延后</strong>，不阻塞渠道结论。</li>
+</ul>
+<h2 id="repo-paper">repo ↔ paper 对照（跨源互证候选）</h2>
+<p><code>source_collection_plan.md</code> 要求合并"同一方法的论文与代码仓库"。下表把 GitHub 仓库与已登记论文 join，标出当前可做的互证；标 <strong>待审</strong> 的仓库一旦完成源码审计，可把对应论文 insight 从"论文主张"升级为"源码确认"（L4）。</p>
+<table>
+<thead>
+<tr>
+<th>GitHub 仓库</th>
+<th>对应论文 / arXiv</th>
+<th>论文笔记状态</th>
+<th>仓库审计状态</th>
+<th>可做的互证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gepa-ai/gepa</code></td>
+<td>GEPA（2507.19457）</td>
+<td>已深读 <a href="paper_notes/paper-gepa-2026.md">paper-gepa-2026</a>（A）</td>
+<td>待审</td>
+<td>用官方实现核验论文的 reflective evolution / Pareto 选择是否与源码一致 → L4 候选</td>
+</tr>
+<tr>
+<td><code>SalesforceAIResearch/promptomatix</code></td>
+<td>Promptomatix（2507.14241）</td>
+<td>skimmed，未深读</td>
+<td>待审</td>
+<td>先补论文笔记 + audit，核验 DSPy 依赖与 synthetic data 流程</td>
+</tr>
+<tr>
+<td><code>microsoft/PromptWizard</code></td>
+<td>PromptWizard（2405.18369）</td>
+<td>未登记笔记</td>
+<td>待审</td>
+<td>补论文笔记 + audit，核验 instruction / example 联合优化</td>
+</tr>
+<tr>
+<td><code>Eladlev/AutoPrompt</code></td>
+<td>Intent-based Prompt Calibration（2402.03099）</td>
+<td>candidate，未深读</td>
+<td>待审</td>
+<td>核验是否有可复现 eval；注意与 LangChain Promptim 区分名称</td>
+</tr>
+<tr>
+<td><code>Scale3-Labs/dspyground</code></td>
+<td>（无独立论文，GEPA harness）</td>
+<td>n/a</td>
+<td>待审</td>
+<td>作为 agent prompt optimizer 工程案例</td>
+</tr>
+<tr>
+<td><code>linshenkx/prompt-optimizer</code></td>
+<td>（无，产品工具）</td>
+<td>n/a</td>
+<td>已审 L2</td>
+<td>无论文可互证；靠本项目 smoke run / 最小实验升级</td>
+</tr>
+<tr>
+<td><code>karpathy/autoresearch</code></td>
+<td>（无，自进化案例）</td>
+<td>n/a</td>
+<td>已审 L2</td>
+<td>结构参考；靠本项目 prompt 版复现升级</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">一眼看懂的洞见</h2>
+<table>
+<thead>
+<tr>
+<th>insight</th>
+<th>普通用户一句话</th>
+<th>可立即尝试的动作</th>
+<th>主要证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>先比较，再改写。</td>
+<td>不要直接让模型“优化 prompt”，先让它解释 baseline 为什么失败。</td>
+<td>让模型先输出失败原因和证据摘要，再让第二步 prompt 根据这些证据改写。</td>
+<td><code>prompt-optimizer</code> 的 structured compare / rewrite-from-evaluation 结构。</td>
+</tr>
+<tr>
+<td>不要让 optimizer 改试卷。</td>
+<td>自动优化只能改 prompt，不能改 eval cases、grader 或成功标准。</td>
+<td>把 <code>candidate_prompt.md</code> 设为唯一可变文件，其它 eval 文件只读。</td>
+<td><code>autoresearch</code> 的 <code>program.md</code> / <code>prepare.py</code> 隔离结构。</td>
+</tr>
+<tr>
+<td>验证集要有“会骗过 optimizer 的反例”。</td>
+<td>只看普通样本会让 prompt 学会局部补丁。</td>
+<td>加入 schema drift、过拟合触发词、单次好运、边界保守类样本。</td>
+<td><code>prompt-optimizer</code> 的 structured compare calibration。</td>
+</tr>
+<tr>
+<td>Prompt 不是唯一优化对象。</td>
+<td>很多失败来自上下文组织，而不是 system prompt 写得不够漂亮。</td>
+<td>同时记录 prompt、retrieval context、history compression、tool result format 和 output schema。</td>
+<td><code>12-factor-agents</code> 的 context window 原则。</td>
+</tr>
+<tr>
+<td>每个候选 prompt 都要有账本。</td>
+<td>没有 diff、分数、成本和拒绝原因，就没有可复用经验。</td>
+<td>记录 prompt diff、来源、指标、成本、失败样例、保留/丢弃和回滚点。</td>
+<td><code>autoresearch</code> 的 results ledger；ECC 的 trace/verifier artifact。</td>
+</tr>
+<tr>
+<td>Memory 要能禁用和过期。</td>
+<td>记忆不是越多越好，旧经验会污染新任务。</td>
+<td>每条 memory 记录来源、适用范围、验证状态、过期策略和 opt-out。</td>
+<td>ECC memory-persistence hooks；arXiv memory 类论文可后续互证。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="helpful-methods">Helpful Methods</h2>
+<h3 id="method-1frozen-evaluator-prompt-loop">Method 1：Frozen Evaluator Prompt Loop</h3>
+<blockquote>
+<p>统一目录归一：对应 <code>insight_method_catalog_20260609.md</code> 的 HM-04 Prompt Artifact Ledger（账本 / 隔离部分）与 frozen-evaluator 反模式；本卡是其 GitHub 源码视角的具体化。</p>
+</blockquote>
+<pre><code class="language-yaml">name: Frozen Evaluator Prompt Loop
+insight_supported: evaluator / data / harness 必须与可优化 prompt 隔离
+problem: 自动优化容易通过修改评分标准、样本或输出解析制造伪提升
+recommended_when: 需要验证一个 prompt optimizer 是否真的改善任务表现
+not_recommended_when: 任务目标还没定义，或评分器本身还在探索
+required_inputs:
+  - baseline_prompt.md
+  - candidate_prompt.md
+  - eval_cases.jsonl
+  - frozen_grader.py 或 frozen_judge_prompt.md
+  - run_ledger.jsonl
+implementation_steps:
+  - 固定 eval cases、grader、模型和参数
+  - 只允许 optimizer 修改 candidate_prompt.md
+  - 每轮记录 prompt diff、score、cost、失败样例和保留/丢弃原因
+  - dev set 决策，held-out set 只做最终确认
+evaluation_metrics:
+  - task_score
+  - format_error_rate
+  - regression_case_count
+  - prompt_length_delta
+  - cost_per_candidate
+risks:
+  - dev set 过拟合
+  - judge 偏差
+  - prompt 变长但不可维护
+rollback_plan: 保留 baseline prompt 和每个 accepted candidate 的 commit/hash
+evidence:
+  - repo-karpathy-autoresearch@228791fb499a
+  - docs/github_repo_insight_cards_20260608.md#GHI-04
+next_experiment: 在一个结构化抽取或工具调用小任务上实现 prompt-only loop
+</code></pre>
+<h3 id="method-2compare-first-rewrite">Method 2：Compare-First Rewrite</h3>
+<blockquote>
+<p>统一目录归一：等价于 <code>insight_method_catalog_20260609.md</code> 的 HM-02 Trace-First Critique Rewrite；"compare-first" 是其 GitHub 源码视角的命名，后续以 HM-02 为准。</p>
+</blockquote>
+<pre><code class="language-yaml">name: Compare-First Rewrite
+insight_supported: 失败证据比直接改写更可审计
+problem: one-shot rewrite 常常只是扩写、迎合 judge 或覆盖局部样本
+recommended_when: 已有 baseline 输出和失败样例，需要系统改 prompt
+not_recommended_when: 没有可比较输出，或任务没有明确评估标准
+required_inputs:
+  - baseline prompt
+  - baseline outputs
+  - target/candidate outputs
+  - rubric 或 schema contract
+  - rewrite prompt
+implementation_steps:
+  - 先做 pairwise compare，输出失败类型和证据
+  - synthesis 阶段把多条判断压缩为可执行修改建议
+  - rewrite 阶段只消费证据摘要，不直接吞全部原始上下文
+  - 人工审查 prompt diff，再运行 eval
+evaluation_metrics:
+  - held_out_score_delta
+  - schema_drift_count
+  - rewrite_reason_coverage
+  - manual_review_time
+risks:
+  - compare judge 过度自信
+  - synthesis 丢失少数失败类型
+  - rewrite 过度迎合当前样本
+rollback_plan: 保存 compare evidence、rewrite reason 和 prompt diff
+evidence:
+  - repo-linshenkx-prompt-optimizer@d7cde6c2fc5c
+  - docs/github_repo_insight_cards_20260608.md#GHI-01
+next_experiment: 对比 direct rewrite 与 compare-first rewrite
+</code></pre>
+<h3 id="method-3bounded-memory-and-trace-playbook">Method 3：Bounded Memory And Trace Playbook</h3>
+<blockquote>
+<p>统一目录归一：<code>insight_method_catalog_20260609.md</code> 暂无对应 HM，属于 M5 记忆 / 自进化阶段方法；待 catalog 补充记忆类 HM 时再归一命名。</p>
+</blockquote>
+<pre><code class="language-yaml">name: Bounded Memory And Trace Playbook
+insight_supported: memory 必须有边界，经验沉淀必须可验证
+problem: 无界历史缓存会带来上下文污染、旧错误继承和成本膨胀
+recommended_when: 需要让 prompt optimizer 或 agent 从历史失败中复用经验
+not_recommended_when: 任务很短、无跨轮复用价值，或隐私边界不清楚
+required_inputs:
+  - scenario.json
+  - trace.jsonl
+  - verifier_result.json
+  - candidate_playbook.md
+  - memory_policy.md
+implementation_steps:
+  - 每轮保存 scenario、trace、candidate 和 verifier decision
+  - 只把通过验证的经验写入 memory
+  - 每条 memory 带来源、适用范围、过期时间和 opt-out
+  - 定期用反例样本清理或降权 memory
+evaluation_metrics:
+  - reused_memory_hit_rate
+  - stale_memory_error_count
+  - token_overhead
+  - rollback_count
+risks:
+  - 把一次性 workaround 写成通用经验
+  - 泄露敏感上下文
+  - memory 选择器引入隐藏变量
+rollback_plan: 支持关闭 memory，并可按 source_id 删除经验条目
+evidence:
+  - repo-affaan-m-ecc@90dfd9505dc8
+  - docs/github_repo_insight_cards_20260608.md#GHI-09
+  - docs/github_repo_insight_cards_20260608.md#GHI-10
+next_experiment: 比较 no-memory、bounded-summary-memory、raw-history-memory
+</code></pre>
+<h2 id="_4">反模式</h2>
+<table>
+<thead>
+<tr>
+<th>anti-pattern</th>
+<th>为什么危险</th>
+<th>替代做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>把 star 数或传播热度当作证据强度。</td>
+<td>热度不能证明方法有效，也不能说明 eval 严谨。</td>
+<td>固定 commit，读源码/测试/示例，再标证据等级。</td>
+</tr>
+<tr>
+<td>直接让 LLM 改 prompt。</td>
+<td>容易扩写、迎合当前样本，无法解释改动原因。</td>
+<td>compare-first rewrite，保留失败证据和 diff。</td>
+</tr>
+<tr>
+<td>让 optimizer 同时改 prompt、数据和 grader。</td>
+<td>无法判断收益来源，还可能 reward hacking。</td>
+<td>冻结 evaluator/data，只改目标对象。</td>
+</tr>
+<tr>
+<td>只看平均分提升。</td>
+<td>可能掩盖 schema drift、少数类回退、安全退化和成本膨胀。</td>
+<td>记录分组指标、格式错误、失败样例、成本和 prompt hygiene。</td>
+</tr>
+<tr>
+<td>把 memory 当长历史缓存。</td>
+<td>旧错误、过时策略和无关上下文会污染新任务。</td>
+<td>bounded memory，带来源、范围、过期和禁用开关。</td>
+</tr>
+<tr>
+<td>把“有 tests”写成“方法有效”。</td>
+<td>测试可能只覆盖安装、格式或配置，不覆盖 optimizer 行为。</td>
+<td>区分可审计入口、行为测试和效果验证。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">最小验证候选</h2>
+<p>优先冻结 2 个验证/演示，不建议先做完整 benchmark harness。</p>
+<table>
+<thead>
+<tr>
+<th>validation</th>
+<th>验证的 insight / method</th>
+<th>最小设置</th>
+<th>成功标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frozen Evaluator Prompt Loop</td>
+<td>Method 1；GHI-04/GHI-05</td>
+<td>20-50 条结构化抽取或工具调用样本；固定 grader；只改 prompt</td>
+<td>dev 提升不伴随 held-out 回退；格式错误率不恶化；ledger 完整</td>
+</tr>
+<tr>
+<td>Direct Rewrite vs Compare-First Rewrite</td>
+<td>Method 2；GHI-01/GHI-03</td>
+<td>同一 baseline prompt、同一失败样本，分别直接 rewrite 和 compare-first rewrite</td>
+<td>compare-first 的失败覆盖率、schema 稳定性或人工审查效率更好</td>
+</tr>
+<tr>
+<td>Markdown vs JSON Payload Judge</td>
+<td>GHI-02</td>
+<td>同一 judge 任务，分别用 Markdown 拼接和 JSON payload</td>
+<td>JSON payload 的解析失败率和 wrapper/schema drift 更低</td>
+</tr>
+<tr>
+<td>Bounded Memory Demo</td>
+<td>Method 3；GHI-09/GHI-10</td>
+<td>no-memory / bounded summary / raw history 三组</td>
+<td>bounded memory 能降低重复错误，且不明显增加旧经验污染</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">证据索引</h2>
+<ul>
+<li><a href="github_repo_triage_20260608.md">GitHub 仓库候选快筛</a>：解释 85 个 raw candidates 的噪声、筛选和时间分布。</li>
+<li><a href="github_repo_analysis_overview_20260608.md">GitHub 仓库分析概述</a>：保留首轮横向结构和仓库类型分布。</li>
+<li><a href="github_repo_source_audit_workflow_20260608.md">GitHub 仓库源码审计流程</a>：说明 clone/audit/人工审计流程和证据等级。</li>
+<li><a href="github_repo_insight_cards_20260608.md">GitHub 仓库候选 insight 证据卡</a>：保留 GHI-01 到 GHI-12 的详细证据卡。</li>
+<li><a href="github_repo_evidence_matrix_20260608.md">GitHub 仓库证据矩阵</a>：保留首轮横向证据矩阵，不再作为最终结论入口。</li>
+<li><code>docs/github_repo_audit_notes/</code>：core4 固定 commit 后的源码审计草稿。</li>
+</ul>
+<h2 id="_7">最终报告写法建议</h2>
+<p>GitHub 渠道在最终报告中不宜写成“某仓库证明了 prompt 自进化有效”。更稳妥的写法是：</p>
+<ul>
+<li>结论：GitHub 源码显示生产形态更关注 eval、版本、trace、context 和 governance，而非单句 prompt 技巧。</li>
+<li>Insight：失败证据、固定 evaluator、候选账本和 context packaging 是 prompt 自进化的工程基础。</li>
+<li>Helpful method：推荐先实现 Frozen Evaluator Prompt Loop 和 Compare-First Rewrite。</li>
+<li>边界：这些方法来自源码结构观察，需要通过本项目最小验证升级证据等级。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/github_repo_channel_synthesis_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">结论总览</a>
+<a class="lv2" href="#_2">渠道覆盖与已知偏差</a>
+<a class="lv2" href="#repo-paper">repo ↔ paper 对照（跨源互证候选）</a>
+<a class="lv2" href="#_3">一眼看懂的洞见</a>
+<a class="lv2" href="#helpful-methods">Helpful Methods</a>
+<a class="lv3" href="#method-1frozen-evaluator-prompt-loop">Method 1：Frozen Evaluator Prompt Loop</a>
+<a class="lv3" href="#method-2compare-first-rewrite">Method 2：Compare-First Rewrite</a>
+<a class="lv3" href="#method-3bounded-memory-and-trace-playbook">Method 3：Bounded Memory And Trace Playbook</a>
+<a class="lv2" href="#_4">反模式</a>
+<a class="lv2" href="#_5">最小验证候选</a>
+<a class="lv2" href="#_6">证据索引</a>
+<a class="lv2" href="#_7">最终报告写法建议</a></aside>
+</div>
+
+</body>
+</html>

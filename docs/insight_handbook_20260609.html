@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>读者向洞见手册 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#46525f">中间层</span><span class="doctitle">读者向洞见手册</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="prompt">Prompt 优化与自进化：读者向洞见手册</h1>
+<p>日期：2026-06-09</p>
+<h2 id="_1">这本手册是写给谁的</h2>
+<p>你懂 AI 工具、会写 prompt、可能受过一些学术训练，但不是 prompt 优化这个细分领域的研究者。市面上关于「自动优化 prompt」「prompt 自进化」「context engineering」的说法很多，真假混杂。这本手册想帮你建立一套<strong>能自己判断真假、能直接上手</strong>的认知。</p>
+<p>它和仓库里另一份 <a href="insight_method_catalog_20260609.html">Insight / Conclusion / Helpful Method 候选清单</a> 是配套关系：那份是给研究者用的结构化中间层（YAML 字段、证据等级），这份是给读者用的——<strong>每条洞见都用一个能看懂的例子讲透</strong>。两份引用的是同一批论文笔记和源码审计，结论一致，只是写法不同。</p>
+<h2 id="_2">怎么读这本手册里的「证据」</h2>
+<p>为了不把话说满，每条洞见会标三件事：</p>
+<ul>
+<li><strong>论文证据强度</strong>：<code>A</code>（多篇互证或有消融）/ <code>B</code>（单篇或工程实践）。这是「论文设置下成立」，不是「在你的任务上一定成立」。</li>
+<li><strong>本项目是否已验证</strong>：截至 2026-06-09，<strong>全部为「否」</strong>。本项目还没跑复现实验，所以任何论文里的提升比例都不能写成「我们已经证明」。</li>
+<li><strong><code>recent-preprint</code> 标记</strong>：2026 年的 arXiv 新稿结论还需独立复现，看到这个标记请额外打折。</li>
+</ul>
+<p>另外，<strong>手册里所有带「示意」字样的 prompt、数字、对话，都是为了讲清概念虚构的，不是真实实验数据</strong>。真实数据只出现在「论文怎么说」一栏，且都给了出处文件。</p>
+<h2 id="_3">一句话总结论</h2>
+<p>如果你只记一句话：<strong>自动优化 prompt 不是「让模型把 prompt 改好」这么一回事，而是一套「先判断值不值得优化 → 把失败变成可编辑证据 → 生成多个候选并用验证集筛选 → 记录版本与回滚」的工程纪律。缺了纪律，「优化」往往只是改写，甚至是退步。</strong></p>
+<p>下面 12 条洞见按你实际会遇到的顺序展开。</p>
+<hr>
+<h2 id="part-a">Part A. 动手之前：这个任务值不值得优化？</h2>
+<h3 id="01">洞见 01 · 先确认有没有提升空间，再花钱跑优化器</h3>
+<blockquote>
+<p>对应清单 I-01｜论文证据强度 A｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：自动优化 prompt 不是稳赚的。在某些设置下，它有接近一半的概率让你的 prompt <strong>比什么都不做（zero-shot）还差</strong>。</p>
+<p><strong>它具体长什么样（示意）</strong>
+你要把客服工单分成「投诉 / 咨询 / 退款」三类。初版 prompt 很朴素：</p>
+<pre><code>把下面的工单分到：投诉、咨询、退款。工单：{text}
+</code></pre>
+<p>30 条样本一测，准确率 82%。你上了个自动优化器，它跑了 6 轮，产出一个又长又「专业」的新 prompt（加了一堆边界规则）。dev 上涨到 87%，你很开心——<strong>但换到没见过的 100 条测试集，掉到 79%，比最初那句话还低</strong>。那 5 个点是优化器在 30 条小样本的噪声里「捡」到的，不是真本事。</p>
+<p><strong>论文怎么说</strong>
+- <em>Prompt Optimization Is a Coin Flip</em>（2026，<code>recent-preprint</code>）：在 Claude Haiku 4.5 上，<strong>72 次优化运行里 49% 低于 zero-shot</strong>；在自由文本任务上（XSum、WildBench）最好的提升只有 +0.6、+0.7，落在测量噪声里。唯一稳赚的是 HelpSteer2 这种<strong>严格 JSON/rubric 输出</strong>任务，六种方法全部超过 zero-shot（最高 +6.8）。来源：<a href="paper_notes/paper-coin-flip-2026.md">paper-coin-flip-2026.md</a>
+- ProTeGi（2023）自己也承认：学习曲线大约 <strong>3 步达峰</strong>，之后往往在训练数据上过拟合。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a></p>
+<p><strong>你该怎么做</strong>（花优化器的钱之前，先做 5 分钟体检）
+1. 跑 zero-shot 和你手写的 baseline，各记一个分。
+2. 手写或让模型生成 10–20 个候选 prompt。
+3. 用<strong>同一批 20 条留出样本</strong>给所有候选打分。
+4. 看两个数：<strong>最高候选比 zero-shot 高多少</strong>（headroom）、<strong>候选之间分数抖动多大</strong>（noise floor）。
+5. 如果「最大提升」还没超过「抖动幅度」——<strong>停</strong>。这个任务大概率没有可优化空间，你优化出来的只是噪声。</p>
+<p><strong>边界</strong>：有些任务的收益要靠多轮搜索才能发现组合结构，简单体检会<strong>低估</strong>它；阈值必须按你的样本量和评分器重新校准，不能跨任务硬套。</p>
+<hr>
+<h3 id="02">洞见 02 · 第一批要验证的，先选「能客观打分」的任务</h3>
+<blockquote>
+<p>对应清单 I-11｜论文证据强度 A/B｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：同样是优化 prompt，<strong>任务类型决定了你能不能看清优化有没有用</strong>。开放写作类任务即使优化了，你也分不清是真变好还是评委口味变了。</p>
+<p><strong>它具体长什么样（示意）</strong>
+两个任务摆在你面前：</p>
+<ul>
+<li>任务甲：「把工单总结成一句话」。两个候选 prompt 产出的总结都「读起来还行」，你只能靠另一个模型当评委打分——而评委今天偏好长一点的，明天偏好短一点的，你根本不知道分数变化来自 prompt 还是评委。</li>
+<li>任务乙：「把工单抽成 <code>{intent, entities, urgency}</code> 的 JSON」。某个候选漏抽了 <code>urgency</code> 字段，你<strong>一眼就能定位</strong>：field F1 在 urgency 这一列掉了，JSON 还是合法的，问题就出在紧急度判定规则上。</li>
+</ul>
+<p>任务乙能把失败拆成「字段漏抽 / 标签错 / 格式破坏 / 过度推断」，每一类都能对应到 prompt 的具体改动。所以第一批验证选乙，不选甲。</p>
+<p><strong>论文怎么说</strong>
+- <em>Coin Flip</em>（2026，<code>recent-preprint</code>）：唯一让所有方法都超过 zero-shot 的，是 HelpSteer2 这种<strong>结构化 JSON/rubric 输出</strong>任务（+6.8）；自由文本任务全在噪声里。来源：<a href="paper_notes/paper-coin-flip-2026.md">paper-coin-flip-2026.md</a>
+- <em>APO for KG Construction</em>（2025）：在结构化三元组抽取上，同数据集优化能拿到 <strong>triple F1 +16%</strong>；但换数据集只剩 <strong>约 1%</strong>——结构化任务收益清楚，可跨域迁移仍要单独测。来源：<a href="paper_notes/paper-apo-kg-construction-2025.md">paper-apo-kg-construction-2025.md</a></p>
+<p><strong>你该怎么做</strong>
+- 第一批最小验证选：信息抽取（JSON schema）、文本分类、工具调用——评分客观、错误可拆解。
+- 暂时别用开放生成（写作、摘要、对话）当第一块试验田，它的因果最难看清。</p>
+<p><strong>边界</strong>：开放生成任务很重要，只是不适合作为「因果清晰」的第一批验证；等结构化任务上的方法跑通了再扩展。</p>
+<hr>
+<h2 id="part-b">Part B. 怎么从失败里学到东西</h2>
+<h3 id="03">洞见 03 · 把失败样本变成「可编辑的证据」，不要只记一个分数</h3>
+<blockquote>
+<p>对应清单 I-02｜论文证据强度 A｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：分数只告诉你「坏了」，它不告诉你「该改哪里」。真正驱动 prompt 改进的，是对失败样本的<strong>文字诊断</strong>，不是 accuracy 那个数字。</p>
+<p><strong>它具体长什么样（示意）</strong>
+工单：「我要退货并且投诉你们客服态度」。模型抽出 <code>intent: 投诉</code>，漏了 <code>退款</code>。</p>
+<ul>
+<li><strong>只记分数</strong>：这条 = 错。你拿到的信息是一个红叉，无从下手。</li>
+<li><strong>记成可编辑证据</strong>：写一句诊断——「<strong>当一条工单同时包含『动作请求』和『情绪表达』时，模型倾向只抓情绪（投诉），漏掉动作（退款）</strong>」。这句话直接告诉你 prompt 该补什么：明确要求「一条工单可以有多个 intent，动作类和情绪类要分别判断」。</li>
+</ul>
+<p>后者就是「文本梯度 / critique」——但注意，它是<strong>改写方向的线索</strong>，不是数学意义上的梯度，别把它当成精确的因果解释。</p>
+<p><strong>论文怎么说</strong>
+- ProTeGi（2023）：用失败样本生成自然语言「gradient」再编辑 prompt，<strong>比原始 prompt 平均高 15.3%，最高可提升 31%</strong>。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>
+- 反面证据同样有力：ProTeGi 论文里，<strong>让 AutoGPT「自己反馈、自己改」6 轮，反而把起始 prompt 改差了</strong>——可见「让 agent 自己改」不等于有效优化。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>
+- 「文本梯度其实是个有缺陷的比喻」这一点，有专门论文论证。来源：<a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">paper-textual-gradients-flawed-metaphor-2025.md</a></p>
+<p><strong>你该怎么做</strong>
+每个 eval case 至少记五样：<code>prediction</code>、<code>gold</code>、<code>error_type</code>（失败类型）、<code>critique</code>（一句话诊断）、<code>candidate_prompt_id</code>（这次改写编号）。先把 20 条失败样本整理成一张「失败类型表」，再让优化器<strong>只基于这张表</strong>改 prompt。</p>
+<p><strong>边界</strong>：critique 会带评委偏见，必须绑定到具体样本和指标；不能把一句诊断当成「真实因果」写进结论。</p>
+<hr>
+<h3 id="04-prompt">洞见 04 · 先列「失败根因假设」，再改 prompt</h3>
+<blockquote>
+<p>对应清单 I-03｜论文证据强度 A｜本项目已验证：否（<code>recent-preprint</code> 证据）</p>
+</blockquote>
+<p><strong>反直觉点</strong>：反思式优化器最常见的翻车，不是信息不够，而是<strong>它一开始就猜错了方向，然后在错误方向上越改越自信</strong>。</p>
+<p><strong>它具体长什么样（示意）</strong>
+抽取任务有 30% 的样本 <code>urgency</code> 判错。</p>
+<ul>
+<li><strong>直接让模型改</strong>：「请优化这个 prompt 让 urgency 更准」→ 模型加了一句「请仔细判断紧急度」。没用，因为它根本没搞清为什么错。</li>
+<li><strong>先列根因假设，每个假设单独改一版</strong>：</li>
+<li>假设 A：schema 没定义清楚「紧急」的判定标准 → 候选 A 补上判定规则。</li>
+<li>假设 B：缺少边界示例 → 候选 B 加 2 个「看起来急但其实不急」的例子。</li>
+<li>假设 C：模型把「尽快」「马上」这类中性词一律当紧急 → 候选 C 明确这些词不单独构成紧急。</li>
+</ul>
+<p>三个候选都在 minibatch 上验证，谁真的把那 30% 拉回来了，就采用谁。</p>
+<p>关键动作是<strong>把「猜原因」和「改 prompt」拆成两步</strong>，而不是让同一个反思器一口气给出最终答案。</p>
+<p><strong>论文怎么说</strong>
+- VISTA / <em>Reflection in the Dark</em>（2026，<code>recent-preprint</code>）：GEPA 在一个有缺陷的 GSM8K 种子 prompt 上，表现<strong>从 23.81% 掉到 13.50%</strong>——因为真正的根因从没进入它的假设空间；VISTA 把「假设生成」和「prompt 改写」解耦后，<strong>恢复到 87.57%</strong>。来源：<a href="paper_notes/paper-vista-reflection-dark-2026.md">paper-vista-reflection-dark-2026.md</a>
+- <em>Are LLMs Good Prompt Optimizers?</em>（2024）：同样指出 LLM 的反思不一定能识别真实错误根因。来源：<a href="paper_notes/paper-llm-prompt-optimizers-2024.md">paper-llm-prompt-optimizers-2024.md</a></p>
+<p><strong>你该怎么做</strong>
+对同一批失败样本，强制生成 <strong>2–3 个互斥的根因假设</strong>（典型三类：缺规则、缺上下文/示例、格式或定义冲突），每个假设生成一个候选 prompt，分别评分。运行记录里要存 <code>failure_hypothesis</code>，而不只是 <code>critique</code>——这样你才能区分「没想到原因」和「改写失败」。</p>
+<p><strong>边界</strong>：开放写作任务的根因边界模糊，多假设验证的成本可能超过收益；这套更适合有明确失败类型的结构化/分类任务。</p>
+<hr>
+<h2 id="part-c">Part C. 别让模型骗你：候选选择与防膨胀</h2>
+<h3 id="05">洞见 05 · 不要采用模型给的第一版，要多生几个再用验证集选</h3>
+<blockquote>
+<p>对应清单 I-04｜论文证据强度 A｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：LLM 生成的 prompt 候选<strong>方差极大</strong>。「怎么选候选」这件事，和「怎么生成候选」一样重要——甚至更重要。把选择权交给一个验证集，而不是让模型自评「我这版最好」。</p>
+<p><strong>它具体长什么样（示意）</strong>
+优化器给了你 5 个改写版本。常见错误是直接用第 1 个（或模型说「推荐」的那个）。正确做法是把 5 个都放到 20 条留出样本上跑，记一张账：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>dev 分</th>
+<th>格式错误率</th>
+<th>prompt 长度</th>
+<th>选不选</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td>0.86</td>
+<td>0%</td>
+<td>1.0x</td>
+<td>候选</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>0.88</td>
+<td>6%</td>
+<td>1.2x</td>
+<td>弃（格式错误升高）</td>
+</tr>
+<tr>
+<td>C3</td>
+<td>0.87</td>
+<td>0%</td>
+<td>2.4x</td>
+<td>弃（太长，疑似过拟合）</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>0.84</td>
+<td>0%</td>
+<td>1.1x</td>
+<td>弃（不如 C1）</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>0.86</td>
+<td>0%</td>
+<td>1.0x</td>
+<td>候选</td>
+</tr>
+</tbody>
+</table>
+<p>不是只看 dev 分最高的 C2，而是综合 dev 分、格式、长度三个维度挑——这就是「Pareto 选择」的朴素版。同时永远保留一个 <code>best-seen</code>（目前见过最好的），它不会被任何新候选直接覆盖，随时能回滚。</p>
+<p><strong>论文怎么说</strong>
+- ProTeGi（2023）：beam search 选择（Beam 在 Jailbreak/Liar/Sarcasm 上 <strong>0.85 / 0.67 / 0.88</strong>）明显优于不迭代和贪心；用 bandit（UCB 等）做候选选择也明显优于均匀随机选。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>
+- 这一结构在 GEPA、PromptBreeder、EvoPrompt、SePO、MASPO 等方法里反复出现（archive / 进化搜索 / Pareto / bandit）。来源：<a href="paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a>、<a href="paper_notes/paper-promptbreeder-2023.md">paper-promptbreeder-2023.md</a></p>
+<p><strong>你该怎么做</strong>
+每轮至少保存：<code>seed</code>（起点）、<code>candidates</code>（候选池）、<code>scores</code>、<code>selection_policy</code>（按什么选）、<code>rejected_reason</code>（为什么弃）、<code>best_seen</code>、<code>rollback_point</code>。生成 5 个候选，按 dev 分 + 格式错误 + 长度三维选 Pareto 候选。</p>
+<p><strong>边界</strong>：搜索预算越大，越容易在 dev 上过拟合——必须有 validation/test 分层兜底。</p>
+<hr>
+<h3 id="06-prompt">洞见 06 · prompt 变长、变复杂，往往是过拟合，不是进步</h3>
+<blockquote>
+<p>对应清单 I-07｜论文证据强度 A｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：优化后的 prompt 更长、规则更多、看起来更「专业」，<strong>很可能是危险信号</strong>——它在给训练样本打补丁，而不是真的更强。</p>
+<p><strong>它具体长什么样（示意）</strong>
+优化前（2 行）：</p>
+<pre><code>把工单抽成 {intent, entities, urgency}。urgency 取 high/medium/low。
+</code></pre>
+<p>优化后（优化器加了一堆规则，节选）：</p>
+<pre><code>把工单抽成 {intent, entities, urgency}。urgency 取 high/medium/low。
+- 如果工单提到「发票」且包含数字，则 intent 一定是退款。   ← 来自某一条训练样本的补丁
+- 如果出现「经理」「投诉」，urgency 一律设为 high。          ← 把局部特例写成全局规则
+- 注意：如果用户用了感叹号超过两个，倾向 high。            ← 在拟合标注者的习惯
+（……还有 9 条类似规则）
+</code></pre>
+<p>dev 涨了 5 分，但这些规则全是从个别训练样本反推出来的「伪规律」。换到压力测试集（OOD），掉 8 分。<strong>判断标准不是「短就好」，而是「每条新增规则能不能对应到一类真实失败，并通过压力测试」。</strong></p>
+<p><strong>论文怎么说</strong>
+- PrefPO（2026，<code>recent-preprint</code>）：放任优化时，TextGrad 在 IFEval-Hard 上把 prompt 撑到 <strong>14.7 倍长度</strong>；更严重的是 <strong>86% 的情况下它在「prompt hacking」</strong>（偷偷改写任务本身），而带约束的 PrefPO 只有 37%。来源：<a href="paper_notes/paper-prefpo-2026.md">paper-prefpo-2026.md</a>
+- TextReg（2026，<code>recent-preprint</code>）：给优化加上「正则化梯度」控制长度和规则范围后，在 Tracking Shuffled Objects 上比 TextGrad <strong>高 +10.0 / +9.9</strong>——管住膨胀反而更好。来源：<a href="paper_notes/paper-textreg-2026.md">paper-textreg-2026.md</a>
+- Edit-Level 因果分析（2026，<code>recent-preprint</code>）：加 meta-instruction 在数学类任务上与性能<strong>负相关（-0.103）</strong>，加 clarity 约束在逻辑任务上也负相关（-0.083）。来源：<a href="paper_notes/paper-causal-edit-level-2026.md">paper-causal-edit-level-2026.md</a></p>
+<p><strong>你该怎么做</strong>
+候选选择时记录这些「卫生指标」：<code>prompt_length_ratio</code>（相对种子的长度比）、<code>repetition_ratio</code>、<code>edit_family</code>（这次改的是哪类）、<code>dev_test_gap</code>、<code>OOD/stress_delta</code>。<strong>候选若长度超过阈值，必须说明每条新增规则绑定了哪些失败样本，并通过压力测试</strong>，否则拒绝——哪怕它 dev 分更高。</p>
+<p><strong>边界</strong>：某些复杂任务确实需要更明确的约束；标准不是「短」，而是「必要、可追溯、不过拟合」。</p>
+<hr>
+<h2 id="part-d-prompt">Part D. 到底该改什么（不只是那段 prompt）</h2>
+<h3 id="07-instruction">洞见 07 · 有开发集时，选「给模型看的例子」常比改 instruction 更有效</h3>
+<blockquote>
+<p>对应清单 I-05｜论文证据强度 A｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：大家本能地去改 instruction 的措辞，却忽略了一个常常更有效的变量——<strong>给模型看哪几个示例</strong>。而且如果你已经有带标签的开发集，你其实已经握着优化示例的原料了，却只拿它来打分。</p>
+<p><strong>它具体长什么样（示意）</strong>
+固定 instruction 不动，只把 few-shot 示例从「随便挑 3 个」换成「精挑 3 个正好覆盖易错边界的」：</p>
+<pre><code>（instruction 不变）把工单抽成 {intent, entities, urgency}。
+
+示例 1（覆盖「动作+情绪并存」）：
+  工单：要退货还要投诉客服 → {intent:[退款,投诉], ...}
+示例 2（覆盖「看似紧急其实不急」）：
+  工单：方便时帮我看下 → {urgency: low, ...}
+示例 3（覆盖「多实体」）：
+  工单：订单 123 和 456 都要改地址 → {entities:[123,456], ...}
+</code></pre>
+<p>光是这一步，往往就比绞尽脑汁重写 instruction 收益更大——因为示例直接展示了「决策边界」和「输出格式」，比抽象规则更容易被模型照着做。</p>
+<p><strong>论文怎么说</strong>
+- <em>Teach Better or Show Smarter?</em>（2024）：在 PaLM 2 + BBH 上，<strong>不优化 instruction、只优化示例</strong>就达到 72.92（比基线 +12.63）；在 Gemini 1.0 Pro 上，<strong>优化示例（75.77）超过只优化 instruction 的 ProTeGi（65.91）</strong>；而且<strong>精选 3 个示例 &gt; 全部示例</strong>——数量不等于质量。来源：<a href="paper_notes/paper-teach-better-show-smarter-2024.md">paper-teach-better-show-smarter-2024.md</a></p>
+<p><strong>你该怎么做</strong>
+每个优化实验至少比较四组：<code>no-example</code>、<code>random-example</code>、<code>optimized-example</code>、<code>instruction + optimized-example</code>。固定 instruction，从候选池里搜 3 个示例，看留出表现是否超过 instruction-only。运行记录里存 <code>exemplar_source</code>、<code>selector</code>、<code>k</code>。</p>
+<p><strong>边界</strong>：上下文很紧张、示例分布偏、或示例可能泄漏敏感信息/答案时，优化示例可能伤害泛化——这时要回退到 no-example 或 random-example。</p>
+<hr>
+<h3 id="08-prompt">洞见 08 · 你要改的可能不是「那段 prompt」，先标清楚改的是哪个部件</h3>
+<blockquote>
+<p>对应清单 I-06｜论文证据强度 A/B｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：真实系统里，失败可能来自示例、检索上下文、工具描述、agent 角色、记忆或评委——<strong>而不只是那段 system prompt</strong>。把整个上下文窗口都叫「prompt」一起改，会让你永远无法归因。</p>
+<p><strong>它具体长什么样（示意）</strong>
+你的抽取 agent 老出错。在动手改 system prompt 之前，先把这次运行拆成一张「部件清单」，并标明哪些能改、哪些冻结：</p>
+<pre><code>artifact manifest（示意）
+  task_prompt        v3    [mutable]   ← 任务指令
+  examples           v2    [mutable]   ← few-shot 示例
+  prompting_pattern  Zero-Shot [mutable]  ← 用 Zero-Shot 还是 CoT/ReAct
+  tool_schema        v1    [mutable]   ← 工具/字段说明
+  context_packaging  v1    [mutable]   ← 上下文怎么拼
+  evaluator          v1    [FROZEN]    ← 评委不许改（防作弊）
+  safety_rules       v1    [FROZEN]    ← 安全/权限不进搜索空间
+  selection_policy   pareto
+</code></pre>
+<p>很多时候你会发现：真正的 bug 不在 <code>task_prompt</code> 的措辞，而在 <code>prompting_pattern</code>（该用 CoT 却用了 Zero-Shot）或 <code>tool_schema</code>。先定位部件，结论才写得清「变化来自哪里」。</p>
+<p><strong>论文怎么说</strong>
+- AutoPDL（2025）：<strong>只是把 prompting pattern 换对</strong>（而非重写指令措辞），FEVER 上 Granite 13B Instruct V2 <strong>从 6.5% 跳到 74.0%（+67.5 个百分点）</strong>；但同样的优化在 MBPP+ 上拒绝了 ReWOO 模式（因为它用不上执行反馈）——可见「改哪个部件」高度依任务而定。来源：<a href="paper_notes/paper-autopdl-2025.md">paper-autopdl-2025.md</a>
+- JTPRO（2026）、Prompt Codebooks（2026）等进一步把可优化对象扩展到 tool schema、codebook、routing。来源：<a href="paper_notes/paper-jtpro-2026.md">paper-jtpro-2026.md</a>、<a href="paper_notes/paper-prompt-codebooks-2026.md">paper-prompt-codebooks-2026.md</a></p>
+<p><strong>你该怎么做</strong>
+为每次优化生成一份 artifact manifest，至少拆出 <code>task_prompt</code>、<code>examples</code>、<code>prompting_pattern</code>、<code>tool_schema</code>、<code>context_packaging</code>、<code>evaluator</code>、<code>selection_policy</code>，并明确标 <code>mutable / frozen</code>。<strong>评委、测试集、安全规则必须 frozen</strong>——这是防 reward hacking 的底线。</p>
+<p><strong>边界</strong>：简单一次性任务不需要完整 manifest；但研究级和生产级优化需要。</p>
+<hr>
+<h3 id="09-agent">洞见 09 · 工具调用出错时，要改的常是「工具说明」，不是 agent 指令</h3>
+<blockquote>
+<p>对应清单 I-10｜论文证据强度 A｜本项目已验证：否（<code>recent-preprint</code> 证据）</p>
+</blockquote>
+<p><strong>反直觉点</strong>：agent 把工具调错了，大多数人去改 agent 的 system prompt。但失败常常来自<strong>工具描述和参数语义本身</strong>——你改 agent 指令再多遍也没用。</p>
+<p><strong>它具体长什么样（示意）</strong>
+agent 反复用错误格式调退款工具：传了 <code>amount: 99.5</code>，但后端要的是「分」。</p>
+<ul>
+<li><strong>改 agent 指令（无效）</strong>：在 system prompt 里加「请正确填写金额」——模型照样不知道单位。</li>
+<li><strong>改工具 schema（有效）</strong>：</li>
+</ul>
+<pre><code>优化前 tool schema:
+  amount: number  // 退款金额
+
+优化后 tool schema:
+  amount: integer  // 退款金额，单位为「分」，例如 99 元应填 9900，不接受小数
+</code></pre>
+<p>工具调用的失败要拆成三层来看：<strong>选错工具</strong>（Tool Selection）、<strong>填错参数</strong>（Slot Filling）、<strong>整体是否成功</strong>（Overall Success）。很多时候工具选对了，错在 slot——那就该改 schema，不该改 agent 指令。</p>
+<p><strong>论文怎么说</strong>
+- JTPRO（2026，<code>recent-preprint</code>）：在 ToolACE 的 1000 工具设置下，<strong>联合优化「全局指令 + 每个工具的 schema」让 o3-mini 的整体成功率从 51.27% 提到 64.46%（+13.19）</strong>；GPT-4o mini 上 OSR +20.30。诊断里 ETID 数据集<strong>工具选得很准但整体成功率低，瓶颈正是 slot-filling</strong>。来源：<a href="paper_notes/paper-jtpro-2026.md">paper-jtpro-2026.md</a></p>
+<p><strong>你该怎么做</strong>
+工具 eval 必须拆成 <strong>Tool Selection Accuracy / Slot Filling Accuracy / Overall Success Rate</strong> 三个指标分别记。对一批相似工具构造 tool-call eval，分别测「只改全局指令 / 只改 schema / 两者联合」，看瓶颈到底在哪一层。</p>
+<p><strong>边界</strong>：外部 API 的 schema 不可改时，可以用 wrapper 文档或检索上下文来承载这些局部规则。</p>
+<hr>
+<h2 id="part-e-agent">Part E. 记忆与多 agent：更多 ≠ 更好</h2>
+<h3 id="10">洞见 10 · 记住更多历史不等于更聪明——只有「过滤后的记忆」才有用</h3>
+<blockquote>
+<p>对应清单 I-08｜论文证据强度 A/B｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：给系统加「记忆」听起来总是好的，但<strong>未经筛选地堆历史，会污染优化、造成跨任务负迁移</strong>，还更贵。</p>
+<p><strong>它具体长什么样（示意）</strong>
+- <strong>无界记忆（错）</strong>：把过去所有对话、所有反馈一股脑塞进上下文。结果模型把从「A 产品线」学到的退款规则，错误地套到了「B 产品线」的工单上。
+- <strong>过滤记忆（对）</strong>：只存少量带元数据的条目：</p>
+<pre><code>memory entry（示意）
+  type: success_template          # 成功模板 or error_pattern
+  content: &quot;动作+情绪并存时分别抽两个 intent&quot;
+  source_task: 工单抽取-A产品线
+  applicability: 仅 intent 抽取类任务
+  quality_score: 0.9
+  retrieval_reason: 当前任务含多 intent
+  forget_after: 2026-12-31         # 可过期
+</code></pre>
+<p>检索时只取 3–5 条<strong>经过验证、且适用条件匹配当前任务</strong>的记忆，而不是把历史全倒进去。</p>
+<p><strong>论文怎么说</strong>
+- MemAPO（2026，<code>recent-preprint</code>）：<strong>平均表现 70.7%，优于 TextGrad 的 63.6%，而且更便宜——平均成本 $0.31 vs $0.70</strong>；把记忆拆成「成功模板 + 错误模式」双记忆后，AQuA-RAT 从 61.7 提到 82.5。来源：<a href="paper_notes/paper-memapo-2026.md">paper-memapo-2026.md</a>
+- ERM（2024）：<strong>原始反馈记忆没有收益，只有过滤 + 选择性遗忘才带来增益</strong>；带记忆的 ERM 在 LIAR 上第 7 步就到 68.6，而 ProTeGi 第 13 步才 58.5——<strong>接近两倍速度</strong>。来源：<a href="paper_notes/paper-erm-memory-2024.md">paper-erm-memory-2024.md</a></p>
+<p><strong>你该怎么做</strong>
+记忆 schema 至少包含：<code>success_template</code> / <code>error_pattern</code>、<code>source_task</code>、<code>applicability_condition</code>、<code>retrieval_reason</code>、<code>quality_score</code>、<code>forget_reason</code>。<strong>别直接塞历史对话</strong>，只检索经过验证、与当前任务匹配的 3–5 条。</p>
+<p><strong>边界</strong>：高度非平稳的任务、安全敏感任务里，历史经验可能快速过期或泄漏隐私——这时遗忘策略和 opt-out 比「记得多」更重要。</p>
+<hr>
+<h3 id="11-agent">洞见 11 · 多 agent 系统出错，先找「是谁的责任」，别整个系统一起重写</h3>
+<blockquote>
+<p>对应清单 I-09｜论文证据强度 A｜本项目已验证：否（<code>recent-preprint</code> 证据）</p>
+</blockquote>
+<p><strong>反直觉点</strong>：多 agent 系统的核心难题不是「加更多 agent」，而是 <strong>credit assignment（责任分配）</strong>——一个 agent 局部看起来完全正确，却可能让整个系统失败。</p>
+<p><strong>它具体长什么样（示意）</strong>
+三段流水线：<code>抽取 agent → 补全 agent → 回复 agent</code>。最终回复错了。</p>
+<ul>
+<li><strong>错误做法</strong>：三个 agent 的 prompt 一起重写。结果你不知道是哪一步的改动起了作用，下次还会再错。</li>
+<li><strong>正确做法</strong>：看 trace，标注每一步的「局部是否正确 / 全局是否正确」：</li>
+</ul>
+<pre><code>trace（示意）
+  agent_1 抽取   local_valid=✗  ← urgency 字段在这里就丢了
+  agent_2 补全   local_valid=✓  （但基于错误输入，local_pass_global_fail）
+  agent_3 回复   local_valid=✓  （同上）
+  global_outcome=✗
+</code></pre>
+<p>根因在 agent_1。<strong>只改 agent_1 的 prompt</strong>，别动另外两个。</p>
+<p><strong>论文怎么说</strong>
+- MASPO（2026，<code>recent-preprint</code>）：联合优化下平均 <strong>70.39，超过顺序 baseline 65.31</strong>。来源：<a href="paper_notes/paper-maspo-2026.md">paper-maspo-2026.md</a>
+- Temporal/Structural Credit（2026，<code>recent-preprint</code>）：在 MedMCQA 上，credit-guided 把 LLaMA3-8B 辩论 baseline <strong>从 55.13 提到 64.63（+9.50）</strong>；并且<strong>无差别地更新所有轮次的 prompt 反而会掉分</strong>——必须只更新低 credit 的角色/轮次。来源：<a href="paper_notes/paper-temporal-structural-credit-mas-2026.md">paper-temporal-structural-credit-mas-2026.md</a>
+- MAPRO（2025）：把多 agent prompt 优化建模为图上的 MAP 推断，沿拓扑传播 credit。来源：<a href="paper_notes/paper-mapro-2025.md">paper-mapro-2025.md</a></p>
+<p><strong>你该怎么做</strong>
+trace 里保存 <code>role_id</code>、<code>round_id</code>、<code>local_validity</code>、<code>successor_utility</code>、<code>global_outcome</code>，并标出 <code>local_pass_global_fail</code> 的样本。对失败 trace 标记哪个 role/round <strong>首次</strong>引入错误，只允许优化器改那一块。如果 agent 之间耦合很弱，先做 coupling test，别急着联合优化。</p>
+<p><strong>边界</strong>：如果 agent 交互很弱，联合优化的成本可能不划算——先测耦合强度再决定。</p>
+<hr>
+<h2 id="part-f">Part F. 怎么对待「听来的」方法</h2>
+<h3 id="12">洞见 12 · 社媒和二手文章是「线索」，不是「证据」</h3>
+<blockquote>
+<p>对应清单 I-12｜论文证据强度 B｜本项目已验证：否</p>
+</blockquote>
+<p><strong>反直觉点</strong>：一个方法在 Twitter/X、知乎、Medium 上被反复转发，<strong>只能说明它热，不能说明它有效</strong>。二手传播会放大结论、丢掉边界和版本信息。</p>
+<p><strong>它具体长什么样（示意）</strong>
+你刷到一条爆款：「GEPA 用少 35 倍的 rollout 吊打强化学习（RL）！」</p>
+<ul>
+<li><strong>当证据（错）</strong>：因为转发多、说得斩钉截铁，就直接信「GEPA 能替代 RL」。</li>
+<li><strong>当线索（对）</strong>：去翻原论文，你会发现 GEPA 其实是<strong>反思式 prompt 进化</strong>——靠执行轨迹生成自然语言反思 + Pareto 前沿选择，<strong>根本不是一个 RL 系统</strong>。「替代 RL」是传播过程中被简化出来的口号。</li>
+</ul>
+<p><strong>论文/材料怎么说</strong>
+- 本项目的 Twitter/X 批次分析记录了这个典型误读：GEPA 在社媒上被反复框成「RL 替代品 / 35x fewer rollouts」，但其机制是用执行轨迹做反思，不是策略梯度。来源：<a href="source_batches/twitter_web_analysis_20260608.md">twitter_web_analysis_20260608.md</a></p>
+<p><strong>你该怎么做</strong>
+读到一个技巧时，先抽六个字段：<code>dataset</code>、<code>metric</code>、<code>baseline</code>、<code>model</code>、<code>cost</code>、<code>failure_cases</code>。<strong>任何一个缺失，就把它降级为「线索」</strong>，只能当作「去查一手来源」的指针，不能进结论。进结论前必须追溯到论文、官方文档、代码，或本项目自己的实验。</p>
+<p><strong>边界</strong>：高质量工程博客如果<strong>自带代码、数据和可复现实验</strong>，可以升级为更强的证据——关键看它给不给可核验的细节，不看它发在哪个平台。</p>
+<hr>
+<h2 id="_4">把这些用起来：首批最小验证</h2>
+<p>上面 12 条洞见里，最值得本项目<strong>先动手验证</strong>的是这几条（成本低、错误可解释、跨渠道支撑强）：</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>验证什么</th>
+<th>对应洞见</th>
+<th>最小任务</th>
+<th>无论成败都能产出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>优化前体检（headroom/noise floor）</td>
+<td>01、02</td>
+<td>100–300 条 JSON 抽取</td>
+<td>判断有没有优化空间，校准噪声地板</td>
+</tr>
+<tr>
+<td>P0</td>
+<td>示例优化 vs 指令优化</td>
+<td>07</td>
+<td>同一抽取任务</td>
+<td>防止把示例的收益误记成指令的收益</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>直接改写 vs 根因假设改写</td>
+<td>03、04</td>
+<td>失败清晰的抽取/分类</td>
+<td>判断根因假设是否真的改善留出表现</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>只看性能 vs 加卫生门</td>
+<td>06</td>
+<td>同一候选池</td>
+<td>判断防膨胀门是否减少伪提升</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>工具 schema 优化</td>
+<td>09</td>
+<td>20–50 个相似工具</td>
+<td>判断改 schema 是否优于只改全局指令</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>过滤记忆 vs 原始记忆</td>
+<td>10</td>
+<td>两个相近任务 + 一个异质任务</td>
+<td>判断记忆是否降本，或带来负迁移</td>
+</tr>
+</tbody>
+</table>
+<p>详细实验设计见 <a href="experiment_plan.html">实验计划</a>；每条洞见的结构化证据卡见 <a href="insight_method_catalog_20260609.html">Insight / Method 候选清单</a>。</p>
+<h2 id="_5">给读者的三条总结</h2>
+<ol>
+<li><strong>「优化」之前先问「值不值得」</strong>：headroom 没超过 noise floor 就别花钱（洞见 01）。</li>
+<li><strong>改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」</strong>，不是「让模型润色一下」（洞见 03–06）。</li>
+<li><strong>更长、更多、更复杂都不是默认的好</strong>：更长的 prompt、更多的记忆、更多的 agent，都要先证明它没带来过拟合、污染或归因困难（洞见 06、08、10、11）。</li>
+</ol>
+<hr>
+<p><em>本手册所有标「示意」的例子均为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；<code>recent-preprint</code> 结论需独立复现后才能采信。证据追溯入口见各条「论文怎么说」中的文件链接。</em></p>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_handbook_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">这本手册是写给谁的</a>
+<a class="lv2" href="#_2">怎么读这本手册里的「证据」</a>
+<a class="lv2" href="#_3">一句话总结论</a>
+<a class="lv2" href="#part-a">Part A. 动手之前：这个任务值不值得优化？</a>
+<a class="lv3" href="#01">洞见 01 · 先确认有没有提升空间，再花钱跑优化器</a>
+<a class="lv3" href="#02">洞见 02 · 第一批要验证的，先选「能客观打分」的任务</a>
+<a class="lv2" href="#part-b">Part B. 怎么从失败里学到东西</a>
+<a class="lv3" href="#03">洞见 03 · 把失败样本变成「可编辑的证据」，不要只记一个分数</a>
+<a class="lv3" href="#04-prompt">洞见 04 · 先列「失败根因假设」，再改 prompt</a>
+<a class="lv2" href="#part-c">Part C. 别让模型骗你：候选选择与防膨胀</a>
+<a class="lv3" href="#05">洞见 05 · 不要采用模型给的第一版，要多生几个再用验证集选</a>
+<a class="lv3" href="#06-prompt">洞见 06 · prompt 变长、变复杂，往往是过拟合，不是进步</a>
+<a class="lv2" href="#part-d-prompt">Part D. 到底该改什么（不只是那段 prompt）</a>
+<a class="lv3" href="#07-instruction">洞见 07 · 有开发集时，选「给模型看的例子」常比改 instruction 更有效</a>
+<a class="lv3" href="#08-prompt">洞见 08 · 你要改的可能不是「那段 prompt」，先标清楚改的是哪个部件</a>
+<a class="lv3" href="#09-agent">洞见 09 · 工具调用出错时，要改的常是「工具说明」，不是 agent 指令</a>
+<a class="lv2" href="#part-e-agent">Part E. 记忆与多 agent：更多 ≠ 更好</a>
+<a class="lv3" href="#10">洞见 10 · 记住更多历史不等于更聪明——只有「过滤后的记忆」才有用</a>
+<a class="lv3" href="#11-agent">洞见 11 · 多 agent 系统出错，先找「是谁的责任」，别整个系统一起重写</a>
+<a class="lv2" href="#part-f">Part F. 怎么对待「听来的」方法</a>
+<a class="lv3" href="#12">洞见 12 · 社媒和二手文章是「线索」，不是「证据」</a>
+<a class="lv2" href="#_4">把这些用起来：首批最小验证</a>
+<a class="lv2" href="#_5">给读者的三条总结</a></aside>
+</div>
+
+</body>
+</html>

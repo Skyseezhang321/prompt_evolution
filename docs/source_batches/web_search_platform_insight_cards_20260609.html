@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>其它平台 insight / method cards · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="../analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#af6b08">其它平台渠道</span><span class="doctitle">其它平台 insight / method cards</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="insight-method-cards2026-06-09">其它平台 Insight / Method Cards：2026-06-09</h1>
+<p>本文件承接 <a href="web_search_platform_analysis_20260608.md">其它平台候选来源结构化分析</a>，按最新 insight-first 原则，把 Hugging Face、Arize/Phoenix、Promptfoo、Langfuse、Humanloop、LangChain/LangSmith、OPIK、Weaviate、Medium/Substack/LessWrong 等来源转写成可复用洞见、helpful methods、反模式和验证候选。</p>
+<p>本文件不是最终结论。它保留 source_id、主要证据、证据等级和可转验证方式，供最终报告和后续实验选择使用。详细 source cards 仍在 <a href="web_search_platform_analysis_20260608.md">其它平台候选来源结构化分析</a> 中。</p>
+<h2 id="_1">证据等级</h2>
+<p>本文件统一采用 <code>docs/insight_field_standard.md</code> 规定的 <strong>A/B/C/D</strong> 等级，不再使用早期的 <code>L1–L4</code> 自定义阶梯：</p>
+<ul>
+<li>A：原始论文、官方文档或开源项目文档，且已完成结构化笔记。</li>
+<li>B：多个独立来源重复出现的工程实践，已记录来源和适用条件。</li>
+<li>C：本项目初步实验观察，有运行记录、样例输出和失败案例。</li>
+<li>D：基于资料综合形成的推测，尚未有充分证据，必须标注为待验证。</li>
+</ul>
+<p>旧等级换算（仅供对照早期版本）：</p>
+<table>
+<thead>
+<tr>
+<th>旧 L 级</th>
+<th>含义</th>
+<th>收敛到</th>
+<th>升级条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>仅搜索 artifact 标题/摘要/域名线索</td>
+<td>D</td>
+<td>追溯到一手来源后升 B</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>已追溯官方文档/blog/cookbook/论文页并登记</td>
+<td>B</td>
+<td>完成结构化行业笔记后升 A</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>已有结构化笔记/可复现 notebook/本地源码证据</td>
+<td>A（或 B→A 过渡）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>已被论文、代码、官方文档和本项目实验交叉验证</td>
+<td>A + 本项目 C 级证据</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>当前其它平台卡片多数是 <strong>B</strong>：来自多个官方工具文档的重复工程实践，但尚未完成结构化行业笔记（升 A），也未经本项目实验验证（升 C）。它们适合进入最终报告的候选洞见和方法章节，但效果类主张仍需本项目最小实验验证。关联的 <a href="web_search_platform_analysis_20260608.md">其它平台候选来源结构化分析</a> 仍在来源层使用 <code>strong/medium/weak</code> 作为快筛状态标签，对应关系：<code>strong≈B（含可入 A 的官方来源）</code>、<code>medium≈B/D</code>、<code>weak≈D</code>。</p>
+<h2 id="_2">快速概述</h2>
+<p>其它平台批次最有价值的不是“又找到一批文章”，而是把工具生态反复强调的工程闭环抽象出来：</p>
+<ol>
+<li>Prompt optimizer 的输入不应只是 prompt，而是 <code>prompt + dataset + metric + trace + constraints</code>。</li>
+<li>Prompt management、trace、versioning 和 rollback 是自动优化的基础设施，不是事后补充。</li>
+<li>Cookbook、official docs 和 notebook 比 Medium/Substack 摘要更接近可复现证据。</li>
+<li>优化过程中的 rejected candidates、trial history、cost 和失败原因，和 best prompt 一样重要。</li>
+<li>RAG/agent 场景必须先区分 prompt problem 与 context problem，否则实验变量不可归因。</li>
+</ol>
+<h2 id="_3">结论总览</h2>
+<table>
+<thead>
+<tr>
+<th>conclusion</th>
+<th>当前判断</th>
+<th>证据等级</th>
+<th>边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>其它平台渠道最适合提供工具生态的工程闭环，而非效果证明。</td>
+<td>官方工具文档反复要求 dataset、metric、trace、versioning、rollback。</td>
+<td>B</td>
+<td>不能单独证明某个 optimizer 稳定涨分，需本项目实验。</td>
+</tr>
+<tr>
+<td>Optimizer 的输入是 <code>prompt + dataset + metric + trace + constraints</code>，不是单条 prompt。</td>
+<td>Promptfoo、Promptim、OPIK、Arize、Vertex、HF cookbook 均以此为闭环。</td>
+<td>B</td>
+<td>主观写作任务需先定义 rubric，否则 metric 不稳。</td>
+</tr>
+<tr>
+<td>Prompt management/observability 是治理层，不是效果证据。</td>
+<td>Langfuse、Humanloop、LangSmith、Arize 提供版本/trace/experiment。</td>
+<td>B</td>
+<td>带可复现 notebook 的工具文章可作方法线索，仍需重跑。</td>
+</tr>
+<tr>
+<td>Context engineering 与 prompt optimization 必须分变量。</td>
+<td>Weaviate、LangChain、12-factor agents 把 context 拆成多组件。</td>
+<td>B</td>
+<td>纯分类/抽取无外部 context 时可先做 prompt-only。</td>
+</tr>
+<tr>
+<td>厂商提升比例不可直接采信，可采信的是流程字段。</td>
+<td>Arize、OPIK、Vertex、OpenAI 文档给流程，营销标题强调百分比。</td>
+<td>B</td>
+<td>开源 notebook + 固定数据集可作复现起点。</td>
+</tr>
+<tr>
+<td>二手 posts 与社区热度是线索，不是效果证据。</td>
+<td>GEPA/DSPy 在 Medium/Substack/社区大量重复同一来源。</td>
+<td>D</td>
+<td>含代码/数据/失败分析的工程复盘可升 B。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">普通用户一眼看懂版</h2>
+<table>
+<thead>
+<tr>
+<th>具体洞见</th>
+<th>普通用户可以怎么做</th>
+<th>为什么有用</th>
+<th>证据边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>不要把 prompt 丢给优化器就结束。</td>
+<td>先准备 20-50 条样本和评分规则，再运行优化器。</td>
+<td>没有 dataset 和 metric，自动优化只是自动改写。</td>
+<td>Promptfoo、Promptim、OPIK、Arize、HF cookbook 都支持这一闭环；效果需本项目验证。</td>
+</tr>
+<tr>
+<td>每个 prompt 版本都要能解释“为什么改”。</td>
+<td>保存 diff、来源、失败样例、分数、成本、接受/拒绝原因和回滚点。</td>
+<td>线上退化时能快速回滚，也能积累可复用经验。</td>
+<td>LangSmith、Langfuse、Humanloop、Arize、OPIK 提供治理线索。</td>
+</tr>
+<tr>
+<td>看工具文章时，不要先看涨幅百分比。</td>
+<td>先找 dataset、metric、baseline、模型、成本、失败样例、validation split。</td>
+<td>厂商或博客的提升比例很难迁移，但流程字段可以迁移。</td>
+<td>Arize/OPIK 等 benchmark 只作 workflow evidence。</td>
+</tr>
+<tr>
+<td>RAG/agent 失败不一定该改 prompt。</td>
+<td>分开检查 retrieval、memory、tool output、message history、output schema。</td>
+<td>很多失败来自上下文组织，而不是 instruction 写得不够好。</td>
+<td>Weaviate、LangChain context engineering、12-factor agents 提供边界证据。</td>
+</tr>
+<tr>
+<td>保留失败和被拒候选。</td>
+<td>不只存 best prompt，还存 trial history 和 rejected reason。</td>
+<td>被拒候选能暴露 overfit、格式漂移和安全退化。</td>
+<td>OPIK OptimizationResult、Arize experiments、LangSmith commits 支持该做法。</td>
+</tr>
+<tr>
+<td>社区热度不是证据。</td>
+<td>Medium/Substack 只作为发现原始论文、代码、cookbook 的入口。</td>
+<td>多篇转述同一论文不能提高方法可信度。</td>
+<td>其它平台 artifact 中 GEPA 二手解读重复度高。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">卡片总览</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>候选 insight / method</th>
+<th>主要来源</th>
+<th>证据等级</th>
+<th>可转验证优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WPI-01</td>
+<td>Optimizer intake 必须先检查 dataset、metric、baseline 和约束。</td>
+<td>Promptfoo、Promptim、OPIK、Arize、HF cookbook</td>
+<td>B</td>
+<td>high</td>
+</tr>
+<tr>
+<td>WPI-02</td>
+<td>Prompt version 的最小账本应绑定 trace、eval、成本和回滚点。</td>
+<td>LangSmith、Langfuse、Humanloop、Arize、OPIK</td>
+<td>B</td>
+<td>high</td>
+</tr>
+<tr>
+<td>WPI-03</td>
+<td>Trial history 和 rejected candidates 是 optimizer 的学习资料。</td>
+<td>OPIK、Arize、LangSmith、Promptfoo</td>
+<td>B</td>
+<td>high</td>
+</tr>
+<tr>
+<td>WPI-04</td>
+<td>Cookbook-first triage 比读二手摘要更适合作为研究入口。</td>
+<td>Hugging Face cookbook/blog、Arize/Phoenix cookbooks</td>
+<td>B</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>WPI-05</td>
+<td>Prompt management/observability 是治理层，不是自动优化效果证据。</td>
+<td>Langfuse、Humanloop、LangSmith、Arize</td>
+<td>B</td>
+<td>high</td>
+</tr>
+<tr>
+<td>WPI-06</td>
+<td>Context engineering 与 prompt optimization 要分变量验证。</td>
+<td>Weaviate、LangChain docs、12-factor agents</td>
+<td>B</td>
+<td>high</td>
+</tr>
+<tr>
+<td>WPI-07</td>
+<td>Vendor benchmark 可采流程，不直接采信提升比例。</td>
+<td>Arize、OPIK、Vertex、OpenAI docs</td>
+<td>B</td>
+<td>high</td>
+</tr>
+<tr>
+<td>WPI-08</td>
+<td>Secondary posts 的主要价值是传播地图和原始来源发现。</td>
+<td>Medium/Substack/LessWrong/HF forum</td>
+<td>D</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>WPI-09</td>
+<td>工具选择应按阶段匹配，不要一开始引入重平台。</td>
+<td>Promptfoo、Promptim、Langfuse、Humanloop、Arize、OPIK</td>
+<td>B</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>WPI-10</td>
+<td>Judge prompt 也应被版本化、评估和优化。</td>
+<td>Arize LLM-as-a-Judge、OPIK G-Eval、OpenAI graders</td>
+<td>B</td>
+<td>high</td>
+</tr>
+</tbody>
+</table>
+<h2 id="helpful-methods">Helpful Methods</h2>
+<p>字段口径以 <code>docs/insight_field_standard.md</code> 的 helpful method schema 为准（必填：<code>name</code>、<code>insight_supported</code>、<code>problem</code>、<code>recommended_when</code>、<code>not_recommended_when</code>、<code>required_inputs</code>、<code>implementation_steps</code>、<code>evaluation_metrics</code>、<code>risks</code>、<code>misuse_or_anti_pattern</code>、<code>rollback_plan</code>、<code>evidence</code>）。</p>
+<h3 id="whm-01optimizer-intake-checklist">WHM-01：Optimizer Intake Checklist</h3>
+<pre><code class="language-yaml">name: Optimizer Intake Checklist
+insight_supported: WPI-01
+problem: 用户常把 prompt 直接丢给优化器，没有 dataset、metric、baseline 和约束，结果只是自动改写。
+recommended_when: 准备使用 Promptfoo、Promptim、OPIK、Arize、Vertex、OpenAI Prompt Optimizer、DSPy/GEPA 等工具优化会重复使用的 prompt。
+not_recommended_when: 一次性创意写作、无评分器、无失败样本，或任务目标/约束尚未定义。
+required_inputs:
+  - 任务定义与不可自动改写的约束
+  - 最小 dataset：正常样本、边界样本、历史失败样本
+  - baseline prompt、模型、参数、输出 schema
+  - metric 或 rubric，并记录评分器版本
+  - train/dev/test 切分
+implementation_steps:
+  - 写清任务和不可自动改写的约束
+  - 准备并切分 dataset，优化器只能看 train
+  - 固定 baseline prompt、模型、参数和输出 schema
+  - 定义 metric 或 rubric，记录评分器版本
+  - 运行优化后记录 best prompt、所有候选、分数、成本、失败样例和拒绝原因
+evaluation_metrics:
+  - dev/test score（dev 提升且 test 不掉分）
+  - format_error_rate、safety_failure_rate
+  - cost_delta、latency_delta
+  - 人工可解释采用理由的比例
+risks:
+  - 只给 3-5 条 happy path 导致局部补丁
+  - 只看平均分掩盖边界失败
+  - 同时改 prompt/examples/schema/evaluator 失去归因能力
+misuse_or_anti_pattern: 没有 eval 时直接让模型“优化一下 prompt”。
+rollback_plan: 保留 baseline prompt 与每个 accepted/rejected 候选；test 掉分则回退到 baseline。
+evidence: practice-promptfoo-optimization、practice-langchain-promptim、practice-opik-optimizer-overview、practice-arize-phoenix-prompt-optimization-techniques、practice-hf-dspy-gepa-cookbook（B）。
+next_experiment: 用 100-300 条结构化抽取或分类样本，对比手工 prompt、直接 rewrite、checklist-gated optimizer 三种流程。
+</code></pre>
+<h3 id="whm-02prompt-version-ledger">WHM-02：Prompt Version Ledger</h3>
+<pre><code class="language-yaml">name: Prompt Version Ledger
+insight_supported: WPI-02, WPI-03
+problem: 只存 prompt 文本无法复现线上行为，被拒候选丢失后也无法积累可复用经验。
+recommended_when: 任何需要多人协作、长期维护或上线的 prompt。
+not_recommended_when: 一次性探索型 prompt 草稿（但一旦进入 eval 或报告结论必须补齐账本）。
+required_inputs:
+  - prompt_id、version、owner、model、parameters、tools、output_schema
+  - prompt diff 和修改原因
+  - eval run、dataset split、trace sample、成本、失败样例
+implementation_steps:
+  - 为每个 prompt 版本记录 prompt_id/version/owner/model/parameters/tools/output_schema
+  - 记录 prompt diff 和修改原因
+  - 绑定 eval run、dataset split、trace sample、成本和失败样例
+  - 记录 adoption decision：accepted/rejected/rolled_back/needs_more_data
+  - 保留 rollback target 和触发回滚的指标
+evaluation_metrics:
+  - 线上回归可追到具体 prompt/model/schema 改动的比例
+  - rejected 候选可复查率
+  - rollback 定位时间
+risks:
+  - 只存文本不存模型/参数/tools/schema 仍无法复现
+  - 只依赖平台 UI 不导出本地 artifact，影响长期可追踪性
+misuse_or_anti_pattern: 把 prompt 当临时文本直接覆盖线上版本。
+rollback_plan: 每个 production prompt 保留 parent 和上一稳定版本，按 ledger 恢复。
+evidence: practice-langsmith-prompts、practice-langfuse-prompt-management、practice-langfuse-prompt-tracing、practice-humanloop-prompts、practice-arize-ax-prompt-learning、practice-opik-optimizer-overview（B）。
+next_experiment: 为后续 optimizer runner 增加 prompt_runs.jsonl，每条候选记录 diff、score、cost、failures、decision 和 rollback target。
+</code></pre>
+<h3 id="whm-03context-first-diagnosis">WHM-03：Context First Diagnosis</h3>
+<pre><code class="language-yaml">name: Context First Diagnosis
+insight_supported: WPI-06
+problem: RAG/agent/tool-use 失败常被误归因为 prompt 写得不好，实际可能来自 retrieval、memory、tool output 或 history compression。
+recommended_when: RAG、agent、tool-use、长上下文任务中 prompt 改写效果不稳定或失败类型混杂。
+not_recommended_when: 单轮纯文本分类且上下文固定、无外部 context 的任务。
+required_inputs:
+  - 失败样例与 trace（检索命中、工具输入输出、中间判断、最终输出、judge 理由）
+  - 当前 prompt、retrieval、memory、tool output、history、output schema 记录
+implementation_steps:
+  - 先把失败归因字段拆开：instruction/retrieval/memory/tool output/history compression/output schema/judge rubric
+  - 每次只改一个组件
+  - 对每个失败样例记录完整 trace
+  - 若错误来自 context，不写成 prompt optimizer 的收益或失败
+evaluation_metrics:
+  - failure owner 分布（能否定位失败组件）
+  - prompt-only fix 与 context fix 的效果可分离度
+  - 归因清晰度、token、工具误用率
+risks:
+  - 同一次实验同时改 prompt/retriever/memory/tool schema 导致不可归因
+  - 把“上下文变好”误记为“prompt optimizer 更有效”
+misuse_or_anti_pattern: 看到失败就改 system prompt。
+rollback_plan: 每层改动独立 commit 或独立 prompt/context version，可逐层回退。
+evidence: practice-weaviate-context-engineering、practice-langchain-agent-context-engineering、practice-langchain-deepagents-context-engineering、repo-humanlayer-12-factor-agents（B）。
+next_experiment: 同一 RAG/agent 小任务上对比 prompt-only、context-only、prompt+context 三组，检查成功率、token、工具误用和归因清晰度。
+</code></pre>
+<h3 id="whm-04source-triage-rule-for-blogs-and-tools">WHM-04：Source Triage Rule for Blogs and Tools</h3>
+<pre><code class="language-yaml">name: Source Triage Rule for Blogs and Tools
+insight_supported: WPI-04, WPI-07, WPI-08
+problem: 二手博客和工具营销文章容易把论文/工具主张压缩成标题，导致证据强度被高估。
+recommended_when: 阅读 Medium/Substack、产品博客、工具榜单、社媒推荐时。
+not_recommended_when: 已经是原始论文、官方文档、固定 commit 源码或本项目运行记录。
+required_inputs:
+  - 来源 URL、标题、摘要、声称的方法与结果
+  - 可复现字段核查：dataset、metric、code、notebook、失败案例、成本、version/rollback
+implementation_steps:
+  - 判断来源类型：official docs/cookbook/paper page/forum/practitioner blog/paper digest/marketing
+  - 对非官方来源只抽取可复现字段，缺失则降级为线索
+  - 有实验配置的文章进入候选，只复述论文摘要的降级为 weak
+  - 工具榜单只用于发现官方 docs，不直接引用排名或推荐语
+evaluation_metrics:
+  - 最终报告引用一手来源/可复现流程的比例
+  - 被追溯到一手来源的二手主张比例
+  - 因缺字段被降级的条目数
+risks:
+  - 把 GEPA/DSPy 的重复解读当成独立证据
+  - 把工具营销文章里的性能提升当成稳定结论
+misuse_or_anti_pattern: 因为文章写得清楚或热度高就直接写成 conclusion。
+rollback_plan: 对每条结论保留 source_id 和 evidence level；无法补证时从 conclusion 降级为 hypothesis 或 observation。
+evidence: candidate-web-search-* GEPA duplicates group、Microsoft APO Medium group、tool-list Medium group、Hugging Face/Arize/OPIK 官方来源（D，传播观察）。
+next_experiment: 抽样 10 篇 Medium/Substack，把主张追溯到论文或 docs，统计能保留为 method evidence 的比例。
+</code></pre>
+<h2 id="insight-cards">详细 Insight Cards</h2>
+<h3 id="wpi-01optimizer-intake-datasetmetricbaseline">WPI-01：Optimizer intake 必须先检查 dataset、metric、baseline 和约束</h3>
+<ul>
+<li>insight：自动优化前先定义评价问题，而不是先生成候选 prompt。</li>
+<li>user_facing_one_liner：没有测试集和评分规则，就不要启动 prompt optimizer。</li>
+<li>phenomenon：官方优化工具几乎都要求 dataset、metric/evaluator、baseline prompt 或现有 eval config。</li>
+<li>mechanism：optimizer 需要反馈信号选择候选；没有反馈信号时，候选只是风格不同的改写。</li>
+<li>actionable_rule：任何 optimizer run 都必须先通过 WHM-01 checklist。</li>
+<li>counterexample_or_limit：开放写作和品牌语气任务可先做人工 pairwise rubric，但仍要固定评价口径。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：Promptfoo optimization、LangChain Promptim、OPIK optimizer overview、Arize Phoenix cookbook、HF DSPy GEPA cookbook。</li>
+<li>validation_or_demo：结构化抽取或分类任务上，对比 no-eval rewrite 与 eval-gated optimizer。</li>
+</ul>
+<h3 id="wpi-02prompt-version-traceeval">WPI-02：Prompt version 的最小账本应绑定 trace、eval、成本和回滚点</h3>
+<ul>
+<li>insight：prompt 不是文本片段，而是一个带上下文的可追踪变更对象。</li>
+<li>user_facing_one_liner：每个 prompt 版本都要像代码 commit 一样可解释、可回滚。</li>
+<li>phenomenon：LangSmith、Langfuse、Humanloop、Arize 和 OPIK 都强调 prompt version、trace、dataset/evaluator 或 experiment 关联。</li>
+<li>mechanism：prompt 效果依赖模型、参数、tools、schema 和输入分布；只存文本无法复现线上行为。</li>
+<li>actionable_rule：采用 WHM-02 ledger 字段作为后续实验和报告的最小记录标准。</li>
+<li>counterexample_or_limit：一次性探索型 prompt 草稿可简化，但一旦进入 eval 或报告结论，必须补齐账本。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：LangSmith manage prompts、Langfuse prompt tracing、Humanloop prompts/evaluators、Arize AX prompt learning、OPIK OptimizationResult。</li>
+<li>validation_or_demo：在同一 prompt 变体上模拟一次回滚，验证是否能定位触发指标和目标版本。</li>
+</ul>
+<h3 id="wpi-03trial-history-rejected-candidates-optimizer">WPI-03：Trial history 和 rejected candidates 是 optimizer 的学习资料</h3>
+<ul>
+<li>insight：只保存 best prompt 会丢失最有价值的失败证据。</li>
+<li>user_facing_one_liner：被拒绝的 prompt 也要保存，因为它告诉你优化器容易犯什么错。</li>
+<li>phenomenon：OPIK、Arize、LangSmith/Promptim 等都把 experiments、trials、history、scores 或 commits 当作流程对象。</li>
+<li>mechanism：失败候选可暴露 overfit、schema drift、成本膨胀、安全退化和 judge gaming。</li>
+<li>actionable_rule：每次 optimizer run 至少保留 top candidates、rejected candidates、score deltas、failure tags 和 rejection reason。</li>
+<li>counterexample_or_limit：超大规模搜索可先抽样保留，但必须保留决策摘要和代表失败。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：OPIK optimizer overview、Arize experiments、Promptim/LangSmith tracking、Promptfoo baseline/candidate eval。</li>
+<li>validation_or_demo：人工审查 best-only ledger 与 full-trial ledger，比较能否解释 test 掉分。</li>
+</ul>
+<h3 id="wpi-04cookbook-first-triage">WPI-04：Cookbook-first triage 比读二手摘要更适合作为研究入口</h3>
+<ul>
+<li>insight：可运行 cookbook 和 official blog 更接近实验入口，二手摘要更适合传播观察。</li>
+<li>user_facing_one_liner：先找 notebook 和官方 docs，再读解读文章。</li>
+<li>phenomenon：Hugging Face GEPA cookbook 和 cross-encoder blog 包含任务、数据、metric 和 optimizer 配置；大量 Medium/Substack 只复述 GEPA 论文结论。</li>
+<li>mechanism：cookbook 暴露可复现变量，二手摘要通常省略失败案例、成本和评估边界。</li>
+<li>actionable_rule：来源快筛时优先保留 official docs/cookbook；secondary posts 必须追溯原文。</li>
+<li>counterexample_or_limit：高质量 practitioner blog 若含代码、成本、失败和生产流程，可保留为 medium source。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：HF DSPy GEPA cookbook、HF DSPy + cross-encoders blog、GEPA duplicate group。</li>
+<li>validation_or_demo：同一主题下比较 cookbook 与 5 篇二手解读能提供多少记录字段。</li>
+</ul>
+<h3 id="wpi-05prompt-managementobservability">WPI-05：Prompt management/observability 是治理层，不是自动优化效果证据</h3>
+<ul>
+<li>insight：工具平台能提高可审计性，但不能单独证明 optimizer 有效。</li>
+<li>user_facing_one_liner：平台让你管好 prompt，不等于它证明 prompt 变好了。</li>
+<li>phenomenon：Langfuse、Humanloop、LangSmith、Arize 提供 versioning、trace、dataset、experiment、monitoring；这些是流程证据，不是跨任务效果证据。</li>
+<li>mechanism：治理工具降低回滚和审计成本，但性能收益仍取决于任务、数据和 evaluator。</li>
+<li>actionable_rule：最终报告引用工具文档时写“治理闭环”，不写“效果已证明”。</li>
+<li>counterexample_or_limit：带明确 benchmark 和可复现 notebook 的工具文章可以作为方法线索，但仍需本项目重跑。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：Langfuse docs、Humanloop docs、LangSmith docs、Arize docs。</li>
+<li>validation_or_demo：同一 prompt 优化流程在有/无 ledger 与 trace 的情况下比较审查成本和回滚速度。</li>
+</ul>
+<h3 id="wpi-06context-engineering-prompt-optimization">WPI-06：Context engineering 与 prompt optimization 要分变量验证</h3>
+<ul>
+<li>insight：agent/RAG 失败经常来自上下文组织，不一定来自 instruction。</li>
+<li>user_facing_one_liner：先查模型看到了什么，再决定要不要改 prompt。</li>
+<li>phenomenon：Weaviate 和 LangChain 文档把 context 拆成 retrieval、memory、tools、messages、state、response format 等组件。</li>
+<li>mechanism：当错误来自检索缺失或 tool output 格式混乱时，改 prompt 可能只是掩盖问题。</li>
+<li>actionable_rule：RAG/agent 实验必须记录 context variable，并至少比较 prompt-only 与 context-only。</li>
+<li>counterexample_or_limit：纯分类/抽取任务如果没有外部 context，可以先做 prompt-only optimizer。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：Weaviate context engineering、LangChain context engineering docs、12-factor agents。</li>
+<li>validation_or_demo：同一 RAG 任务分别改 prompt、retrieval prompt、tool result schema，比较失败归因。</li>
+</ul>
+<h3 id="wpi-07vendor-benchmark">WPI-07：Vendor benchmark 可采流程，不直接采信提升比例</h3>
+<ul>
+<li>insight：厂商材料的最大价值是暴露工作流字段，而不是证明提升幅度会迁移。</li>
+<li>user_facing_one_liner：看到“提升 184%”先问用的是什么数据和评分器。</li>
+<li>phenomenon：Arize、OPIK、Vertex、OpenAI 等产品文档提供流程；营销或 benchmark 标题常强调提升比例。</li>
+<li>mechanism：任务、模型、数据分布、evaluator 和成本预算不同，提升比例不可直接迁移。</li>
+<li>actionable_rule：从厂商材料抽取 required_inputs、implementation_steps、evaluation_metrics、rollback_plan，而不是抽取结论百分比。</li>
+<li>counterexample_or_limit：开源 notebook、固定数据集和完整配置可作为复现实验起点。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：Arize GEPA vs Prompt Learning、OPIK optimizer docs、Vertex/OpenAI prompt optimizer docs、Medium OPIK article group。</li>
+<li>validation_or_demo：选一条厂商流程，用本项目任务复跑，只比较流程可用性和边界。</li>
+</ul>
+<h3 id="wpi-08secondary-posts">WPI-08：Secondary posts 的主要价值是传播地图和原始来源发现</h3>
+<ul>
+<li>insight：二手博客不应直接进入证据链，但可以帮助发现用户误解和传播重点。</li>
+<li>user_facing_one_liner：社区文章告诉你大家怎么理解，不告诉你方法是否一定有效。</li>
+<li>phenomenon：GEPA、DSPy、MIPRO、Microsoft APO 在 Medium/Substack 中大量重复出现。</li>
+<li>mechanism：传播材料会简化术语、夸大收益、漏掉实验边界，但能暴露哪些概念最容易误用。</li>
+<li>actionable_rule：将 secondary posts 标为 weak/social signal，除非它包含代码、dataset、metric、cost 或失败案例。</li>
+<li>counterexample_or_limit：工程师个人复盘若有真实生产数据和失败分析，可升为 medium。</li>
+<li>evidence_strength：D。</li>
+<li>main_sources：GEPA Medium/Substack duplicate group、Microsoft APO group、HF forum/practitioner blog candidates。</li>
+<li>validation_or_demo：对 secondary posts 做误解标签，例如“GEPA=RL 替代品”“DSPy=自动写 prompt”，并回到一手来源校正。</li>
+</ul>
+<h3 id="wpi-09">WPI-09：工具选择应按阶段匹配，不要一开始引入重平台</h3>
+<ul>
+<li>insight：不同工具解决的是不同成熟度的问题。</li>
+<li>user_facing_one_liner：小项目先用简单 eval gate，别一开始上完整平台。</li>
+<li>phenomenon：Promptfoo 偏轻量 CLI eval/optimization；Promptim 偏 prompt optimization library；Langfuse/Humanloop/LangSmith 偏治理和追踪；Arize/OPIK 覆盖 experiment/optimizer dashboard。</li>
+<li>mechanism：早期最缺的是小数据和评分器；后期才需要多人协作、prompt hub、observability 和 rollback。</li>
+<li>actionable_rule：先满足 eval gate，再引入 prompt management，再考虑 optimizer SDK 和 observability 平台。</li>
+<li>counterexample_or_limit：已有线上流量和多人 prompt 协作的团队可以更早引入治理平台。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：Promptfoo、Promptim、Langfuse、Humanloop、LangSmith、Arize、OPIK docs。</li>
+<li>validation_or_demo：把第一版实验拆成 three-tier tool path：config-only、library optimizer、platform-integrated。</li>
+</ul>
+<h3 id="wpi-10judge-prompt">WPI-10：Judge prompt 也应被版本化、评估和优化</h3>
+<ul>
+<li>insight：评分器本身是 prompt 优化闭环中最危险的可变对象之一。</li>
+<li>user_facing_one_liner：评委 prompt 也会偏，也要测试和版本管理。</li>
+<li>phenomenon：Arize LLM-as-a-Judge prompt optimization、OPIK G-Eval、OpenAI graders 都把 judge/rubric 作为明确对象。</li>
+<li>mechanism：如果 judge prompt 漂移或被优化器过拟合，prompt 改写的分数提升会变成伪提升。</li>
+<li>actionable_rule：业务 prompt 和 judge prompt 分开版本化；优化业务 prompt 时冻结 judge；优化 judge 时使用人工校准样本。</li>
+<li>counterexample_or_limit：规则评分或 exact match 任务风险较低，但仍需记录 scorer 版本。</li>
+<li>evidence_strength：B。</li>
+<li>main_sources：Arize Phoenix LLM-as-a-Judge prompt optimization、OPIK G-Eval、OpenAI graders、Promptfoo assertions。</li>
+<li>validation_or_demo：构造固定业务 prompt，分别改业务 prompt 和 judge prompt，观察分数变化是否代表真实质量变化。</li>
+</ul>
+<h2 id="_6">反模式</h2>
+<table>
+<thead>
+<tr>
+<th>anti_pattern</th>
+<th>为什么危险</th>
+<th>替代做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>把 prompt 丢给优化器就结束。</td>
+<td>没有 dataset 和 metric 时，自动优化只是风格化改写。</td>
+<td>先过 WHM-01 Optimizer Intake Checklist。</td>
+</tr>
+<tr>
+<td>采信厂商“提升 X%”的标题。</td>
+<td>任务、模型、数据分布和 evaluator 不同，提升比例不可迁移。</td>
+<td>只抽取 required_inputs/steps/metrics/rollback 流程字段（WPI-07）。</td>
+</tr>
+<tr>
+<td>把工具平台能力当作 optimizer 效果证据。</td>
+<td>versioning/trace/dashboard 是治理，不证明 prompt 变好。</td>
+<td>引用时写“治理闭环”，效果回到本项目实验（WPI-05）。</td>
+</tr>
+<tr>
+<td>把社区/二手转述当独立证据。</td>
+<td>多篇转述同一来源只代表热度，不提高可信度。</td>
+<td>标为 source pointer，追溯一手来源（WHM-04）。</td>
+</tr>
+<tr>
+<td>在 RAG/agent 里一上来就改 system prompt。</td>
+<td>失败可能来自检索/记忆/工具输出，改 prompt 只是掩盖。</td>
+<td>先做 WHM-03 Context First Diagnosis 拆变量。</td>
+</tr>
+<tr>
+<td>优化业务 prompt 时让 judge prompt 一起漂移。</td>
+<td>judge 被优化器过拟合会制造伪提升。</td>
+<td>业务 prompt 与 judge prompt 分开版本化、冻结其一（WPI-10）。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">广搜渠道覆盖与缺口</h2>
+<p>「其它平台」批次由两类渠道组成：web_search（Brave 域名定向）和通用社区广搜（Hacker News / Stack Exchange / RSS / Reddit / dev.to）。前者是本文件主体；后者本轮净新增信号有限，但<strong>不应静默丢弃</strong>，故在此登记覆盖与缺口（满足 <code>docs/source_collection_plan.md</code> 的缺口分析要求）。</p>
+<table>
+<thead>
+<tr>
+<th>渠道</th>
+<th>采集量</th>
+<th>处理深度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>web_search</td>
+<td>465</td>
+<td>深读+卡片</td>
+<td>压缩为 30-50 条 source cards，见 <a href="web_search_platform_analysis_20260608.md">结构化分析</a>。</td>
+</tr>
+<tr>
+<td>hackernews</td>
+<td>~24</td>
+<td>快筛未深读</td>
+<td>见 <code>artifacts/source_search/source_candidates_20260608_083113.*</code>。</td>
+</tr>
+<tr>
+<td>stackexchange</td>
+<td>1</td>
+<td>快筛</td>
+<td>同上。</td>
+</tr>
+<tr>
+<td>rss</td>
+<td>1</td>
+<td>快筛</td>
+<td>同上。</td>
+</tr>
+<tr>
+<td>reddit / dev.to</td>
+<td>0</td>
+<td>命中为空</td>
+<td>本轮查询未返回相关结果。</td>
+</tr>
+<tr>
+<td>x_api</td>
+<td>未跑</td>
+<td>—</td>
+<td>需 <code>X_BEARER_TOKEN</code>；Twitter/X 信号已由独立 <code>twitter_web</code> 渠道覆盖。</td>
+</tr>
+</tbody>
+</table>
+<p>通用社区批次（26 条）的信号判断：</p>
+<ul>
+<li><strong>高重复</strong>：约一半是 GEPA 转贴（substack/HN/observablehq/podcast/HF cookbook/optimize_anything），均指向已覆盖的 GEPA 论文或 cookbook，按 WHM-04 降级为 pointer。</li>
+<li><strong>已入库或已覆盖</strong>：Promptbreeder、Promptomatix（已在 <code>source_inventory.md</code>）；Weaviate context engineering、OPIK agent optimizer（已在 web_search 批次）。</li>
+<li><strong>低信号产品发布</strong>：Promptify 插件、SimplAI、UltraContext、InsForge、EvoAgents、Openlayer 等 Show HN，缺评估字段，不入证据链。</li>
+<li><strong>净新增（值得登记）</strong>：</li>
+<li><code>Amazon Bedrock advanced prompt optimization and migration tool</code>（RSS / AWS blog）——一个尚未覆盖的厂商 optimizer，补充 WPI-07/09 工具地图。</li>
+<li><code>Vertex AI Prompt Optimizer: lock sections via placeholder_to_content</code>（Stack Overflow）——对应「冻结/可变段落」边界，呼应 frozen-evaluator / mutable-object 约束。</li>
+<li><code>Ask HN: What tools are you using for AI evals? Everything feels half-baked</code>——社区痛点信号，佐证 WPI-01/WPI-05「eval 基础设施不成熟、需自建闭环」。</li>
+</ul>
+<p><strong>缺口（诚实标注）</strong>：</p>
+<ol>
+<li>真实失败案例 / 事故复盘来自社区渠道的覆盖不足。<code>source_collection_plan.md</code> 覆盖矩阵要求「失败案例/反面经验 ≥5 个来源」，目前其它平台渠道贡献的多是工具流程，缺 production 踩坑一手叙述。</li>
+<li>Reddit、dev.to 本轮零命中，x_api 未跑——社区讨论维度（尤其英文实践者的失败故事）尚未真正采集。</li>
+<li>上述 3 条净新增仅完成登记，未深读核验；进入结论前需追溯一手来源并补字段。</li>
+</ol>
+<p><strong>后续建议</strong>：若优先补失败案例，针对性查 Reddit（r/LocalLLaMA、r/MachineLearning）、HN 评论区和 Ask HN eval/optimizer 线程，而非再泛搜一轮工具榜单。</p>
+<h2 id="_8">进入最终报告的建议</h2>
+<ul>
+<li>WPI-01、WPI-02、WPI-06、WPI-10 可作为核心 insights。</li>
+<li>WHM-01、WHM-02、WHM-03 可作为 helpful methods。</li>
+<li>WPI-05、WPI-07、WPI-08 可作为证据边界和 anti-patterns。</li>
+<li>WPI-03、WPI-09 可作为后续实验 runner 和工具选型约束。</li>
+</ul>
+<h2 id="_9">后续动作</h2>
+<ol>
+<li>将 WHM-01 和 WHM-02 合并进第一版最小实验设计，形成 optimizer intake + prompt ledger。</li>
+<li>对 HF DSPy GEPA cookbook、Promptfoo optimization、Arize Phoenix prompt optimization、OPIK optimizer overview、Langfuse prompt experiments 写 3-5 篇行业笔记。</li>
+<li>在最终报告中不要单列工具清单作为主内容；先展示 WPI/WHM 卡片，再把工具作为证据索引。</li>
+<li>选择 1 个结构化任务做验证：比较 no-eval rewrite、eval-gated rewrite、ledger+trace rewrite 三种流程。</li>
+</ol>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/source_batches/web_search_platform_insight_cards_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="../analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">证据等级</a>
+<a class="lv2" href="#_2">快速概述</a>
+<a class="lv2" href="#_3">结论总览</a>
+<a class="lv2" href="#_4">普通用户一眼看懂版</a>
+<a class="lv2" href="#_5">卡片总览</a>
+<a class="lv2" href="#helpful-methods">Helpful Methods</a>
+<a class="lv3" href="#whm-01optimizer-intake-checklist">WHM-01：Optimizer Intake Checklist</a>
+<a class="lv3" href="#whm-02prompt-version-ledger">WHM-02：Prompt Version Ledger</a>
+<a class="lv3" href="#whm-03context-first-diagnosis">WHM-03：Context First Diagnosis</a>
+<a class="lv3" href="#whm-04source-triage-rule-for-blogs-and-tools">WHM-04：Source Triage Rule for Blogs and Tools</a>
+<a class="lv2" href="#insight-cards">详细 Insight Cards</a>
+<a class="lv3" href="#wpi-01optimizer-intake-datasetmetricbaseline">WPI-01：Optimizer intake 必须先检查 dataset、metric、baseline 和约束</a>
+<a class="lv3" href="#wpi-02prompt-version-traceeval">WPI-02：Prompt version 的最小账本应绑定 trace、eval、成本和回滚点</a>
+<a class="lv3" href="#wpi-03trial-history-rejected-candidates-optimizer">WPI-03：Trial history 和 rejected candidates 是 optimizer 的学习资料</a>
+<a class="lv3" href="#wpi-04cookbook-first-triage">WPI-04：Cookbook-first triage 比读二手摘要更适合作为研究入口</a>
+<a class="lv3" href="#wpi-05prompt-managementobservability">WPI-05：Prompt management/observability 是治理层，不是自动优化效果证据</a>
+<a class="lv3" href="#wpi-06context-engineering-prompt-optimization">WPI-06：Context engineering 与 prompt optimization 要分变量验证</a>
+<a class="lv3" href="#wpi-07vendor-benchmark">WPI-07：Vendor benchmark 可采流程，不直接采信提升比例</a>
+<a class="lv3" href="#wpi-08secondary-posts">WPI-08：Secondary posts 的主要价值是传播地图和原始来源发现</a>
+<a class="lv3" href="#wpi-09">WPI-09：工具选择应按阶段匹配，不要一开始引入重平台</a>
+<a class="lv3" href="#wpi-10judge-prompt">WPI-10：Judge prompt 也应被版本化、评估和优化</a>
+<a class="lv2" href="#_6">反模式</a>
+<a class="lv2" href="#_7">广搜渠道覆盖与缺口</a>
+<a class="lv2" href="#_8">进入最终报告的建议</a>
+<a class="lv2" href="#_9">后续动作</a></aside>
+</div>
+
+</body>
+</html>

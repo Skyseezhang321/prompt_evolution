@@ -39,7 +39,7 @@ evidence_level：results-diagnostic-framework-read
 
 ## 方法摘要
 
-- 候选如何生成：APE、OPRO、EvoPrompt、PromptBreeder、DSPy-style、PROSE 等方法。
+- 候选如何生成：APE、OPRO、EvoPrompt、PromptBreeder、DSPy-style、PROSE 等方法。注意 **PROSE 是本论文作者自建的内部基线**（PRompt Optimization via Structured Evolution，结构化分解 + 多算子进化 + 风险感知选择），非独立外部方法，完整细节见 Appendix C；方法级拆解与定位见 [[paper-prose-2026]]，六法横向对比见 `docs/classic_optimizer_methods_comparison_20260610.md`。
 - 反馈如何获得：20 training questions / 100 test questions，LLM judge 评分。
 - 如何选择候选：各 optimizer 按其策略选择；作者另提出诊断流程。
 - 是否使用记忆/archive：取决于 baseline 方法；论文重点不是 memory。

@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知乎洞见与方法卡片 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="../analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#b44a5c">知乎渠道</span><span class="doctitle">知乎洞见与方法卡片</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="_1">知乎候选材料洞见与方法卡片</h1>
+<p>更新时间：2026-06-10</p>
+<p>关联文档：<a href="zhihu_three_layer_analysis_20260608.md">知乎候选材料三层分析</a></p>
+<p>2026-06-10 修订：(1) <code>evidence_strength</code> 由 ZH-L1..L4 收敛到规范 A/B/C/D（见证据边界节），并为每张卡补 <code>main_sources</code>；(2) 新增 [ZHI ↔ 全渠道 catalog 交叉对照] 防重复计数；(3) [重点追溯对象] 表接上仓库内已登记 source_id 与已存在的结构化笔记。注：保留候选登记进 <code>source_inventory.md</code> 与 <code>CHANGELOG.md</code> 条目因该文件正被其它渠道并发编辑，本次未一并改动，留待其干净后补。</p>
+<p>原始 artifact：</p>
+<ul>
+<li><code>artifacts/source_search/source_candidates_20260608_132914.jsonl</code></li>
+<li><code>artifacts/source_search/source_candidates_20260608_132914.md</code></li>
+</ul>
+<h2 id="_2">文档目标</h2>
+<p>本文把知乎批次从“来源摘要”重写为更贴近最终报告的材料：insights、conclusions、helpful methods、anti-patterns 和最小验证候选。</p>
+<p>知乎批次的主要价值不是证明某个 prompt optimizer 有效，而是观察中文社区如何理解、传播、误解和使用 prompt optimization、GEPA、DSPy、context engineering 与 agent self-evolution。进入最终报告时，知乎材料应优先贡献问题意识、通俗表达、反模式和深读线索；性能、收益和适用边界必须由论文、官方文档、代码或本项目实验补证据。</p>
+<h2 id="_3">证据边界</h2>
+<p>本批次基于 Brave Search 返回的标题和摘要。直接访问部分知乎链接时遇到 403，因此当前证据等级偏低。</p>
+<p><strong>evidence_strength 统一用规范的 A/B/C/D</strong>（定义见 <a href="../insight_field_standard.html">insight_field_standard.md</a> 第四节）。知乎渠道此前使用的 ZH-L1..L4 只表示”溯源进度”，不是独立的证据强度标度，按下表映射到规范等级；各卡正文的 <code>evidence_strength</code> 字段以映射后的 A/B/C/D 为准，不再使用 ZH-Lx 取值。</p>
+<table>
+<thead>
+<tr>
+<th>溯源进度（ZH-Lx）</th>
+<th>含义</th>
+<th>映射到 evidence_strength</th>
+<th>当前用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZH-L1</td>
+<td>仅基于搜索标题、摘要、URL 和主题聚类</td>
+<td>D</td>
+<td>发现中文社区问题意识、传播口径和候选追溯对象</td>
+</tr>
+<tr>
+<td>ZH-L2</td>
+<td>已读全文，且本地记录快照路径、SHA256 和结构化摘要</td>
+<td>D（单一二手来源，仍不证明效果）</td>
+<td>可写行业经验笔记</td>
+</tr>
+<tr>
+<td>ZH-L3</td>
+<td>已追溯到原论文、官方文档、代码或可运行示例</td>
+<td>B（一手来源已做结构化笔记时可达 A）</td>
+<td>可支持方法背景和证据链</td>
+</tr>
+<tr>
+<td>ZH-L4</td>
+<td>与其它渠道或本项目实验互相印证</td>
+<td>A</td>
+<td>可进入最终报告的核心 conclusion</td>
+</tr>
+</tbody>
+</table>
+<p>批次说明：本批多数卡片溯源进度仍为 ZH-L1（即 evidence_strength D）；少数已能指向仓库内已提交的结构化笔记（如 GEPA、MemAPO/SePO）记为 B。各卡 <code>main_sources</code> 给出当前可追溯到的仓库内文件或 source_id；溯源补齐前，凡涉及”超过 RL””大幅提升””自动进化””生产可用”等主张都不得写入最终报告核心结论。</p>
+<h2 id="_4">快速结论</h2>
+<ol>
+<li>知乎候选显示中文社区已经把 prompt optimization 从“提示词技巧”转向“样本、评分器、候选、迭代”的工程问题，但很多文章仍缺少评估字段。</li>
+<li>GEPA 被频繁传播为“比 RL 更强”。更稳妥的洞见是：在有执行轨迹的任务中，自然语言反思可能比单一标量分数提供更密集的改写信号。</li>
+<li>DSPy/MIPRO 的关键不是“自动写 prompt”，而是把 instruction、examples、metric 和 optimizer 变成可组合、可评估的程序组件。</li>
+<li>Context engineering 在知乎材料里非常显眼，说明很多实际失败不是 prompt 文案问题，而是 retrieval、memory、tool output、history compression 或 output schema 问题。</li>
+<li>工具体验文章可以帮助发现用户需求和本土工具生态，但只有暴露 dataset、metric、diff、cost、failure 和 rollback 的文章才值得进入证据链。</li>
+<li>Agent self-evolution 方向的热度高，但必须先明确优化对象：task prompt、system prompt、skill、tool description、memory、workflow policy 不能混为一谈。</li>
+</ol>
+<h2 id="_5">普通用户一眼看懂版</h2>
+<table>
+<thead>
+<tr>
+<th>具体洞见</th>
+<th>普通用户可以怎么做</th>
+<th>为什么有用</th>
+<th>证据边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>不要先问 AI“帮我优化 prompt”。</td>
+<td>先写 10-20 条测试样本和失败例子，再让 AI 根据样本改 prompt。</td>
+<td>没有样本和评分标准时，优化只是改写口吻。</td>
+<td>知乎材料暴露痛点，效果需实验验证。</td>
+</tr>
+<tr>
+<td>模型失败时，先定位失败类型。</td>
+<td>把失败分成理解错任务、缺上下文、格式漂移、工具错误、拒答过度、事实错误。</td>
+<td>只有知道错在哪里，才知道该改 prompt、context 还是工具。</td>
+<td>由 context engineering 和 agent 文章共同提示。</td>
+</tr>
+<tr>
+<td>GEPA 类方法不要理解成万能替代 RL。</td>
+<td>对有 trace 的任务，比较 <code>score-only rewrite</code> 和 <code>trace + critique rewrite</code>。</td>
+<td>轨迹反思能解释失败原因，可能减少盲目搜索。</td>
+<td>必须回到 GEPA 论文和本项目验证。</td>
+</tr>
+<tr>
+<td>DSPy/MIPRO 不是提示词模板库。</td>
+<td>把任务写成 signature、examples、metric，再让 optimizer 搜索。</td>
+<td>prompt、示例和评价函数会成为可版本化组件。</td>
+<td>知乎可作术语入口，证据回到 DSPy/MIPRO。</td>
+</tr>
+<tr>
+<td>Agent/RAG 场景先查 context，再改 system prompt。</td>
+<td>分别记录 retrieval、memory、tool result、history、schema 和 prompt。</td>
+<td>很多失败来自模型看到的信息不对，而不是指令不够漂亮。</td>
+<td>需要其它平台和工程源码补强。</td>
+</tr>
+<tr>
+<td>工具文章要看评估字段，不看演示截图。</td>
+<td>只抽取 dataset、metric、baseline、candidate diff、cost、failure、rollback。</td>
+<td>这些字段决定工具是否能形成可复盘闭环。</td>
+<td>无评估字段的文章只作工具线索。</td>
+</tr>
+<tr>
+<td>自进化不是“让系统记住一切”。</td>
+<td>每条 memory/skill 都记录来源、适用范围、验证结果和禁用方式。</td>
+<td>无界记忆会污染后续任务，形成不可审计漂移。</td>
+<td>需要项目源码、issue 或实验支撑。</td>
+</tr>
+<tr>
+<td>泛 prompt 技巧要降权。</td>
+<td>只有当技巧能映射到样本、指标、失败模式或可验证动作时才保留。</td>
+<td>避免把“经验口诀”写成研究结论。</td>
+<td>当前批次的泛技巧文章多数不进核心证据链。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="insight">Insight 卡片总览</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>候选 insight</th>
+<th>主要来源簇</th>
+<th>evidence_strength（溯源进度 / 补证路径）</th>
+<th>最小验证优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZHI-01</td>
+<td>prompt optimization 已从技巧问题转向 eval-driven iteration。</td>
+<td>APO/APE/OPRO/EvoPrompt/PRewrite 中文解读</td>
+<td>B（已有 coin-flip / ProTeGi 笔记；追溯 APO 谱系可升 A）</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-02</td>
+<td>GEPA 的可迁移洞见是 trace-aware reflection，而不是”全面超过 RL”。</td>
+<td>GEPA / reflective prompt evolution 文章</td>
+<td>B（GEPA 笔记已支撑）</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-03</td>
+<td>DSPy/MIPRO 应被写成 prompt-as-program，而不是自动提示词生成器。</td>
+<td>DSPy / MIPRO / Prompt 编译文章</td>
+<td>D（DSPy/MIPRO paper note 待补，inventory 已登记）</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-04</td>
+<td>context engineering 把优化对象从单条 prompt 扩展到模型可见上下文。</td>
+<td>Context Engineering / agent context / RAG context</td>
+<td>D（context engineering 工程资料待笔记）</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-05</td>
+<td>工具类文章的筛选标准是是否支持可复盘评估闭环。</td>
+<td>OPIK / Prompt Optimizer / PromptPilot / Coze</td>
+<td>D（工具官方文档待笔记）</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>ZHI-06</td>
+<td>agent self-evolution 必须先定义可变对象和冻结对象。</td>
+<td>Hermes / Manus / Skill / Agent 自进化</td>
+<td>B（MemAPO / SePO 笔记已支撑）</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-07</td>
+<td>中文来源适合提炼用户语言和误区，不适合直接承载性能结论。</td>
+<td>全批次综合</td>
+<td>D（渠道级方法论判断）</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>ZHI-08</td>
+<td>泛 prompt 技巧是反模式线索，除非它能接入 eval 和版本管理。</td>
+<td>泛 prompt engineering 文章</td>
+<td>D（接入 catalog I-07/I-12 后判定）</td>
+<td>medium</td>
+</tr>
+</tbody>
+</table>
+<h2 id="zhi-catalog">ZHI ↔ 全渠道 catalog 交叉对照（防重复计数）</h2>
+<p>知乎 ZHI 卡片与研究者向 <a href="../insight_method_catalog_20260609.html">insight_method_catalog</a> 的 I- / HM- 编号是两套命名空间。融入最终报告的全渠道 insight pool 时，必须按下表去重，避免把同一洞见的中文传播版本当成独立洞见重复计数。<code>关系</code> 取值：<code>duplicate</code>（同一洞见）、<code>extension</code>（补充已有洞见的边界/语言/案例）、<code>new</code>（catalog 暂无）。</p>
+<table>
+<thead>
+<tr>
+<th>知乎条目</th>
+<th>对应 catalog</th>
+<th>关系</th>
+<th>知乎渠道的净增量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZHI-01</td>
+<td>I-01、I-02、I-11</td>
+<td>duplicate</td>
+<td>中文社区"找万能模板"痛点的用户语言</td>
+</tr>
+<tr>
+<td>ZHI-02</td>
+<td>I-02</td>
+<td>extension</td>
+<td>"超越 RL"标题被误读的传播口径</td>
+</tr>
+<tr>
+<td>ZHI-03</td>
+<td>I-06（含 I-05）</td>
+<td>duplicate</td>
+<td>"自动写提示词"简化误读</td>
+</tr>
+<tr>
+<td>ZHI-04</td>
+<td>I-06</td>
+<td>duplicate</td>
+<td>context engineering 在中文圈的讨论密度</td>
+</tr>
+<tr>
+<td>ZHI-05</td>
+<td>I-12、I-04、HM-04</td>
+<td>duplicate</td>
+<td>工具体验文的营销话术样本</td>
+</tr>
+<tr>
+<td>ZHI-06</td>
+<td>I-08、I-06</td>
+<td>extension</td>
+<td>agent 自进化"可变对象未拆分"的中文叙述</td>
+</tr>
+<tr>
+<td>ZHI-07</td>
+<td>I-12</td>
+<td>duplicate</td>
+<td>渠道级印证（中文二手=线索，不承载性能结论）</td>
+</tr>
+<tr>
+<td>ZHI-08</td>
+<td>I-07、I-12</td>
+<td>extension</td>
+<td>泛技巧降权的用户痛点表达</td>
+</tr>
+<tr>
+<td>HM-ZH-01</td>
+<td>HM-01</td>
+<td>duplicate</td>
+<td>—</td>
+</tr>
+<tr>
+<td>HM-ZH-02</td>
+<td>HM-02</td>
+<td>duplicate</td>
+<td>—</td>
+</tr>
+<tr>
+<td>HM-ZH-03</td>
+<td>（无对应）</td>
+<td>new</td>
+<td>二手 post 的 primary-source promotion gate，catalog 暂无</td>
+</tr>
+</tbody>
+</table>
+<p>结论：知乎渠道与 catalog 高度重合，绝大多数是 <code>duplicate</code>/<code>extension</code>；唯一净新增的可复用方法是 <strong>HM-ZH-03（primary-source promotion gate）</strong>。最终报告中 ZHI-01~08 应作为对应 I- 洞见的"中文传播 / 误区 / 用户语言"补充材料引用，不单独成条计数。</p>
+<h2 id="insight_1">详细 Insight 卡片</h2>
+<h3 id="zhi-01prompt-optimization-eval-driven-iteration">ZHI-01：Prompt optimization 已转向 eval-driven iteration</h3>
+<ul>
+<li>insight：知乎材料反复把 APE、APO、OPRO、EvoPrompt、PRewrite、PromptBreeder 等方法放在一起，说明讨论重点正在从“写一个好提示词”转向“生成候选、评估候选、选择候选、再迭代”。</li>
+<li>user_facing_one_liner：不要优化一句话，优化一个带测试样本的流程。</li>
+<li>phenomenon：中文文章大量介绍自动提示工程、提示词搜索、反思改写和进化式候选生成，但经常只讲算法名，少讲 dataset、metric 和 validation split。</li>
+<li>mechanism：prompt 是离散文本程序。没有样本、评分器和候选账本时，优化器无法区分真实提升、风格变化和偶然好运。</li>
+<li>actionable_rule：任何 prompt 优化材料都先抽取 <code>task</code>、<code>baseline prompt</code>、<code>test cases</code>、<code>metric</code>、<code>candidate generation</code>、<code>selection rule</code>、<code>rollback</code>。</li>
+<li>helpful_method：Eval-first prompt optimization intake。</li>
+<li>exact_action_to_try：把一个已有 prompt 配上 20 条测试样本，先跑 baseline，再要求模型只基于失败样本给出改写理由和 diff。</li>
+<li>before_after_example：改前是“帮我优化这个客服 prompt”；改后是“在 20 条客服样本上，baseline 有 6 条格式错误、3 条拒答过度，请只改输出格式和拒答边界，并保留回滚版本”。</li>
+<li>counterexample_or_limit：一次性创意写作、语气润色或探索性头脑风暴可能不需要完整 eval 闭环。</li>
+<li>evidence_strength：B（溯源进度 ZH-L1，但机制已有结构化笔记支撑）。与更多 arXiv/GitHub/其它平台资料一致时可升 A。</li>
+<li>main_sources：<a href="../paper_notes/paper-coin-flip-2026.md">paper-coin-flip-2026.md</a>、<a href="../paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>、<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-01、I-02）。</li>
+<li>validation_or_demo：对比 one-shot rewrite 与 eval-first rewrite，看 held-out 样本、格式漂移、人工审查时间和成本。</li>
+</ul>
+<h3 id="zhi-02gepa-rl-trace-aware-reflection">ZHI-02：GEPA 的核心不是“替代 RL”，而是 trace-aware reflection</h3>
+<ul>
+<li>insight：知乎 GEPA 相关文章常被标题化为“超越 RL”或“比强化学习更强”，但对本项目更有价值的是 trace-aware reflection 这个机制解释。</li>
+<li>user_facing_one_liner：有执行过程的任务，不要只看最后得分，要让模型读失败轨迹再改。</li>
+<li>phenomenon：GEPA 被用于连接 prompt evolution、DSPy、agent 轨迹和自然语言反思，传播热度高，但二手文章容易夸大结论。</li>
+<li>mechanism：标量 reward 只告诉优化器好坏，trace 和 critique 能告诉优化器错在哪里、该改哪个组件、哪些行为不能破坏。</li>
+<li>actionable_rule：报告中避免写“GEPA 全面优于 RL”，应写“在某些有轨迹反馈的任务上，语言反思可能提供更高密度的优化信号”。</li>
+<li>helpful_method：Trace-first agent prompt diagnosis。</li>
+<li>exact_action_to_try：同一批失败任务分别用最终分数和完整 trace 生成 prompt diff，比较改动是否更小、更可审计、对 held-out 更稳定。</li>
+<li>before_after_example：改前是“分数低，重写 prompt”；改后是“第 3 步工具调用参数错、history 压缩丢了用户约束，因此只改 tool instruction 和 history summary rubric”。</li>
+<li>counterexample_or_limit：无清晰 trace、评价极噪声、任务过短或输出只需简单格式修复时，trace 反思未必划算。</li>
+<li>evidence_strength：B（溯源进度 ZH-L1，GEPA 结构化笔记已支撑该机制）。本项目复现后可升 A。</li>
+<li>main_sources：<a href="../paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a>、<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-02）。</li>
+<li>validation_or_demo：构造 <code>score-only rewrite</code> vs <code>trace + critique rewrite</code> 两组，记录样本效率、改动幅度、成本和失败类型迁移。</li>
+</ul>
+<h3 id="zhi-03dspymipro-prompt-as-program">ZHI-03：DSPy/MIPRO 应被解释为 prompt-as-program</h3>
+<ul>
+<li>insight：知乎 DSPy/MIPRO 材料适合帮助中文读者理解“prompt 不只是文本，而是 signature、examples、metric、optimizer 的组合”。</li>
+<li>user_facing_one_liner：把 prompt 当程序组件管理，而不是当聊天模板收藏。</li>
+<li>phenomenon：中文材料会把 DSPy/MIPRO 简化成“自动生成提示词”，但高质量材料通常会提到 signature、训练样例、metric、optimizer 和编译过程。</li>
+<li>mechanism：DSPy 把任务接口、示例和评分函数显式化，optimizer 才能搜索 instruction 和 few-shot examples。</li>
+<li>actionable_rule：引用 DSPy/MIPRO 时，必须同时说明被优化对象和评分函数，不能只展示优化后 prompt。</li>
+<li>helpful_method：Prompt-as-program conversion checklist。</li>
+<li>exact_action_to_try：把一个聊天模板改写为 <code>input fields</code>、<code>output schema</code>、<code>examples</code>、<code>metric</code>、<code>optimizer budget</code> 五个部分。</li>
+<li>before_after_example：改前是“你是一个专业分类器，请分类”；改后是“signature: <code>text -&gt; label, rationale</code>；metric: label accuracy + JSON validity；examples: 16 条；optimizer: 只允许改 instruction 和 examples”。</li>
+<li>counterexample_or_limit：如果任务没有稳定指标，或样本少到无法区分候选，DSPy/MIPRO 只能作为组织框架，不能自动保证提升。</li>
+<li>evidence_strength：D（溯源进度 ZH-L1，DSPy/MIPRO 仅 inventory 登记，结构化 paper note 待补）。</li>
+<li>main_sources：<a href="../source_inventory.md">source_inventory.md</a>（<code>paper-dspy-2023</code>、<code>paper-miprov2-2024</code>）、<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-06）。</li>
+<li>validation_or_demo：同一分类任务上比较“手写模板改写”和“signature + metric + optimizer”流程的审查成本、格式错误率和 held-out 表现。</li>
+</ul>
+<h3 id="zhi-04context-engineering-prompt-optimization">ZHI-04：Context engineering 是 prompt optimization 的边界扩展</h3>
+<ul>
+<li>insight：知乎候选中 context engineering 讨论密集，说明实际工程已经把优化对象从 system prompt 扩展到 retrieval、memory、tool result、history compression 和 schema。</li>
+<li>user_facing_one_liner：模型答错时，先看它看到了什么，再看你怎么命令它。</li>
+<li>phenomenon：很多文章围绕上下文工程、agent context、Manus 经验、RAG 和工具上下文展开，主题不再局限于提示词措辞。</li>
+<li>mechanism：LLM 的输出受可见上下文支配。若检索错、工具返回格式乱、记忆污染或历史摘要丢约束，单纯改 system prompt 只能掩盖问题。</li>
+<li>actionable_rule：RAG/agent 任务的优化记录必须拆分 <code>prompt</code>、<code>retrieval</code>、<code>memory</code>、<code>tool output</code>、<code>history</code>、<code>output schema</code>。</li>
+<li>helpful_method：Trace-first agent prompt diagnosis。</li>
+<li>exact_action_to_try：每次失败记录一张 context fault 表，先标注失败来自哪个上下文组件，再决定是否改 prompt。</li>
+<li>before_after_example：改前是“让模型更严格遵守用户约束”；改后是“检索第 2 条文档过期，history summary 删除了用户地区限制，先修 retrieval filter 和 summary rubric”。</li>
+<li>counterexample_or_limit：纯文本改写、短问答或无外部上下文任务，可能仍主要是 instruction 质量问题。</li>
+<li>evidence_strength：D（溯源进度 ZH-L1，需 context engineering 工程资料结构化后补证）。</li>
+<li>main_sources：<a href="../source_inventory.md">source_inventory.md</a>（<code>paper-context-engineering-2025</code>、<code>practice-anthropic-context-engineering</code>、<code>practice-langchain-agent-context-engineering</code>）、<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-06）。</li>
+<li>validation_or_demo：对 RAG 任务做 <code>prompt-only fix</code> 与 <code>context-first fix</code> 对比，评估正确率、归因清晰度和二次退化。</li>
+</ul>
+<h3 id="zhi-05">ZHI-05：工具类文章必须通过评估字段过滤</h3>
+<ul>
+<li>insight：知乎工具体验文章能发现产品需求，但不能凭演示截图证明工具有效。只有带 dataset、metric、baseline、trial history、failure 和 rollback 的材料才有研究价值。</li>
+<li>user_facing_one_liner：看工具文章时，别问“效果好不好”，先问“它怎么测出来的”。</li>
+<li>phenomenon：OPIK、Prompt Optimizer、PromptPilot、Coze 等候选说明工具化需求强，但摘要层面常缺少可复现配置。</li>
+<li>mechanism：prompt optimizer 工具如果不记录候选、评分、成本、失败样例和回滚点，用户无法判断优化是否泛化，也无法复盘误用。</li>
+<li>actionable_rule：工具类来源进入清单前，必须至少提供 3 类字段：评估输入、候选改动、运行结果。</li>
+<li>helpful_method：Primary-source promotion gate for posts。</li>
+<li>exact_action_to_try：读工具文章时只做一张抽取表：<code>dataset</code>、<code>metric</code>、<code>baseline</code>、<code>optimized object</code>、<code>diff</code>、<code>cost</code>、<code>failure</code>、<code>rollback</code>。</li>
+<li>before_after_example：改前是“这个工具能一键优化 prompt”；改后是“该工具使用 50 条 validation data、记录 trial history，但未展示 held-out，因此只能作为 medium evidence”。</li>
+<li>counterexample_or_limit：产品介绍可用于发现生态和用户语言，不一定要完全丢弃，但不能进入效果证据链。</li>
+<li>evidence_strength：D（溯源进度 ZH-L1，需工具官方文档或本地运行记录结构化后补证）。</li>
+<li>main_sources：<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-12、HM-04）、<a href="../source_inventory.md">source_inventory.md</a>（<code>practice-opik-optimizer-overview</code>、<code>practice-promptfoo-optimization</code>）。</li>
+<li>validation_or_demo：抽样 10 篇工具文章，用字段表判定哪些能进入 <code>source_inventory.md</code>，哪些只作线索。</li>
+</ul>
+<h3 id="zhi-06agent-self-evolution">ZHI-06：Agent self-evolution 必须先定义可变对象</h3>
+<ul>
+<li>insight：知乎 agent 自进化材料热度高，但“自进化”可能指 task prompt、system prompt、skill、tool description、memory、workflow policy 或 evaluator 的变化。若不拆开，无法形成可验证结论。</li>
+<li>user_facing_one_liner：自进化系统要先声明它能改什么，不能改什么。</li>
+<li>phenomenon：Hermes、Manus、Skill、agent context 等文章常把记忆、反思、工具调用、系统提示词和工作流策略混在一起讲。</li>
+<li>mechanism：不同对象的风险和验证方式不同。改 task prompt 影响局部行为，改 system prompt 影响全局边界，改 memory 可能造成长期污染，改 evaluator 会制造伪提升。</li>
+<li>actionable_rule：自进化实验必须冻结 evaluator、数据和安全边界，只允许一个可变对象进入搜索。</li>
+<li>helpful_method：Mutable-object declaration for self-evolution。</li>
+<li>exact_action_to_try：为每次自进化实验写 <code>mutable_object</code>、<code>frozen_objects</code>、<code>promotion_rule</code>、<code>rollback_plan</code>。</li>
+<li>before_after_example：改前是“agent 会从经验中自我改进”；改后是“本轮只允许新增一条 skill instruction，不允许改 grader、tools、system safety policy 和 eval cases”。</li>
+<li>counterexample_or_limit：早期探索可以先宽泛收集失败模式，但进入实验或结论前必须拆分变量。</li>
+<li>evidence_strength：B（溯源进度 ZH-L1，MemAPO/SePO 结构化笔记已支撑"可变对象拆分"机制）。Hermes 项目源码、issues、运行 trace 核验后可升 A。</li>
+<li>main_sources：<a href="../paper_notes/paper-memapo-2026.md">paper-memapo-2026.md</a>、<a href="../paper_notes/paper-sepo-2026.md">paper-sepo-2026.md</a>、<a href="../industry_notes/practice-zhihu-hermes-agent-2026.md">practice-zhihu-hermes-agent-2026.md</a>、<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-08）。</li>
+<li>validation_or_demo：比较“允许多对象同时改”和“只允许改 skill description”两组，看指标归因、回滚难度和安全退化。</li>
+</ul>
+<h3 id="zhi-07">ZHI-07：中文来源更适合作为解释层和误区层</h3>
+<ul>
+<li>insight：知乎材料在最终报告中最适合承担“普通用户怎么理解”和“常见误区是什么”的角色，而不是承担强证据角色。</li>
+<li>user_facing_one_liner：中文文章能帮你看懂问题，但证明效果要回到一手证据。</li>
+<li>phenomenon：中文社区对 GEPA、DSPy、上下文工程和 agent 自进化的传播很快，能暴露用户关心的问题和术语接受方式。</li>
+<li>mechanism：二手解读会压缩细节，也容易放大标题主张。它擅长解释，不擅长保留实验设置、负例和适用边界。</li>
+<li>actionable_rule：最终报告可引用知乎作为“传播观察”和“误区提醒”，但核心 conclusion 需要 A/B/C 级证据支撑。</li>
+<li>helpful_method：Primary-source promotion gate for posts。</li>
+<li>exact_action_to_try：每条知乎候选都绑定一个 <code>primary_source_needed</code> 字段，未追溯前不得写入核心结论。</li>
+<li>before_after_example：改前是“知乎文章说 GEPA 领先 RL”；改后是“中文社区常这样传播，最终判断回到 GEPA 原论文的任务设置、baseline 和预算”。</li>
+<li>counterexample_or_limit：少数知乎长文可能包含原创工程实践、代码或真实评估，此时可按行业笔记模板升级到 ZH-L2。</li>
+<li>evidence_strength：D（溯源进度 ZH-L1；这是渠道级方法论判断，本身即对应 catalog I-12）。</li>
+<li>main_sources：<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-12）。</li>
+<li>validation_or_demo：深读 10-15 篇高相关知乎全文，标注哪些是原创实践、哪些是一手材料转述、哪些是泛化标题。</li>
+</ul>
+<h3 id="zhi-08-prompt-eval">ZHI-08：泛 prompt 技巧如果脱离 eval，是需要降权的反模式</h3>
+<ul>
+<li>insight：泛 prompt 技巧文章可以说明用户痛点，但若不能映射到任务、样本、指标或失败类型，就不应进入核心研究结论。</li>
+<li>user_facing_one_liner：不要收藏万能模板，收藏能被测试的改动。</li>
+<li>phenomenon：候选中仍有少量 prompt engineering 技巧、提示词指南和模板类文章，它们通常缺少自动优化、失败案例和评估流程。</li>
+<li>mechanism：通用技巧在不同任务、模型和上下文里很容易失效；没有版本和指标时，用户会把主观满意度误认为稳定收益。</li>
+<li>actionable_rule：泛技巧只在满足以下任一条件时保留：能作为 baseline、能构成失败类型、能转成 eval case、能解释反模式。</li>
+<li>helpful_method：Prompt-tip downgrade rule。</li>
+<li>exact_action_to_try：把技巧文章中的每条建议改写成可测试断言；改不出来的降权。</li>
+<li>before_after_example：改前是“提示词要具体”；改后是“在信息抽取任务中，输出 schema 必须包含字段缺失处理规则，否则 JSON validity 下降”。</li>
+<li>counterexample_or_limit：教学入门内容可以保留在背景材料里，但不要占用最终报告核心篇幅。</li>
+<li>evidence_strength：D（溯源进度 ZH-L1；接入 catalog I-07/I-12 后判定）。</li>
+<li>main_sources：<a href="../insight_method_catalog_20260609.html">insight_method_catalog</a>（I-07、I-12）。</li>
+<li>validation_or_demo：从泛技巧文章抽取 20 条建议，统计有多少能转成 measurable eval case。</li>
+</ul>
+<h2 id="helpful-methods">Helpful Methods 候选</h2>
+<h3 id="hm-zh-01eval-first-prompt-optimization-intake">HM-ZH-01：Eval-first prompt optimization intake</h3>
+<pre><code class="language-yaml">name: Eval-first prompt optimization intake
+insight_supported: ZHI-01, ZHI-05, ZHI-08
+problem: 用户经常直接要求优化 prompt，但没有样本、指标、失败类型和回滚点。
+recommended_when: 任务会重复执行，且能收集至少 10-50 条代表样本。
+not_recommended_when: 一次性创意写作、探索性 brainstorming、无稳定评价标准的开放表达。
+required_inputs: baseline prompt, task definition, eval samples, rubric or metric, current failures, target model, cost budget.
+implementation_steps: 1. 写清任务和成功标准；2. 收集样本和失败例；3. 跑 baseline；4. 按失败类型聚类；5. 只针对主要失败类型生成候选 prompt；6. 用 validation set 选择；7. 记录 diff、成本、失败和回滚点。
+evaluation_metrics: task score, JSON or schema validity, refusal boundary, held-out score, judge disagreement, cost, latency.
+expected_benefit: 把主观改写变成可复盘迭代，减少凭感觉选择 prompt。
+cost_and_latency: 需要准备样本和至少一次 baseline eval；短期成本高于 one-shot rewrite。
+risks: 样本过小会过拟合，rubric 含糊会诱导 judge 偏差。
+misuse_or_anti_pattern: 只在训练样本上挑最高分 prompt，不看 held-out 和失败样例。
+rollback_plan: 保留 baseline prompt、候选 diff、接受理由和拒绝理由；发布后可回退到 baseline 或上一稳定版本。
+evidence: 知乎批次为 ZH-L1 问题线索；需与 GitHub optimizer ledger、Promptfoo/OPIK/Humanloop 等官方资料交叉验证。
+next_experiment: 对比 one-shot rewrite 与 eval-first rewrite 的 held-out 表现、格式错误率和审查时间。
+</code></pre>
+<h3 id="hm-zh-02trace-first-agent-prompt-diagnosis">HM-ZH-02：Trace-first agent prompt diagnosis</h3>
+<pre><code class="language-yaml">name: Trace-first agent prompt diagnosis
+insight_supported: ZHI-02, ZHI-04, ZHI-06
+problem: Agent/RAG 失败常被误归因为 prompt 写得不好，实际可能来自上下文、工具、记忆或 history compression。
+recommended_when: 任务包含多步推理、工具调用、RAG、memory、长对话或 agent handoff。
+not_recommended_when: 单轮短文本任务，或没有可记录执行轨迹的简单分类任务。
+required_inputs: failed traces, retrieved context, tool calls and outputs, conversation history, prompt versions, expected output schema, evaluator result.
+implementation_steps: 1. 保存失败 trace；2. 标注失败发生步骤；3. 分类为 prompt/context/tool/memory/schema/evaluator 问题；4. 冻结无关组件；5. 只改最可能的对象；6. 用相同 trace 和 held-out case 复测。
+evaluation_metrics: task success, step-level failure rate, tool error rate, retrieval relevance, schema validity, prompt diff size, rollback difficulty.
+expected_benefit: 降低盲目改 system prompt 的概率，让优化对象和失败根因对齐。
+cost_and_latency: 需要 trace logging 和人工或 LLM 辅助归因，初期流程比直接改 prompt 慢。
+risks: trace 过长会增加成本；LLM 归因可能把偶然事件解释成稳定原因。
+misuse_or_anti_pattern: 一次同时修改 prompt、retrieval、tool schema 和 memory，导致无法归因。
+rollback_plan: 每轮只发布一个对象的改动，并保留上一个 prompt/context/tool policy 版本。
+evidence: 知乎批次为 ZH-L1；GEPA、LangChain context engineering、GitHub agent harness 资料和本项目实验可补强。
+next_experiment: 对比 score-only rewrite 与 trace-first diagnosis 在 RAG/agent 任务上的样本效率和二次退化。
+</code></pre>
+<h3 id="hm-zh-03primary-source-promotion-gate-for-posts">HM-ZH-03：Primary-source promotion gate for posts</h3>
+<pre><code class="language-yaml">name: Primary-source promotion gate for posts
+insight_supported: ZHI-05, ZHI-07, ZHI-08
+problem: 二手 posts 容易把论文、工具或项目主张压缩成标题，导致证据强度被高估。
+recommended_when: 处理知乎、Twitter/X、Medium、Substack、博客、工具推广和论坛材料。
+not_recommended_when: 已经是原始论文、官方文档、固定 commit 源码或本项目运行记录。
+required_inputs: post URL, title, summary, claimed method, claimed result, linked primary source, reproducibility fields.
+implementation_steps: 1. 抽取文章主张；2. 标记是否有 dataset、metric、baseline、cost、failure；3. 查找 primary source；4. 未找到则保持线索等级；5. 找到后再写行业笔记或论文笔记；6. 在最终报告中标注证据等级。
+evaluation_metrics: promoted source ratio, claims with primary source, claims downgraded, unsupported performance claims removed.
+expected_benefit: 防止把传播热度当作方法有效性证据。
+cost_and_latency: 需要额外追溯时间，可能降低短期材料数量。
+risks: 过度保守可能漏掉原创实践文章。
+misuse_or_anti_pattern: 因为文章写得清楚或点赞高，就直接写成 conclusion。
+rollback_plan: 对每条结论保留 source_id 和 evidence level；无法补证时从 conclusion 降级为 hypothesis 或 observation。
+evidence: 知乎批次直接体现该问题；其它平台和 Twitter/X 批次也存在同类传播噪声。
+next_experiment: 抽样 30 条 post，统计经过 promotion gate 后进入核心证据链的比例和被降级原因。
+</code></pre>
+<h2 id="anti-patterns">Anti-patterns 与降权规则</h2>
+<table>
+<thead>
+<tr>
+<th>anti-pattern</th>
+<th>为什么危险</th>
+<th>处理规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“知乎文章很多，所以结论很强”</td>
+<td>数量代表传播热度，不代表实验可复现。</td>
+<td>只作为问题意识，结论必须追溯一手证据。</td>
+</tr>
+<tr>
+<td>“GEPA 全面超过 RL”</td>
+<td>忽略任务、预算、baseline、rollout 和反馈信号差异。</td>
+<td>改写为待验证机制洞见，不写成普遍结论。</td>
+</tr>
+<tr>
+<td>“工具能展示 optimized prompt，所以工具有效”</td>
+<td>演示截图无法证明泛化、稳定性和成本收益。</td>
+<td>只有评估字段完整时才升级证据。</td>
+</tr>
+<tr>
+<td>“Context engineering 就是写更长 prompt”</td>
+<td>误把检索、记忆、工具输出和历史压缩都塞进 instruction。</td>
+<td>拆分 context 组件并分别记录。</td>
+</tr>
+<tr>
+<td>“Self-evolution 就是越记越多”</td>
+<td>无界 memory 会污染后续任务，且难以回滚。</td>
+<td>每条 memory/skill 必须有来源、适用范围、验证和禁用方式。</td>
+</tr>
+<tr>
+<td>“Prompt 技巧可跨任务通用”</td>
+<td>不同模型、任务和上下文会让技巧失效。</td>
+<td>只有能转成 eval case 的技巧才进入核心材料。</td>
+</tr>
+<tr>
+<td>“一次改多个变量更快”</td>
+<td>无法判断提升来自 prompt、context、examples 还是 evaluator。</td>
+<td>研究实验一次只改一个变量，必要时记录混合变量。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">重点追溯对象</h2>
+<p>下表把每个追溯对象接到 <code>docs/source_inventory.md</code> 已登记的 source_id 和（若已存在）<code>docs/paper_notes/</code> 结构化笔记，使 ZHI 卡片从"应追溯"变为"已指向具体仓库内一手来源"。</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>从知乎得到的线索</th>
+<th>仓库内一手来源（source_id / 笔记路径）</th>
+<th>当前溯源状态</th>
+<th>进入最终报告的角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA</td>
+<td>反思式 prompt evolution、trace feedback、与 RL 对比</td>
+<td><code>paper-gepa-2025</code>；笔记 <a href="../paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a></td>
+<td>已有结构化笔记（B）</td>
+<td>核心 insight 和验证候选</td>
+</tr>
+<tr>
+<td>DSPy / MIPRO</td>
+<td>prompt-as-program、signature、optimizer、metric</td>
+<td><code>paper-dspy-2023</code>、<code>paper-miprov2-2024</code>（inventory 已登记，paper note 待补）</td>
+<td>仅 inventory 登记（D）</td>
+<td>helpful method 背景</td>
+</tr>
+<tr>
+<td>APO / ProTeGi / OPRO / EvoPrompt</td>
+<td>自动提示工程方法索引</td>
+<td><code>paper-protegi-2023</code>（笔记 <a href="../paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>）、<code>paper-evoprompt-2023</code>（笔记 <a href="../paper_notes/paper-evoprompt-2024.md">paper-evoprompt-2024.md</a>）、<code>paper-ape-2022</code>、<code>paper-opro-2023</code>、<code>paper-prewrite-2024</code></td>
+<td>ProTeGi/EvoPrompt 已有笔记（B），其余仅登记（D）</td>
+<td>方法 taxonomy</td>
+</tr>
+<tr>
+<td>Context engineering</td>
+<td>prompt 到 context/workflow 的边界扩展</td>
+<td><code>paper-context-engineering-2025</code>、<code>practice-anthropic-context-engineering</code>、<code>practice-langchain-agent-context-engineering</code></td>
+<td>仅 inventory 登记（D）</td>
+<td>工程结论和反模式</td>
+</tr>
+<tr>
+<td>Hermes / Manus / Skill 自进化</td>
+<td>agent 经验沉淀、skill、memory 和自进化</td>
+<td><code>practice-zhihu-hermes-agent-2026</code>（笔记 <a href="../industry_notes/practice-zhihu-hermes-agent-2026.md">practice-zhihu-hermes-agent-2026.md</a>）、<code>paper-memapo-2026</code>、<code>paper-sepo-2026</code></td>
+<td>Hermes 笔记 weak + MemAPO/SePO 笔记（B）</td>
+<td>自进化变量拆分线索</td>
+</tr>
+<tr>
+<td>OPIK / Prompt Optimizer / PromptPilot / Coze</td>
+<td>工具化需求、本土生态、产品工作流</td>
+<td><code>practice-opik-optimizer-overview</code>、<code>practice-promptfoo-optimization</code>、<code>repo-linshenkx-prompt-optimizer</code></td>
+<td>官方 docs / 源码已登记，待笔记（D）</td>
+<td>行业工具地图</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">最小验证候选</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>要验证的 insight/method</th>
+<th>最小实验设计</th>
+<th>主要指标</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V-ZH-01</td>
+<td>ZHI-01 / HM-ZH-01</td>
+<td>同一任务对比 one-shot rewrite 与 eval-first rewrite。</td>
+<td>held-out score、格式错误率、人工审查时间、成本</td>
+<td>可优先作为最终报告演示实验。</td>
+</tr>
+<tr>
+<td>V-ZH-02</td>
+<td>ZHI-02 / HM-ZH-02</td>
+<td>同一批 agent/RAG 失败样本对比 score-only rewrite 与 trace-first diagnosis。</td>
+<td>样本效率、失败类型迁移、二次退化、diff size</td>
+<td>需要先准备 trace logging。</td>
+</tr>
+<tr>
+<td>V-ZH-03</td>
+<td>ZHI-04 / HM-ZH-02</td>
+<td>对 RAG 任务分别做 prompt-only fix 与 context-first fix。</td>
+<td>answer correctness、retrieval relevance、schema validity</td>
+<td>验证 context-first 是否更可归因。</td>
+</tr>
+<tr>
+<td>V-ZH-04</td>
+<td>ZHI-05 / HM-ZH-03</td>
+<td>对 30 条 posts 执行 primary-source promotion gate。</td>
+<td>升级率、降级原因、缺失字段分布</td>
+<td>可作为资料整理质量检查。</td>
+</tr>
+<tr>
+<td>V-ZH-05</td>
+<td>ZHI-08</td>
+<td>把 20 条泛 prompt 技巧转成 eval case，统计可转比例。</td>
+<td>可测试比例、不可测试原因、重复度</td>
+<td>用于决定泛技巧在最终报告中的占比。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">后续处理建议</h2>
+<ol>
+<li>深读 10-15 篇高相关知乎全文，若需要登录或原文可能失效，快照放入 <code>local_sources/raw/</code>，并记录 SHA256。</li>
+<li>对每篇知乎文章补 <code>primary_source_needed</code> 字段，优先追溯 GEPA、DSPy/MIPRO、APO/ProTeGi、context engineering 和 Hermes/agent 自进化。</li>
+<li>能补齐 dataset、metric、baseline、failure、rollback 的文章，再按 <code>docs/industry_notes/template.md</code> 写单篇行业笔记。</li>
+<li>最终报告不按“知乎文章列表”呈现，而是把本文件的 ZHI cards 融入全渠道 insight pool。</li>
+<li>当前文档中的 ZH-L1 判断不能单独作为结论，只能作为 observation、hypothesis 或 user-facing explanation。</li>
+</ol>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/source_batches/zhihu_insight_cards_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="../analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_2">文档目标</a>
+<a class="lv2" href="#_3">证据边界</a>
+<a class="lv2" href="#_4">快速结论</a>
+<a class="lv2" href="#_5">普通用户一眼看懂版</a>
+<a class="lv2" href="#insight">Insight 卡片总览</a>
+<a class="lv2" href="#zhi-catalog">ZHI ↔ 全渠道 catalog 交叉对照（防重复计数）</a>
+<a class="lv2" href="#insight_1">详细 Insight 卡片</a>
+<a class="lv3" href="#zhi-01prompt-optimization-eval-driven-iteration">ZHI-01：Prompt optimization 已转向 eval-driven iteration</a>
+<a class="lv3" href="#zhi-02gepa-rl-trace-aware-reflection">ZHI-02：GEPA 的核心不是“替代 RL”，而是 trace-aware reflection</a>
+<a class="lv3" href="#zhi-03dspymipro-prompt-as-program">ZHI-03：DSPy/MIPRO 应被解释为 prompt-as-program</a>
+<a class="lv3" href="#zhi-04context-engineering-prompt-optimization">ZHI-04：Context engineering 是 prompt optimization 的边界扩展</a>
+<a class="lv3" href="#zhi-05">ZHI-05：工具类文章必须通过评估字段过滤</a>
+<a class="lv3" href="#zhi-06agent-self-evolution">ZHI-06：Agent self-evolution 必须先定义可变对象</a>
+<a class="lv3" href="#zhi-07">ZHI-07：中文来源更适合作为解释层和误区层</a>
+<a class="lv3" href="#zhi-08-prompt-eval">ZHI-08：泛 prompt 技巧如果脱离 eval，是需要降权的反模式</a>
+<a class="lv2" href="#helpful-methods">Helpful Methods 候选</a>
+<a class="lv3" href="#hm-zh-01eval-first-prompt-optimization-intake">HM-ZH-01：Eval-first prompt optimization intake</a>
+<a class="lv3" href="#hm-zh-02trace-first-agent-prompt-diagnosis">HM-ZH-02：Trace-first agent prompt diagnosis</a>
+<a class="lv3" href="#hm-zh-03primary-source-promotion-gate-for-posts">HM-ZH-03：Primary-source promotion gate for posts</a>
+<a class="lv2" href="#anti-patterns">Anti-patterns 与降权规则</a>
+<a class="lv2" href="#_6">重点追溯对象</a>
+<a class="lv2" href="#_7">最小验证候选</a>
+<a class="lv2" href="#_8">后续处理建议</a></aside>
+</div>
+
+</body>
+</html>

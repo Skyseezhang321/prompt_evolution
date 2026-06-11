@@ -211,7 +211,7 @@
       <div class="hero">
         <div>
           <h1>Prompt 优化与自进化：跨渠道综合论述报告 v3</h1>
-          <p class="lead">这一版把五个渠道（arXiv 论文、GitHub 源码、其它平台/工具、Twitter/X、知乎）最新一轮的分渠道整理收敛进同一篇论述：先用一张全景脑图给出鸟瞰，再讲清「证据如何跨渠道叠起来」，然后按读者学习顺序展开 12 条洞见，最后逐渠道给出结论、方法、反模式、覆盖缺口和追溯链。它是 <a href="./insight_handbook_20260609.md">读者向洞见手册</a> 与 <a href="./insight_method_catalog_20260609.md">Insight/Method 候选清单</a> 的可视化综合版。</p>
+          <p class="lead">这一版把五个渠道（arXiv 论文、GitHub 源码、其它平台/工具、Twitter/X、知乎）最新一轮的分渠道整理收敛进同一篇论述：先用一张全景脑图给出鸟瞰，再讲清「证据如何跨渠道叠起来」，然后按读者学习顺序展开 12 条洞见，最后逐渠道给出结论、方法、反模式、覆盖缺口和追溯链。它是 <a href="./insight_handbook_20260609.html">读者向洞见手册</a> 与 <a href="./insight_method_catalog_20260609.html">Insight/Method 候选清单</a> 的可视化综合版。</p>
           <div class="badge-row" style="margin-top:12px">
             <span class="tag">全景脑图</span>
             <span class="tag b">跨渠道证据金字塔</span>
@@ -262,7 +262,7 @@
     <!-- ① MIND MAP -->
     <section id="map">
       <h2>① 全景脑图：一张图看清整篇论述</h2>
-      <p class="section-intro">从中心的「工程纪律」出发，分出三类分支：左侧的<strong>证据底座（5 个渠道）</strong>、中部的<strong>12 条洞见（A–F 六组）</strong>、右侧的<strong>方法 / 反模式 / 覆盖缺口 / 首批验证</strong>。脑图为全自包含 SVG，无外部依赖；可编辑的 Mermaid 源见 <a href="./prompt_evolution_mindmap_20260610.md">prompt_evolution_mindmap_20260610.md</a>。</p>
+      <p class="section-intro">从中心的「工程纪律」出发，分出三类分支：左侧的<strong>证据底座（5 个渠道）</strong>、中部的<strong>12 条洞见（A–F 六组）</strong>、右侧的<strong>方法 / 反模式 / 覆盖缺口 / 首批验证</strong>。脑图为全自包含 SVG，无外部依赖；可编辑的 Mermaid 源见 <a href="./prompt_evolution_mindmap_20260610.html">prompt_evolution_mindmap_20260610.md</a>。</p>
       <div class="mapwrap">
 <svg viewBox="0 0 1190 1485" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Prompt 优化与自进化跨渠道脑图" font-family="Microsoft YaHei, PingFang SC, Segoe UI, Arial, sans-serif" style="width:100%;height:auto;display:block">
 <rect x="0" y="0" width="1190" height="1485" fill="#ffffff"/>
@@ -458,35 +458,35 @@
             <td>方法机制、消融、各论文设置下的效应数字（Coin Flip / VISTA / AutoPDL / JTPRO …）。</td>
             <td>论文数字不等于在你的任务上成立；2026 新稿需独立复现。</td>
             <td>31+ 篇深读，基线主干 APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA 已闭合；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺。</td>
-            <td><a href="./arxiv_deep_reading_batch3_synthesis.md">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.md">taxonomy</a></td>
+            <td><a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.html">taxonomy</a></td>
           </tr>
           <tr>
             <td><b>GitHub 源码</b></td><td><span class="tag b">B</span> <span class="tag d">部分 D</span></td>
             <td>工程结构与治理：frozen evaluator/data 隔离、artifact ledger、compare-first rewrite、有界 memory 生命周期。</td>
             <td>不能单独证明某 optimizer 稳定提分（受限召回 + core4-only 审计带来的选择偏差）。</td>
             <td>8 查询冒烟召回（240→85→6）；正典 optimizer（gepa / PromptWizard / promptomatix / AutoPrompt / dspyground）尚未审计；未挖 issues/PR 的真实漂移与回滚。</td>
-            <td><a href="./github_repo_channel_synthesis_20260609.md">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.md">insight_cards</a></td>
+            <td><a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.md">insight_cards</a></td>
           </tr>
           <tr>
             <td><b>其它平台 / web_search</b></td><td><span class="tag b">B</span></td>
             <td>生产工程闭环地图（Arize / Promptfoo / Langfuse / OPIK / LangSmith）：优化必须绑定数据集→版本→回滚→可观测；治理是前提而非事后。</td>
             <td>vendor 提升百分比不可直接迁移，只迁移流程字段；二手转贴只算 pointer。</td>
             <td>web_search 465 / HN ~24 / SE 1 / RSS 1 / reddit·dev.to 0 / x_api 未跑；真实事故复盘与失败案例覆盖不足（低于覆盖矩阵要求）。</td>
-            <td><a href="./source_batches/web_search_platform_insight_cards_20260609.md">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a></td>
+            <td><a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a></td>
           </tr>
           <tr>
             <td><b>Twitter/X</b></td><td><span class="tag b">B*</span> <span class="tag pre">待验证</span></td>
             <td>采纳信号与「研究方法→工具集成」的落地映射（GEPA/DSPy/MIPRO → Pydantic / LangChain / Salesforce / Google / Microsoft）；最常见误读边界。</td>
             <td>社媒热度≠有效；候选 main_sources 仍指向外部 URL、论文笔记未写，全部 pending。</td>
             <td>120 候选闭账：21 张 source cards / ~34 排除降级 / ~60 去重转贴簇；待回填仓库内追溯路径。</td>
-            <td><a href="./source_batches/twitter_web_insight_cards_20260609.md">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a></td>
+            <td><a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a></td>
           </tr>
           <tr>
             <td><b>知乎</b></td><td><span class="tag d">D</span> <span class="tag">线索</span></td>
             <td>中文社区对 GEPA / DSPy / context engineering / agent 自进化的理解与传播，误区集中点（如「GEPA 全面超过 RL」），把研究问题重新框定为工程关切。</td>
             <td>不做效应证明、不替代 baseline；ZH-L1→D 表示「发现，非证明」。</td>
             <td>99 候选；多数仍待溯源到一手论文/框架；少数经 GEPA / MemAPO / SePO 仓库笔记升为 B。</td>
-            <td><a href="./source_batches/zhihu_insight_cards_20260609.md">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a></td>
+            <td><a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a></td>
           </tr>
         </tbody>
       </table>
@@ -952,7 +952,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           </div>
           <div class="field"><h4>方法</h4><ul><li>支撑全部 4 个统一方法（HM-01..04）与 I-01..I-11 的机制部分。</li></ul></div>
           <div class="field"><h4>覆盖与缺口</h4><ul><li>31+ 篇深读；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺；2026 新稿统一标 recent-preprint。</li></ul></div>
-          <div class="field"><h4>追溯链</h4><ul><li>每篇笔记含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。核心入口 <a href="./arxiv_deep_reading_batch3_synthesis.md">deep_reading_batch3</a>、<a href="./arxiv_top80_taxonomy.md">taxonomy</a>、<a href="./paper_notes/">paper_notes/</a>。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>每篇笔记含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。核心入口 <a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a>、<a href="./arxiv_top80_taxonomy.html">taxonomy</a>、<a href="./paper_notes/">paper_notes/</a>。</li></ul></div>
         </div>
 
         <div class="chan gh">
@@ -969,7 +969,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <div class="field"><h4>方法</h4><ul><li>把 compare-first rewrite 归一到 HM-02、artifact/frozen-evaluator 结构归一到 HM-04；有界 memory 类方法待 catalog 补 HM 后定名。</li></ul></div>
           <div class="field"><h4>反模式</h4><ul><li>stars/转发当证据强度；同时改 prompt+数据+评分器（reward hacking）；"有测试 = 方法有效"（测试可能只覆盖安装/格式/配置）。</li></ul></div>
           <div class="field"><h4>覆盖与已知偏差</h4><ul><li>discovery 仅 8 查询冒烟（240→85→6，无 GITHUB_TOKEN）；正典 optimizer <code>gepa-ai/gepa</code>、<code>microsoft/PromptWizard</code>、<code>SalesforceAIResearch/promptomatix</code>、<code>Eladlev/AutoPrompt</code>、<code>Scale3-Labs/dspyground</code> 已登记但<strong>尚未克隆审计</strong>（第二轮 backlog）；未挖 issues/PR/release 的真实漂移与回滚。</li></ul></div>
-          <div class="field"><h4>追溯链（repo ↔ paper）</h4><ul><li>建立 repo↔paper 对照表：gepa↔GEPA(A)、promptomatix↔Promptomatix、PromptWizard↔PromptWizard、AutoPrompt↔Intent-based Prompt Calibration；补审后可升级为跨源互证。核心入口 <a href="./github_repo_channel_synthesis_20260609.md">channel_synthesis</a>、<a href="./github_repo_source_audit_workflow_20260608.md">audit_workflow</a>。</li></ul></div>
+          <div class="field"><h4>追溯链（repo ↔ paper）</h4><ul><li>建立 repo↔paper 对照表：gepa↔GEPA(A)、promptomatix↔Promptomatix、PromptWizard↔PromptWizard、AutoPrompt↔Intent-based Prompt Calibration；补审后可升级为跨源互证。核心入口 <a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a>、<a href="./github_repo_source_audit_workflow_20260608.md">audit_workflow</a>。</li></ul></div>
         </div>
 
         <div class="chan web">
@@ -989,7 +989,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           </div>
           <div class="field"><h4>工具地图</h4><ul><li>Hugging Face（方法发现）、Arize Phoenix（可观测+治理）、Promptfoo（轻量 eval gate）、Langfuse（生产 tracing）、Humanloop（配置即治理）、LangSmith/Promptim（prompt commit+库）、OPIK（agent optimizer SDK）、Weaviate（context engineering）。</li></ul></div>
           <div class="field"><h4>覆盖与缺口</h4><ul><li>web_search 465 / HN ~24 / SE 1 / RSS 1 / reddit·dev.to 0 / x_api 未跑；社区批次约半数是 GEPA 转贴 + Show HN 产品发布，净新增有限；<strong>真实失败案例 / 事故复盘覆盖不足</strong>（低于覆盖矩阵「≥5 个失败/反模式来源」要求）。</li></ul></div>
-          <div class="field"><h4>净新增（3）与追溯链</h4><ul><li>AWS Bedrock 高级 prompt 优化/迁移工具、Vertex AI placeholder_to_content 锁段、Ask HN「AI evals 半成品」痛点；L1–L4 → A/B/C/D 已给换算表。核心入口 <a href="./source_batches/web_search_platform_insight_cards_20260609.md">insight_cards</a>、<a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a>。</li></ul></div>
+          <div class="field"><h4>净新增（3）与追溯链</h4><ul><li>AWS Bedrock 高级 prompt 优化/迁移工具、Vertex AI placeholder_to_content 锁段、Ask HN「AI evals 半成品」痛点；L1–L4 → A/B/C/D 已给换算表。核心入口 <a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a>。</li></ul></div>
         </div>
 
         <div class="chan tw">
@@ -1005,7 +1005,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <div class="field"><h4>方法</h4><ul><li>method-01 metric+trace 约束候选迭代；method-04 prompt_as_program_spec；method-05 social_signal_triage（六类标签）；method-06 vendor_optimizer_evidence_filter。</li></ul></div>
           <div class="field"><h4>反模式（含 trigger_condition）</h4><ul><li>把热门 thread 写成研究结论；把 GEPA 写成「RL 替代品」；同时改 prompt/context/model/evaluator；只优化平均分不看 critical failures。</li></ul></div>
           <div class="field"><h4>覆盖与状态</h4><ul><li>120 候选闭账：21 张 source cards / ~34 排除降级 / ~60 去重转贴簇；<strong>全部 pending</strong>——论文笔记未写，main_sources 仍为外部 URL，须回填仓库内路径后才能进最终报告。</li></ul></div>
-          <div class="field"><h4>追溯链</h4><ul><li>已回填稳定来源到来源清单：Pydantic GEPA、LangChain Promptim、Microsoft PromptWizard、Scale3 DSPyground、Salesforce Promptomatix。核心入口 <a href="./source_batches/twitter_web_insight_cards_20260609.md">insight_cards</a>、<a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a>。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>已回填稳定来源到来源清单：Pydantic GEPA、LangChain Promptim、Microsoft PromptWizard、Scale3 DSPyground、Salesforce Promptomatix。核心入口 <a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a>。</li></ul></div>
         </div>
 
         <div class="chan zh">
@@ -1019,7 +1019,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           </div>
           <div class="field"><h4>方法</h4><ul><li>HM-ZH-01 eval-first intake、HM-ZH-02 trace-first agent 诊断、<b>HM-ZH-03 一手来源升格门（净新增）</b>——按 dataset/metric/baseline/cost/failure 字段是否齐全给二手帖升/降级。</li></ul></div>
           <div class="field"><h4>误区 / 反模式</h4><ul><li>「知乎文章多 → 结论就强」「GEPA 全面超过 RL」「工具展示优化后 prompt → 工具有效」「context engineering = 更长 prompt」「自进化 = 什么都记下来」。</li></ul></div>
-          <div class="field"><h4>证据收敛与追溯链</h4><ul><li>把 ZH-L1..L4 收敛为 A/B/C/D：ZH-L1→D（发现非证明），仅经 GEPA / MemAPO / SePO 仓库笔记交叉的才升 B；每张卡 main_sources 指向仓库内论文笔记与 inventory ID。核心入口 <a href="./source_batches/zhihu_insight_cards_20260609.md">insight_cards</a>、<a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a>。</li></ul></div>
+          <div class="field"><h4>证据收敛与追溯链</h4><ul><li>把 ZH-L1..L4 收敛为 A/B/C/D：ZH-L1→D（发现非证明），仅经 GEPA / MemAPO / SePO 仓库笔记交叉的才升 B；每张卡 main_sources 指向仓库内论文笔记与 inventory ID。核心入口 <a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a>。</li></ul></div>
         </div>
 
       </div>
@@ -1028,7 +1028,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
     <!-- ④ METHODS -->
     <section id="methods">
       <h2>④ 可复用方法：4 个统一方法 + 渠道变体</h2>
-      <p class="section-intro">所有渠道的方法卡最终归一到 <a href="./insight_method_catalog_20260609.md">统一目录</a> 的 4 个 helpful methods。下表给出每个方法的问题、关键步骤与各渠道里对应的同源方法卡，避免「各说各话」。</p>
+      <p class="section-intro">所有渠道的方法卡最终归一到 <a href="./insight_method_catalog_20260609.html">统一目录</a> 的 4 个 helpful methods。下表给出每个方法的问题、关键步骤与各渠道里对应的同源方法卡，避免「各说各话」。</p>
       <table class="matrix" aria-label="可复用方法">
         <thead><tr><th>方法</th><th>解决的问题</th><th>关键步骤（最小字段）</th><th>各渠道同源方法卡</th></tr></thead>
         <tbody>
@@ -1064,7 +1064,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           </tr>
         </tbody>
       </table>
-      <p class="src">完整 YAML 字段（required_inputs / evaluation_metrics / misuse_or_anti_pattern / rollback_plan / next_experiment）见 <a href="./insight_method_catalog_20260609.md">insight_method_catalog_20260609.md</a>；字段定义口径以 <a href="./insight_field_standard.md">insight_field_standard.md</a> 为准。</p>
+      <p class="src">完整 YAML 字段（required_inputs / evaluation_metrics / misuse_or_anti_pattern / rollback_plan / next_experiment）见 <a href="./insight_method_catalog_20260609.html">insight_method_catalog_20260609.md</a>；字段定义口径以 <a href="./insight_field_standard.html">insight_field_standard.md</a> 为准。</p>
     </section>
 
     <!-- ⑤ RISKS -->
@@ -1128,7 +1128,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
     <!-- ⑦ ROADMAP -->
     <section id="roadmap">
       <h2>⑦ 把这些用起来：首批最小验证</h2>
-      <p class="section-intro">最值得本项目先动手验证的几条——成本低、错误可解释、跨渠道支撑强。详细设计见 <a href="./experiment_plan.md">实验计划</a>，与统一目录的 P0–P2 同口径。</p>
+      <p class="section-intro">最值得本项目先动手验证的几条——成本低、错误可解释、跨渠道支撑强。详细设计见 <a href="./experiment_plan.html">实验计划</a>，与统一目录的 P0–P2 同口径。</p>
       <table class="matrix" aria-label="首批验证">
         <thead><tr><th>优先级</th><th>验证什么</th><th>对应洞见</th><th>最小任务</th><th>无论成败都能产出</th></tr></thead>
         <tbody>
@@ -1151,20 +1151,20 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
       <p class="section-intro">本页是可视化综合，完整论述见读者向手册与结构化候选清单，再逐层追溯到各渠道整理与论文/源码原文。</p>
       <h4 style="margin-top:6px">综合与中间层</h4>
       <ul class="source-list">
-        <li><a href="./insight_handbook_20260609.md">读者向洞见手册（12 洞见完整版）</a></li>
-        <li><a href="./insight_method_catalog_20260609.md">Insight / Conclusion / Method 候选清单（结构化）</a></li>
-        <li><a href="./insight_field_standard.md">字段定义规范（A/B/C/D 等级与各类型 schema）</a></li>
-        <li><a href="./final_report_outline.md">最终报告结构</a></li>
-        <li><a href="./experiment_plan.md">实验计划（P0–P2）</a></li>
-        <li><a href="./prompt_evolution_mindmap_20260610.md">全景脑图 Mermaid 源（可编辑）</a></li>
+        <li><a href="./insight_handbook_20260609.html">读者向洞见手册（12 洞见完整版）</a></li>
+        <li><a href="./insight_method_catalog_20260609.html">Insight / Conclusion / Method 候选清单（结构化）</a></li>
+        <li><a href="./insight_field_standard.html">字段定义规范（A/B/C/D 等级与各类型 schema）</a></li>
+        <li><a href="./final_report_outline.html">最终报告结构</a></li>
+        <li><a href="./experiment_plan.html">实验计划（P0–P2）</a></li>
+        <li><a href="./prompt_evolution_mindmap_20260610.html">全景脑图 Mermaid 源（可编辑）</a></li>
       </ul>
       <h4 style="margin-top:12px">分渠道整理</h4>
       <ul class="source-list">
-        <li>arXiv：<a href="./arxiv_deep_reading_batch3_synthesis.md">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.md">taxonomy</a> · <a href="./paper_notes/">paper_notes/</a></li>
-        <li>GitHub：<a href="./github_repo_channel_synthesis_20260609.md">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.md">insight_cards</a> · <a href="./github_repo_source_audit_workflow_20260608.md">audit_workflow</a></li>
-        <li>其它平台：<a href="./source_batches/web_search_platform_insight_cards_20260609.md">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a></li>
-        <li>Twitter/X：<a href="./source_batches/twitter_web_insight_cards_20260609.md">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a></li>
-        <li>知乎：<a href="./source_batches/zhihu_insight_cards_20260609.md">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a></li>
+        <li>arXiv：<a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.html">taxonomy</a> · <a href="./paper_notes/">paper_notes/</a></li>
+        <li>GitHub：<a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.md">insight_cards</a> · <a href="./github_repo_source_audit_workflow_20260608.md">audit_workflow</a></li>
+        <li>其它平台：<a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a></li>
+        <li>Twitter/X：<a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a></li>
+        <li>知乎：<a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a></li>
         <li>来源总账：<a href="./source_inventory.md">source_inventory</a> · <a href="./industry_practices.md">industry_practices</a></li>
       </ul>
       <h4 style="margin-top:12px">历史版本（对照 / 回滚）</h4>

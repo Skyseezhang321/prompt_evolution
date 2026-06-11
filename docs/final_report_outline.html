@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>最终报告结构 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#46525f">中间层</span><span class="doctitle">最终报告结构</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="_1">最终报告结构</h1>
+<p>更新时间：2026-06-09</p>
+<h2 id="_2">报告目标</h2>
+<p>最终报告要回答三个问题：</p>
+<ol>
+<li>截至 2026-06-08，prompt 优化与 prompt 自进化领域的前沿状态是什么。</li>
+<li>已有资料中最有价值的 insights、conclusions 和反模式是什么，证据强度和边界分别是什么。</li>
+<li>在工程实践中，哪些 helpful methods 或建议值得实际执行，前提、成本、风险和验证方式分别是什么。</li>
+</ol>
+<p>报告不追求穷尽所有论文，也不声称初步实验能证明长期稳定收益。报告的价值来自可追溯证据、清晰判断、可复用洞见、可执行方法和诚实的风险边界。实验结果只用于验证、演示或修正洞见与方法，不应喧宾夺主。</p>
+<h2 id="_3">核心问题</h2>
+<ul>
+<li>当前前沿方法如何分类：自动 instruction 搜索、文本梯度、反思式进化、prompt-as-program、记忆型自进化、agent/context 优化。</li>
+<li>行业实践正在收敛到什么：eval-driven development、prompt versioning、observability、人工审核、rollback、context engineering。</li>
+<li>哪些结论已有较强证据，哪些只是初步趋势。</li>
+<li>哪些洞见具体、可迁移、可验证，值得进入最终报告。</li>
+<li>哪些 helpful methods 适合作为短期落地方案，哪些更适合作为中长期研究方向。</li>
+<li>初步实验能验证哪些关键洞见或方法，不能验证哪些判断。</li>
+</ul>
+<h2 id="_4">建议结构</h2>
+<ol>
+<li>执行摘要：用一页说明主要 conclusions、最高价值 insights、推荐 helpful methods 和风险。</li>
+<li>一眼看懂的具体洞见卡片：先展示普通用户能立刻理解和尝试的发现，例如“非 reasoning 模型可测试 prompt repetition”“先写失败根因假设再改 prompt”“示例选择本身是一等优化变量”。</li>
+<li>研究范围与方法：说明来源筛选、证据等级、验证边界和不覆盖内容。</li>
+<li>Key insights：逐条写清洞见、现象、机制、可迁移规则、反例和证据等级。</li>
+<li>Helpful methods：给出 2-3 个可复用方法或建议，每个包含适用场景、实施步骤、所需数据、评估指标、成本、误用风险和回滚策略。</li>
+<li>前沿状态地图：按方法类别总结学术论文和工程框架，为洞见和方法提供背景。</li>
+<li>行业经验总结：总结官方文档、工具实践和生产治理经验，优先提炼可复用规则而不是产品罗列。</li>
+<li>初步验证/演示：描述验证目标、要验证的 insight/method、数据、prompt 版本、模型、指标、结果、失败案例和限制。</li>
+<li>风险与治理：覆盖 eval 过拟合、judge 偏差、prompt 漂移、安全退化、成本失控和跨模型脆弱性。</li>
+<li>后续路线：说明如果继续投入，应优先补哪些来源、洞见、方法、验证和工程能力。</li>
+</ol>
+<h2 id="_5">证据等级</h2>
+<ul>
+<li>A：原始论文、官方文档或开源项目文档，并已完成结构化笔记。</li>
+<li>B：多个独立来源重复出现的行业实践或工程经验，已记录来源和适用条件。</li>
+<li>C：本项目初步实验观察，有运行记录、样例输出和失败案例。</li>
+<li>D：基于资料综合形成的推测，尚未有充分证据，必须标注为待验证。</li>
+</ul>
+<p>最终报告中的每个关键判断都必须标注证据等级。不能把 D 级推测写成确定结论。</p>
+<h2 id="_6">可执行方案字段</h2>
+<blockquote>
+<p>本节及下方「Insight 字段」的字段定义与各类型必填项以 <code>docs/insight_field_standard.md</code> 为准；该文同时给出本仓库尚缺的 <code>conclusion</code> 独立字段 schema。</p>
+</blockquote>
+<p>每个 helpful method 或方案至少写清：</p>
+<pre><code class="language-yaml">name:
+insight_supported:
+problem:
+recommended_when:
+not_recommended_when:
+required_inputs:
+implementation_steps:
+evaluation_metrics:
+expected_benefit:
+cost_and_latency:
+risks:
+misuse_or_anti_pattern:
+rollback_plan:
+evidence:
+next_experiment:
+</code></pre>
+<h2 id="insight">Insight 字段</h2>
+<p>每条核心洞见至少写清：</p>
+<pre><code class="language-yaml">insight:
+user_facing_one_liner:
+phenomenon:
+mechanism:
+actionable_rule:
+helpful_method:
+exact_action_to_try:
+before_after_example:
+counterexample_or_limit:
+evidence_strength:
+validation_or_demo:
+</code></pre>
+<h2 id="_7">验收标准</h2>
+<p>最终报告完成时应满足：</p>
+<ul>
+<li>能说明当前前沿的主要方向和代表方法。</li>
+<li>能把论文和行业实践转化为 insights、conclusions、helpful methods 和反模式，而不是只做摘要。</li>
+<li>至少包含 8 条核心 insights 或 conclusions。</li>
+<li>至少包含 2 个可复用 helpful methods 或建议。</li>
+<li>至少包含 1 个用于验证/演示关键洞见或方法的初步实验设计。</li>
+<li>每个关键结论都能追溯到来源、实验或明确标注为待验证。</li>
+<li>明确列出不确定性、反例和后续验证路径。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/final_report_outline.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_2">报告目标</a>
+<a class="lv2" href="#_3">核心问题</a>
+<a class="lv2" href="#_4">建议结构</a>
+<a class="lv2" href="#_5">证据等级</a>
+<a class="lv2" href="#_6">可执行方案字段</a>
+<a class="lv2" href="#insight">Insight 字段</a>
+<a class="lv2" href="#_7">验收标准</a></aside>
+</div>
+
+</body>
+</html>
