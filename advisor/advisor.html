@@ -329,7 +329,13 @@ function generate(){
   state.phase = 'free';
   botSay('好，根据你说的，我从知识库里挑了适用的洞见，给你分层建议 👇', false);
   botSay(adviceHTML(state.answers), true);
-  botSay('建议看完了。你可以继续追问任意话题，我会从知识库里捞相关洞见（当前为关键词匹配，<b>非 LLM</b>；深度自然语言问答是第二阶段）。', false);
+  if (LLM.available){
+    // LLM 模式：确定性卡片是可追溯底座，再让 LLM 结合场景把洞见总结成行动计划
+    botSay('上面是确定性命中的完整卡片。下面我再<b>结合你的场景做个总结</b>，把适用洞见串成一份行动计划（LLM 流式生成、扎根知识库）👇', false);
+    llmAsk('请结合我的场景，把适用的洞见总结成一份按优先级排序的行动计划（3–5 步）：每一步给出贴合我场景的具体例子或方向，并标注洞见引用与证据等级。');
+  } else {
+    botSay('建议看完了。你可以继续追问任意话题，我会从知识库里捞相关洞见（当前为关键词匹配，<b>非 LLM</b>；要用 LLM 总结与自由问答，请按 advisor/README.md 起后端并访问 http://localhost:8000/）。', false);
+  }
   freeChips();
 }
 function freeChips(){
@@ -578,7 +584,8 @@ document.getElementById('tgRight').onclick = () => document.body.classList.toggl
 document.getElementById('scrim').onclick = () => document.body.classList.remove('dr-left', 'dr-right');
 
 document.getElementById('send').onclick = onSend;
-document.getElementById('box').addEventListener('keydown', e => { if (e.key === 'Enter') onSend(); });
+// 中文输入法组词时按回车只是确认候选词（isComposing/keyCode 229），不应触发发送
+document.getElementById('box').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) onSend(); });
 document.getElementById('restart').onclick = restart;
 renderLeft(); rightDefault();
 init();

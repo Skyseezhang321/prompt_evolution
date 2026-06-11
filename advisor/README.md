@@ -70,6 +70,8 @@ python -m uvicorn server:app --app-dir advisor --port 8000
 
 LLM 形态调参（可选，不改 `.env` 全局值）：`ADVISOR_MAX_TOKENS`（默认 1600，推理模型需要较大输出预算）。模型由 `.env` 的 `OPENROUTER_MODEL` 决定。
 
+> **运维注意**：后端在**启动期**加载知识库 / 语料 / 向量索引——改了 KB、后端代码或重建索引后必须**重启后端**，否则旧进程会一直用旧知识库继续服务（曾出现残留进程带着 12 条洞见的旧 KB 跑了一天）。核对方法：`GET /api/health` 的 `insights`（当前应为 14）与 `corpus`（43）。另外 LLM 模式只在**经后端访问**（如 `http://localhost:8000/`）时激活；双击打开 `advisor.html`（file://）永远是确定性模式。
+
 ## 怎么加 / 改一条洞见
 
 只动 `knowledge_base.json`：
