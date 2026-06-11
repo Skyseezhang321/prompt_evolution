@@ -82,7 +82,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <article class="content">
 <h1 id="_1">文献地图</h1>
 <p>更新时间：2026-06-12</p>
-<p>状态：paper_notes 全目录。下方主表收录全部 37 篇已完成深读笔记（每行链接 arXiv 原文与仓库内笔记），另附「已登记、尚未深读」候选清单。新增来源仍先按 <a href="source_collection_plan.md">资料搜集计划</a> 登记和分类，再决定是否进入深读笔记；完整处理状态见 <a href="source_inventory.md">来源清单</a>。</p>
+<p>状态：paper_notes 全目录。下方主表收录全部 39 篇已完成深读笔记（每行链接 arXiv 原文与仓库内笔记），另附「已登记、尚未深读」候选清单。新增来源仍先按 <a href="source_collection_plan.md">资料搜集计划</a> 登记和分类，再决定是否进入深读笔记；完整处理状态见 <a href="source_inventory.md">来源清单</a>。</p>
 <p>筛选标准：优先收录直接讨论 automatic prompt optimization、prompt evolution、self-improving/self-evolving prompts、prompt-as-program、context engineering、eval-driven prompt iteration 的论文或框架。</p>
 <p>收录口径说明：主表按「已写深读笔记」收录，含两类主线之外的特殊条目，均在定位列标注——对照基线类（如 Prompt Repetition，零成本结构变换、非 APO 方法本身，作任何 optimizer 报告增益前的对照底线）与内部基线（PROSE 系 coin-flip 作者自建对照、非独立文献）。</p>
 <h2 id="_2">快速脉络</h2>
@@ -109,7 +109,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>context engineering：行业和论文都在把问题从“写好 prompt”推进到“控制模型在每一步看到什么上下文”。</li>
 <li>已确认的覆盖缺口：bi-level / thought-driven（o1/R1 类推理模型时代的 prompt 优化）整块缺席，是最高优先的定向搜索方向；task-agnostic/online 与 constrained optimization 也仅被间接触及。判据与清单见 <a href="arxiv_taxonomy_completeness_check_20260610.md">taxonomy 外部完整性校验</a>。</li>
 </ul>
-<h2 id="37">深读笔记全目录（37 篇）</h2>
+<h2 id="39">深读笔记全目录（39 篇）</h2>
 <p>证据等级均为论文级（方法 + 结果深读，非本项目复现结论）；逐篇含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。批次归属与综合判断见 <a href="arxiv_deep_reading_batch3_synthesis.html">Batch 3 综合</a>；其中 2025/2026 年 25 篇的时间切片综合（四个转向 + 两个张力 + 缺口清点）见 <a href="arxiv_2025_2026_frontier_synthesis_20260612.html">arXiv 2025/2026 前沿深读综合</a>。</p>
 <table>
 <thead>
@@ -123,8 +123,14 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <tbody>
 <tr>
 <td>2022</td>
+<td><a href="https://arxiv.org/abs/2203.07281">GrIPS</a></td>
+<td>前史锚点（v1 早于 APE）：免梯度短语级编辑搜索，无 LLM 生成器；语义不连贯编辑照样涨分。</td>
+<td><a href="paper_notes/paper-grips-2022.md">paper-grips-2022</a></td>
+</tr>
+<tr>
+<td>2022</td>
 <td><a href="https://arxiv.org/abs/2211.01910">APE</a></td>
-<td>两阶段黑盒搜索（propose + select）的起点，确立「instruction 即可搜索程序」。</td>
+<td>两阶段黑盒搜索（propose + select）的起点，确立「instruction 即可搜索程序」；LLM-as-generator 谱系自此开始。</td>
 <td><a href="paper_notes/paper-ape-2022.md">paper-ape-2022</a></td>
 </tr>
 <tr>
@@ -150,6 +156,12 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td><a href="https://arxiv.org/abs/2310.03714">DSPy</a></td>
 <td>把 LM pipeline 写成声明式程序再编译，prompt 工程转向可编译 AI program。</td>
 <td><a href="paper_notes/paper-dspy-2023.md">paper-dspy-2023</a></td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2310.16427">PromptAgent</a></td>
+<td>把 prompt 优化建模为 MDP + MCTS 规划；同等探索量下树搜索胜 beam/greedy，补上「搜索结构」演进维度。</td>
+<td><a href="paper_notes/paper-promptagent-2023.md">paper-promptagent-2023</a></td>
 </tr>
 <tr>
 <td>2024</td>
@@ -404,11 +416,11 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>LLM-as-judge 评分噪声会不会引导 optimizer 学到迎合 judge 的 prompt。</li>
 <li>长期运行时，prompt 版本如何和生产数据分布、模型版本、工具版本一起追踪。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/literature_map.md</code> 自动生成（2026-06-12 01:03 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/literature_map.md</code> 自动生成（2026-06-12 01:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_2">快速脉络</a>
 <a class="lv2" href="#_3">当前前沿关注点</a>
-<a class="lv2" href="#37">深读笔记全目录（37 篇）</a>
+<a class="lv2" href="#39">深读笔记全目录（39 篇）</a>
 <a class="lv2" href="#_4">已登记、尚未深读的重点候选</a>
 <a class="lv2" href="#_5">读论文时重点抽取</a>
 <a class="lv2" href="#_6">优先阅读顺序</a>

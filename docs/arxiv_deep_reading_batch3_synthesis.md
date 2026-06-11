@@ -4,9 +4,9 @@
 
 2026-06-09 补充：新增“可转成普通用户方法的候选”层，用于把论文级判断转写成具体洞见卡片；原有学术结论和证据边界保留。
 
-2026-06-12 补充：新增「批次外深读」清单——经典锚点 5 篇、综述 3 篇、对照基线 2 篇不属于任何 batch，批次累计 27 篇 + 批次外 10 篇 = arXiv 渠道深读笔记共 37 篇，全目录见 `docs/literature_map.md`；2025/2026 年 25 篇的时间切片综合见 `docs/arxiv_2025_2026_frontier_synthesis_20260612.md`。
+2026-06-12 补充：新增「批次外深读」清单——经典锚点 7 篇（同日主线结构评审补读 GrIPS、PromptAgent 两篇）、综述 3 篇、对照基线 2 篇不属于任何 batch，批次累计 27 篇 + 批次外 12 篇 = arXiv 渠道深读笔记共 39 篇，全目录见 `docs/literature_map.md`；2025/2026 年 25 篇的时间切片综合见 `docs/arxiv_2025_2026_frontier_synthesis_20260612.md`。
 
-范围：第三批新增深读 16 篇，批次累计已深读 27 篇（另有批次外深读 10 篇，见下方清单）。
+范围：第三批新增深读 16 篇，批次累计已深读 27 篇（另有批次外深读 12 篇，见下方清单）。
 
 第三批新增：
 
@@ -27,9 +27,9 @@
 - Prompt Optimization Is a Coin Flip：`docs/paper_notes/paper-coin-flip-2026.md`
 - JTPRO：`docs/paper_notes/paper-jtpro-2026.md`
 
-批次外深读 10 篇（2026-06-12 补注；不属于任何 batch，综合判断不在本文内，按指针另读）：
+批次外深读 12 篇（2026-06-12 补注；不属于任何 batch，综合判断不在本文内，按指针另读）：
 
-- 经典锚点 5 篇：APE / OPRO / DSPy / MIPROv2 / TextGrad——逐法机制、数字与留下的洞见见 `docs/apo_seven_methods_primer_20260611.md`，笔记在 `docs/paper_notes/`（paper-ape-2022 等）。
+- 经典锚点 7 篇：APE / OPRO / DSPy / MIPROv2 / TextGrad——逐法机制、数字与留下的洞见见 `docs/apo_seven_methods_primer_20260611.md`，笔记在 `docs/paper_notes/`（paper-ape-2022 等）；另有 2026-06-12 主线结构评审补读的 GrIPS（前史：免梯度编辑搜索早于 APE，`docs/paper_notes/paper-grips-2022.md`）与 PromptAgent（MCTS 规划搜索，beam 与 Pareto 之间的缺环，`docs/paper_notes/paper-promptagent-2023.md`）。
 - 综述 3 篇：APO Survey / APE Survey / Context Engineering Survey——已用于 taxonomy 外部完整性校验，结论与 frontier 缺口见 `docs/arxiv_taxonomy_completeness_check_20260610.md`。
 - 对照基线 2 篇：Prompt Repetition（零成本结构变换对照底线，`docs/paper_notes/paper-prompt-repetition-2025.md`）/ PROSE（coin-flip 作者自建内部基线、非独立文献，`docs/paper_notes/paper-prose-2026.md`，与 `docs/classic_optimizer_methods_comparison_20260610.md` 同读）。
 

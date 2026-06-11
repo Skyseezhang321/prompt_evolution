@@ -2,7 +2,7 @@
 
 更新时间：2026-06-12
 
-状态：paper_notes 全目录。下方主表收录全部 37 篇已完成深读笔记（每行链接 arXiv 原文与仓库内笔记），另附「已登记、尚未深读」候选清单。新增来源仍先按 [资料搜集计划](source_collection_plan.md) 登记和分类，再决定是否进入深读笔记；完整处理状态见 [来源清单](source_inventory.md)。
+状态：paper_notes 全目录。下方主表收录全部 39 篇已完成深读笔记（每行链接 arXiv 原文与仓库内笔记），另附「已登记、尚未深读」候选清单。新增来源仍先按 [资料搜集计划](source_collection_plan.md) 登记和分类，再决定是否进入深读笔记；完整处理状态见 [来源清单](source_inventory.md)。
 
 筛选标准：优先收录直接讨论 automatic prompt optimization、prompt evolution、self-improving/self-evolving prompts、prompt-as-program、context engineering、eval-driven prompt iteration 的论文或框架。
 
@@ -32,17 +32,19 @@
 - context engineering：行业和论文都在把问题从“写好 prompt”推进到“控制模型在每一步看到什么上下文”。
 - 已确认的覆盖缺口：bi-level / thought-driven（o1/R1 类推理模型时代的 prompt 优化）整块缺席，是最高优先的定向搜索方向；task-agnostic/online 与 constrained optimization 也仅被间接触及。判据与清单见 [taxonomy 外部完整性校验](arxiv_taxonomy_completeness_check_20260610.md)。
 
-## 深读笔记全目录（37 篇）
+## 深读笔记全目录（39 篇）
 
 证据等级均为论文级（方法 + 结果深读，非本项目复现结论）；逐篇含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。批次归属与综合判断见 [Batch 3 综合](arxiv_deep_reading_batch3_synthesis.md)；其中 2025/2026 年 25 篇的时间切片综合（四个转向 + 两个张力 + 缺口清点）见 [arXiv 2025/2026 前沿深读综合](arxiv_2025_2026_frontier_synthesis_20260612.md)。
 
 | 年份 | 论文 | 一句话定位 | 深读笔记 |
 | --- | --- | --- | --- |
-| 2022 | [APE](https://arxiv.org/abs/2211.01910) | 两阶段黑盒搜索（propose + select）的起点，确立「instruction 即可搜索程序」。 | [paper-ape-2022](paper_notes/paper-ape-2022.md) |
+| 2022 | [GrIPS](https://arxiv.org/abs/2203.07281) | 前史锚点（v1 早于 APE）：免梯度短语级编辑搜索，无 LLM 生成器；语义不连贯编辑照样涨分。 | [paper-grips-2022](paper_notes/paper-grips-2022.md) |
+| 2022 | [APE](https://arxiv.org/abs/2211.01910) | 两阶段黑盒搜索（propose + select）的起点，确立「instruction 即可搜索程序」；LLM-as-generator 谱系自此开始。 | [paper-ape-2022](paper_notes/paper-ape-2022.md) |
 | 2023 | [ProTeGi](https://arxiv.org/abs/2305.03495) | 把失败样本压缩成自然语言批评，beam search + 数据选择；textual critique 经典基线。 | [paper-protegi-2023](paper_notes/paper-protegi-2023.md) |
 | 2023 | [OPRO](https://arxiv.org/abs/2309.03409) | LLM-as-optimizer：用「历史候选 + 分数」轨迹驱动生成全新指令。 | [paper-opro-2023](paper_notes/paper-opro-2023.md) |
 | 2023 | [PromptBreeder](https://arxiv.org/abs/2309.16797) | task-prompt 与 mutation-prompt 同时进化，自指优化的经典起点。 | [paper-promptbreeder-2023](paper_notes/paper-promptbreeder-2023.md) |
 | 2023 | [DSPy](https://arxiv.org/abs/2310.03714) | 把 LM pipeline 写成声明式程序再编译，prompt 工程转向可编译 AI program。 | [paper-dspy-2023](paper_notes/paper-dspy-2023.md) |
+| 2023 | [PromptAgent](https://arxiv.org/abs/2310.16427) | 把 prompt 优化建模为 MDP + MCTS 规划；同等探索量下树搜索胜 beam/greedy，补上「搜索结构」演进维度。 | [paper-promptagent-2023](paper_notes/paper-promptagent-2023.md) |
 | 2024 | [EvoPrompt](https://arxiv.org/abs/2309.08532) | 把 GA/DE 经典进化算法翻译成 LLM 可执行的自然语言算子。 | [paper-evoprompt-2024](paper_notes/paper-evoprompt-2024.md) |
 | 2024 | [TextGrad](https://arxiv.org/abs/2406.07496) | 把文本反馈抽象成可经计算图反向传播的「textual gradient」，泛化到任意文本变量。 | [paper-textgrad-2024](paper_notes/paper-textgrad-2024.md) |
 | 2024 | [MIPROv2](https://arxiv.org/abs/2406.11695) | 多阶段 LM program 的 instruction + demonstration 联合优化与 credit assignment。 | [paper-miprov2-2024](paper_notes/paper-miprov2-2024.md) |

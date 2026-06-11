@@ -83,8 +83,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <h1 id="arxiv-batch-3">arXiv 重点论文深读 Batch 3 综合判断</h1>
 <p>日期：2026-06-08</p>
 <p>2026-06-09 补充：新增“可转成普通用户方法的候选”层，用于把论文级判断转写成具体洞见卡片；原有学术结论和证据边界保留。</p>
-<p>2026-06-12 补充：新增「批次外深读」清单——经典锚点 5 篇、综述 3 篇、对照基线 2 篇不属于任何 batch，批次累计 27 篇 + 批次外 10 篇 = arXiv 渠道深读笔记共 37 篇，全目录见 <code>docs/literature_map.md</code>；2025/2026 年 25 篇的时间切片综合见 <code>docs/arxiv_2025_2026_frontier_synthesis_20260612.md</code>。</p>
-<p>范围：第三批新增深读 16 篇，批次累计已深读 27 篇（另有批次外深读 10 篇，见下方清单）。</p>
+<p>2026-06-12 补充：新增「批次外深读」清单——经典锚点 7 篇（同日主线结构评审补读 GrIPS、PromptAgent 两篇）、综述 3 篇、对照基线 2 篇不属于任何 batch，批次累计 27 篇 + 批次外 12 篇 = arXiv 渠道深读笔记共 39 篇，全目录见 <code>docs/literature_map.md</code>；2025/2026 年 25 篇的时间切片综合见 <code>docs/arxiv_2025_2026_frontier_synthesis_20260612.md</code>。</p>
+<p>范围：第三批新增深读 16 篇，批次累计已深读 27 篇（另有批次外深读 12 篇，见下方清单）。</p>
 <p>第三批新增：</p>
 <ul>
 <li>CriSPO：<code>docs/paper_notes/paper-crispo-2024.md</code></li>
@@ -104,9 +104,9 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>Prompt Optimization Is a Coin Flip：<code>docs/paper_notes/paper-coin-flip-2026.md</code></li>
 <li>JTPRO：<code>docs/paper_notes/paper-jtpro-2026.md</code></li>
 </ul>
-<p>批次外深读 10 篇（2026-06-12 补注；不属于任何 batch，综合判断不在本文内，按指针另读）：</p>
+<p>批次外深读 12 篇（2026-06-12 补注；不属于任何 batch，综合判断不在本文内，按指针另读）：</p>
 <ul>
-<li>经典锚点 5 篇：APE / OPRO / DSPy / MIPROv2 / TextGrad——逐法机制、数字与留下的洞见见 <code>docs/apo_seven_methods_primer_20260611.md</code>，笔记在 <code>docs/paper_notes/</code>（paper-ape-2022 等）。</li>
+<li>经典锚点 7 篇：APE / OPRO / DSPy / MIPROv2 / TextGrad——逐法机制、数字与留下的洞见见 <code>docs/apo_seven_methods_primer_20260611.md</code>，笔记在 <code>docs/paper_notes/</code>（paper-ape-2022 等）；另有 2026-06-12 主线结构评审补读的 GrIPS（前史：免梯度编辑搜索早于 APE，<code>docs/paper_notes/paper-grips-2022.md</code>）与 PromptAgent（MCTS 规划搜索，beam 与 Pareto 之间的缺环，<code>docs/paper_notes/paper-promptagent-2023.md</code>）。</li>
 <li>综述 3 篇：APO Survey / APE Survey / Context Engineering Survey——已用于 taxonomy 外部完整性校验，结论与 frontier 缺口见 <code>docs/arxiv_taxonomy_completeness_check_20260610.md</code>。</li>
 <li>对照基线 2 篇：Prompt Repetition（零成本结构变换对照底线，<code>docs/paper_notes/paper-prompt-repetition-2025.md</code>）/ PROSE（coin-flip 作者自建内部基线、非独立文献，<code>docs/paper_notes/paper-prose-2026.md</code>，与 <code>docs/classic_optimizer_methods_comparison_20260610.md</code> 同读）。</li>
 </ul>
@@ -361,7 +361,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>prompt 没有显著膨胀或重复。</li>
 <li>每次提升能追溯到 candidate、feedback、edit、selector 和评估结果。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_deep_reading_batch3_synthesis.md</code> 自动生成（2026-06-12 01:03 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_deep_reading_batch3_synthesis.md</code> 自动生成（2026-06-12 01:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">可转成普通用户方法的候选</a>
 <a class="lv2" href="#1-optimizer">结论 1：先测优化值不值得做，再跑 optimizer</a>

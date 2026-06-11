@@ -166,7 +166,7 @@ Agent 场景里，优化对象不再是“回答 prompt”，而是 role、tool 
 
 ## 当前缺口
 
-- ~~需要补读不一定在 top80 中的经典锚点：APE、OPRO、DSPy、MIPROv2、TextGrad 原始论文。~~（2026-06-10 已闭合：5 篇均完成全文证据级深读，笔记见 `docs/paper_notes/paper-ape-2022.md`、`paper-opro-2023.md`、`paper-dspy-2023.md`、`paper-miprov2-2024.md`、`paper-textgrad-2024.md`；连同已有的 ProTeGi/EvoPrompt/PromptBreeder 形成 APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA 的基线主干。仍待补的更早锚点：AutoPrompt、RLPrompt、GrIPS。）
+- ~~需要补读不一定在 top80 中的经典锚点：APE、OPRO、DSPy、MIPROv2、TextGrad 原始论文。~~（2026-06-10 已闭合：5 篇均完成全文证据级深读，笔记见 `docs/paper_notes/paper-ape-2022.md`、`paper-opro-2023.md`、`paper-dspy-2023.md`、`paper-miprov2-2024.md`、`paper-textgrad-2024.md`；连同已有的 ProTeGi/EvoPrompt/PromptBreeder 形成 APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA 的基线主干。仍待补的更早锚点：AutoPrompt、RLPrompt；GrIPS 已于 2026-06-12 补读（`docs/paper_notes/paper-grips-2022.md`，前史定位：免梯度编辑搜索早于 APE、无 LLM 生成器），同日补读 PromptAgent（`docs/paper_notes/paper-promptagent-2023.md`，MCTS 规划搜索缺环）。）
 - 2026-06-10 完成对照 3 篇综述（APO survey 2502.16923、APE survey 2502.11560、Context Engineering survey 2507.13334）的**外部完整性校验**，结论见 `docs/arxiv_taxonomy_completeness_check_20260610.md`：本 7 簇在"离散自然语言 prompt 优化"范围内无整块遗漏；查出的是簇内偏轻子机制（学习型评分/token 级编辑/bandit 筛选/MoE 路由）、需登记的 frontier（task-agnostic/online、constrained optimization、bi-level/thought-driven 推理模型、multi-task）、以及需显式声明的刻意边界（soft prompt、multimodal、完整 context-engineering 系统）。最高优先级单项补读：bi-level/thought-driven（o1/R1 推理模型）prompt 优化。
 - 当前矩阵尚未核验每篇论文的 train/dev/test 切分、成本和代码可用性。
 - 需要将 P0 论文逐篇转成 `docs/paper_notes/` 模板笔记，再决定最小实验候选。
