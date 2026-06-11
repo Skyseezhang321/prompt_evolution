@@ -8,6 +8,8 @@
 
 ## 快速脉络
 
+> 主线七法（APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA）的逐方法详细介绍见 [APO 七法主线详解](apo_seven_methods_primer_20260611.md)，所有数字与各深读笔记同口径。
+
 1. 早期自动 prompt 生成：把 instruction 当成可搜索的程序。
 2. 文本梯度与黑盒搜索：用错误反馈生成自然语言 critique，再编辑 prompt。
 3. 进化与自指优化：同时优化 task prompt 和 mutation/optimizer prompt。

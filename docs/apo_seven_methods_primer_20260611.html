@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APO 七法主线详解 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4d5246">中间层</span><span class="doctitle">APO 七法主线详解</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="apo-apeprotegioprodspytextgradmiprov2gepa">APO 七法主线详解（APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA）</h1>
+<p>生成日期：2026-06-11</p>
+<p>reviewed_by：Claude</p>
+<p>适用范围：本仓库各报告与笔记反复引用"APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA"这条基线主干（见 <code>CHANGELOG.md</code> 经典锚点补读条目），但此前只有逐篇深读笔记，没有一份把七法串成整体叙事的术语介绍。本文档补上这个入口：每个方法给出定位、机制、代表性结果和被后续方法补上的洞，并指向对应深读笔记。</p>
+<p>证据等级：全部内容综合自七篇 <code>method-and-results-read</code> 深读笔记（均读过本地 PDF/文本，含 SHA256）；所有数字与笔记同口径，可逐条回溯。属<strong>论文级证据，非本项目复现结论</strong>；跨论文原始分数不可直接横比（任务、模型、年代不同），引用时必须绑定各自实验设置。</p>
+<blockquote>
+<p>这条主线不是唯一谱系。进化算法分支（EvoPrompt、PromptBreeder）与受控反例 PROSE 的横向对比见 <a href="classic_optimizer_methods_comparison_20260610.md">classic_optimizer_methods_comparison_20260610.md</a>；本文档只覆盖被本仓库当作"基线主干"的七法。</p>
+</blockquote>
+<h2 id="_1">主线一句话</h2>
+<p>这条链是自动 prompt 优化（APO）从<strong>盲目搜索 → 利用失败反馈 → 利用优化轨迹 → 优化整个程序 → 通用文本反向传播 → 联合贝叶斯搜索 → 反思式进化</strong>的演进史。驱动演进的两条暗线：<strong>反馈信号越来越丰富</strong>（标量分数 → 失败批评 → 逐模块文本梯度 → 完整执行轨迹），<strong>优化对象越来越大</strong>（单条指令 → 指令+演示 → 多模块程序）。</p>
+<h2 id="1-ape2022-">1. APE（2022）— 生成-筛选范式的起点</h2>
+<p><strong>Automatic Prompt Engineer</strong>（Zhou et al., ICLR 2023）把"写指令"形式化为最简两阶段黑盒搜索：<strong>propose-then-select</strong>。</p>
+<ul>
+<li><strong>机制</strong>：给 LLM 看少量 input-output 示例，让它反推"什么指令能产生这种映射"，批量生成约 50 条候选；再用 score function（execution accuracy 或 log probability）在小训练集上选最高分。可选迭代 Monte Carlo 搜索——让 LLM 生成高分指令的语义变体再筛一轮，但论文自报收益仅边际。</li>
+<li><strong>代表性结果</strong>：24/24 个 instruction induction 任务达到或超过人类（IQM 0.810 vs 0.749）；搜出 zero-shot CoT prompt "Let's work this out in a step by step way to be sure we have the right answer."，把 MultiArith 从 78.7 提到 82.0、GSM8K 从 40.7 提到 43.0（相对 "Let's think step by step." 起点）。</li>
+<li><strong>留下的洞</strong>：纯"生成→评分→选择"，<strong>不利用失败案例的信息</strong>，候选相互独立，搜索近乎盲目；且最早暴露"选择口径必须等于部署场景"的过拟合戒律（zero-shot 口径选出的指令到 few-shot 场景掉分）。</li>
+<li>深读笔记：<a href="paper_notes/paper-ape-2022.md">paper-ape-2022.md</a></li>
+</ul>
+<h2 id="2-protegi2023">2. ProTeGi（2023）— 引入"文本梯度"</h2>
+<p><strong>Prompt Optimization with Textual Gradients</strong>（Pryzant et al., EMNLP 2023），论文标题即 "Automatic Prompt Optimization with 'Gradient Descent' and Beam Search"。</p>
+<ul>
+<li><strong>机制</strong>：把梯度下降类比到自然语言空间——拿当前 prompt 在 minibatch 上的<strong>错误样本</strong>，让 LLM 总结失败原因（这段批评即"文本梯度"），再沿"语义反方向"编辑 prompt；候选经 paraphrase 扩展后进入 beam search，并用 bandit 算法（UCB 系）做评估预算分配，不必每个候选都跑全量验证集。</li>
+<li><strong>代表性结果</strong>：四个分类 benchmark 上平均比 Monte-Carlo 搜索高 3.9%、比 RL 高 8.2%、比原始 prompt 高 15.3%；最高把初始 prompt 提升 31%。消融显示 beam search 与 bandit 选择各自都有贡献。</li>
+<li><strong>留下的洞</strong>：第一次让失败案例成为优化信号，是后续 critique/trace 路线（TextGrad、GEPA）的源头；但学习曲线约 3 步即达峰，之后过拟合或局部停滞，且 critique 本身可能误导（梯度把焦点带偏的定性案例）。</li>
+<li>深读笔记：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a></li>
+</ul>
+<h2 id="3-opro2023-llm">3. OPRO（2023）— LLM 即优化器</h2>
+<p><strong>Optimization by PROmpting</strong>（Yang et al., DeepMind）换角度：不给失败案例，给<strong>优化轨迹</strong>。</p>
+<ul>
+<li><strong>机制</strong>：构造 meta-prompt，内含按分数<strong>升序</strong>排列的历史 (instruction, 训练分) 轨迹（截断 top-20）+ 少量任务样例；每步让 optimizer LLM 采样 8 条<strong>全新</strong>指令（不是编辑、不要求语义保持），评分后回填轨迹循环。LLM 靠上下文内的"解-分数"模式归纳改进方向。</li>
+<li><strong>代表性结果</strong>：搜出 "Take a deep breath and work on this problem step-by-step."（GSM8K 测试 80.2，对照 "Let's think step by step." 71.8、空串 34.0）；BBH 上多数任务超人写指令 5% 以上。</li>
+<li><strong>留下的洞</strong>：信号只有标量分数，<strong>不知道为什么失败</strong>，无法定位根因；最佳 prompt 高度 model-specific（更像在搜"触发某模型某能力的钥匙短语"）；"默认不留验证集"的论断后续被反复挑战（train-test gap 常达 5%–20%）。本项目把 OPRO 当反面对照，强制 held-out。</li>
+<li>深读笔记：<a href="paper_notes/paper-opro-2023.md">paper-opro-2023.md</a></li>
+</ul>
+<h2 id="4-dspy2023-prompt">4. DSPy（2023）— 从"优化一个 prompt"到"编译一个程序"</h2>
+<p><strong>DSPy</strong>（Khattab et al., Stanford）是范式转变而非又一个算法。</p>
+<ul>
+<li><strong>机制</strong>：把多步 LM 流水线抽象成<strong>程序</strong>——用 signature（如 <code>question -&gt; answer</code>）声明每个 LM 调用的输入输出语义，用 module（Predict / ChainOfThought / ReAct）实例化成可组合计算图；prompt 具体文字不手写，由 <strong>teleprompter（编译器内优化器）针对 metric 编译</strong>出来。本版核心优化器是 BootstrapFewShot：让程序高温多跑训练输入、透明追踪多阶段 trace、用 metric 过滤出整条通过的 trace、把其中各模块的 input-output 对自举为 demonstration 候选，再随机搜索/Optuna 在 dev 上选组合。</li>
+<li><strong>代表性结果</strong>：GSM8K 上 GPT-3.5 从 ~33% 编译到 88.3 dev / 81.6 test；编译能让 Llama2-13b-chat 追平 GPT-3.5；T5-770M 仅用 200 条标注追平依赖专家 prompt 的 GPT-3.5 方案。</li>
+<li><strong>关键澄清</strong>（本仓库反复强调）：<strong>这版优化的是 demonstration，不是 instruction</strong>——把 DSPy 当"自动改指令工具"是误读，instruction 层自动优化要到 MIPROv2/COPRO 才系统化。它的范式贡献是把评估口径从"模型 X 在任务 Y"改成"模型 X + 程序 P + 编译策略 S 在任务 Y"。</li>
+<li>深读笔记：<a href="paper_notes/paper-dspy-2023.md">paper-dspy-2023.md</a></li>
+</ul>
+<h2 id="5-textgrad2024">5. TextGrad（2024）— 文本反向传播的通用化</h2>
+<p><strong>TextGrad</strong>（Yuksekgonul et al., Stanford）把 ProTeGi 的"文本梯度"推广成通用<strong>文本自动微分框架</strong>。</p>
+<ul>
+<li><strong>机制</strong>：把任意 compound 系统建成计算图，变量是文本（prompt、代码、分子、答案……）。前向算出 loss（LLM 评价或规则 metric）后，让 LLM 对每个变量产出自然语言批评（textual gradient）并沿图<strong>逐节点反向传播</strong>，再由文本版梯度下降（TGD）改写变量。API 刻意同构 PyTorch（<code>Variable</code> / <code>loss.backward()</code> / <code>optimizer.step()</code>）。典型成本结构：<strong>弱模型做前向、强模型当 gradient engine</strong>；稳定性靠 minibatch + momentum + <strong>revert-if-worse 验证闸门</strong>（每轮在验证集上只接受变好的更新）支撑。</li>
+<li><strong>代表性结果</strong>：instruction-only（零 demo）的 prompt 优化在 BBH Object Counting 上 77.8 → 91.9，超 DSPy 8-demo 方案 7%；GSM8K 与 DSPy 持平（81.1），把 DSPy 选的 demo 拼到优化后 instruction 上进一步到 82.1——<strong>instruction 与 demonstration 是互补的两条轴</strong>。</li>
+<li><strong>留下的洞</strong>："梯度"是作者自认的隐喻而非真梯度，本仓库另有批判性笔记 <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">paper-textual-gradients-flawed-metaphor-2025.md</a>；每步反传多次 LLM 调用成本不低；自然语言约束堆多后可靠性下降；跨模型迁移未验证。</li>
+<li>深读笔记：<a href="paper_notes/paper-textgrad-2024.md">paper-textgrad-2024.md</a></li>
+</ul>
+<h2 id="6-miprov22024">6. MIPROv2（2024）— 指令与演示的联合贝叶斯优化</h2>
+<p><strong>MIPRO</strong>（Opsahl-Ong et al., EMNLP 2024；DSPy 库中实现名 MIPROv2）补上 DSPy 没解决的"多阶段程序里 instruction 怎么自动优化"，并把问题形式化为两个挑战：<strong>proposal</strong>（prompt 空间太大，怎么采到少量高质量候选）与 <strong>credit assignment</strong>（只有程序级 metric、没有模块级标签，怎么归因到各模块）。</p>
+<ul>
+<li><strong>机制</strong>：三步——(1) <strong>bootstrap demonstration</strong>（沿用 DSPy 的 trace 过滤自举）；(2) <strong>grounded instruction proposal</strong>：给 proposer LM 喂数据集模式摘要、程序控制流摘要、自举 demo 和历史评分，让它写出贴任务的候选指令；(3) <strong>贝叶斯联合搜索</strong>：用 Optuna 的 TPE 建代理模型，在 mini-batch 上评估"各模块选哪条指令 × 哪组 demo"的组合并更新先验，proposal 与 selection 解耦。</li>
+<li><strong>代表性结果</strong>（7 任务，5 次运行 + 显著性检验）：联合优化在 5/7 任务最优，最高 +13%。最重要的分诊结论：<strong>多数任务上优化 bootstrapped demonstration 比优化 instruction 更管用</strong>；instruction 优化只在"含不显然、又无法靠少量样例表达的条件规则"的任务上才是决定性的。</li>
+<li><strong>留下的洞</strong>：optimizer 推不出复杂任务的隐藏规则，仍需人写 seed prompt；代理模型只能在固定候选集里选、不能改进候选本身；demo 集本身高方差。</li>
+<li>深读笔记：<a href="paper_notes/paper-miprov2-2024.md">paper-miprov2-2024.md</a></li>
+</ul>
+<h2 id="7-gepa2025-pareto">7. GEPA（2025）— 反思式进化 + Pareto 前沿</h2>
+<p><strong>GEPA</strong>（Genetic-Pareto，Agrawal et al.）是当前主线终点，定位是"反思式 prompt 进化可以超过 RL 微调"。</p>
+<ul>
+<li><strong>机制</strong>：三个核心组件——
+  1. <strong>反思式变异</strong>：选中系统的一个模块，在 minibatch 上执行并收集 execution trace + evaluation trace（编译错误、failed rubrics、模块级失败原因等自然语言反馈），让 reflection LM 据此改写该模块 prompt——继承 ProTeGi/TextGrad 的批评思路，但输入是整条 rollout 轨迹而非只有分数或单点批评；
+  2. <strong>Pareto 候选池</strong>：维护 candidate × example 分数矩阵，保留"在至少一个样本上最佳"的所有非支配候选，按出现在 Pareto frontier 的频次采样父代——避免贪心全局最优过早锁死局部模式；
+  3. <strong>system-aware merge（crossover）</strong>：把不同进化分支里各模块的优胜 prompt 拼合成新候选（GEPA+Merge）。</li>
+<li><strong>代表性结果</strong>：Qwen3 8B 上 aggregate 45.23 → 54.85，超过 GRPO（RL，固定 24,000 rollouts）的 48.91 与 MIPROv2 的 47.84，而 GEPA 平均只用约 3,936 rollouts；论文口径为对 GRPO 平均高约 6%、最高 20%，最高省 35 倍 rollouts。消融显示 <strong>Pareto 选择本身是主要贡献</strong>（aggregate improvement +12.44 vs 贪心 +6.05、beam +5.11）；产出 prompt 最高比 MIPROv2 短 9.2 倍。</li>
+<li><strong>留下的洞</strong>：AIME-2025 上仍低于 GRPO（反思进化不是处处替代 RL）；Merge 在 Qwen3 8B 上反而掉分；大部分 rollout 预算花在验证候选而非产生学习信号；优势依赖 feedback function 质量，评价只能给标量时优势收窄。</li>
+<li>深读笔记：<a href="paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a></li>
+</ul>
+<h2 id="_2">主线总结</h2>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>年份</th>
+<th>反馈信号</th>
+<th>优化对象</th>
+<th>信号家族</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>2022</td>
+<td>小训练集标量分</td>
+<td>单条 instruction</td>
+<td>标量</td>
+</tr>
+<tr>
+<td>ProTeGi</td>
+<td>2023</td>
+<td>失败样本的自然语言批评</td>
+<td>单条 prompt</td>
+<td>critique</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>2023</td>
+<td>历史 (prompt, 分数) 升序轨迹</td>
+<td>单条 instruction</td>
+<td>标量</td>
+</tr>
+<tr>
+<td>DSPy</td>
+<td>2023</td>
+<td>metric pass/fail（trace 用于筛 demo）</td>
+<td>多模块程序，主要是 demonstration</td>
+<td>标量（含 trace 筛选）</td>
+</tr>
+<tr>
+<td>TextGrad</td>
+<td>2024</td>
+<td>逐节点反传的文本批评</td>
+<td>任意文本变量</td>
+<td>critique</td>
+</tr>
+<tr>
+<td>MIPROv2</td>
+<td>2024</td>
+<td>metric + 贝叶斯代理模型</td>
+<td>各模块 instruction × demo 组合</td>
+<td>标量</td>
+</tr>
+<tr>
+<td>GEPA</td>
+<td>2025</td>
+<td>完整 execution/evaluation trace 的反思</td>
+<td>多模块 prompt 池（Pareto）</td>
+<td>trace</td>
+</tr>
+</tbody>
+</table>
+<p>两条暗线的含义：</p>
+<ol>
+<li><strong>反馈信息密度决定样本效率</strong>。从标量（APE/OPRO）到批评（ProTeGi/TextGrad）到完整轨迹（GEPA），单位 rollout 被榨取的信息持续上升——这直接对应 GEPA 对 GRPO 的 35 倍 rollout 节省主张。本项目评估方法时按"标量 / critique / trace"三层分类，不把它们混为"LLM 改 prompt"（同 <a href="classic_optimizer_methods_comparison_20260610.md">classic_optimizer_methods_comparison_20260610.md</a> 结论 2）。</li>
+<li><strong>优化对象的升维依赖程序抽象</strong>。从单指令到指令+演示再到多模块系统，DSPy 的 signature/module/编译抽象是承载这种扩展的底座，MIPROv2 与 GEPA 都长在其上；因此任何结果都必须连同程序结构与编译/优化策略一起记录才可复现。</li>
+</ol>
+<h2 id="_3">对本项目的使用约定</h2>
+<ul>
+<li>这条主线是<strong>基线锚点谱系</strong>，不是排行榜：APE 与 OPRO 是任何 optimizer 实验的强制下限对照；ProTeGi/TextGrad 是 critique 线对照；MIPROv2 是 instruction+demo 联合优化基线；GEPA 是当前最值得复现的强 baseline（见 <a href="literature_map.md">literature_map.md</a>）。</li>
+<li>引用各方法的数字时必须绑定其原始实验设置；唯一可公平横比的是把多法放进同一框架的结果（如 coin-flip，见 <a href="classic_optimizer_methods_comparison_20260610.md">classic_optimizer_methods_comparison_20260610.md</a>）。</li>
+<li>各方法的最小验证/复现计划已写在对应深读笔记的末节，不在本文档重复。</li>
+</ul>
+<h2 id="_4">关联文档</h2>
+<ul>
+<li>七篇深读笔记：<a href="paper_notes/paper-ape-2022.md">APE</a>、<a href="paper_notes/paper-protegi-2023.md">ProTeGi</a>、<a href="paper_notes/paper-opro-2023.md">OPRO</a>、<a href="paper_notes/paper-dspy-2023.md">DSPy</a>、<a href="paper_notes/paper-textgrad-2024.md">TextGrad</a>、<a href="paper_notes/paper-miprov2-2024.md">MIPROv2</a>、<a href="paper_notes/paper-gepa-2026.md">GEPA</a></li>
+<li>进化算法分支与同框架横比：<a href="classic_optimizer_methods_comparison_20260610.md">classic_optimizer_methods_comparison_20260610.md</a></li>
+<li>文献全景与优先阅读顺序：<a href="literature_map.md">literature_map.md</a></li>
+<li>"文本梯度"隐喻的批判：<a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">paper-textual-gradients-flawed-metaphor-2025.md</a></li>
+<li>字段与证据口径：<code>docs/insight_field_standard.md</code></li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/apo_seven_methods_primer_20260611.md</code> 自动生成（2026-06-11 18:22 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">主线一句话</a>
+<a class="lv2" href="#1-ape2022-">1. APE（2022）— 生成-筛选范式的起点</a>
+<a class="lv2" href="#2-protegi2023">2. ProTeGi（2023）— 引入"文本梯度"</a>
+<a class="lv2" href="#3-opro2023-llm">3. OPRO（2023）— LLM 即优化器</a>
+<a class="lv2" href="#4-dspy2023-prompt">4. DSPy（2023）— 从"优化一个 prompt"到"编译一个程序"</a>
+<a class="lv2" href="#5-textgrad2024">5. TextGrad（2024）— 文本反向传播的通用化</a>
+<a class="lv2" href="#6-miprov22024">6. MIPROv2（2024）— 指令与演示的联合贝叶斯优化</a>
+<a class="lv2" href="#7-gepa2025-pareto">7. GEPA（2025）— 反思式进化 + Pareto 前沿</a>
+<a class="lv2" href="#_2">主线总结</a>
+<a class="lv2" href="#_3">对本项目的使用约定</a>
+<a class="lv2" href="#_4">关联文档</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

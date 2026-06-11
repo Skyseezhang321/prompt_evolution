@@ -15,6 +15,7 @@
 | 第一批实验方向 | 不追求完整 benchmark；只选择 1-2 个能验证洞见或演示方法的最小任务。 |
 | 主要风险 | eval 过拟合、LLM-as-judge 偏差、prompt 漂移、成本失控、自动优化破坏安全边界。 |
 | 想快速理解结论 | 直接打开 [跨渠道综合论述报告 v3](docs/analysis_report_v3_20260610.html)：含全景脑图、跨渠道证据金字塔、12 条核心洞见、分渠道速览和覆盖诚实清点；脑图可编辑源见 [Mermaid 脑图](docs/prompt_evolution_mindmap_20260610.md)。只想读 12 洞见可看 [读者向洞见手册](docs/insight_handbook_20260609.md)。 |
+| 想直接拿优化建议 | [Prompt 优化建议助手](advisor/advisor.html)：聊天式描述你的场景，系统按证据分级知识库给出分层、可追溯的建议。两种形态——直接开 `advisor.html`（确定性、免费）；或起 FastAPI 后端（`uvicorn server:app --app-dir advisor`）走**扎根 LLM 问答**（OpenRouter/deepseek，回答强制引用洞见编号与证据等级）。源与构建见 [advisor/](advisor/README.md)。 |
 | 阅读路径 | 先读本 README；想快速理解结论读 [读者向洞见手册](docs/insight_handbook_20260609.md)；想参与共创先读 [参与贡献指南](CONTRIBUTING.md) 和 [共创工作流](docs/contribution_workflow.md)；继续研究细节再读 [资料搜集计划](docs/source_collection_plan.md)、[来源清单](docs/source_inventory.md)、[研究框架](docs/research_brief.md)、[实验计划](docs/experiment_plan.md)、[最终报告结构](docs/final_report_outline.md) 和 [变更记录](CHANGELOG.md)。 |
 
 ## 五天交付目标
@@ -136,6 +137,7 @@ Research Signal issue -> 项目内新颖性判断 -> 结构化笔记 -> insight/
 - [跨渠道综合论述报告 v3](docs/analysis_report_v3_20260610.html)：当前主报告。在 v2 的 12 洞见主干上叠加全景脑图、跨渠道证据金字塔（arXiv·A → GitHub·B → 其它平台·B → Twitter·B* → 知乎·D）、分渠道速览和覆盖诚实清点；脑图可编辑源见 [Mermaid 脑图](docs/prompt_evolution_mindmap_20260610.md)。旧版 [报告 v2](docs/analysis_report_v2_20260609.html)（按洞见组织、arXiv 为主）与 [报告 v1](docs/analysis_report_v1_20260608.html)（按渠道组织）保留作对照与回滚。
 - [Insight / Conclusion / Helpful Method 候选清单](docs/insight_method_catalog_20260609.md)：按最新 insight-first 原则，把论文、源码和行业材料聚合成可复用洞见、核心结论、helpful methods、反模式和验证候选（结构化中间层，供研究者和最终报告使用）。
 - [文献地图](docs/literature_map.md)：自动 prompt 优化、自进化、上下文工程相关论文脉络。
+- [APO 七法主线详解](docs/apo_seven_methods_primer_20260611.md)：把仓库反复引用的基线主干 APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA 串成整体叙事，逐方法给出定位、机制、代表性结果和局限，数字与各深读笔记同口径。
 - [行业实践](docs/industry_practices.md)：OpenAI、Anthropic、Google、DSPy、LangSmith、Promptfoo 等跨来源实践整理。
 - [其它平台渠道洞见综合](docs/source_batches/web_search_platform_insight_cards_20260609.md)：其它平台（web_search/工具 + 通用社区广搜）渠道入口，按 A/B/C/D 等级给出结论总览、insight/helpful method 卡片、反模式、广搜渠道覆盖与缺口和验证候选。
 - [其它平台候选来源结构化分析](docs/source_batches/web_search_platform_analysis_20260608.md)：证据层，对 Hugging Face、Arize、Promptfoo、Langfuse、Humanloop、LangChain、OPIK、Weaviate 等来源做快筛分层和证据索引。

@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt 优化建议助手 · 对话式 v1</title>
+<style>
+/* ---- 视觉语言：学术期刊 / 研究档案（与 scripts/build_doc_html.py 文档页同一套）——
+        暖纸面 + 墨色 + 茶青主色 + 朱砂印章点缀；宋体衬线标题、黑体正文、等宽编号；
+        全部系统字体 + 内联 SVG 纹理，无外部依赖，file:// 离线可用。 ---- */
+:root{
+  --bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+  --line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+  --teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;
+  --seal:#b23f2e;--seal-soft:#f8ece6;
+  --blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+  --serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+  --sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  --mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+  --shadow:0 1px 2px rgba(35,40,32,.05),0 18px 40px -26px rgba(35,40,32,.35);--radius:12px;
+}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.7;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.page{position:relative;z-index:1;max-width:1480px;margin:0 auto;padding:16px 16px 20px;}
+.app{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;height:100%;min-height:0;}
+
+/* ---- 三栏控制台外壳 ---- */
+.topbar{display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding:11px 16px;background:var(--card);
+  border:1px solid var(--line);border-bottom:3px double var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:13px;}
+.topbar .dot{width:38px;height:38px;border-radius:7px;background:var(--seal);color:#fff;display:flex;
+  align-items:center;justify-content:center;font-family:var(--serif);font-weight:700;font-size:19px;flex:none;
+  transform:rotate(-2deg);box-shadow:inset 0 0 0 2px var(--seal),inset 0 0 0 3.5px rgba(255,253,245,.55);}
+.ttl h1{margin:0;font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:.01em;}
+.ttl .sub{margin:1px 0 0;color:var(--muted);font-size:12px;letter-spacing:.03em;}
+.toggle{display:none;align-items:center;gap:5px;font-size:13px;padding:6px 12px;border:1px solid var(--line);
+  border-radius:7px;background:var(--paper);color:var(--slate);cursor:pointer;font-family:var(--sans);transition:.15s;}
+.toggle:hover{border-color:var(--teal);color:var(--teal-deep);background:var(--teal-soft);}
+.shell{display:grid;grid-template-columns:266px minmax(0,1fr) 322px;gap:13px;height:calc(100vh - 98px);min-height:520px;}
+.side{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  overflow-y:auto;padding:14px;}
+.side::-webkit-scrollbar,.msgs::-webkit-scrollbar{width:10px;}
+.side::-webkit-scrollbar-thumb,.msgs::-webkit-scrollbar-thumb{background:var(--line);
+  border:3px solid var(--paper);border-radius:99px;}
+.side::-webkit-scrollbar-track,.msgs::-webkit-scrollbar-track{background:transparent;}
+.pan-h{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+.side .pan-h:first-child{margin-top:2px;}
+.pan-p{font-size:12.8px;color:#474d3f;margin:0 0 8px;}
+.reslink{display:block;font-size:13px;padding:7px 10px;border:1px solid var(--line-soft);border-radius:7px;
+  margin-bottom:6px;background:var(--card);text-decoration:none;color:var(--teal-deep);transition:.14s;}
+.reslink:hover{border-color:var(--teal);background:var(--teal-soft);color:var(--teal-deep);}
+.nav-group{font-size:11.5px;color:var(--slate);font-weight:700;margin:10px 0 4px;}
+.navitem{display:block;width:100%;text-align:left;font-size:12.8px;padding:6px 8px;border:1px solid transparent;
+  border-radius:7px;background:none;cursor:pointer;color:var(--ink);line-height:1.45;font-family:var(--sans);transition:.12s;}
+.navitem:hover{background:var(--soft);border-color:var(--line);}
+.navitem:focus-visible,.toggle:focus-visible,.btn-restart:focus-visible{outline:2px solid var(--teal);outline-offset:1px;}
+.navitem .lvl{margin-right:5px;}
+.scrim{display:none;position:fixed;inset:0;background:rgba(30,33,26,.35);backdrop-filter:blur(2px);z-index:40;}
+@media(max-width:1180px){
+  .shell{grid-template-columns:266px minmax(0,1fr);}
+  .side.right{position:fixed;top:0;right:0;height:100vh;width:344px;max-width:88vw;z-index:50;border-radius:0;
+    transform:translateX(100%);transition:transform .22s;}
+  body.dr-right .side.right{transform:none;}
+  body.dr-right .scrim,body.dr-left .scrim{display:block;}
+  .toggle.right{display:inline-flex;}
+}
+@media(max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);height:calc(100vh - 136px);}
+  .side.left{position:fixed;top:0;left:0;height:100vh;width:300px;max-width:86vw;z-index:50;border-radius:0;
+    transform:translateX(-100%);transition:transform .22s;}
+  body.dr-left .side.left{transform:none;}
+  .toggle.left{display:inline-flex;}
+}
+.pill{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  padding:5px 11px;border-radius:4px;border:1px solid var(--line);background:var(--soft);color:var(--slate);}
+.pill b{color:var(--amber);}
+.btn-restart{font-size:12px;padding:6px 13px;border:1px solid var(--line);border-radius:7px;
+  background:transparent;color:var(--muted);cursor:pointer;font-family:var(--sans);transition:.15s;}
+.btn-restart:hover{border-color:var(--seal);color:var(--seal);}
+
+.msgs{flex:1;overflow-y:auto;padding:21px 20px;display:flex;flex-direction:column;gap:15px;
+  background:linear-gradient(180deg,#f4f2e6,#efedde);}
+.row{display:flex;gap:10px;align-items:flex-end;max-width:100%;
+  animation:rise .32s cubic-bezier(.21,.68,.32,1) both;}
+.row.me{flex-direction:row-reverse;align-self:flex-end;}
+@keyframes rise{from{opacity:0;transform:translateY(9px);}to{opacity:1;transform:none;}}
+.av{width:30px;height:30px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:14px;font-weight:700;color:#fff;}
+.av.bot{background:var(--seal);transform:rotate(-2deg);
+  box-shadow:inset 0 0 0 1.5px var(--seal),inset 0 0 0 2.5px rgba(255,253,245,.5);}
+.av.me{background:var(--slate);}
+.msg{padding:12px 16px;border-radius:12px;max-width:78%;font-size:14.6px;}
+.msg.bot{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:3px;
+  box-shadow:0 2px 10px -5px rgba(35,40,32,.18);}
+.msg.me{background:var(--teal-deep);color:#f2f5ee;border-bottom-right-radius:3px;font-weight:500;
+  box-shadow:0 2px 10px -5px rgba(13,76,67,.5);}
+.msg.wide{max-width:100%;}
+.msg .qh{color:var(--muted);font-size:12.5px;margin-top:5px;}
+.typing{display:inline-flex;gap:5px;padding:5px 2px;}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--teal);opacity:.4;animation:bl 1s infinite;}
+.typing i:nth-child(2){animation-delay:.2s;} .typing i:nth-child(3){animation-delay:.4s;}
+@keyframes bl{0%,80%,100%{opacity:.25;transform:translateY(0);}40%{opacity:.9;transform:translateY(-3px);}}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:12px 20px;border-top:1px solid var(--line-soft);background:var(--card);}
+.chip{cursor:pointer;user-select:none;padding:7px 15px;border:1px solid var(--line);border-radius:999px;
+  background:var(--paper);font-size:13.5px;color:#3e4336;transition:all .16s ease;}
+.chip:hover{border-color:var(--teal);color:var(--teal-deep);background:var(--teal-soft);
+  transform:translateY(-1px);box-shadow:0 4px 10px -6px rgba(23,106,94,.55);}
+.chip.go{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600;}
+.chip.go:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.chip.ghost{background:transparent;border-style:dashed;color:var(--muted);}
+.chip.ghost:hover{box-shadow:none;transform:none;}
+.composer{display:flex;gap:10px;padding:13px 20px 15px;border-top:1px solid var(--line);background:var(--card);}
+.composer input{flex:1;padding:11px 15px;border:1px solid var(--line);border-radius:9px;font-size:14px;
+  font-family:var(--sans);background:var(--paper);color:var(--ink);transition:border-color .15s,box-shadow .15s;}
+.composer input::placeholder{color:var(--faint);}
+.composer input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,106,94,.14);}
+.composer button{border:0;border-radius:9px;padding:0 22px;font-size:14px;font-weight:600;font-family:var(--sans);
+  background:var(--teal);color:#fff;cursor:pointer;transition:background .15s;}
+.composer button:hover{background:var(--teal-deep);}
+
+/* ---- advice rich content (聊天宽气泡与右侧详情面板共用) ---- */
+.banner{padding:10px 14px;border-left:3px solid var(--amber);background:#faf3e0;border-radius:0 8px 8px 0;
+  font-size:12.5px;color:#5c4c22;margin-bottom:13px;}
+.banner b{color:#7a5f14;}
+.summary{padding:14px 17px;border-radius:0 10px 10px 0;border-left:3px solid var(--teal);background:var(--teal-soft);margin-bottom:14px;}
+.summary h3{margin:0 0 8px;font-family:var(--serif);font-size:16px;}
+.summary ul{margin:6px 0 0;padding-left:18px;}
+.flag{padding:10px 14px;border-left:3px solid var(--rose);background:#f9ecef;border-radius:0 8px 8px 0;
+  margin-bottom:9px;color:#7c2e40;font-weight:600;font-size:13.5px;}
+.flag.ok{border-left-color:var(--green);background:#eef3e4;color:#3a5520;}
+.group-label{display:block;margin:20px 0 11px;padding:0 0 7px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--card);position:relative;overflow:hidden;
+  padding:16px 18px 14px;margin-bottom:13px;box-shadow:0 1px 4px -2px rgba(35,40,32,.12);}
+.card::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--teal);}
+.card.A::before{background:var(--teal);} .card.B::before{background:var(--amber);}
+.card.C::before{background:var(--rose);} .card.D::before{background:var(--violet);}
+.card.E::before{background:var(--green);} .card.F::before{background:var(--slate);}
+.card .cid{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:7px;}
+.card .cid b{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+.lvl{display:inline-flex;align-items:center;padding:1.5px 8px;border-radius:3px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  border:1px solid var(--line);background:var(--soft);color:#565b4c;}
+.lvl.A{background:#e6f1ea;border-color:#bcd7c8;color:#175e4b;}
+.lvl.B{background:#e9effa;border-color:#bccbe8;color:#23508f;}
+.lvl.pre{background:var(--seal-soft);border-color:#e2bdaf;color:#a03c28;}
+.card h3{margin:0 0 6px;font-family:var(--serif);font-size:17px;line-height:1.45;}
+.hook{color:#3a4034;font-weight:600;margin:0 0 11px;font-size:13.6px;}
+.layer{margin-top:11px;}
+.layer h4{margin:0 0 5px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--faint);font-weight:700;}
+.layer ul{margin:4px 0 0;padding-left:18px;} .layer li{margin-bottom:3px;}
+.ev{display:flex;flex-wrap:wrap;gap:9px;}
+.ev .n{flex:1;min-width:190px;padding:9px 12px;border:1px solid var(--line-soft);border-radius:7px;background:var(--paper);}
+.ev .n b{display:block;font-family:var(--mono);font-size:16.5px;font-weight:700;color:var(--teal-deep);font-variant-numeric:tabular-nums;}
+.ev .n small{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.55;}
+.ev .n a{font-size:11.5px;}
+.bound{margin-top:10px;padding:8px 12px;border-left:3px solid var(--amber);background:#faf3e0;border-radius:0 6px 6px 0;font-size:12.5px;color:#5c4c22;}
+.corr{margin-top:7px;font-size:12px;color:var(--muted);}
+.at-table{width:100%;border-collapse:collapse;border:1px solid var(--line);font-size:12.8px;background:var(--card);}
+.at-table th,.at-table td{padding:9px 12px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top;}
+.at-table th{background:var(--soft);font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);}
+.at-table tr:last-child td{border-bottom:0;}
+.exp{padding:10px 13px;border:1px solid var(--line-soft);border-radius:8px;background:var(--paper);margin-bottom:8px;font-size:12.8px;}
+.exp b{color:var(--teal-deep);font-family:var(--mono);}
+.llm-ans{font-size:14.4px;line-height:1.82;}
+.llm-ans b{font-family:var(--mono);font-weight:600;font-size:.86em;color:#175e4b;background:#e6f1ea;
+  border:1px solid #bcd7c8;border-radius:4px;padding:0 5px;margin:0 1px;}
+.cursor{display:inline-block;width:7px;height:15px;background:var(--teal);margin-left:2px;vertical-align:text-bottom;animation:blink 1s steps(2,start) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.refs{margin-top:12px;border-top:1px dashed var(--line);padding-top:9px;}
+.refs .group-label{margin:0 0 4px;border-bottom:0;padding-bottom:0;}
+.refs ul{margin:6px 0 0;padding-left:18px;font-size:12.6px;} .refs li{margin-bottom:3px;}
+@media(max-width:680px){.page{padding:8px 8px 12px;}.msg{max-width:88%;}.ttl h1{font-size:16.5px;}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="dot">优</div>
+    <div class="ttl">
+      <h1>Prompt 优化建议助手</h1>
+      <p class="sub">扎根证据分级知识库 · 回答可追溯到出处 · 知识库更新 2026-06-11</p>
+    </div>
+    <span class="pill" id="llmpill">LLM 模式：<b>未接入</b>（当前确定性）</span>
+    <button class="toggle left" id="tgLeft">📚 知识库</button>
+    <button class="toggle right" id="tgRight">📄 详情</button>
+    <button class="btn-restart" id="restart">重新开始</button>
+  </header>
+  <div class="shell">
+    <aside class="side left" id="leftPanel"></aside>
+    <main class="app">
+      <div class="msgs" id="msgs"></div>
+      <div class="chips" id="chips"></div>
+      <div class="composer">
+        <input id="box" placeholder="直接打字提问（如：多个 agent 出错怎么定位？）" autocomplete="off">
+        <button id="send">发送</button>
+      </div>
+    </main>
+    <aside class="side right" id="rightPanel"></aside>
+  </div>
+  <div class="scrim" id="scrim"></div>
+</div>
+
+<script id="kb" type="application/json">{"meta": {"name": "Prompt 优化建议系统 · 知识库", "version": "v1", "updated": "2026-06-11", "derived_from": "docs/analysis_report_v3_20260610.html", "single_source_of_truth": true, "notes": "12 条洞见忠实摘自跨渠道综合报告 v3 与读者向洞见手册。论文数字=该论文设置下成立，不等于在你的任务上成立；12 洞见均尚未在本项目复现验证；标 recent-preprint 的 2026 新稿需独立复现后才能采信。本 JSON 是单一事实来源：advisor.html 由 build_advisor.py 内联生成，第二阶段的扎根 LLM RAG 也复用同一份。", "evidence_levels": {"A": "论文/官方文档/源码并已结构化笔记", "B": "多源重复出现的工程实践", "C": "本项目实验（暂无）", "D": "综合推测/线索", "recent-preprint": "2026 新稿，需独立复现后才能采信"}}, "questions": [{"id": "task_type", "title": "你要优化的任务，主要是哪一种？", "hint": "决定能不能看清优化效果，以及第一批该不该拿它练手。", "type": "single", "options": [{"id": "extract", "label": "信息抽取（出 JSON / 字段）"}, {"id": "classify", "label": "文本分类 / 打标签"}, {"id": "toolcall", "label": "工具 / 函数调用（agent 用工具）"}, {"id": "open", "label": "开放写作 / 生成（摘要、回复、文案）"}, {"id": "unsure", "label": "还不确定 / 混合"}]}, {"id": "has_evalset", "title": "你有没有一个能客观打分的评测集 / 留出集？", "hint": "没有评测集，你看到的“涨分”很可能只是噪声。", "type": "single", "options": [{"id": "yes_objective", "label": "有，能客观打分（如字段 F1、准确率）"}, {"id": "judge_only", "label": "有，但只能靠另一个模型当评委打分"}, {"id": "no", "label": "暂时没有"}]}, {"id": "failure_visible", "title": "失败的时候，你能不能把“为什么错”拆开看清？", "hint": "分数告诉你坏了，诊断才告诉你哪儿坏了。", "type": "single", "options": [{"id": "yes", "label": "能，可以归类（漏抽 / 标错 / 格式坏 / 过度推断…）"}, {"id": "no", "label": "不能，只知道总分高低"}, {"id": "unsure", "label": "没仔细看过"}]}, {"id": "tried_autopolish", "title": "你是不是打算（或已经）直接让模型“优化一下 prompt”？", "hint": "这是最常见、也最危险的起点。", "type": "single", "options": [{"id": "planning_to", "label": "打算这么做 / 正想跑个优化器"}, {"id": "got_worse", "label": "已经跑了，结果好像更差或不稳定"}, {"id": "no", "label": "没有，我想先搞清楚方法"}]}, {"id": "prompt_growing", "title": "优化几轮后，你的 prompt 是不是越来越长、规则越来越多？", "hint": "变长变复杂，往往是过拟合不是进步。", "type": "single", "options": [{"id": "yes", "label": "是，明显变长 / 加了很多特例规则"}, {"id": "no", "label": "没有 / 长度可控"}, {"id": "na", "label": "还没到这一步"}]}, {"id": "architecture", "title": "你的系统是单个 prompt，还是多个 agent 协作？", "hint": "多 agent 的难点不是加 agent，而是出错时分清是谁的责任。", "type": "single", "options": [{"id": "single", "label": "单个 prompt / 单步"}, {"id": "multi_agent", "label": "多个 agent / 多步流水线"}]}, {"id": "uses_memory", "title": "你有没有给系统加“记忆”（把历史经验喂回上下文）？", "hint": "没过滤的记忆不是资产，是污染源。", "type": "single", "options": [{"id": "unbounded", "label": "有，基本是把历史对话 / 经验都塞进去"}, {"id": "filtered", "label": "有，但做了筛选 / 带元数据"}, {"id": "no", "label": "没有"}]}, {"id": "idea_source", "title": "你手上这个“优化思路”主要是从哪来的？", "hint": "热度只说明传播，不说明有效。", "type": "single", "options": [{"id": "social", "label": "社媒爆款 / 二手文章 / 朋友推荐"}, {"id": "paper_or_code", "label": "论文 / 官方文档 / 能复现的代码"}, {"id": "self_test", "label": "自己在数据上测过"}, {"id": "na", "label": "说不清"}]}], "insights": [{"id": "I01", "group": "A", "group_title": "动手之前：值不值得优化", "title": "先确认有没有提升空间，再花钱跑优化器", "hook": "自动优化不是稳赚的——某些设置下，它有近一半概率让 prompt 比 zero-shot 还差。", "evidence_level": "A", "spine": true, "triggers": [{"any": [{"q": "tried_autopolish", "in": ["planning_to", "got_worse"]}, {"q": "has_evalset", "eq": "no"}]}], "diagnosis": "在花钱跑优化器之前，先量两个东西：提升空间（最好的候选比 zero-shot 高多少）和噪声地板（候选之间本来就抖动多少）。提升空间没超过噪声地板，就别优化。", "steps": ["跑 zero-shot + 手写 baseline，各记一分。", "生成 10–20 个候选，用同一批 20 条留出样本打分。", "看 headroom（最高候选 − zero-shot）和 noise floor（候选间抖动）。", "headroom 没超过 noise floor → 停，别优化。"], "evidence": [{"num": "49%", "note": "Coin Flip：72 次优化里 49% 低于 zero-shot（Haiku 4.5）", "level": "recent-preprint", "source": "docs/paper_notes/paper-coin-flip-2026.md"}, {"num": "~3 步", "note": "ProTeGi：约 3 步达峰，之后多在训练集过拟合", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md"}], "boundary": "靠多轮搜索才能发现组合结构的任务会被这个体检低估；阈值要按样本量和评分器重校准。", "cross_channel": "web_search 的 Optimizer Intake Checklist、Ask HN「AI evals 半成品」痛点、Twitter「先有测试集和评分器」、知乎「从技巧转向 eval 驱动」独立指向同一前置纪律。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I02", "group": "A", "group_title": "动手之前：值不值得优化", "title": "第一批先选「能客观打分」的任务", "hook": "任务类型决定你能不能看清优化有没有用。开放写作就算优化了，你也分不清是真变好还是评委口味变了。", "evidence_level": "A", "spine": false, "triggers": [{"any": [{"q": "task_type", "in": ["open", "unsure"]}, {"q": "has_evalset", "eq": "judge_only"}]}], "diagnosis": "信息抽取、分类、工具调用这种任务，失败能拆解、因果看得清，适合作为第一块试验田；开放生成很重要，但分数受评委口味影响，最难归因。", "steps": ["第一批验证选：信息抽取（JSON）、文本分类、工具调用。", "暂时别用开放生成当第一块试验田——因果最难看清。", "若必须做主观写作，先定义 rubric，否则 metric 不稳。"], "evidence": [{"num": "+6.8", "note": "Coin Flip：唯一让 6 种方法全超 zero-shot 的是结构化 JSON 任务 HelpSteer2", "level": "recent-preprint", "source": "docs/paper_notes/paper-coin-flip-2026.md"}, {"num": "+16% → ~1%", "note": "KG 抽取：同数据集 triple F1 +16%，换数据集只剩约 1%", "level": "A", "source": "docs/paper_notes/paper-apo-kg-construction-2025.md"}], "boundary": "开放生成很重要，只是不适合作为「因果清晰」的首批验证。", "cross_channel": "Twitter 把「有留出集、可分类失败、有可解释中间过程」列为方法成立前提；web_search 也强调主观写作必须先定义 rubric。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I03", "group": "B", "group_title": "怎么从失败里学东西", "title": "把失败样本变成「可编辑的证据」，不只是一个分数", "hook": "accuracy 那个数字无从下手；一句具体的失败诊断才直接指向 prompt 该补什么。", "evidence_level": "A", "spine": true, "triggers": [{"any": [{"q": "failure_visible", "in": ["no", "unsure"]}, {"q": "tried_autopolish", "in": ["planning_to", "got_worse"]}]}], "diagnosis": "只记「这条错了」得到的是一个红叉；把它记成一句具体诊断（什么条件下、模型犯了什么错），才直接告诉你该补哪条规则。这才是改 prompt 的燃料。", "steps": ["每个失败 case 记：prediction、gold、error_type、critique、candidate_id。", "先把 20 条失败整理成「失败类型表」，再让优化器只基于这张表改。"], "evidence": [{"num": "+15.3% / 最高 +31%", "note": "ProTeGi：用失败样本生成文字「梯度」再改写，比原始 prompt", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md"}, {"num": "越改越差", "note": "同论文：让 AutoGPT 自己反馈改 6 轮，反而把起始 prompt 改差；文字「梯度」是比喻非真梯度", "level": "A", "source": "docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md"}], "boundary": "critique 会带评委偏见，必须绑定样本和指标，不能当成真实因果。", "cross_channel": "GitHub 的 compare-first rewrite 保留失败证据与 diff；Twitter「让优化器读失败过程而非只读最终分数」；web_search 与知乎都要求按失败 owner 分层诊断。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I04", "group": "B", "group_title": "怎么从失败里学东西", "title": "先列「失败根因假设」，再改 prompt", "hook": "反思式优化器最常见的翻车，是一开始就猜错方向，然后在错误方向上越改越自信。", "evidence_level": "recent-preprint", "spine": false, "triggers": [{"any": [{"q": "tried_autopolish", "eq": "got_worse"}, {"q": "failure_visible", "eq": "yes"}]}], "diagnosis": "别让模型一边猜原因一边改。对同一批失败，强制列出 2–3 个互斥的根因假设（缺规则 / 缺示例 / 格式冲突），每个假设生成一个候选，分别验证，谁真把错误率拉回来用谁。", "steps": ["对同一批失败，强制生成 2–3 个互斥根因假设。", "每个假设生成一个候选，分别评分；运行记录存 failure_hypothesis 而不只 critique。"], "evidence": [{"num": "23.81% → 13.50% → 87.57%", "note": "VISTA：反思式优化器在缺陷种子上反而掉到 13.50%；解耦「假设生成 / 改写」后恢复 87.57%", "level": "recent-preprint", "source": "docs/paper_notes/paper-vista-reflection-dark-2026.md"}], "boundary": "开放写作任务根因模糊，多假设验证可能成本大于收益。", "cross_channel": "本条目前主要由 arXiv（VISTA）单层支撑，工程渠道尚无独立证据——属「机制清晰、待工程与本项目验证」，已列入 P1。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I05", "group": "C", "group_title": "别被模型骗：选候选与防膨胀", "title": "不要采用第一版，多生几个再用验证集选", "hook": "「怎么选候选」和「怎么生成候选」一样重要。把选择权交给验证集，别让模型自评「我这版最好」。", "evidence_level": "A", "spine": true, "triggers": [{"any": [{"q": "has_evalset", "in": ["yes_objective", "judge_only"]}, {"q": "tried_autopolish", "in": ["planning_to", "got_worse"]}]}], "diagnosis": "LLM 候选方差极大。生成多个候选，按「dev 分 + 格式错误 + 长度」多维度选 Pareto 候选；历史最佳（best-seen）永远单独存着，不许被新候选直接覆盖，随时能回滚。", "steps": ["每轮存 seed / candidates / scores / selection_policy / rejected_reason / best_seen / rollback_point。", "生成 5 个候选，按 dev 分 + 格式错误 + 长度三维选 Pareto 候选。"], "evidence": [{"num": "0.85 / 0.67 / 0.88", "note": "ProTeGi：beam 选择在 Jailbreak/Liar/Sarcasm 明显优于贪心；bandit > 均匀选", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md"}], "boundary": "搜索预算越大越容易 dev 过拟合，必须有 validation/test 分层兜底。", "cross_channel": "GitHub insight cards 把 candidate ledger 列为可复用结构；Twitter「metric+trace 约束下生成并选择候选」是同一原则的业界版。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I06", "group": "C", "group_title": "别被模型骗：选候选与防膨胀", "title": "prompt 变长、变复杂，往往是过拟合不是进步", "hook": "优化后更长、规则更多、看起来更专业，很可能是在给训练样本打补丁。", "evidence_level": "recent-preprint", "spine": false, "triggers": [{"any": [{"q": "prompt_growing", "eq": "yes"}]}], "diagnosis": "候选如果变长，必须说清楚每条新规则对应哪些失败样本、而且扛得住压力测试，否则一律拒绝。标准是「必要、可追溯、不过拟合」，不是「越短越好」。", "steps": ["候选选择记录 length_ratio、repetition、edit_family、dev_test_gap、OOD/stress_delta。", "候选若变长，必须说明每条新规则绑定哪些失败样本并通过压力测试，否则拒绝。"], "evidence": [{"num": "14.7x / 86%", "note": "PrefPO：放任时 TextGrad 撑到 14.7 倍长、86% 在偷改任务本身（PrefPO 仅 37%）", "level": "recent-preprint", "source": "docs/paper_notes/paper-prefpo-2026.md"}, {"num": "+10.0 / +9.9", "note": "TextReg：加正则化管住膨胀，反而比 TextGrad 更高", "level": "recent-preprint", "source": "docs/paper_notes/paper-textreg-2026.md"}], "boundary": "有些复杂任务确实需要更明确约束——标准是「必要、可追溯、不过拟合」，不是「短」。", "cross_channel": "GitHub 与 web_search 的反模式表都把「只看平均分上升」单列；web_search 另把「采信 vendor 提升 X%」列为同源风险。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I07", "group": "D", "group_title": "到底该改什么部件", "title": "有开发集时，选「给模型看的例子」常比改 instruction 更有效", "hook": "大家本能去改 instruction 措辞，却忽略了常更有效的变量——给模型看哪几个示例。", "evidence_level": "A", "spine": false, "triggers": [{"any": [{"all": [{"q": "has_evalset", "eq": "yes_objective"}, {"q": "task_type", "in": ["extract", "classify"]}]}]}], "diagnosis": "固定 instruction，只精选 3 个覆盖易错边界的示例，往往比绞尽脑汁重写 instruction 收益更大；甚至精选 3 个比把所有示例都塞进去还好。", "steps": ["至少比较 no-example / random-example / optimized-example / instruction+optimized。", "固定 instruction，从候选池搜 3 个示例看留出表现。"], "evidence": [{"num": "+12.63", "note": "Teach Better：不改 instruction、只优化示例就达 72.92（PaLM 2 / BBH）", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md"}, {"num": "75.77 > 65.91", "note": "Gemini 1.0 Pro：优化示例 > 只优化 instruction；且精选 3 个 > 全部示例", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md"}], "boundary": "上下文紧张、示例分布偏、示例可能泄漏答案时，会伤害泛化。", "cross_channel": "主要由 arXiv（Teach Better、ERM、DistillPrompt）支撑；列入 P0 首批验证，正是为了防止把示例收益误记成指令收益。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I08", "group": "D", "group_title": "到底该改什么部件", "title": "先标清楚你改的是哪个「部件」", "hook": "失败可能来自示例、prompting 模式、工具 schema、agent 角色、记忆或评委，不只是 system prompt。", "evidence_level": "A", "spine": true, "triggers": [{"any": [{"q": "architecture", "eq": "multi_agent"}, {"q": "task_type", "eq": "toolcall"}, {"q": "uses_memory", "in": ["unbounded", "filtered"]}]}], "diagnosis": "每次优化生成 artifact manifest，拆出各部件（task_prompt / examples / prompting_pattern / tool_schema / evaluator / safety_rules）并标 mutable / frozen。评委、测试集、安全规则必须 frozen——防 reward hacking 的底线。", "steps": ["每次优化生成 artifact manifest，拆出各部件并标 mutable/frozen。", "评委、测试集、安全规则必须 frozen——防 reward hacking 的底线。"], "evidence": [{"num": "6.5% → 74.0%", "note": "AutoPDL：只把 prompting 模式换对（非重写措辞），FEVER 跳 +67.5pp", "level": "A", "source": "docs/paper_notes/paper-autopdl-2025.md"}], "boundary": "简单一次性任务不需要完整 manifest，研究/生产级才需要。", "cross_channel": "跨渠道支撑最厚的一条——GitHub frozen evaluator/data 隔离、12-factor-agents 的 context engineering、web_search version ledger、Twitter prompt_as_program_spec、知乎「先声明 mutable/frozen」全部独立指向同一结构。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I09", "group": "D", "group_title": "到底该改什么部件", "title": "工具调错时，改的常是「工具说明」，不是 agent 指令", "hook": "失败常来自工具描述和参数语义本身；改 agent 的 system prompt 再多遍也没用。", "evidence_level": "recent-preprint", "spine": false, "triggers": [{"any": [{"q": "task_type", "eq": "toolcall"}]}], "diagnosis": "工具调用失败常是工具描述 / 参数语义没说清（如金额单位）。把工具 eval 拆成 Tool Selection / Slot Filling / Overall Success 三个指标分别记，看瓶颈在哪层，再决定改全局指令还是改 schema。", "steps": ["工具 eval 拆成 Tool Selection / Slot Filling / Overall Success 三个指标分别记。", "分别测「只改全局指令 / 只改 schema / 联合」，看瓶颈在哪层。"], "evidence": [{"num": "51.27% → 64.46%", "note": "JTPRO：联合优化全局指令 + 每工具 schema，o3-mini 整体成功率（ToolACE 1000 工具）", "level": "recent-preprint", "source": "docs/paper_notes/paper-jtpro-2026.md"}], "boundary": "外部 API schema 不可改时，用 wrapper 文档或检索上下文承载局部规则。", "cross_channel": "web_search 登记的 Vertex AI「用 placeholder_to_content 锁定 prompt 段落」正是「区分可变/冻结段落」在生产工具里的具体实现。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I10", "group": "E", "group_title": "记忆与多 agent：更多 ≠ 更好", "title": "只有「过滤后的记忆」才有用", "hook": "未经筛选地堆历史，会造成跨任务负迁移，还更贵。", "evidence_level": "recent-preprint", "spine": false, "triggers": [{"any": [{"q": "uses_memory", "in": ["unbounded", "filtered"]}]}], "diagnosis": "别把历史对话整坨塞进上下文（会把 A 任务规则错套到 B 任务，还烧 token）。每条记忆带元数据，只检索已验证、且适用条件匹配当前任务的 3–5 条。", "steps": ["记忆 schema 含 success_template/error_pattern、source_task、applicability、quality、forget_reason。", "别塞历史对话，只检索已验证、匹配当前任务的 3–5 条。"], "evidence": [{"num": "70.7% vs 63.6% ｜ $0.31 vs $0.70", "note": "MemAPO：双记忆比 TextGrad 更好且更便宜", "level": "recent-preprint", "source": "docs/paper_notes/paper-memapo-2026.md"}, {"num": "第7步 68.6 vs 第13步 58.5", "note": "ERM：过滤记忆收敛近两倍速；原始记忆无收益", "level": "A", "source": "docs/paper_notes/paper-erm-memory-2024.md"}], "boundary": "非平稳/安全敏感任务里，遗忘策略和 opt-out 比「记得多」更重要。", "cross_channel": "GitHub 的 ECC memory hooks / evaluator-RAG 原型把有界 memory + trace + verifier + playbook 做成结构参考；知乎社区误区「自进化=什么都记下来」从反面印证。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I11", "group": "E", "group_title": "记忆与多 agent：更多 ≠ 更好", "title": "多 agent 出错，先找「是谁的责任」，别整个重写", "hook": "核心难题不是加更多 agent，而是 credit assignment——一个 agent 局部完全正确，却可能让整体失败。", "evidence_level": "recent-preprint", "spine": false, "triggers": [{"any": [{"q": "architecture", "eq": "multi_agent"}]}], "diagnosis": "在 trace 里记下每个 agent / 每一轮的「局部对不对、对后续有没有帮助、最终成没成」，找到第一个引入错误的那一步，只改那一块，别整条流水线重写。", "steps": ["trace 存 role_id/round_id/local_validity/successor_utility/global_outcome。", "标出首次引入错误的 role/round，只改那一块；耦合弱时先做 coupling test。"], "evidence": [{"num": "55.13 → 64.63", "note": "Temporal/Structural Credit：credit-guided 在 MedMCQA（+9.50）；无差别更新所有轮反而掉分", "level": "recent-preprint", "source": "docs/paper_notes/paper-temporal-structural-credit-mas-2026.md"}, {"num": "70.39 vs 65.31", "note": "MASPO：联合优化平均优于顺序 baseline", "level": "recent-preprint", "source": "docs/paper_notes/paper-maspo-2026.md"}], "boundary": "agent 交互很弱时，联合优化成本可能不划算——先测耦合再决定。", "cross_channel": "本条主要由 arXiv（MASPO / MAPRO / Temporal-Structural Credit）单层支撑，工程渠道尚无独立证据；与洞见 08「先标责任部件、再局部改」属同一治理思路。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}, {"id": "I12", "group": "F", "group_title": "怎么对待「听来的」方法", "title": "社媒和二手文章是「线索」，不是「证据」", "hook": "一个方法被反复转发，只能说明它热，不能说明它有效。", "evidence_level": "B", "spine": true, "triggers": [{"any": [{"q": "idea_source", "in": ["social", "na"]}]}], "diagnosis": "读到一个心动的技巧，先逼自己抽六个字段：dataset / metric / baseline / model / cost / failure_cases。缺任何一个，就降级成「线索」——进结论前必须追溯到一手论文 / 官方文档 / 代码 / 本项目实验。", "steps": ["读到技巧先抽六字段：dataset / metric / baseline / model / cost / failure_cases。", "缺任一字段就降级为「线索」，进结论前必须追溯论文/官方文档/代码/本项目实验。"], "evidence": [{"num": "口号 vs 机制", "note": "「GEPA 用少 35 倍 rollout 吊打 RL」是传播简化；GEPA 实为反思式 prompt 进化（轨迹 + Pareto 选择），根本不是 RL 系统", "level": "B", "source": "docs/source_batches/twitter_web_analysis_20260608.md"}], "boundary": "自带代码、数据、可复现实验的高质量工程博客可升级为更强证据——看细节，不看平台。", "cross_channel": "Twitter（social_signal_triage / vendor_optimizer_evidence_filter）、web_search（source triage）、知乎（一手来源升格门）三个渠道独立收敛出同一道闸。", "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]}], "anti_patterns": [{"name": "让模型直接「优化一下 prompt」", "why": "无目标、无评估、无回滚，输出只是润色或随机改写。", "trigger": "无留出集/评分器/失败样本就调用优化器。", "defense": "洞见 01、03", "channels": "arXiv·GitHub·web·Twitter·知乎"}, {"name": "只看平均分上升", "why": "掩盖 schema 漂移、少数类回退、安全退化、成本膨胀。", "trigger": "优化目标只设平均分，无 regression/critical failure set。", "defense": "分层指标 + stress split", "channels": "arXiv·GitHub·web·Twitter"}, {"name": "prompt 越改越长", "why": "多半是训练样本补丁与规则冲突（过拟合）。", "trigger": "候选长度增加超阈值且无样本绑定。", "defense": "洞见 06 卫生门", "channels": "arXiv·GitHub·web"}, {"name": "允许 optimizer 改 evaluator / test", "why": "直接 reward hacking。", "trigger": "评分器/测试集进入可变搜索空间。", "defense": "frozen evaluator/data", "channels": "GitHub（autoresearch 审计）"}, {"name": "raw memory 无界追加", "why": "继承坏反馈、隐私泄漏、跨任务污染。", "trigger": "把历史对话整体塞进上下文。", "defense": "洞见 10 过滤记忆 + 遗忘", "channels": "arXiv（ERM/MemAPO）·GitHub·知乎"}, {"name": "用社媒热度 / vendor 百分比当证据", "why": "热度只说明传播；vendor 数字任务/指标/展示偏向叙事。", "trigger": "按转发数排序方法 / 引用无 dataset 披露的提升数字。", "defense": "洞见 12 source triage", "channels": "Twitter·web·知乎"}, {"name": "多 agent 一起重写", "why": "无法判断哪个 role/round 引起变化。", "trigger": "失败后无差别更新所有 agent/轮。", "defense": "洞见 11 credit ledger", "channels": "arXiv（MASPO/MAPRO）·Twitter"}, {"name": "工具调用只改 system prompt", "why": "tool schema/slot 错误无法被修复。", "trigger": "tool-use 失败只反复改 agent 指令。", "defense": "洞见 09 schema 联合优化", "channels": "arXiv（JTPRO）·web（Vertex 锁段）"}], "experiments": [{"priority": "P0", "verify": "优化前体检（headroom / noise floor）", "insights": ["I01", "I02"], "task": "100–300 条 JSON 抽取", "output": "判断有无优化空间，校准噪声地板"}, {"priority": "P0", "verify": "示例优化 vs 指令优化", "insights": ["I07"], "task": "同一抽取任务", "output": "防止把示例收益误记成指令收益"}, {"priority": "P1", "verify": "直接改写 vs 根因假设改写", "insights": ["I03", "I04"], "task": "失败清晰的抽取/分类", "output": "判断根因假设是否改善留出表现"}, {"priority": "P1", "verify": "只看性能 vs 加卫生门", "insights": ["I06"], "task": "同一候选池", "output": "判断防膨胀门是否减少伪提升"}, {"priority": "P2", "verify": "工具 schema 优化", "insights": ["I09"], "task": "20–50 个相似工具", "output": "判断改 schema 是否优于只改全局指令"}, {"priority": "P2", "verify": "过滤记忆 vs 原始记忆", "insights": ["I10"], "task": "两个相近 + 一个异质任务", "output": "判断记忆是否降本或带来负迁移"}], "closing": ["优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱。", "改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色。", "更长、更多、更复杂都不是默认的好，先证明它没带来过拟合、污染或归因困难。"]}</script>
+<script>
+const KB = JSON.parse(document.getElementById('kb').textContent);
+const Q = KB.questions;
+const state = { step: 0, answers: {}, phase: 'asking' };
+const LLM = { available: false, model: '' };   // 由 api/health 探测填充
+let llmHistory = [];                            // LLM 模式多轮上下文
+
+// ---------- 触发 DSL（与 test_advisor.py 同口径）----------
+function evalCond(c, a){
+  if (c.any) return c.any.some(x => evalCond(x, a));
+  if (c.all) return c.all.every(x => evalCond(x, a));
+  if (c.q == null) return false;
+  const v = a[c.q];
+  if (v == null) return false;
+  if ('eq' in c) return v === c.eq;
+  if ('in' in c) return c.in.includes(v);
+  return false;
+}
+function matched(ins, a){ return (ins.triggers||[]).some(t => evalCond(t, a)); }
+
+// ---------- DOM 辅助 ----------
+const msgs = document.getElementById('msgs');
+const chipsEl = document.getElementById('chips');
+function esc(s){ return String(s).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+function scroll(){ msgs.scrollTop = msgs.scrollHeight; }
+
+function bubble(who, html, wide){
+  const row = document.createElement('div');
+  row.className = 'row ' + (who === 'me' ? 'me' : 'bot');
+  const av = `<div class="av ${who}">${who === 'me' ? '你' : '优'}</div>`;
+  row.innerHTML = av + `<div class="msg ${who} ${wide?'wide':''}">${html}</div>`;
+  msgs.appendChild(row); scroll();
+  return row;
+}
+function botSay(html, wide){ return bubble('bot', html, wide); }
+function meSay(text){ return bubble('me', esc(text)); }
+
+function renderChips(items){
+  chipsEl.innerHTML = '';
+  items.forEach(it => {
+    const c = document.createElement('span');
+    c.className = 'chip ' + (it.cls || '');
+    c.textContent = it.label;
+    c.onclick = it.onClick;
+    chipsEl.appendChild(c);
+  });
+}
+
+// ---------- 渲染建议（与表单版同口径，装进一个宽气泡）----------
+function lvlTag(lv){ const cls = lv === 'A' ? 'A' : lv === 'B' ? 'B' : 'pre'; return `<span class="lvl ${cls}">${lv}</span>`; }
+function repoLink(p){ return '../' + p; }
+function card(ins){
+  const ev = (ins.evidence||[]).map(e =>
+    `<div class="n"><b>${e.num}</b><small>${e.note}</small>${
+      e.source ? `<a href="${repoLink(e.source)}">${e.source.split('/').pop()} ${lvlTag(e.level)}</a>` : lvlTag(e.level)
+    }</div>`).join('');
+  const steps = (ins.steps||[]).map(s => `<li>${s}</li>`).join('');
+  const src = (ins.sources||[]).map(s => `<a href="${repoLink(s)}">${s.split('/').pop()}</a>`).join(' · ');
+  return `<div class="card ${ins.group}">
+    <div class="cid"><b>${ins.id} · 洞见</b>${lvlTag(ins.evidence_level)}${ins.spine?'<span class="lvl">通用纪律</span>':''}</div>
+    <h3>${ins.title}</h3><p class="hook">${ins.hook}</p>
+    <div class="layer"><h4>① 快速诊断</h4><div>${ins.diagnosis}</div></div>
+    <div class="layer"><h4>② 可照抄步骤</h4><ul>${steps}</ul></div>
+    <div class="layer"><h4>③ 真实证据（该论文设置下成立）</h4><div class="ev">${ev}</div></div>
+    <div class="bound"><b>边界：</b>${ins.boundary}</div>
+    ${ins.cross_channel?`<div class="corr"><b>跨渠道互证：</b>${ins.cross_channel}</div>`:''}
+    <div class="corr">出处：${src}</div></div>`;
+}
+function topFlags(a){
+  const f = [];
+  if (a.has_evalset === 'no') f.push({cls:'', t:'你还没有评测集。这是第一道闸：没有它，你看到的「涨分」很可能只是噪声——先建一个能客观打分的留出集，再谈优化。'});
+  if (a.tried_autopolish === 'planning_to') f.push({cls:'', t:'你打算直接让模型「优化一下 prompt」。这正是最危险的起点——先做优化前体检（洞见 01），别把润色当优化。'});
+  if (a.tried_autopolish === 'got_worse') f.push({cls:'', t:'优化后反而更差，几乎是教科书现象：很可能在小样本噪声上过拟合，或反思猜错了根因（洞见 01 / 04 / 06）。'});
+  if (a.task_type === 'open') f.push({cls:'', t:'开放写作任务因果最难看清。第一批建议先拿能客观打分的任务练手（洞见 02）。'});
+  if (a.idea_source === 'social') f.push({cls:'', t:'你的思路来自社媒/二手。先把它当「线索」，抽六字段追溯到一手来源再采信（洞见 12）。'});
+  if (!f.length) f.push({cls:'ok', t:'基础前提看起来不错。下面按你的场景给出适用洞见——仍建议先过一遍「通用纪律」那几条。'});
+  return f;
+}
+function adviceHTML(a){
+  const hit = KB.insights.filter(i => matched(i, a));
+  const hitIds = new Set(hit.map(i => i.id));
+  const spine = KB.insights.filter(i => i.spine && !hitIds.has(i.id));
+  let h = `<div class="banner"><b>怎么读：</b>这是<b>确定性规则映射、非 LLM 生成</b>，每条都能追溯到出处。论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；12 洞见<b>均尚未在本项目复现</b>。</div>`;
+  h += '<div class="summary"><h3>总诊断</h3>' + topFlags(a).map(x => `<div class="flag ${x.cls}">${x.t}</div>`).join('') + '</div>';
+  if (hit.length){ h += '<div class="group-label">高度相关（按你的场景命中）</div>' + hit.map(card).join(''); }
+  else { h += '<div class="flag ok">还没有强命中——可能你回答得还少。下面是无论什么场景都该过一遍的「通用纪律」，也可以直接打字追问。</div>'; }
+  if (spine.length){ h += '<div class="group-label">通用纪律（任何场景都建议过一遍）</div>' + spine.map(card).join(''); }
+  h += '<div class="group-label">要避开的反模式</div><table class="at-table"><thead><tr><th>反模式</th><th>为什么危险</th><th>对应防线</th></tr></thead><tbody>'
+    + KB.anti_patterns.map(p => `<tr><td><b>${p.name}</b></td><td>${p.why}</td><td>${p.defense}</td></tr>`).join('') + '</tbody></table>';
+  const rel = KB.experiments.filter(e => e.insights.some(id => hitIds.has(id) || spine.some(s=>s.id===id)));
+  const exps = rel.length ? rel : KB.experiments;
+  h += '<div class="group-label">建议的首批最小验证</div>'
+    + exps.map(e => `<div class="exp"><b>${e.priority}</b> · ${e.verify}（${e.insights.join('、')}）→ 最小任务：${e.task}；产出：${e.output}</div>`).join('');
+  h += '<div class="summary" style="margin-top:14px"><h3>记住这三句就够</h3><ul>' + KB.closing.map(c => `<li>${c}</li>`).join('') + '</ul></div>';
+  return h;
+}
+
+// ---------- 对话状态机 ----------
+function askNext(){
+  if (state.step >= Q.length){ return generate(); }
+  const q = Q[state.step];
+  botSay(`${esc(q.title)}<div class="qh">${esc(q.hint||'')}</div>`);
+  const chips = q.options.map(o => ({ label: o.label, onClick: () => answer(q, o) }));
+  chips.push({ label: '跳过这题', cls: 'ghost', onClick: () => { meSay('（跳过）'); state.step++; askNext(); } });
+  chips.push({ label: '直接给建议 →', cls: 'go', onClick: generate });
+  renderChips(chips);
+}
+function answer(q, o){
+  meSay(o.label);
+  state.answers[q.id] = o.id;
+  state.step++;
+  askNext();
+}
+function generate(){
+  state.phase = 'free';
+  botSay('好，根据你说的，我从知识库里挑了适用的洞见，给你分层建议 👇', false);
+  botSay(adviceHTML(state.answers), true);
+  botSay('建议看完了。你可以继续追问任意话题，我会从知识库里捞相关洞见（当前为关键词匹配，<b>非 LLM</b>；深度自然语言问答是第二阶段）。', false);
+  freeChips();
+}
+function freeChips(){
+  const chips = [
+    {label:'工具调用出错', onClick:()=>freeReply('我的工具调用总是填错参数，该怎么优化？')},
+    {label:'记忆 / 历史', onClick:()=>freeReply('该怎么给系统加记忆而不互相污染？')},
+    {label:'多 agent 定位', onClick:()=>freeReply('多个 agent 协作出错，怎么定位是谁的责任？')},
+    {label:'prompt 越改越长', onClick:()=>freeReply('prompt 优化后变得又长又复杂，是过拟合吗？')},
+    {label:'没有评测集', onClick:()=>freeReply('我还没有评测集，能直接让模型优化 prompt 吗？')},
+    {label:'走引导问答', cls:'ghost', onClick:startGuided},
+    {label:'重新开始', cls:'ghost', onClick:restart},
+  ];
+  renderChips(chips);
+}
+function startGuided(){
+  state.step = 0; state.answers = {}; state.phase = 'asking';
+  botSay('好，我们走一遍引导问答，几个问题帮你精确定位 👇', false);
+  askNext();
+}
+
+// ---------- 自由追问（关键词匹配，非 LLM）----------
+// 中文不按空格分词：用「空格/拉丁词」+「二元字组(bigram)」双路 shingle，
+// 让「记忆怎么办」也能切出「记忆」命中。深度语义匹配属于第二阶段。
+function shingles(text){
+  const out = new Set();
+  text.toLowerCase().split(/[\s,，。、?？!！~…:：;；]+/).filter(t => t.length >= 2).forEach(t => out.add(t));
+  const clean = text.toLowerCase().replace(/[\s,，。、?？!！~…:：;；()（）]+/g, '');
+  for (let i = 0; i < clean.length - 1; i++) out.add(clean.slice(i, i + 2));
+  return [...out];
+}
+// 分发：LLM 可用走后端，否则确定性关键词匹配
+function freeReply(text){ return LLM.available ? llmAsk(text) : keywordReply(text); }
+
+function keywordReply(text){
+  const toks = shingles(text);
+  const scored = KB.insights.map(i => {
+    const blob = (i.title + i.hook + i.diagnosis + i.steps.join('') + (i.cross_channel||'')).toLowerCase();
+    let s = 0; toks.forEach(t => { if (blob.includes(t)) s++; });
+    return {i, s};
+  }).filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0, 3);
+  if (!scored.length){
+    botSay('这个问题我在知识库里没直接命中相关洞见。可以换个说法，或点「走引导问答」精确定位。<br><span class="corr">若你问的是某篇具体论文/仓库/文章，可用对应阅读流程把它读进库再来问：论文→read-paper、GitHub 仓库→github-repo-audit、社交/行业文章→article-deep-read。</span>', false);
+    return;
+  }
+  botSay(`在知识库里找到 ${scored.length} 条相关洞见（关键词匹配，非 LLM）：`, false);
+  botSay(scored.map(x => card(x.i)).join(''), true);
+}
+
+// LLM 模式：调后端流式接口，扎根知识库逐字作答，附可追溯引用；失败自动回退关键词匹配
+function streamBubble(){
+  const row = document.createElement('div'); row.className = 'row bot';
+  row.innerHTML = '<div class="av bot">优</div><div class="msg bot wide"><span class="typing"><i></i><i></i><i></i></span></div>';
+  msgs.appendChild(row); scroll();
+  const box = row.querySelector('.msg');
+  return { set(html){ box.innerHTML = html; scroll(); } };
+}
+function parseSSE(chunk){
+  let event = 'message', data = '';
+  chunk.split('\n').forEach(l => {
+    if (l.startsWith('event:')) event = l.slice(6).trim();
+    else if (l.startsWith('data:')) data += l.slice(5).trim();
+  });
+  if (!data) return null;
+  try { return { event, data: JSON.parse(data) }; } catch(e){ return null; }
+}
+function contextFromAnswers(){
+  const parts = [];
+  Q.forEach(q => { const a = state.answers[q.id]; if (a){ const o = q.options.find(x => x.id === a); if (o) parts.push(q.id + '=' + o.label); } });
+  return parts.join('; ');
+}
+function renderAnswer(text){
+  let h = esc(text).replace(/\n/g, '<br>').replace(/\[(I\d{2}[^\]]*)\]/g, '<b>[$1]</b>');
+  return `<div class="llm-ans">${h}</div>`;
+}
+function citedRefs(cited){
+  if (!cited || !cited.length) return '';
+  const items = cited.map(c => {
+    const src = (c.sources && c.sources[0]) ? `<a href="${repoLink(c.sources[0])}">出处</a>` : '';
+    return `<li><b>${c.id}</b> ${c.title} ${lvlTag(c.evidence_level)} ${src}</li>`;
+  }).join('');
+  return `<div class="refs"><div class="group-label">本回答可追溯到的知识库条目</div><ul>${items}</ul></div>`;
+}
+async function llmAsk(text){
+  const bub = streamBubble();
+  let acc = '', cited = null, errd = null;
+  try{
+    const res = await fetch('api/chat/stream', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ message: text, history: llmHistory, context: contextFromAnswers() })
+    });
+    if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true){
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf('\n\n')) >= 0){
+        const ev = parseSSE(buf.slice(0, i)); buf = buf.slice(i + 2);
+        if (!ev) continue;
+        if (ev.event === 'meta') cited = ev.data.cited;
+        else if (ev.event === 'delta'){ acc += ev.data.text; bub.set(renderAnswer(acc) + '<span class="cursor"></span>'); }
+        else if (ev.event === 'error') errd = ev.data;
+      }
+    }
+    if (errd){
+      bub.set(`LLM 调用失败：${esc(errd.error || errd.code || '未知错误')}<br>已回退到关键词匹配 👇`);
+      keywordReply(text); return;
+    }
+    if (!acc.trim()){ bub.set('（模型没有返回内容，已回退到关键词匹配 👇）'); keywordReply(text); return; }
+    bub.set(renderAnswer(acc) + citedRefs(cited));
+    showCitedPanel(cited);
+    llmHistory.push({ role: 'user', content: text });
+    llmHistory.push({ role: 'assistant', content: acc });
+  } catch(e){
+    bub.set(`LLM 请求异常：${esc(String(e))}<br>已回退到关键词匹配 👇`);
+    keywordReply(text);
+  }
+}
+
+// ---------- 输入处理 ----------
+function onSend(){
+  const t = document.getElementById('box').value.trim();
+  if (!t) return;
+  document.getElementById('box').value = '';
+  meSay(t);
+  if (/^(给建议|建议|够了|结束|生成建议|直接给建议)/.test(t)) { generate(); return; }
+  freeReply(t);  // 任何阶段都允许关键词追问
+}
+function restart(){
+  state.step = 0; state.answers = {}; state.phase = 'asking'; llmHistory = [];
+  msgs.innerHTML = '';
+  greet();
+}
+function greet(){
+  const tail = LLM.available
+    ? `当前已接入 <b>LLM 模式</b>（${esc(LLM.model)}）：直接用自然语言问我任意 prompt 优化问题，我会<b>扎根知识库</b>作答并标注引用；也可以点「走引导问答」。`
+    : `先回答几个问题（点选项即可，随时可「直接给建议」或打字追问）。`;
+  botSay('你好，我是 Prompt 优化建议助手 👋 我会从我们整理的<b>证据分级知识库</b>里，按你的场景给出<b>分层、可追溯</b>的建议。<br>' + tail, false);
+  if (LLM.available){ state.phase = 'free'; freeChips(); } else { askNext(); }
+}
+async function init(){
+  try{
+    const r = await fetch('api/health');
+    const d = await r.json();
+    if (d && d.ok && d.llm_available){
+      LLM.available = true; LLM.model = d.model || '';
+      const pill = document.getElementById('llmpill');
+      if (pill) pill.innerHTML = 'LLM 模式：<b style="color:var(--green)">已接入</b>';
+    }
+  } catch(e){ /* file:// 或无后端 → 保持确定性模式 */ }
+  greet();
+}
+
+// ---------- 左右面板：知识库导览 + 详情/引用 ----------
+const RESOURCES = [
+  { t: '综合报告 v3（主报告）', p: 'docs/analysis_report_v3_20260610.html' },
+  { t: '读者向洞见手册（12 洞见）', p: 'docs/insight_handbook_20260609.html' },
+  { t: 'Insight / Method 候选清单', p: 'docs/insight_method_catalog_20260609.html' },
+  { t: '全景脑图（渲染版）', p: 'docs/prompt_evolution_mindmap_20260610.html' },
+  { t: '小说体科普《别让 AI 自己改作业》', p: 'docs/popsci_prompt_evolution_story_20260610.html' },
+];
+const insightById = {}; KB.insights.forEach(i => insightById[i.id] = i);
+const leftPanel = document.getElementById('leftPanel');
+const rightPanel = document.getElementById('rightPanel');
+
+function openRightIfSmall(){ if (window.innerWidth <= 1180) document.body.classList.add('dr-right'); }
+
+function rightDefault(){
+  rightPanel.innerHTML =
+    '<div class="pan-h">怎么用</div>'
+    + '<p class="pan-p">左侧点开任意<b>洞见 / 反模式 / 实验</b>，详情显示在这里；中间直接打字提问，回答会标注引用并把<b>本轮来源</b>列在这里。</p>'
+    + '<div class="pan-h">证据等级</div>'
+    + '<p class="pan-p">' + lvlTag('A') + ' 论文/源码并已结构化笔记　' + lvlTag('B') + ' 多源工程实践　' + lvlTag('recent-preprint') + ' 2026 新稿待复现</p>'
+    + '<div class="banner" style="margin-top:10px">论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；12 洞见<b>均尚未在本项目复现</b>。</div>';
+}
+function showInsight(id){ rightPanel.innerHTML = '<div class="pan-h">洞见详情</div>' + card(insightById[id]); openRightIfSmall(); rightPanel.scrollTop = 0; }
+function showAnti(p){
+  rightPanel.innerHTML = `<div class="pan-h">反模式</div><div class="card C"><h3>${p.name}</h3>`
+    + `<div class="layer"><h4>为什么危险</h4><div>${p.why}</div></div>`
+    + `<div class="layer"><h4>触发条件</h4><div>${p.trigger}</div></div>`
+    + `<div class="layer"><h4>对应防线</h4><div>${p.defense}</div></div>`
+    + `<div class="corr">证据渠道：${p.channels}</div></div>`;
+  openRightIfSmall(); rightPanel.scrollTop = 0;
+}
+function showExp(e){
+  rightPanel.innerHTML = `<div class="pan-h">首批最小验证</div><div class="card"><h3>${e.priority} · ${e.verify}</h3>`
+    + `<div class="layer"><h4>对应洞见</h4><div>${e.insights.join('、')}</div></div>`
+    + `<div class="layer"><h4>最小任务</h4><div>${e.task}</div></div>`
+    + `<div class="layer"><h4>无论成败都能产出</h4><div>${e.output}</div></div></div>`;
+  openRightIfSmall(); rightPanel.scrollTop = 0;
+}
+function showCitedPanel(cited){
+  if (!cited || !cited.length){ return; }
+  let h = '<div class="pan-h">本轮回答引用的来源</div>';
+  cited.forEach(c => {
+    if (insightById[c.id]){
+      h += `<button class="navitem" data-ins="${c.id}">${lvlTag(c.evidence_level)} ${c.id} ${esc(c.title)}</button>`;
+    } else {
+      const src = (c.sources && c.sources[0]) ? repoLink(c.sources[0]) : '#';
+      h += `<a class="reslink" href="${src}">${lvlTag(c.evidence_level)} ${esc(c.title)}</a>`;
+    }
+  });
+  rightPanel.innerHTML = h;
+  rightPanel.querySelectorAll('[data-ins]').forEach(el => el.onclick = () => showInsight(el.dataset.ins));
+}
+function navItem(label, onClick, lv){
+  const b = document.createElement('button'); b.className = 'navitem'; b.onclick = onClick;
+  b.innerHTML = (lv ? lvlTag(lv) + ' ' : '') + esc(label); return b;
+}
+function renderLeft(){
+  leftPanel.innerHTML = '';
+  const sec = (title) => { const h = document.createElement('div'); h.className = 'pan-h'; h.textContent = title; leftPanel.appendChild(h); };
+  sec('文档与报告');
+  RESOURCES.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
+  sec('12 条核心洞见');
+  let lastG = null;
+  KB.insights.forEach(i => {
+    if (i.group_title !== lastG){ const g = document.createElement('div'); g.className = 'nav-group'; g.textContent = i.group_title; leftPanel.appendChild(g); lastG = i.group_title; }
+    leftPanel.appendChild(navItem(`${i.id} ${i.title}`, () => showInsight(i.id), i.evidence_level));
+  });
+  sec('要避开的反模式');
+  KB.anti_patterns.forEach(p => leftPanel.appendChild(navItem(p.name, () => showAnti(p))));
+  sec('首批最小验证');
+  KB.experiments.forEach(e => leftPanel.appendChild(navItem(`${e.priority} ${e.verify}`, () => showExp(e))));
+}
+
+// 抽屉开关（小屏）
+document.getElementById('tgLeft').onclick = () => document.body.classList.toggle('dr-left');
+document.getElementById('tgRight').onclick = () => document.body.classList.toggle('dr-right');
+document.getElementById('scrim').onclick = () => document.body.classList.remove('dr-left', 'dr-right');
+
+document.getElementById('send').onclick = onSend;
+document.getElementById('box').addEventListener('keydown', e => { if (e.key === 'Enter') onSend(); });
+document.getElementById('restart').onclick = restart;
+renderLeft(); rightDefault();
+init();
+</script>
+</body>
+</html>

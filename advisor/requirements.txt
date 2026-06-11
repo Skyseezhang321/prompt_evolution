@@ -1,0 +1,5 @@
+# Prompt 优化建议助手 · v2 LLM 后端依赖
+# 安装： pip install -r advisor/requirements.txt
+# LLM 客户端复用 scripts/llm_clients.py（纯标准库，无需额外依赖）。
+fastapi>=0.110
+uvicorn[standard]>=0.27
