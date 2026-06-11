@@ -33,6 +33,7 @@ reviewed_by：Claude
 - **每环留洞、下环补洞**：APE 不用失败信息→ProTeGi 补；OPRO 不知为何失败→DSPy/MIPROv2 换对象、TextGrad/GEPA 换信号；DSPy 不优化 instruction→MIPROv2 补——演进有机制逻辑，不是时间罗列。
 - **证据纪律**：七法全部有 `method-and-results-read` 深读笔记（本地 PDF + SHA256），数字逐条可回溯；且三篇独立综述都把这组方法当 canonical 处理。
 - **刻意排除项及去处**：进化分支（EvoPrompt/PromptBreeder，标量信号家族）→ [六法横向对比](classic_optimizer_methods_comparison_20260610.md)；规划搜索分支（PromptAgent）→ 暗线三主线外锚点；前史（GrIPS 已读，AutoPrompt/RLPrompt 待读）→ §1 前史定位；PROSE → coin-flip 内部基线，非独立文献。单链呈现是为叙事入口服务，结构实情是上述双轨汇合。
+- **终点口径**：主线停在 GEPA 不是更新滞后——[arXiv 2025/2026 前沿深读综合](arxiv_2025_2026_frontier_synthesis_20260612.md)对 25 篇的时间切片显示「新方法起名字的时代（2022–2024）结束」，其中唯一确立主线的命名方法即 GEPA；其后的演进以四个转向形态出现，由「主线之后」一节对接。
 
 ## 1. APE（2022）— 生成-筛选范式的起点
 
@@ -99,7 +100,7 @@ reviewed_by：Claude
   2. **Pareto 候选池**：维护 candidate × example 分数矩阵，保留"在至少一个样本上最佳"的所有非支配候选，按出现在 Pareto frontier 的频次采样父代——避免贪心全局最优过早锁死局部模式；
   3. **system-aware merge（crossover）**：把不同进化分支里各模块的优胜 prompt 拼合成新候选（GEPA+Merge）。
 - **代表性结果**：Qwen3 8B 上 aggregate 45.23 → 54.85，超过 GRPO（RL，固定 24,000 rollouts）的 48.91 与 MIPROv2 的 47.84，而 GEPA 平均只用约 3,936 rollouts；论文口径为对 GRPO 平均高约 6%、最高 20%，最高省 35 倍 rollouts。消融显示 **Pareto 选择本身是主要贡献**（aggregate improvement +12.44 vs 贪心 +6.05、beam +5.11）；产出 prompt 最高比 MIPROv2 短 9.2 倍。
-- **留下的洞**：AIME-2025 上仍低于 GRPO（反思进化不是处处替代 RL）；Merge 在 Qwen3 8B 上反而掉分；大部分 rollout 预算花在验证候选而非产生学习信号；优势依赖 feedback function 质量，评价只能给标量时优势收窄。
+- **留下的洞**：AIME-2025 上仍低于 GRPO（反思进化不是处处替代 RL）；Merge 在 Qwen3 8B 上反而掉分；大部分 rollout 预算花在验证候选而非产生学习信号；优势依赖 feedback function 质量，评价只能给标量时优势收窄。适用条件后被 VISTA 收敛为「反馈含轨迹级诊断 + 真实根因在假设空间内」，反例与数字见下文「主线之后」。
 - 深读笔记：[paper-gepa-2026.md](paper_notes/paper-gepa-2026.md)
 
 ## 主线总结
@@ -120,9 +121,21 @@ reviewed_by：Claude
 2. **优化对象的升维依赖程序抽象**。从单指令到指令+演示再到多模块系统，DSPy 的 signature/module/编译抽象是承载这种扩展的底座，MIPROv2 与 GEPA 都长在其上；因此任何结果都必须连同程序结构与编译/优化策略一起记录才可复现。
 3. **搜索结构是独立于反馈信号的演进维度**（2026-06-12 补，证据级）。盲目采样（APE/OPRO）→ beam（ProTeGi）→ MCTS 规划（PromptAgent，主线外锚点）→ Pareto 候选池（GEPA）。两组单变量消融跨论文互证：PromptAgent 在候选生成与反馈完全固定、同等探索量下 MCTS 0.754 > Greedy 0.698 ≈ Beam 0.697 > 单步 MC 0.635（[paper-promptagent-2023.md](paper_notes/paper-promptagent-2023.md) Table 4）；GEPA 消融显示 Pareto 选择本身是主要贡献（aggregate +12.44 vs 贪心 +6.05、beam +5.11，[paper-gepa-2026.md](paper_notes/paper-gepa-2026.md)）。对本项目的含义：对比 optimizer 时把"探索候选数"作为预算轴单独报告，search structure 与 feedback signal 分开消融，不可把搜索结构带来的收益归功于"反思有效"。
 
+## 主线之后：为什么没有第八法（2025/2026）
+
+主线终点停在 GEPA 不是更新滞后。[arXiv 2025/2026 前沿深读综合](arxiv_2025_2026_frontier_synthesis_20260612.md)对 25 篇的时间切片结论是：**「新方法起名字」的时代（2022–2024）结束了**——25 篇中只有 GEPA 一篇是确立主线的命名方法，其余产出形态是诊断、形式化、对象升维、自进化与卫生。对主线读者，这意味着 GEPA 留下的洞不再由"第八个命名方法"来补，而是由四个转向分头补：
+
+- **反思的适用条件**（转向一·降温与诊断）：VISTA 证明根因不在假设空间时反思越多偏越远——defective seed 上 GEPA 23.81%→13.50%，把假设生成与改写解耦后恢复 87.57%；跨模型迁移 GEPA 优化结果只剩 22.74% vs VISTA 86.05%。"反思有用 vs 有害"由此收敛为两个前置条件：反馈含轨迹级诊断、真实根因在 optimizer 假设空间内。见 [paper-vista-reflection-dark-2026.md](paper_notes/paper-vista-reflection-dark-2026.md)。
+- **prompt 膨胀与伪提升**（转向四·卫生与正则）：Prompt Codebooks 把 prompt 拆成按输入路由的可复用单元，HotpotQA 上比 MIPROv2 prompt 短 14.1 倍、性能仍超 GEPA（IFBench 41.33，+2.72）；PrefPO 把长度/重复/hacking 率做进评估（TextGrad hacking 率 86% vs PrefPO 37%）。见 [paper-prompt-codebooks-2026.md](paper_notes/paper-prompt-codebooks-2026.md)、[paper-prefpo-2026.md](paper_notes/paper-prefpo-2026.md)。
+- **反馈形态继续升级**（暗线一的延长线）：SPEAR 让 optimizer 自己写 Python 做 confusion matrix / groupby 式错误分析，BBH-7 平均 0.938 vs GEPA 0.628——轨迹之后的下一站可能是"结构化计算分析"。见 [paper-spear-2026.md](paper_notes/paper-spear-2026.md)。
+- **optimizer 自身入轨**（转向三·自进化）：SePO 把 optimizer 的 system prompt 纳入演化（71.89→76.38，去 self-improvement 掉回 74.94）、MemAPO 双记忆跨任务复用（70.7% vs TextGrad 63.6%、成本反降 58.6%）——主线七法共同的"optimizer 静态"默认假设开始松动。见 [paper-sepo-2026.md](paper_notes/paper-sepo-2026.md)、[paper-memapo-2026.md](paper_notes/paper-memapo-2026.md)。
+
+完整时间线、两个张力的收敛（反思有用 vs 有害、大增益 vs 抛硬币）与缺口清点（bi-level/thought-driven 整块缺席）见前沿综合本体；本节只做主线视角的对接，不复制其结论，所有数字与该综合及各笔记同口径。
+
 ## 对本项目的使用约定
 
 - 这条主线是**基线锚点谱系**，不是排行榜：APE 与 OPRO 是任何 optimizer 实验的强制下限对照；ProTeGi/TextGrad 是 critique 线对照；MIPROv2 是 instruction+demo 联合优化基线；GEPA 是当前最值得复现的强 baseline（见 [literature_map.md](literature_map.md)）。
+- 任何主线方法上场前先过 **pre-optimization gate**：zero-shot baseline → headroom / noise floor 估计 → Prompt Repetition 零成本对照（非推理模式 47/70 显著胜 0 负的免费底线）；依据见[前沿综合](arxiv_2025_2026_frontier_synthesis_20260612.md)转向一（Coin Flip：72 次优化运行 49% 低于 zero-shot）。
 - 引用各方法的数字时必须绑定其原始实验设置；唯一可公平横比的是把多法放进同一框架的结果（如 coin-flip，见 [classic_optimizer_methods_comparison_20260610.md](classic_optimizer_methods_comparison_20260610.md)）。
 - 各方法的最小验证/复现计划已写在对应深读笔记的末节，不在本文档重复。
 
@@ -130,6 +143,7 @@ reviewed_by：Claude
 
 - 七篇深读笔记：[APE](paper_notes/paper-ape-2022.md)、[ProTeGi](paper_notes/paper-protegi-2023.md)、[OPRO](paper_notes/paper-opro-2023.md)、[DSPy](paper_notes/paper-dspy-2023.md)、[TextGrad](paper_notes/paper-textgrad-2024.md)、[MIPROv2](paper_notes/paper-miprov2-2024.md)、[GEPA](paper_notes/paper-gepa-2026.md)
 - 主线外锚点（2026-06-12 结构评审补读）：[GrIPS（前史：免梯度编辑搜索）](paper_notes/paper-grips-2022.md)、[PromptAgent（规划搜索缺环）](paper_notes/paper-promptagent-2023.md)
+- 主线之后的时间切片：[arXiv 2025/2026 前沿深读综合](arxiv_2025_2026_frontier_synthesis_20260612.md)（四个转向 + 两个张力 + 缺口清点）
 - 进化算法分支与同框架横比：[classic_optimizer_methods_comparison_20260610.md](classic_optimizer_methods_comparison_20260610.md)
 - 文献全景与优先阅读顺序：[literature_map.md](literature_map.md)
 - "文本梯度"隐喻的批判：[paper-textual-gradients-flawed-metaphor-2025.md](paper_notes/paper-textual-gradients-flawed-metaphor-2025.md)
