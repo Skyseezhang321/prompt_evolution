@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitter/X 社媒线索洞见卡 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="../analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#2d67ad">Twitter/X 渠道</span><span class="doctitle">Twitter/X 社媒线索洞见卡</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="twitterx-2026-06-09">Twitter/X 社媒线索洞见卡：2026-06-09</h1>
+<p>本页是 <a href="twitter_web_analysis_20260608.md">Twitter/X 候选 posts 分析</a> 的 insight-first 补充。目标不是继续罗列 X/Twitter posts，而是把社媒线索压缩成可进入最终报告候选的：</p>
+<ul>
+<li>insight candidates</li>
+<li>conclusion candidates</li>
+<li>helpful method candidates</li>
+<li>anti-patterns / limits</li>
+<li>validation or demo candidates</li>
+</ul>
+<p>证据边界：</p>
+<ul>
+<li>X/Twitter 片段只用于发现线索、误读、传播路径和一手来源，不直接支撑方法有效性结论。</li>
+<li>每条洞见进入最终报告前，必须追溯到论文、官方文档、代码、结构化笔记、实验记录或失败案例。</li>
+<li><code>evidence_strength</code> 统一用规范的 A/B/C/D（见 <a href="../insight_field_standard.html">insight_field_standard.md</a>）：本批多数洞见有多源一手/官方来源支撑记为 <code>B</code>，少数仍属综合推测待验证记为 <code>D</code>；不使用 <code>B-candidate</code> 等非规范取值。</li>
+<li>注意：结构化深读（paper notes）尚未全部完成，整批仍处 candidate 状态；各卡 <code>main_sources</code> 暂填外部一手来源，须在写出仓库内结构化笔记后替换为文件路径，补齐前这些洞见不得进入最终报告。</li>
+</ul>
+<h2 id="insight-candidates">Insight Candidates</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>insight</th>
+<th>user_facing_one_liner</th>
+<th>evidence_strength</th>
+<th>status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tw-insight-01</td>
+<td>自动 prompt optimization 的价值不在“让模型自由改写”，而在 metric、trace 和版本约束下产生可比较候选。</td>
+<td>先有测试集和评分器，再谈自动改 prompt。</td>
+<td>B</td>
+<td>可进入 helpful method 候选</td>
+</tr>
+<tr>
+<td>tw-insight-02</td>
+<td>GEPA 的社媒传播容易被简化成“替代 RL”，但更可迁移的机制是 trace-aware reflection + population/Pareto selection。</td>
+<td>不要只看最终分数；让优化器读失败轨迹。</td>
+<td>B</td>
+<td>需要 GEPA paper note 支撑</td>
+</tr>
+<tr>
+<td>tw-insight-03</td>
+<td>DSPy 在社媒上常被叫作 prompt optimizer，但原作者线索更支持把它看成 prompt-as-program 编程模型。</td>
+<td>把任务写成 program，再让 optimizer 编译。</td>
+<td>B</td>
+<td>可进入前沿状态地图</td>
+</tr>
+<tr>
+<td>tw-insight-04</td>
+<td>Prompt versioning、diff、owner、environment 和 rollback 是自动优化进入生产前的基础设施。</td>
+<td>Prompt 要像代码一样能比较、审核和回滚。</td>
+<td>B</td>
+<td>可进入行业实践方法</td>
+</tr>
+<tr>
+<td>tw-insight-05</td>
+<td>Context engineering 与 prompt optimization 必须分开记变量；很多“prompt 变好”其实来自检索、memory、tool output 或上下文组织变化。</td>
+<td>先判断该改 prompt，还是该改 context。</td>
+<td>B</td>
+<td>可进入反模式和实验设计</td>
+</tr>
+<tr>
+<td>tw-insight-06</td>
+<td>社媒热度能发现方向和误读，但不能排序方法有效性。</td>
+<td>转发多不等于更有效。</td>
+<td>B</td>
+<td>可进入证据等级说明</td>
+</tr>
+<tr>
+<td>tw-insight-07</td>
+<td>AI safety/control 场景中的 prompt optimization 更应关注 audit budget、monitor failure 和安全回归，而不是普通准确率。</td>
+<td>安全监控 prompt 不能只优化平均分。</td>
+<td>D</td>
+<td>需深读 DSPy AI control 来源</td>
+</tr>
+<tr>
+<td>tw-insight-08</td>
+<td>产品化 prompt optimizer 的可采信信息是流程字段，而不是厂商提升百分比。</td>
+<td>采信 dataset、metric、baseline、cost、rollback；降级营销数字。</td>
+<td>B</td>
+<td>可进入行业实践方法</td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-cards">Detailed Cards</h2>
+<h3 id="tw-insight-01-eval-first">tw-insight-01: Eval-first 自动优化</h3>
+<pre><code class="language-yaml">insight: 自动 prompt optimization 的价值不在“让模型自由改写”，而在 metric、trace 和版本约束下产生可比较候选。
+user_facing_one_liner: 先有测试集和评分器，再谈自动改 prompt。
+phenomenon: Twitter/X 批次中，GEPA、Pydantic、Promptim、Vertex AI Prompt Optimizer、PromptWizard 等线索都把 prompt optimizer 与 dataset、metric、evaluator 或 optimization job 绑定。
+mechanism: 没有 eval，LLM 只能做风格化改写；有 eval 和 trace 后，候选 prompt 才能被比较、拒绝、回滚和复用。
+actionable_rule: 每次自动改 prompt 前，先冻结任务样本、主指标、失败类型、成本预算和回滚点。
+helpful_method: metric_trace_constrained_prompt_iteration
+exact_action_to_try: 为一个现有 prompt 建 20-50 条开发样本，记录 baseline 输出和失败类型，再让模型只基于失败样本提出 3 个候选 prompt。
+before_after_example: &quot;Before: 帮我优化这个 prompt。After: 在 validation set v0.1 上，把格式错误率从 18% 降到 8% 以下，成本不超过 baseline 1.5x。&quot;
+counterexample_or_limit: 创意写作、探索性 brainstorming 或一次性临时任务可能不值得搭建完整 eval。
+evidence_strength: B
+main_sources: Pydantic GEPA article; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; GEPA/DSPy docs.
+validation_or_demo: 对比“无 eval 改写”与“失败样本 + metric 约束改写”，观察 validation set 和 hidden sample 上的差异。
+</code></pre>
+<h3 id="tw-insight-02-trace-aware-prompt-evolution">tw-insight-02: Trace-aware prompt evolution</h3>
+<pre><code class="language-yaml">insight: GEPA 的可迁移机制是从执行轨迹和失败解释中生成 prompt edits，而不是把它简单理解为 RL 替代品。
+user_facing_one_liner: 让优化器读失败过程，而不只是读最终分数。
+phenomenon: 作者和维护者 posts 反复强调 natural-language reflection、rollout/trajectory、MIPRO/GRPO/GEPA taxonomy 和 Pareto-style candidate selection。
+mechanism: Prompt 是可读文本，失败轨迹中的 tool calls、intermediate reasoning、judge explanation 和错误日志能提供比标量 reward 更可编辑的反馈。
+actionable_rule: 对 agent/tool-use 任务，prompt optimizer 的输入至少包含失败输入、输出、关键中间步骤、错误类型和评分理由。
+helpful_method: metric_trace_constrained_prompt_iteration
+exact_action_to_try: 在一个 tool-use 小任务中保存 10 个失败轨迹，让模型先归纳失败根因，再提出局部 prompt edit。
+before_after_example: &quot;Before: 只给 optimizer 一个 0/1 分数。After: 给 optimizer 失败输入、工具调用、错误输出、judge 解释和禁止改写的约束。&quot;
+counterexample_or_limit: 如果任务没有可解释中间过程，或者 judge 解释质量很差，trace-aware 方法可能只会放大噪声。
+evidence_strength: B
+main_sources: GEPA arXiv; GEPA repo; DSPy GEPA docs; Omar Khattab / Lakshya A Agrawal X 线索。
+validation_or_demo: scalar-only rewrite vs trace-aware rewrite，控制候选数量和模型参数，只比较反馈信号差异。
+</code></pre>
+<h3 id="tw-insight-03-prompt-as-program">tw-insight-03: Prompt-as-program 的定位</h3>
+<pre><code class="language-yaml">insight: DSPy 不应只被写成 prompt optimizer；更准确的定位是把任务、签名、模块和指标声明出来，再用 optimizer 编译 LM program。
+user_facing_one_liner: 不要在聊天框里堆 prompt，把任务结构写出来。
+phenomenon: 社媒中大量账号把 DSPy 简化为 automatic prompt optimization system；Omar Khattab 和 Drew Breunig 线索强调 programming model、maintainability 和 DX。
+mechanism: 当任务被拆成 signature/module/metric 后，prompt 文案只是可优化资产之一，示例、模型、模块组合和 evaluator 都能被系统管理。
+actionable_rule: 把“prompt 是否变好”的讨论改写成“program spec、optimizer、metric 和 split 是否定义清楚”。
+helpful_method: prompt_as_program_spec
+exact_action_to_try: 对一个多步骤 prompt，先写输入字段、输出字段、评分器和可变组件，再决定是否用 DSPy/Promptim/手写脚本优化。
+before_after_example: &quot;Before: 一段 800 字系统 prompt。After: task signature + output schema + metric + fixed examples + versioned instruction。&quot;
+counterexample_or_limit: 单轮简单问答或低价值临时任务使用 prompt-as-program 可能过度工程。
+evidence_strength: B
+main_sources: DSPy docs; DSPy paper; Drew Breunig writeup; Simon Willison X 线索。
+validation_or_demo: 选择一个多步骤任务，对比纯 prompt 模板和结构化 spec 在模型切换、错误定位和版本 diff 上的可维护性。
+</code></pre>
+<h3 id="tw-insight-04-prompt-versioning">tw-insight-04: Prompt versioning 是自动优化的发布门槛</h3>
+<pre><code class="language-yaml">insight: 自动 prompt optimization 进入生产前必须有 prompt diff、commit、environment、owner、eval gate 和 rollback。
+user_facing_one_liner: Prompt 要像代码一样发布。
+phenomenon: LangSmith Prompt Hub、Langfuse、Humanloop、Promptfoo、Google/OpenAI optimizer 文档都强调 eval、versioning、observability 或 deployment 控制。
+mechanism: 自动生成候选会增加行为漂移风险；没有版本和回滚，失败时无法定位是哪次改写破坏了系统。
+actionable_rule: 新 prompt 只能从 candidate 进入 staging，再通过 eval gate 和人工审核进入 production。
+helpful_method: prompt_release_gate
+exact_action_to_try: 为 prompt 变体记录 prompt_id、parent_id、diff、reason、dataset_version、metric_delta、cost_delta 和 rollback_target。
+before_after_example: &quot;Before: 直接替换线上 prompt。After: candidate -&gt; offline eval -&gt; reviewer approval -&gt; production tag -&gt; rollback pointer。&quot;
+counterexample_or_limit: 离线个人任务可以简化，但仍应保存原 prompt 和候选。
+evidence_strength: B
+main_sources: LangSmith manage prompts; Langfuse prompt management/tracing; Promptfoo optimization; Humanloop docs; OpenAI/Google prompt optimizer docs.
+validation_or_demo: 对一次 prompt 优化运行生成 release record，检查是否能复现采用原因和回滚点。
+</code></pre>
+<h3 id="tw-insight-05-prompt-context">tw-insight-05: Prompt 与 context 分变量</h3>
+<pre><code class="language-yaml">insight: 许多“prompt 优化”线索其实是 context engineering、retrieval、memory 或 tool policy 问题，必须先拆变量。
+user_facing_one_liner: 先诊断该改哪一层，不要一上来改 system prompt。
+phenomenon: Twitter/X 批次同时出现 prompt optimizer、context engineering、LangGraph/LangChain、12-factor agents 和 agent reliability 线索。
+mechanism: LLM 输出受 instruction、few-shot examples、retrieved context、tool result format、memory 和 model 参数共同影响；混在一起改会产生伪因果。
+actionable_rule: 每次优化只允许改一个变量层；如果同时改 prompt 和 context，本轮只能标为 multi-factor observation。
+helpful_method: prompt_context_variable_audit
+exact_action_to_try: 对失败样本先标注 failure owner：instruction / example / retrieval / memory / tool policy / schema / model。
+before_after_example: &quot;Before: 把所有失败归因于 prompt 不好。After: 10 个失败中 4 个是检索缺失，3 个是 schema 不清，2 个是 tool output 格式，1 个才是 instruction。&quot;
+counterexample_or_limit: 早期探索阶段可以多因素试错，但不能写成单变量结论。
+evidence_strength: B
+main_sources: LangChain context engineering blog/docs; 12-factor agents; Anthropic context engineering; Twitter/X context engineering posts.
+validation_or_demo: 对一组 agent 失败案例做 failure owner 标注，再决定最小改动层。
+</code></pre>
+<h3 id="tw-insight-06">tw-insight-06: 社媒热度不是证据</h3>
+<pre><code class="language-yaml">insight: X/Twitter 可用于发现一手来源、误读和传播路径，但不能用 post 数量、账号热度或转发密度证明方法有效。
+user_facing_one_liner: 热门不等于有效。
+phenomenon: GEPA 相关候选中有大量媒体传播、论文标题转发和重复摘要；这些条目经常复述同一个 arXiv 链接。
+mechanism: 社媒排序受新鲜度、账号影响力、标题冲击和搜索召回影响；它不能替代任务设置、baseline、metric 和 failure analysis。
+actionable_rule: 社媒来源进入报告时只能标为 source discovery、adoption signal、misunderstanding signal 或 pointer；性能结论必须另有证据。
+helpful_method: social_signal_triage
+exact_action_to_try: 给每条社媒线索打标签：primary_author / official_release / practitioner_case / media_repost / marketing / unrelated。
+before_after_example: &quot;Before: 多个账号都说 GEPA 超过 RL。After: 多个账号都指向同一 GEPA paper；性能主张只引用论文表格和后续复现。&quot;
+counterexample_or_limit: 作者 post 可以提供方法解释和限制，但仍需追溯论文或官方材料。
+evidence_strength: B
+main_sources: Twitter/X candidate batch; GEPA repost exclusion list; source_collection_plan evidence boundary.
+validation_or_demo: 不需要实验；在最终报告证据等级中强制标注社媒用途。
+</code></pre>
+<h3 id="tw-insight-07-safetycontrol-optimizer">tw-insight-07: Safety/control optimizer 的特殊指标</h3>
+<pre><code class="language-yaml">insight: AI safety/control 场景中的 prompt optimization 应优先记录 audit budget、monitor failure、false negative、coverage 和安全回归，而不是只看平均任务分。
+user_facing_one_liner: 安全 prompt 优化不能只追求更高分。
+phenomenon: DSPy 官方线索提到 prompt-optimized monitors、audit budget 和 baseline monitor，对本项目的 eval/governance 维度有价值。
+mechanism: 安全监控器的失败成本和普通任务不同；optimizer 可能提升表面分数，但损害关键边界或被 judge/rubric 利用。
+actionable_rule: 安全相关 prompt 只能在有 adversarial/safety regression set 和人工审核门槛时自动优化。
+helpful_method: safety_prompt_optimizer_gate（待补：证据为 D，需先深读 DSPy AI control 来源后再成卡）
+exact_action_to_try: 对安全 monitor prompt 记录 false_negative_rate、audit_budget、critical_failure_examples 和 rollback rule。
+before_after_example: &quot;Before: monitor accuracy 提高。After: audit budget 固定为 1%，critical false negatives 不增加，拒答/误报成本可解释。&quot;
+counterexample_or_limit: 当前 Twitter 批次只提供线索，必须深读 DSPy AI control 来源后才能形成结论。
+evidence_strength: D
+main_sources: DSPy AI safety X post; Prompt optimization can enable AI control research; DSPy GEPA docs.
+validation_or_demo: 设计小型安全分类/monitor demo，比较普通 accuracy 与 critical failure 指标的冲突。
+</code></pre>
+<h3 id="tw-insight-08-optimizer">tw-insight-08: 厂商 optimizer 主张要采信流程，不采信数字</h3>
+<pre><code class="language-yaml">insight: 产品化 prompt optimizer 的可复用信息通常是流程和字段，而不是营销提升比例。
+user_facing_one_liner: 看它怎么评估、怎么回滚，不先看它说提升多少。
+phenomenon: Pydantic、Promptim、Google、Microsoft、Salesforce、Sentient、OpenAI 等线索都以产品/工具形态出现，但证据强度差异很大。
+mechanism: 厂商 benchmark 可能有任务选择、模型选择、指标选择和展示偏差；流程字段更容易迁移到本项目。
+actionable_rule: 读取产品 optimizer 文档时，只抽取 dataset、metric、baseline、candidate generation、selection、cost、failure cases、versioning、rollback。
+helpful_method: vendor_optimizer_evidence_filter
+exact_action_to_try: 对每个产品来源填一张 evidence checklist；缺少 eval 或 rollback 的条目降级为线索。
+before_after_example: &quot;Before: 某工具提升 20%。After: 该工具使用什么样本、什么 metric、多少候选、如何避免 overfit、失败时怎么回滚。&quot;
+counterexample_or_limit: 有些官方文档只说明产品流程，不提供实验细节；这类来源只能作为工程实践，不作为性能证据。
+evidence_strength: B
+main_sources: Pydantic GEPA; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; Salesforce Promptomatix; Sentient ROMA.
+validation_or_demo: 用同一 checklist 审核 5 个工具来源，筛出能支撑 helpful method 的字段。
+</code></pre>
+<h2 id="conclusion-candidates">Conclusion Candidates</h2>
+<p>以下是把上述洞见升格为「可被采纳或反驳的判断」的候选，按 <a href="../insight_field_standard.html">insight_field_standard.md</a> 的 conclusion schema 填写。注意：这些均为<strong>候选结论</strong>，多数 <code>main_sources</code> 仍待补齐为仓库内结构化笔记路径，且未完成跨源核验，进入最终报告前不得直接采纳（见 <code>docs/project_principles.md</code> 第 4 条：单源不得直接升格为结论）。</p>
+<pre><code class="language-yaml"># conclusion-01
+conclusion: 在有可客观打分留出集、且 prompt 会重复使用的任务上，自动 prompt optimization 只有在 eval + trace + 版本约束下才能产生可比较、可回滚的收益；缺 eval 时它等价于风格化改写。
+scope: 有留出集、可分类失败、prompt 重复使用的任务；不含一次性创作或探索性任务。
+evidence_strength: B
+main_sources: 待补（DSPy / GEPA / Pydantic GEPA / Promptim 文档，结构化笔记未完成）。
+counterexample_or_limit: 创意写作、探索性 brainstorming 或一次性临时任务可能不值得搭建完整 eval。
+supersedes_or_conflicts: 与“自动优化默认有收益”的口号冲突。
+
+# conclusion-02
+conclusion: GEPA 更准确的定位是 trace-aware reflective prompt evolution（执行轨迹 + 自然语言反思 + Pareto 选择），而非“RL 替代品”。
+scope: 有可解释中间过程或 judge 解释的 agent、tool-use、结构化输出任务。
+evidence_strength: D
+main_sources: 待补（GEPA arXiv / repo / DSPy GEPA docs，paper note 未写）。
+counterexample_or_limit: 无可解释中间过程或 judge 质量差时 trace-aware 可能只放大噪声；当前仅社媒 + 文档线索，未做结构化深读。
+
+# conclusion-03
+conclusion: DSPy 在本项目中应按 prompt-as-program / LM program framework 定位，而不是单纯 prompt optimizer。
+scope: 多步骤 / 多模块、需换模型或长期维护的任务。
+evidence_strength: B
+main_sources: 待补（DSPy arXiv / docs，Drew Breunig writeup）。
+counterexample_or_limit: 单轮简单任务用 program 框架可能过度工程；定位判断主要来自作者线索与文档，非效果实证。
+
+# conclusion-04
+conclusion: 工程化自动 prompt optimization 的发布前置条件是 prompt versioning/diff/owner/rollback 与“prompt 与 context 分变量”，缺这两项则指标无法归因、失败无法回滚。
+scope: prompt 影响生产系统、agent 工具调用、安全监控或成本的场景。
+evidence_strength: B
+main_sources: 待补（LangSmith / Langfuse / Humanloop / Promptfoo 文档；LangChain context engineering / 12-factor agents）。
+counterexample_or_limit: 离线个人任务可简化流程，但仍应保存原 prompt 与候选。
+
+# conclusion-05
+conclusion: 社媒与厂商材料只能作为发现层（source discovery / adoption signal / 流程字段），不能直接支撑性能或有效性结论。
+scope: 所有来自 X / 媒体转发 / 厂商 benchmark 的性能主张。
+evidence_strength: B
+main_sources: 本批 Twitter 候选、排除清单、source_collection_plan 证据边界。
+counterexample_or_limit: 作者 post 可提供方法解释与限制，但仍需追溯论文 / 官方材料。
+</code></pre>
+<h2 id="helpful-method-candidates">Helpful Method Candidates</h2>
+<h3 id="method-01-metric-trace-constrained-prompt-iteration">method-01: Metric + Trace Constrained Prompt Iteration</h3>
+<pre><code class="language-yaml">name: metric_trace_constrained_prompt_iteration
+insight_supported: tw-insight-01, tw-insight-02
+problem: 自动 prompt 改写容易变成不可比较的风格化改写。
+recommended_when: 任务有明确输入输出、可构造 20+ 样本、失败可以分类，且 prompt 会重复使用。
+not_recommended_when: 一次性创作、无评分器、无失败样本、无法承受额外推理成本。
+required_inputs: baseline prompt, dataset_version, metric, failure_samples, constraints, cost_budget, rollback_prompt.
+implementation_steps: 固定 baseline；跑开发集；标注失败类型；生成 3-5 个候选；离线评分；人工审核 diff；只发布通过 gate 的候选。
+evaluation_metrics: task score, format error rate, critical failure rate, cost_delta, latency_delta, hidden_sample_score.
+expected_benefit: 把 prompt 改写从主观编辑变成可比较实验。
+cost_and_latency: 至少增加候选生成和多次 eval 成本；适合高复用 prompt。
+risks: 过拟合开发集；judge gaming；prompt 变长；忽略安全边界。
+misuse_or_anti_pattern: 没有 eval 时直接让模型“优化一下 prompt”。
+rollback_plan: 保存 parent prompt、candidate prompt、diff、采用原因和 rollback_target。
+evidence: GEPA, Pydantic GEPA, Promptim, Google Vertex AI Prompt Optimizer, PromptWizard.
+next_experiment: scalar-only rewrite vs trace-aware rewrite。
+</code></pre>
+<h3 id="method-02-prompt-release-gate">method-02: Prompt Release Gate</h3>
+<pre><code class="language-yaml">name: prompt_release_gate
+insight_supported: tw-insight-04, tw-insight-08
+problem: 自动生成候选 prompt 后，如果没有版本、审核和回滚，线上行为会不可审计。
+recommended_when: prompt 影响生产系统、agent 工具调用、安全监控、客户输出或成本。
+not_recommended_when: 个人一次性试验；但仍建议保存原 prompt。
+required_inputs: prompt_id, parent_id, diff, dataset_version, evaluator_version, metric_delta, reviewer, environment, rollback_target.
+implementation_steps: candidate tag -&gt; offline eval -&gt; risk checklist -&gt; reviewer approval -&gt; staging -&gt; production tag -&gt; monitor -&gt; rollback.
+evaluation_metrics: release pass/fail, regression count, rollback time, owner coverage, trace coverage.
+expected_benefit: 降低 prompt 漂移和不可回滚失败风险。
+cost_and_latency: 增加发布流程成本，但减少事故排查成本。
+risks: 流程过重导致低价值 prompt 也被过度治理。
+misuse_or_anti_pattern: 把 prompt 当临时文本，直接覆盖线上版本。
+rollback_plan: 每个 production prompt 都保留 parent 和上一稳定版本。
+evidence: LangSmith manage prompts, Langfuse prompt management, Promptfoo, Humanloop, OpenAI/Google docs.
+next_experiment: 为一次 prompt 优化 demo 生成 release record，检查是否可复查。
+</code></pre>
+<h3 id="method-03-prompt-context-variable-audit">method-03: Prompt / Context Variable Audit</h3>
+<pre><code class="language-yaml">name: prompt_context_variable_audit
+insight_supported: tw-insight-05
+problem: 团队常把 retrieval、memory、tool policy 或 schema 问题误判为 prompt 问题。
+recommended_when: RAG、agent、tool-use、多轮任务或长上下文任务失败。
+not_recommended_when: 单轮纯文本分类且上下文固定。
+required_inputs: failure_samples, prompt, retrieved_context, tool_outputs, memory_state, schema, model_parameters.
+implementation_steps: 对每个失败样本标注 failure owner；一次只改一个变量层；多因素改动必须标注为 multi-factor observation。
+evaluation_metrics: owner_distribution, fix_success_by_layer, regression_by_layer, cost_delta.
+expected_benefit: 减少伪因果，提高后续 prompt optimizer 输入质量。
+cost_and_latency: 需要人工或 LLM 辅助标注失败归因。
+risks: failure owner 标注可能主观；需要 reviewer 抽查。
+misuse_or_anti_pattern: 看到失败就改 system prompt。
+rollback_plan: 每层改动独立 commit 或独立 prompt/context version。
+evidence: LangChain context engineering, 12-factor agents, Anthropic context engineering, Twitter/X context signals.
+next_experiment: 对 20 个 agent 失败样本做 owner 标注，再比较 prompt-only fix 与 owner-guided fix。
+</code></pre>
+<h3 id="method-04-prompt-as-program-spec">method-04: Prompt-as-Program Spec</h3>
+<pre><code class="language-yaml">name: prompt_as_program_spec
+insight_supported: tw-insight-03
+problem: 多步骤任务把逻辑堆在一段长 system prompt 里，换模型、定位失败和做版本 diff 都困难。
+recommended_when: 多步骤 / 多模块任务，prompt 会长期维护、需要换模型或交接。
+not_recommended_when: 单轮简单问答或一次性低价值任务，结构化反而过度工程。
+required_inputs: 任务输入/输出字段定义、评分器、可变组件清单（instruction / examples / module 组合）、目标模型。
+implementation_steps: 写出 signature（输入/输出字段）→ 定义 metric 与 split → 标出可优化组件 → 决定手写或用 DSPy/Promptim 编译 → 固定示例与 instruction 版本。
+evaluation_metrics: 换模型后的迁移成本、失败定位时间、版本 diff 可读性、任务主指标。
+risks: 结构化抽象本身有学习与维护成本；签名/指标定义错会传导到全流程。
+misuse_or_anti_pattern: 把简单任务硬套 program 框架；或只换框架不定义 metric。
+rollback_plan: 保留原始整段 prompt 作为 baseline，可随时回退到非结构化版本。
+evidence: DSPy paper/docs；Drew Breunig writeup（B，工程可维护性线索，非效果结论）。
+cost_and_latency: 前期结构化有一次性投入；长期降低维护与换模型成本。
+expected_benefit: prompt 可维护、可换模型、可复评。
+next_experiment: 选一个多步骤任务，对比纯模板与结构化 spec 在换模型/版本 diff 上的可维护性。
+</code></pre>
+<h3 id="method-05-social-signal-triage">method-05: Social Signal Triage</h3>
+<pre><code class="language-yaml">name: social_signal_triage
+insight_supported: tw-insight-06
+problem: 社媒线索容易被当成方法有效性证据，污染结论。
+recommended_when: 处理来自 X / 社媒 / 媒体转发的线索，需要判断其证据角色。
+not_recommended_when: 已有论文 / 官方文档 / 代码的一手来源，无需再经社媒分流。
+required_inputs: 社媒线索 URL、作者或机构、是否指向一手来源。
+implementation_steps: 给每条线索打标签 primary_author / official_release / practitioner_case / media_repost / marketing / unrelated → 仅前三类进入 source card → 性能主张一律回到一手来源 → 转发与营销只计传播热度。
+evaluation_metrics: 进入 source card 的线索可追溯率、被误当证据的比例（目标为 0）。
+risks: 标签判断主观；作者账号也可能过度简化，仍需追溯原文。
+misuse_or_anti_pattern: 用 post 热度 / 转发数排序方法有效性。
+rollback_plan: 标签有误时降级为 weak social signal 并重新追溯。
+evidence: 本批 Twitter 候选与排除清单；source_collection_plan 证据边界（B）。
+cost_and_latency: 仅人工或 LLM 辅助打标签，成本低。
+expected_benefit: 把社媒从“伪证据”降为“发现层”，避免热度污染结论。
+next_experiment: 无需实验；在最终报告证据等级中强制标注社媒用途。
+</code></pre>
+<h3 id="method-06-vendor-optimizer-evidence-filter">method-06: Vendor Optimizer Evidence Filter</h3>
+<pre><code class="language-yaml">name: vendor_optimizer_evidence_filter
+insight_supported: tw-insight-08
+problem: 厂商 optimizer 的提升百分比可能因任务/指标/展示选择而有偏，直接采信会误导结论。
+recommended_when: 评估产品化 prompt optimizer（Pydantic / Google / Microsoft / Salesforce / OpenAI 等）来源。
+not_recommended_when: 已有可复现实验或论文给出完整设置的来源。
+required_inputs: 厂商文档/blog、其声称的指标、是否披露 dataset / metric / baseline / cost / rollback。
+implementation_steps: 对每个来源填 evidence checklist（dataset、metric、baseline、candidate generation、selection、cost、failure cases、versioning、rollback）→ 抽取流程字段进入 helpful method → 缺 eval 或 rollback 的数字主张降级为线索。
+evaluation_metrics: checklist 字段完整度、被降级的营销数字数量、可迁移流程字段数量。
+risks: 部分官方文档只给流程不给实验，易被误判为强证据；需区分“流程可信”与“数字可信”。
+misuse_or_anti_pattern: 直接引用厂商提升百分比作为本项目预期收益。
+rollback_plan: 若后续发现披露不实，将该来源从工程实践降级为传播信号。
+evidence: Pydantic GEPA、Vertex AI、PromptWizard、Promptomatix、OpenAI/Google docs（B，流程字段）。
+cost_and_latency: 仅文档审阅成本。
+expected_benefit: 只迁移可信流程，过滤不可验证数字。
+next_experiment: 用同一 checklist 审核 5 个工具来源，筛出能支撑 helpful method 的字段。
+</code></pre>
+<blockquote>
+<p>方法引用处理说明：<code>tw-insight-02</code> 的 trace-aware 编辑已并入 <code>method-01</code>（其 <code>insight_supported</code> 同时覆盖 tw-insight-01/02），不另立卡；<code>tw-insight-07</code> 的 <code>safety_prompt_optimizer_gate</code> 证据仅为 D，待深读 DSPy AI control 来源后再补完整卡，暂不成卡以免在弱证据上编造步骤。</p>
+</blockquote>
+<h2 id="anti-patterns-and-limits">Anti-patterns And Limits</h2>
+<table>
+<thead>
+<tr>
+<th>anti_pattern</th>
+<th>why_harmful（为什么危险）</th>
+<th>trigger_condition（触发条件）</th>
+<th>instead_do（更好的处理）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>把热门 X thread 写成研究结论</td>
+<td>社媒热度不能证明方法有效，且可能重复同一来源。</td>
+<td>直接用 post 热度 / 转发数排序方法，未追溯一手来源。</td>
+<td>只作为 source discovery 或 adoption signal，结论回到论文/代码/实验。</td>
+</tr>
+<tr>
+<td>没有 eval 就让模型“优化 prompt”</td>
+<td>只能得到更像 prompt 的文本，无法判断是否变好。</td>
+<td>无留出集、无评分器、无失败样本时就调用优化器。</td>
+<td>先冻结样本、指标、失败类型和成本预算。</td>
+</tr>
+<tr>
+<td>把 GEPA 写成“RL 替代品”</td>
+<td>过度简化会忽略 trace、reflection、candidate selection 和任务边界。</td>
+<td>仅凭社媒一句话概括 GEPA，未读其实验设置与任务边界。</td>
+<td>写成 reflective prompt evolution，并追溯具体实验设置。</td>
+</tr>
+<tr>
+<td>同时改 prompt、context、model 和 evaluator</td>
+<td>指标变化无法归因，容易形成伪结论。</td>
+<td>一轮内同时改动多个变量层后比较指标。</td>
+<td>一次只改一层；多因素改动只写观察。</td>
+</tr>
+<tr>
+<td>采信厂商提升百分比</td>
+<td>任务选择、指标和展示可能偏向产品叙事。</td>
+<td>引用厂商 benchmark 数字而无 dataset / metric / baseline 披露。</td>
+<td>采信流程字段，降级未公开 eval 的数字主张。</td>
+</tr>
+<tr>
+<td>只优化平均分，不看 critical failures</td>
+<td>自动优化可能牺牲安全边界、格式稳定性或特定少数场景。</td>
+<td>优化目标只设平均分，未建立 regression / critical failure set。</td>
+<td>记录 critical failure set、regression set 和 rollback gate。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="validation-demo-candidates">Validation / Demo Candidates</h2>
+<table>
+<thead>
+<tr>
+<th>candidate</th>
+<th>要验证的洞见/方法</th>
+<th>最小设计</th>
+<th>成功标准</th>
+<th>当前状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>demo-trace-aware-vs-score-only</td>
+<td><code>tw-insight-02</code>, <code>method-01</code></td>
+<td>选一个小型结构化输出或 tool-use 任务；同样候选预算下比较只给分数 vs 给失败 trace 的 prompt rewrite。</td>
+<td>trace-aware 至少减少一种失败类型，且 hidden sample 不退化；记录成本。</td>
+<td>待进入 experiment_plan</td>
+</tr>
+<tr>
+<td>demo-prompt-release-record</td>
+<td><code>tw-insight-04</code>, <code>method-02</code></td>
+<td>对一次已有 prompt 优化运行补全 release record：parent、diff、metric、cost、review、rollback。</td>
+<td>另一个 reviewer 能复查采用原因并找到回滚点。</td>
+<td>可先作为文档演示</td>
+</tr>
+<tr>
+<td>demo-variable-owner-audit</td>
+<td><code>tw-insight-05</code>, <code>method-03</code></td>
+<td>对 20 个 agent/RAG 失败样本标注 failure owner，再只改最主要变量层。</td>
+<td>能区分 prompt 问题和 context/retrieval/tool 问题；避免多变量结论。</td>
+<td>待选数据</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_1">写入最终报告的建议</h2>
+<p>优先进入最终报告的不是“Twitter 上大家都在讨论 GEPA/DSPy”，而是以下更可复用的判断：</p>
+<ol>
+<li>自动 prompt optimization 必须 eval-first，否则只是改写。</li>
+<li>Trace-aware feedback 是 prompt evolution 的关键机制候选，值得最小实验验证。</li>
+<li>Prompt-as-program 和 prompt versioning 是工程化 prompt optimizer 的基础设施。</li>
+<li>Context engineering 和 prompt optimization 必须分变量，否则无法归因。</li>
+<li>社媒和厂商材料只提供线索或流程字段，不能直接支撑性能结论。</li>
+</ol>
+<p>上述 5 条判断已在本页「Conclusion Candidates」段按 conclusion schema 形式化（含 scope、evidence_strength、counterexample_or_limit）。进入最终报告前需：① 把 <code>main_sources</code> 从外部一手来源替换为仓库内结构化笔记路径；② 完成跨源核验，把 D 级判断升级或标注待验证。</p>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/source_batches/twitter_web_insight_cards_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="../analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#insight-candidates">Insight Candidates</a>
+<a class="lv2" href="#detailed-cards">Detailed Cards</a>
+<a class="lv3" href="#tw-insight-01-eval-first">tw-insight-01: Eval-first 自动优化</a>
+<a class="lv3" href="#tw-insight-02-trace-aware-prompt-evolution">tw-insight-02: Trace-aware prompt evolution</a>
+<a class="lv3" href="#tw-insight-03-prompt-as-program">tw-insight-03: Prompt-as-program 的定位</a>
+<a class="lv3" href="#tw-insight-04-prompt-versioning">tw-insight-04: Prompt versioning 是自动优化的发布门槛</a>
+<a class="lv3" href="#tw-insight-05-prompt-context">tw-insight-05: Prompt 与 context 分变量</a>
+<a class="lv3" href="#tw-insight-06">tw-insight-06: 社媒热度不是证据</a>
+<a class="lv3" href="#tw-insight-07-safetycontrol-optimizer">tw-insight-07: Safety/control optimizer 的特殊指标</a>
+<a class="lv3" href="#tw-insight-08-optimizer">tw-insight-08: 厂商 optimizer 主张要采信流程，不采信数字</a>
+<a class="lv2" href="#conclusion-candidates">Conclusion Candidates</a>
+<a class="lv2" href="#helpful-method-candidates">Helpful Method Candidates</a>
+<a class="lv3" href="#method-01-metric-trace-constrained-prompt-iteration">method-01: Metric + Trace Constrained Prompt Iteration</a>
+<a class="lv3" href="#method-02-prompt-release-gate">method-02: Prompt Release Gate</a>
+<a class="lv3" href="#method-03-prompt-context-variable-audit">method-03: Prompt / Context Variable Audit</a>
+<a class="lv3" href="#method-04-prompt-as-program-spec">method-04: Prompt-as-Program Spec</a>
+<a class="lv3" href="#method-05-social-signal-triage">method-05: Social Signal Triage</a>
+<a class="lv3" href="#method-06-vendor-optimizer-evidence-filter">method-06: Vendor Optimizer Evidence Filter</a>
+<a class="lv2" href="#anti-patterns-and-limits">Anti-patterns And Limits</a>
+<a class="lv2" href="#validation-demo-candidates">Validation / Demo Candidates</a>
+<a class="lv2" href="#_1">写入最终报告的建议</a></aside>
+</div>
+
+</body>
+</html>

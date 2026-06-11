@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arXiv top80 分类 taxonomy · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#257d72">arXiv 渠道</span><span class="doctitle">arXiv top80 分类 taxonomy</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="arxiv-top80">arXiv Top80 分类综述与横向矩阵</h1>
+<p>更新时间：2026-06-08</p>
+<p>数据来源：<code>outputs/arxiv_prompt_search/arxiv_focus_top80_20260608T131514Z.csv</code></p>
+<p>证据等级：标题 + arXiv 摘要 + 自动分类的一读矩阵。本文用于粗筛和深读排期，不作为最终结论。</p>
+<h2 id="_1">分析框架</h2>
+<p>本批论文统一按以下维度分析：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>关注问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>优化对象</td>
+<td>改 instruction、few-shot examples、system prompt、结构化 prompt section、workflow、agent role、tool policy、memory，还是 optimizer 自身。</td>
+</tr>
+<tr>
+<td>反馈信号</td>
+<td>使用任务分数、自然语言 critique、textual gradient、pairwise preference、human feedback、judge score、执行轨迹、工具错误、失败样本还是 memory。</td>
+</tr>
+<tr>
+<td>候选生成</td>
+<td>使用 LLM rewrite、beam search、evolutionary operators、bandit/Bayesian、program compiler、agentic tool loop、code analysis 或 synthetic data。</td>
+</tr>
+<tr>
+<td>候选选择</td>
+<td>用 dev set 分数、Pareto frontier、successive halving、pairwise preference、joint agent outcome、guard metric、cost-aware objective 还是 archive。</td>
+</tr>
+<tr>
+<td>评估可信度</td>
+<td>是否报告数据集、模型、baseline、train/dev/test 隔离、成本、失败案例、泛化和代码。</td>
+</tr>
+<tr>
+<td>对项目价值</td>
+<td>能否作为 baseline、taxonomy source、风险证据、工程设计参考或最小实验候选。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-apo">方法簇 1：经典 APO 与基线锚点</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2305.03495">ProTeGi</a>：用自然语言“梯度”批评 prompt，再做 beam search。</li>
+<li><a href="https://arxiv.org/abs/2307.07415">AutoHint</a>：通过 hint generation 做自动 prompt 优化。</li>
+<li><a href="https://arxiv.org/abs/2309.08532">EvoPrompt</a>：连接 LLM 与进化算法做离散 prompt 搜索。</li>
+<li><a href="https://arxiv.org/abs/2309.16797">PromptBreeder</a>：同时进化 task prompts 和 mutation prompts。</li>
+<li><a href="https://arxiv.org/abs/2402.02101">Are Large Language Models Good Prompt Optimizers?</a>：直接评估 LLM 作为 prompt optimizer 的能力边界。</li>
+</ul>
+<p>粗读判断：</p>
+<p>这些论文构成历史基线，价值不只在性能，而在问题形式化：prompt 可以作为自然语言离散对象被生成、评价、选择和回滚。后续实验若要建立 baseline，至少需要覆盖 manual prompt、APE/LLM rewrite、ProTeGi-style textual feedback、evolutionary search 中的 2-3 类。</p>
+<h2 id="2textual-gradient">方法簇 2：Textual Gradient 与反思式优化</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2506.00400">Scaling Textual Gradients via Sampling-Based Momentum</a>：讨论 textual gradient 扩展到更多训练数据时的上下文墙和稳定性问题。</li>
+<li><a href="https://arxiv.org/abs/2410.02748">CriSPO</a>：面向生成任务，用多方面 critique-suggestion 指导 prompt 修改。</li>
+<li><a href="https://arxiv.org/abs/2601.04055">Modular Prompt Optimization</a>：把结构化 prompt 拆成 section，用局部 textual gradient 优化。</li>
+<li><a href="https://arxiv.org/abs/2603.18388">Reflection in the Dark</a>：指出 reflective APO 的黑箱轨迹和失败模式，并用多 agent 分离 hypothesis 与 rewriting。</li>
+<li><a href="https://arxiv.org/abs/2605.21318">TextReg</a>：把 prompt distributional overfitting 作为 text-space optimization 的正则化问题处理。</li>
+<li><a href="https://arxiv.org/abs/2512.13598">Textual Gradients are a Flawed Metaphor</a>：挑战 textual gradient 类比本身，提醒不要把自然语言反馈误当可微梯度。</li>
+</ul>
+<p>粗读判断：</p>
+<p>Textual gradient 的真正价值可能不是“梯度类比”，而是把失败样本转成可读、可审计、可局部应用的修改建议。该方向最值得转化为本项目实验的是：同一任务上比较 scalar score、free-form critique、section-local critique 三种反馈信号，并记录 prompt 增长、泛化和失败模式。</p>
+<h2 id="3">方法簇 3：进化、自指和记忆型自进化</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2309.08532">EvoPrompt</a>：population + evolutionary operators。</li>
+<li><a href="https://arxiv.org/abs/2309.16797">PromptBreeder</a>：自指地优化 mutation prompt。</li>
+<li><a href="https://arxiv.org/abs/2507.19457">GEPA</a>：结合轨迹反思、Pareto frontier 和 prompt evolution。</li>
+<li><a href="https://arxiv.org/abs/2603.21520">MemAPO</a>：把成功策略和失败模式沉淀为双 memory。</li>
+<li><a href="https://arxiv.org/abs/2606.04465">SePO</a>：把 prompt agent 自身的 system prompt 也纳入优化对象。</li>
+<li><a href="https://arxiv.org/abs/2605.28360">Prompt Codebooks</a>：把可复用 instruction units 组织为 codebook，并按实例路由。</li>
+<li><a href="https://arxiv.org/abs/2602.10874">C-MOP</a>：把 momentum 和 clustering 用于 prompt evolution。</li>
+</ul>
+<p>粗读判断：</p>
+<p>本批论文里的自进化有三种不同对象：task prompt、optimizer prompt、经验 memory。后续文档和实验必须分开记录，否则无法判断收益来自更好的 prompt、更多搜索预算，还是来自 optimizer 本身的经验迁移。</p>
+<h2 id="4prompt-as-program-prompt">方法簇 4：Prompt-as-Program、结构化 prompt 与框架化工具</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2507.14241">Promptomatix</a>：从任务描述生成 prompt，结合 meta-prompt optimizer 和 DSPy compiler。</li>
+<li><a href="https://arxiv.org/abs/2504.04365">AutoPDL</a>：把 agent prompting pattern 与 demonstrations 搜索写成可执行 PDL program。</li>
+<li><a href="https://arxiv.org/abs/2512.02840">promptolution</a>：统一、模块化的 prompt optimization 框架。</li>
+<li><a href="https://arxiv.org/abs/2507.03620">Is It Time To Treat Prompts As Code?</a>：用 DSPy 做多用例 prompt optimization case study。</li>
+<li><a href="https://arxiv.org/abs/2412.15298">A Comparative Study of DSPy Teleprompter Algorithms</a>：比较 DSPy teleprompter 与人类评估对齐。</li>
+<li><a href="https://arxiv.org/abs/2508.04660">Composing Policy Gradients and Prompt Optimization for Language Model Programs</a>：把 prompt optimization 放到 language model programs 中讨论。</li>
+</ul>
+<p>粗读判断：</p>
+<p>这类论文把 prompt 从文本片段提升为可编译、可组合、可执行、可复用的程序组件。对本项目来说，prompt-as-program 的工程价值高于单次分数提升，因为它天然支持版本追踪、局部回滚和实验隔离。</p>
+<h2 id="5agent-prompt-agent">方法簇 5：Agent、系统 prompt、多 agent 和工具链优化</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2605.26275">SPEAR</a>：agentic optimizer 使用 evaluate/python/set_prompt/finish 工具，并提供 auto-rollback 和 guard metric。</li>
+<li><a href="https://arxiv.org/abs/2504.04365">AutoPDL</a>：搜索 agentic/non-agentic prompting patterns。</li>
+<li><a href="https://arxiv.org/abs/2505.09666">System Prompt Optimization with Meta-Learning</a>：专门优化 system prompt。</li>
+<li><a href="https://arxiv.org/abs/2605.06623">MASPO</a>：联合优化多 agent 系统中的 role prompts。</li>
+<li><a href="https://arxiv.org/abs/2510.07475">MAPRO</a>：把 multi-agent prompt optimization 重写为 MAP inference。</li>
+<li><a href="https://arxiv.org/abs/2603.02630">MASPOB</a>：bandit-based multi-agent prompt optimization。</li>
+<li><a href="https://arxiv.org/abs/2604.19821">JTPRO</a>：联合 tool-prompt reflective optimization。</li>
+</ul>
+<p>粗读判断：</p>
+<p>Agent 场景里，优化对象不再是“回答 prompt”，而是 role、tool policy、workflow、局部 agent 输出和全局成功之间的 credit assignment。该方向很适合本项目后续做最小实验，因为可以选择一个小型 tool-use 任务，比较 manual prompt、局部 role prompt 改写和带 guard metric 的 agentic optimizer。</p>
+<h2 id="6judge">方法簇 6：偏好、人类反馈、judge 与治理</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2603.19311">PrefPO</a>：用 pairwise preference 和 LLM discriminator 支持无标签优化。</li>
+<li><a href="https://arxiv.org/abs/2402.08702">PROMST</a>：在 multi-step tasks 中结合 human feedback 和 heuristic sampling。</li>
+<li><a href="https://arxiv.org/abs/2510.13907">LLM Prompt Duel Optimizer</a>：用 label-free duel / preference 做 prompt optimization。</li>
+<li><a href="https://arxiv.org/abs/2603.19247">When Prompt Optimization Becomes Jailbreaking</a>：把 prompt optimization 与 adaptive red-teaming 联系起来。</li>
+<li><a href="https://arxiv.org/abs/2605.26046">When Gradients Collide</a>：分析 LLM judges 的多目标 prompt optimization failure modes。</li>
+<li><a href="https://arxiv.org/abs/2604.20726">Exploiting LLM-as-a-Judge Disposition</a>：提示 optimizer 可能利用 judge 倾向。</li>
+</ul>
+<p>粗读判断：</p>
+<p>这一簇是后续风险章节的核心证据来源。只要 optimizer 面向 judge 或偏好信号优化，就必须防 prompt hacking、judge gaming、过拟合到 rubrics、牺牲安全边界和 prompt 变长。</p>
+<h2 id="7-apo">方法簇 7：应用型 APO 与经验研究</h2>
+<p>代表论文：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2506.19773">APO for Knowledge Graph Construction</a>：比较 DSPy、APE、TextGrad 在 triple extraction 上的效果。</li>
+<li><a href="https://arxiv.org/abs/2502.15944">AutoMedPrompt</a>：医疗 prompt 优化。</li>
+<li><a href="https://arxiv.org/abs/2506.10751">Clinical QA / ArchEHR-QA 系列</a>：医疗 evidence-grounded QA 的 agentic prompt optimization。</li>
+<li><a href="https://arxiv.org/abs/2601.15037">Knowledge Restoration-driven Prompt Optimization</a>：面向 open-domain relation triplet extraction。</li>
+<li><a href="https://arxiv.org/abs/2409.01466">Political Science Text Classification</a>：文本分类和 dynamic exemplar selection。</li>
+<li><a href="https://arxiv.org/abs/2509.25196">APRIL</a>：API synthesis 中的 APO + RL。</li>
+</ul>
+<p>粗读判断：</p>
+<p>应用论文的价值不在提出通用算法，而在提供任务边界、指标选择、跨模型表现和失败案例。它们适合作为后续实验场景参考，但不应优先作为方法 taxonomy 的核心证据。</p>
+<h2 id="_2">横向证据矩阵：优先深读候选</h2>
+<table>
+<thead>
+<tr>
+<th>论文</th>
+<th>优化对象</th>
+<th>反馈信号</th>
+<th>搜索/选择方式</th>
+<th>本项目价值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ProTeGi</td>
+<td>task prompt</td>
+<td>textual critique / task score</td>
+<td>semantic edit + beam search</td>
+<td>经典 textual-gradient baseline</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>task prompt population</td>
+<td>dev score</td>
+<td>evolutionary operators</td>
+<td>经典进化 baseline</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>task prompt + mutation prompt</td>
+<td>fitness on train set</td>
+<td>self-referential evolution</td>
+<td>自指优化起点</td>
+</tr>
+<tr>
+<td>GEPA</td>
+<td>prompts in AI system</td>
+<td>trajectory reflection</td>
+<td>Pareto / evolutionary search</td>
+<td>当前强 baseline 与实验候选</td>
+</tr>
+<tr>
+<td>SePO</td>
+<td>task agent prompt + prompt agent system prompt</td>
+<td>task benchmark score / self-evolution archive</td>
+<td>open-ended evolutionary search</td>
+<td>optimizer 自身可优化的核心证据</td>
+</tr>
+<tr>
+<td>MemAPO</td>
+<td>prompt + reusable memory</td>
+<td>success strategies + failure patterns</td>
+<td>memory retrieval/editing</td>
+<td>长期经验积累机制</td>
+</tr>
+<tr>
+<td>Modular Prompt Optimization</td>
+<td>structured prompt sections</td>
+<td>section-local textual gradients</td>
+<td>schema-preserving local edits</td>
+<td>可回滚结构化 prompt 方案参考</td>
+</tr>
+<tr>
+<td>Scaling Textual Gradients</td>
+<td>prompt updates</td>
+<td>minibatch textual gradients</td>
+<td>momentum sampling / Gumbel-Top-k</td>
+<td>textual gradient 扩展性证据</td>
+</tr>
+<tr>
+<td>Textual Gradients are a Flawed Metaphor</td>
+<td>textual-gradient methods</td>
+<td>behavioral experiments</td>
+<td>critique / case study</td>
+<td>反证与术语风险</td>
+</tr>
+<tr>
+<td>PrefPO</td>
+<td>prompt</td>
+<td>pairwise preference</td>
+<td>LLM discriminator + optimizer loop</td>
+<td>无标签优化与 prompt hacking 风险</td>
+</tr>
+<tr>
+<td>CriSPO</td>
+<td>generation task prompt</td>
+<td>multi-aspect critique-suggestion</td>
+<td>optimizer + suffix tuning</td>
+<td>多指标生成任务 APO</td>
+</tr>
+<tr>
+<td>SPEAR</td>
+<td>prompt + optimizer workflow</td>
+<td>eval dataframe / code analysis</td>
+<td>agentic tool loop + rollback</td>
+<td>工程化 agent optimizer 参考</td>
+</tr>
+<tr>
+<td>AutoPDL</td>
+<td>agent configuration / PDL prompt program</td>
+<td>task score</td>
+<td>successive halving over prompt programs</td>
+<td>prompt-as-program baseline</td>
+</tr>
+<tr>
+<td>MASPO</td>
+<td>multi-agent role prompts</td>
+<td>joint downstream outcome</td>
+<td>evolutionary beam search</td>
+<td>多 agent credit assignment</td>
+</tr>
+<tr>
+<td>TextReg</td>
+<td>prompt edits</td>
+<td>regularized textual gradients</td>
+<td>OOD-aware regularized update</td>
+<td>prompt overfitting 治理</td>
+</tr>
+<tr>
+<td>Why Prompt Optimization Works...</td>
+<td>prompt edit families</td>
+<td>cross-task observational analysis</td>
+<td>causal-inspired analysis</td>
+<td>解释失败和迁移边界</td>
+</tr>
+<tr>
+<td>Prompt Codebooks</td>
+<td>reusable instruction units</td>
+<td>structured critic verdict</td>
+<td>codebook + router + generator</td>
+<td>可复用经验单元</td>
+</tr>
+<tr>
+<td>Reflection in the Dark</td>
+<td>reflective APO trajectory</td>
+<td>labeled hypotheses / minibatch verification</td>
+<td>multi-agent explore-exploit</td>
+<td>reflective optimizer 可解释性</td>
+</tr>
+<tr>
+<td>Prompt Optimization Is a Coin Flip</td>
+<td>compound AI prompts</td>
+<td>task outcomes / failure diagnosis</td>
+<td>diagnostic analysis</td>
+<td>何时不该自动优化</td>
+</tr>
+<tr>
+<td>When Prompt Optimization Becomes Jailbreaking</td>
+<td>adversarial prompts</td>
+<td>safety eval / red-team signal</td>
+<td>adaptive optimization</td>
+<td>安全边界证据</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">初步深读优先级</h2>
+<h3 id="p0">P0：直接影响方案选择</h3>
+<ul>
+<li>ProTeGi、GEPA、SePO、MemAPO、Modular Prompt Optimization、SPEAR、AutoPDL、MASPO、TextReg、PrefPO。</li>
+</ul>
+<h3 id="p1-taxonomy">P1：影响 taxonomy 和风险章节</h3>
+<ul>
+<li>Textual Gradients are a Flawed Metaphor、Why Prompt Optimization Works、Reflection in the Dark、Prompt Optimization Is a Coin Flip、When Prompt Optimization Becomes Jailbreaking、When Gradients Collide。</li>
+</ul>
+<h3 id="p2">P2：应用和场景参考</h3>
+<ul>
+<li>Knowledge Graph APO、AutoMedPrompt、ArchEHR-QA 系列、Political Science Text Classification、APRIL、Knowledge Restoration-driven Prompt Optimization。</li>
+</ul>
+<h2 id="_4">当前缺口</h2>
+<ul>
+<li>~~需要补读不一定在 top80 中的经典锚点：APE、OPRO、DSPy、MIPROv2、TextGrad 原始论文。~~（2026-06-10 已闭合：5 篇均完成全文证据级深读，笔记见 <code>docs/paper_notes/paper-ape-2022.md</code>、<code>paper-opro-2023.md</code>、<code>paper-dspy-2023.md</code>、<code>paper-miprov2-2024.md</code>、<code>paper-textgrad-2024.md</code>；连同已有的 ProTeGi/EvoPrompt/PromptBreeder 形成 APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA 的基线主干。仍待补的更早锚点：AutoPrompt、RLPrompt、GrIPS。）</li>
+<li>2026-06-10 完成对照 3 篇综述（APO survey 2502.16923、APE survey 2502.11560、Context Engineering survey 2507.13334）的<strong>外部完整性校验</strong>，结论见 <code>docs/arxiv_taxonomy_completeness_check_20260610.md</code>：本 7 簇在"离散自然语言 prompt 优化"范围内无整块遗漏；查出的是簇内偏轻子机制（学习型评分/token 级编辑/bandit 筛选/MoE 路由）、需登记的 frontier（task-agnostic/online、constrained optimization、bi-level/thought-driven 推理模型、multi-task）、以及需显式声明的刻意边界（soft prompt、multimodal、完整 context-engineering 系统）。最高优先级单项补读：bi-level/thought-driven（o1/R1 推理模型）prompt 优化。</li>
+<li>当前矩阵尚未核验每篇论文的 train/dev/test 切分、成本和代码可用性。</li>
+<li>需要将 P0 论文逐篇转成 <code>docs/paper_notes/</code> 模板笔记，再决定最小实验候选。</li>
+<li>如果要从论文分类进入洞见和经验总结，先读 <code>docs/arxiv_top80_insights.md</code>，其中把主要论文条目提炼成了可验证的 insight cards。</li>
+<li>如果要从 taxonomy 进入可执行工作流，先读 <code>docs/arxiv_top80_action_playbook.md</code>，其中把主要问题拆成了具体症状、解决方案和最小实验。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_top80_taxonomy.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">分析框架</a>
+<a class="lv2" href="#1-apo">方法簇 1：经典 APO 与基线锚点</a>
+<a class="lv2" href="#2textual-gradient">方法簇 2：Textual Gradient 与反思式优化</a>
+<a class="lv2" href="#3">方法簇 3：进化、自指和记忆型自进化</a>
+<a class="lv2" href="#4prompt-as-program-prompt">方法簇 4：Prompt-as-Program、结构化 prompt 与框架化工具</a>
+<a class="lv2" href="#5agent-prompt-agent">方法簇 5：Agent、系统 prompt、多 agent 和工具链优化</a>
+<a class="lv2" href="#6judge">方法簇 6：偏好、人类反馈、judge 与治理</a>
+<a class="lv2" href="#7-apo">方法簇 7：应用型 APO 与经验研究</a>
+<a class="lv2" href="#_2">横向证据矩阵：优先深读候选</a>
+<a class="lv2" href="#_3">初步深读优先级</a>
+<a class="lv3" href="#p0">P0：直接影响方案选择</a>
+<a class="lv3" href="#p1-taxonomy">P1：影响 taxonomy 和风险章节</a>
+<a class="lv3" href="#p2">P2：应用和场景参考</a>
+<a class="lv2" href="#_4">当前缺口</a></aside>
+</div>
+
+</body>
+</html>

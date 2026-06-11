@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>字段定义规范 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#46525f">中间层</span><span class="doctitle">字段定义规范</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="insight-conclusion-helpful-method">Insight / Conclusion / Helpful Method 字段定义规范</h1>
+<p>更新时间：2026-06-10</p>
+<h2 id="_1">这份规范是什么</h2>
+<p>本文是 <code>insight</code>、<code>conclusion</code>、<code>helpful method</code>、<code>anti-pattern</code> 四类核心产出的<strong>唯一字段权威</strong>。目的是消除一个长期存在的问题：这四个概念在 <code>docs/research_brief.md</code>、<code>docs/project_principles.md</code>、两个深读模板和 <code>docs/insight_method_catalog_20260609.md</code> 里反复出现，但此前<strong>只有字段名、没有统一的「定义 + 区分口径 + 必填项」</strong>，导致同一个判断在不同文档里可能被归成不同类型、字段命名也略有出入。</p>
+<p>统辖范围（这些文档的字段定义都以本文为准）：</p>
+<ul>
+<li><code>docs/paper_notes/template.md</code>、<code>docs/industry_notes/template.md</code> 的「对本项目的启发」段。</li>
+<li><code>docs/insight_method_catalog_20260609.md</code> 的 YAML 字段。</li>
+<li><code>docs/final_report_outline.md</code> 的「Insight 字段」「可执行方案字段」。</li>
+</ul>
+<p>与上游文档的关系：本文<strong>承接</strong> <code>docs/research_brief.md</code> 第 25-27 行对三类产出的一句话定义，不另起炉灶；在其基础上补齐区分口径、<code>conclusion</code> 缺失的字段 schema，并统一字段命名。证据等级沿用 <code>docs/final_report_outline.md</code> 的 A/B/C/D，不在本文重复定义。</p>
+<h2 id="_2">一、四类核心产出的定义与区分</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>一句话定义</th>
+<th>回答的问题</th>
+<th>判别问句（命中即归此类）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insight</code> 洞见</td>
+<td>具体、可迁移、可验证的认知：某现象<strong>为什么</strong>发生、机制是什么</td>
+<td>「发生了什么 / 为什么」</td>
+<td>它解释了一个机制或反直觉现象吗？换个任务/模型还可能成立吗？</td>
+</tr>
+<tr>
+<td><code>conclusion</code> 结论</td>
+<td>带证据等级、反例和边界的<strong>判断</strong>，可被直接采纳或反驳</td>
+<td>「所以现在能确定什么」</td>
+<td>它是一句能被证据支撑或推翻的断言吗？标得出证据等级和适用边界吗？</td>
+</tr>
+<tr>
+<td><code>helpful method</code> 方法</td>
+<td>可直接复用的操作步骤 / playbook，挂靠在某个 insight 下</td>
+<td>「我具体该怎么做」</td>
+<td>读者能照着步骤执行吗？有适用场景、指标、回滚吗？</td>
+</tr>
+<tr>
+<td><code>anti-pattern</code> 反模式</td>
+<td>已知会导致错误结论或退化的做法及其触发条件</td>
+<td>「不要怎么做、为什么」</td>
+<td>它描述的是一个<strong>应避免</strong>的具体做法及其后果吗？</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">容易混的边界（区分口径）</h3>
+<ul>
+<li><strong>insight vs conclusion</strong>：insight 是机制层的「为什么」，允许来自单一来源、可作为待验证认知；conclusion 是判断层的「已确定什么」，<strong>必须</strong>带证据等级和适用边界，<strong>不能</strong>由单篇论文或单次样例直接升格为结论（见 <code>docs/project_principles.md</code> 第 4 条）。同一份材料常先沉淀为 insight，积累跨源证据后才升格为 conclusion。</li>
+<li><strong>insight vs helpful method</strong>：insight 是认知，helpful method 是可照抄的操作。一个 insight 可以暂时不配方法；但<strong>每个 helpful method 必须通过 <code>insight_supported</code> 指回它所服务的 insight</strong>，不允许「无洞见支撑的纯操作步骤」。</li>
+<li><strong>conclusion vs helpful method</strong>：conclusion 是「这件事成立/不成立」，helpful method 是「据此你应该怎么做」。一条 conclusion 可以不产出方法（例如只是划定边界），一个方法则应能追溯到支撑它的 conclusion 或 insight。</li>
+<li><strong>anti-pattern 的归属</strong>：反模式既可独立成条，也可作为某个 insight/method 的 <code>counterexample_or_limit</code> / <code>misuse_or_anti_pattern</code> 字段出现；独立成条的标准是它本身具有跨场景的警示价值。</li>
+</ul>
+<h2 id="_4">二、各类型的字段（必填 / 可选）</h2>
+<p>字段名以下表为准。标 <strong>必填</strong> 的字段缺失时，该条不得进入最终报告或项目结论。</p>
+<h3 id="insight">Insight</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insight</code></td>
+<td>必填</td>
+<td>一句话洞见</td>
+</tr>
+<tr>
+<td><code>user_facing_one_liner</code></td>
+<td>必填</td>
+<td>给非研究者读者的通俗版</td>
+</tr>
+<tr>
+<td><code>phenomenon</code></td>
+<td>必填</td>
+<td>观察到的现象</td>
+</tr>
+<tr>
+<td><code>mechanism</code></td>
+<td>必填</td>
+<td>现象背后的机制</td>
+</tr>
+<tr>
+<td><code>actionable_rule</code></td>
+<td>必填</td>
+<td>可迁移的规则</td>
+</tr>
+<tr>
+<td><code>evidence_strength</code></td>
+<td>必填</td>
+<td>A/B/C/D</td>
+</tr>
+<tr>
+<td><code>main_sources</code></td>
+<td>必填</td>
+<td>支撑来源文件路径，保证可追溯</td>
+</tr>
+<tr>
+<td><code>counterexample_or_limit</code></td>
+<td>必填</td>
+<td>反例或不成立的情形</td>
+</tr>
+<tr>
+<td><code>helpful_method</code></td>
+<td>可选</td>
+<td>指向配套方法名（若有）</td>
+</tr>
+<tr>
+<td><code>exact_action_to_try</code></td>
+<td>可选</td>
+<td>读者可立即尝试的最小动作</td>
+</tr>
+<tr>
+<td><code>before_after_example</code></td>
+<td>可选</td>
+<td>报告展示用的对照例子</td>
+</tr>
+<tr>
+<td><code>validation_or_demo</code></td>
+<td>可选</td>
+<td>拟用的验证 / 演示方式</td>
+</tr>
+</tbody>
+</table>
+<h3 id="conclusion">Conclusion</h3>
+<p>此前三处文档均无独立 <code>conclusion</code> schema，本规范补齐如下最小集合：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>conclusion</code></td>
+<td>必填</td>
+<td>一句可被采纳或反驳的判断</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>必填</td>
+<td>适用边界：任务类型、模型、样本量等成立条件</td>
+</tr>
+<tr>
+<td><code>evidence_strength</code></td>
+<td>必填</td>
+<td>A/B/C/D</td>
+</tr>
+<tr>
+<td><code>main_sources</code></td>
+<td>必填</td>
+<td>支撑来源</td>
+</tr>
+<tr>
+<td><code>counterexample_or_limit</code></td>
+<td>必填</td>
+<td>反例、失败案例或不成立的情形</td>
+</tr>
+<tr>
+<td><code>supersedes_or_conflicts</code></td>
+<td>可选</td>
+<td>与哪条已有判断替代或冲突</td>
+</tr>
+</tbody>
+</table>
+<h3 id="helpful-method">Helpful method</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>必填</td>
+<td>方法名</td>
+</tr>
+<tr>
+<td><code>insight_supported</code></td>
+<td>必填</td>
+<td>指回所服务的 insight</td>
+</tr>
+<tr>
+<td><code>problem</code></td>
+<td>必填</td>
+<td>解决什么问题</td>
+</tr>
+<tr>
+<td><code>recommended_when</code></td>
+<td>必填</td>
+<td>适用场景</td>
+</tr>
+<tr>
+<td><code>not_recommended_when</code></td>
+<td>必填</td>
+<td>不适用场景（与 <code>recommended_when</code> 成对，构成区分口径）</td>
+</tr>
+<tr>
+<td><code>required_inputs</code></td>
+<td>必填</td>
+<td>所需数据 / 前置条件</td>
+</tr>
+<tr>
+<td><code>implementation_steps</code></td>
+<td>必填</td>
+<td>可照抄的步骤</td>
+</tr>
+<tr>
+<td><code>evaluation_metrics</code></td>
+<td>必填</td>
+<td>评估指标</td>
+</tr>
+<tr>
+<td><code>risks</code></td>
+<td>必填</td>
+<td>风险</td>
+</tr>
+<tr>
+<td><code>misuse_or_anti_pattern</code></td>
+<td>必填</td>
+<td>误用方式 / 对应反模式</td>
+</tr>
+<tr>
+<td><code>rollback_plan</code></td>
+<td>必填</td>
+<td>回滚策略</td>
+</tr>
+<tr>
+<td><code>evidence</code></td>
+<td>必填</td>
+<td>证据（来源 / 实验 / 等级）</td>
+</tr>
+<tr>
+<td><code>cost_and_latency</code></td>
+<td>可选</td>
+<td>成本与延迟</td>
+</tr>
+<tr>
+<td><code>expected_benefit</code></td>
+<td>可选</td>
+<td>预期收益</td>
+</tr>
+<tr>
+<td><code>next_experiment</code></td>
+<td>可选</td>
+<td>后续验证实验</td>
+</tr>
+</tbody>
+</table>
+<h3 id="anti-pattern">Anti-pattern</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>anti_pattern</code></td>
+<td>必填</td>
+<td>应避免的具体做法</td>
+</tr>
+<tr>
+<td><code>why_harmful</code></td>
+<td>必填</td>
+<td>为什么会导致错误结论或退化</td>
+</tr>
+<tr>
+<td><code>trigger_condition</code></td>
+<td>必填</td>
+<td>在什么条件下会发生</td>
+</tr>
+<tr>
+<td><code>instead_do</code></td>
+<td>必填</td>
+<td>替代做法（通常指向某个 helpful method）</td>
+</tr>
+<tr>
+<td><code>evidence_or_source</code></td>
+<td>可选</td>
+<td>来源或观察到的案例</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">三、字段命名映射（消除现有不一致）</h2>
+<p>下表对齐三套已有 schema，统一以本规范命名为准；命名不一致或缺失的，应在后续修订中向本规范收敛：</p>
+<table>
+<thead>
+<tr>
+<th>本规范统一字段</th>
+<th>paper/industry 模板</th>
+<th>insight_method_catalog</th>
+<th>final_report_outline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insight</code></td>
+<td><code>insight</code></td>
+<td><code>insight</code></td>
+<td><code>insight</code></td>
+</tr>
+<tr>
+<td><code>conclusion</code></td>
+<td><code>conclusion</code></td>
+<td>（无独立字段，被拆为 <code>user_facing_one_liner</code> + <code>exact_action_to_try</code>）</td>
+<td>（无独立字段）</td>
+</tr>
+<tr>
+<td><code>helpful_method</code></td>
+<td><code>helpful method</code></td>
+<td><code>helpful_method</code></td>
+<td>见「可执行方案字段」</td>
+</tr>
+<tr>
+<td><code>anti_pattern</code></td>
+<td><code>anti-pattern / limit</code></td>
+<td><code>counterexample_or_limit</code></td>
+<td><code>misuse_or_anti_pattern</code></td>
+</tr>
+<tr>
+<td><code>validation_or_demo</code></td>
+<td>最小验证 / 演示</td>
+<td><code>next_validation</code></td>
+<td><code>validation_or_demo</code></td>
+</tr>
+<tr>
+<td><code>evidence_strength</code></td>
+<td>（隐含于证据等级）</td>
+<td><code>evidence_strength</code></td>
+<td><code>evidence_strength</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>已知待收敛点：<code>insight_method_catalog_20260609.md</code> 文首「使用方式」列出的精简 schema 缺 <code>phenomenon</code> / <code>mechanism</code> / <code>actionable_rule</code>（正文各条其实已包含），且用 <code>next_validation</code> 而非 <code>validation_or_demo</code>；其标题含「Conclusion」但无独立 <code>conclusion</code> 字段。后续修订该文件时按本规范补齐。</p>
+</blockquote>
+<h2 id="_6">四、证据等级</h2>
+<p>沿用 <code>docs/final_report_outline.md</code> 第 39-42 行定义，不在本文重复：A（原始论文/官方文档/开源文档 + 已做结构化笔记）、B（多源重复出现的工程实践）、C（本项目初步实验观察）、D（资料综合推测，须标注待验证）。每条 conclusion、insight、helpful method 的关键判断都必须标注证据等级，且不得把 D 级推测写成确定结论。</p>
+<h2 id="_7">五、最小合格示例</h2>
+<pre><code class="language-yaml"># insight
+insight: prompt 优化不是默认有收益，很多任务优化后可能低于 zero-shot。
+user_facing_one_liner: 先看有没有提升空间，再花钱自动优化。
+phenomenon: 小样本 dev 选择中，候选差异可能不超过噪声。
+mechanism: zero-shot 已接近能力上限时，prompt 搜索主要放大评估噪声。
+actionable_rule: APO 前先估计 headroom 与 noise floor。
+evidence_strength: A
+main_sources: [docs/paper_notes/paper-coin-flip-2026.md]
+counterexample_or_limit: 需多轮搜索才能发现组合结构的任务可能被低估。
+
+# conclusion
+conclusion: 在小样本、自由文本任务上，自动 prompt 优化的期望收益不显著高于 zero-shot。
+scope: 小样本 dev（约 20-30 条）、自由生成任务；不含严格 JSON/rubric 输出任务。
+evidence_strength: A
+main_sources: [docs/paper_notes/paper-coin-flip-2026.md]
+counterexample_or_limit: HelpSteer2 等严格 rubric 任务上六种方法均超过 zero-shot。
+
+# helpful_method
+name: pre-optimization gate
+insight_supported: 「先确认有没有提升空间，再花钱跑优化器」
+problem: 避免在没有可优化空间的任务上浪费优化器调用并引入过拟合。
+recommended_when: 任务有可客观打分的留出集，且怀疑 headroom 有限。
+not_recommended_when: 收益依赖多轮搜索发现组合结构的任务。
+required_inputs: 20 条留出样本、10-20 个候选 prompt、zero-shot baseline。
+implementation_steps: 跑 baseline → 生成候选 → 同批样本打分 → 比较 headroom 与 noise floor → 低于阈值则停。
+evaluation_metrics: best gain over zero-shot、候选间分数方差。
+risks: 阈值跨任务硬套会误判。
+misuse_or_anti_pattern: 用训练集而非留出集估 headroom。
+rollback_plan: gate 判定不可靠时回退到固定预算的常规优化流程。
+evidence: docs/paper_notes/paper-coin-flip-2026.md（A）。
+</code></pre>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_field_standard.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">这份规范是什么</a>
+<a class="lv2" href="#_2">一、四类核心产出的定义与区分</a>
+<a class="lv3" href="#_3">容易混的边界（区分口径）</a>
+<a class="lv2" href="#_4">二、各类型的字段（必填 / 可选）</a>
+<a class="lv3" href="#insight">Insight</a>
+<a class="lv3" href="#conclusion">Conclusion</a>
+<a class="lv3" href="#helpful-method">Helpful method</a>
+<a class="lv3" href="#anti-pattern">Anti-pattern</a>
+<a class="lv2" href="#_5">三、字段命名映射（消除现有不一致）</a>
+<a class="lv2" href="#_6">四、证据等级</a>
+<a class="lv2" href="#_7">五、最小合格示例</a></aside>
+</div>
+
+</body>
+</html>

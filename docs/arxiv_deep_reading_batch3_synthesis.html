@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arXiv 深读 Batch 3 综合 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#257d72">arXiv 渠道</span><span class="doctitle">arXiv 深读 Batch 3 综合</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="arxiv-batch-3">arXiv 重点论文深读 Batch 3 综合判断</h1>
+<p>日期：2026-06-08</p>
+<p>2026-06-09 补充：新增“可转成普通用户方法的候选”层，用于把论文级判断转写成具体洞见卡片；原有学术结论和证据边界保留。</p>
+<p>范围：第三批新增深读 16 篇，累计已深读 27 篇。</p>
+<p>第三批新增：</p>
+<ul>
+<li>CriSPO：<code>docs/paper_notes/paper-crispo-2024.md</code></li>
+<li>MemAPO：<code>docs/paper_notes/paper-memapo-2026.md</code></li>
+<li>AutoPDL：<code>docs/paper_notes/paper-autopdl-2025.md</code></li>
+<li>MASPO：<code>docs/paper_notes/paper-maspo-2026.md</code></li>
+<li>APO for KG Construction：<code>docs/paper_notes/paper-apo-kg-construction-2025.md</code></li>
+<li>VISTA / Reflection in the Dark：<code>docs/paper_notes/paper-vista-reflection-dark-2026.md</code></li>
+<li>Prompt Codebooks：<code>docs/paper_notes/paper-prompt-codebooks-2026.md</code></li>
+<li>Temporal and Structural Credit Assignment in MAS：<code>docs/paper_notes/paper-temporal-structural-credit-mas-2026.md</code></li>
+<li>MAPRO：<code>docs/paper_notes/paper-mapro-2025.md</code></li>
+<li>DistillPrompt：<code>docs/paper_notes/paper-distillprompt-2025.md</code></li>
+<li>Edit-Level Causal-Inspired Analysis：<code>docs/paper_notes/paper-causal-edit-level-2026.md</code></li>
+<li>ERM / Exemplar-Guided Reflection with Memory：<code>docs/paper_notes/paper-erm-memory-2024.md</code></li>
+<li>Are LLMs Good Prompt Optimizers?：<code>docs/paper_notes/paper-llm-prompt-optimizers-2024.md</code></li>
+<li>Teach Better or Show Smarter?：<code>docs/paper_notes/paper-teach-better-show-smarter-2024.md</code></li>
+<li>Prompt Optimization Is a Coin Flip：<code>docs/paper_notes/paper-coin-flip-2026.md</code></li>
+<li>JTPRO：<code>docs/paper_notes/paper-jtpro-2026.md</code></li>
+</ul>
+<p>证据边界：以下判断来自本地 PDF 全文中的方法、主结果、消融、局限和诊断框架阅读。它们是论文证据级结论，不是本项目复现实验结论；涉及 2026 年 arXiv 新稿的结果还需要后续独立复现。</p>
+<h2 id="_1">可转成普通用户方法的候选</h2>
+<p>Batch 3 的价值在于把“自动优化一定有用”这件事降温，并给出更细的操作判断。下表用于最终报告的具体洞见层，详细证据仍在后文和 paper notes 中。</p>
+<table>
+<thead>
+<tr>
+<th>具体洞见</th>
+<th>一句话给普通用户</th>
+<th>最小可试方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>先测值不值得优化。</td>
+<td>有些任务优化后反而比 zero-shot 差，先看有没有提升空间。</td>
+<td>跑 zero-shot、人工 prompt、10-20 个候选，估计 headroom 和噪声。</td>
+</tr>
+<tr>
+<td>先写失败根因假设，再改 prompt。</td>
+<td>不要只说“回答不够好”，先猜清楚到底缺规则、缺上下文还是格式错。</td>
+<td>每个 failure hypothesis 生成一个候选，用 minibatch 验证。</td>
+</tr>
+<tr>
+<td>示例选择也是 prompt 优化。</td>
+<td>有开发集时，选哪些例子给模型看可能比改 instruction 更重要。</td>
+<td>比较 no-example、random-example、optimized-example。</td>
+</tr>
+<tr>
+<td>优化对象已变成 artifact graph。</td>
+<td>失败可能来自 tool schema、slot 规则、agent role、codebook，不只是一段 prompt。</td>
+<td>保存 prompt、examples、tool schema、context、memory、selection policy 的版本。</td>
+</tr>
+<tr>
+<td>多 agent 失败要做责任分配。</td>
+<td>某个 agent 局部正确，也可能让整体失败。</td>
+<td>记录 local pass/global fail，并按 role 或 round 局部更新。</td>
+</tr>
+<tr>
+<td>Memory 要过滤和可禁用。</td>
+<td>记住更多经验可能污染新任务，必须有证据和过期策略。</td>
+<td>每条 memory 记录来源、适用范围、验证结果、过期时间和 opt-out。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-optimizer">结论 1：先测优化值不值得做，再跑 optimizer</h2>
+<p><code>Prompt Optimization Is a Coin Flip</code> 给出最强的实践约束：在 compound AI 设置中，72 次 Haiku 优化运行有 49% 低于 zero-shot；Nova Lite 中 24 个 method x task means 有 14 个低于 zero-shot。它提出的行动规则是：</p>
+<ul>
+<li>先做 zero-shot baseline。</li>
+<li>生成 10-20 个候选 prompt，估计 headroom 和 noise floor。</li>
+<li>多 agent / pipeline 先做 coupling test；interaction 很弱时不要直接做 joint optimization。</li>
+<li>如果 candidate spread 没超过噪声阈值，停止优化，把 zero-shot 或人工 prompt 当 baseline。</li>
+</ul>
+<p>对本项目的直接含义：后续任何“自动优化 prompt”实验都应先有 pre-optimization gate。否则我们可能只是在小样本噪声里做 expensive search。</p>
+<p>最小实验建议：</p>
+<ul>
+<li><code>zero_shot</code></li>
+<li><code>20_candidate_headroom</code></li>
+<li><code>best_candidate</code></li>
+<li><code>noise_floor</code></li>
+<li><code>go_or_stop_reason</code></li>
+</ul>
+<h2 id="2-prompt">结论 2：失败分析要先生成“根因假设”，再改 prompt</h2>
+<p>VISTA 和 <code>Are LLMs Good Prompt Optimizers?</code> 共同说明：LLM optimizer 的反思不一定能识别真实错误根因。VISTA 中 GEPA 在 defective GSM8K seed 上从 23.81% 降到 13.50%，因为根因从未进入它的 hypothesis space；VISTA 把 hypothesis generation 和 prompt rewriting 解耦后恢复到 87.57%。</p>
+<p>可执行规则：</p>
+<ul>
+<li>每轮优化保存 <code>failure_hypothesis</code>，而不只是保存 <code>critique</code>。</li>
+<li>每个 hypothesis 单独产生一个 candidate prompt。</li>
+<li>用 minibatch validation 选择 hypothesis，而不是让同一个 reflector 一次性给最终改写。</li>
+<li>记录根因是否曾经被提出；否则无法区分“没想到原因”和“改写失败”。</li>
+</ul>
+<p>这会改变我们后续分析文档的写法：结论不应写成“模型反思发现了 X”，而应写成“optimizer 提出假设 H，候选 C 在验证集上产生 delta D”。</p>
+<h2 id="3-dev-set-exemplar-selection">结论 3：有 dev set 时，exemplar selection 是一等优化变量</h2>
+<p><code>Teach Better or Show Smarter?</code> 的结果非常适合转成项目规则：很多 IO 实验已经用了 labeled dev set 打分，却没有把这些样本用于 exemplar optimization。论文显示 No IO + optimized exemplars 经常超过 SoTA IO + no/random exemplars。</p>
+<p>可执行规则：</p>
+<ul>
+<li>每个 APO 实验至少比较 no-example、random-example、optimized-example。</li>
+<li>记录 <code>exemplar_source</code>、<code>selector</code>、<code>k</code>、<code>selection_budget</code>、<code>generated_or_gold</code>。</li>
+<li>不把“用了 dev set 但不放 exemplar”的实验称为真正 zero-shot。</li>
+</ul>
+<p>结合 ERM 和 DistillPrompt，还有两个派生规则：</p>
+<ul>
+<li>exemplar / feedback memory 必须过滤和选择性遗忘，不能原样堆进上下文。</li>
+<li>样例可以先蒸馏成 task-solving principles，再压缩成 instruction；这应作为 direct few-shot 的对照。</li>
+</ul>
+<h2 id="4-task-prompt">结论 4：优化对象已经不只是 task prompt</h2>
+<p>Batch3 中多篇论文把可优化 artifact 扩展得很清楚：</p>
+<ul>
+<li>AutoPDL：优化 prompting pattern，例如 Zero-Shot、CoT、ReAct、ReWOO。</li>
+<li>JTPRO：优化 global instruction + per-tool schema + slot semantics。</li>
+<li>Prompt Codebooks：优化可复用 instinct codebook 和 per-input routing。</li>
+<li>MASPO / MAPRO / temporal-structural credit：优化 agent role prompt、round aggregator、node/edge prompt。</li>
+<li>CriSPO / AST：优化 prompt 之外的 suffix / postscript 以处理多目标。</li>
+</ul>
+<p>行动结论：本项目的 prompt versioning 不能只保存一段文本，应保存 artifact graph。</p>
+<p>建议字段：</p>
+<ul>
+<li><code>task_prompt_version</code></li>
+<li><code>prompting_pattern</code></li>
+<li><code>tool_schema_version</code></li>
+<li><code>slot_rule_version</code></li>
+<li><code>agent_role_prompt_version</code></li>
+<li><code>aggregator_prompt_version</code></li>
+<li><code>codebook_version</code></li>
+<li><code>suffix_version</code></li>
+<li><code>selection_policy</code></li>
+<li><code>rollback_point</code></li>
+</ul>
+<h2 id="5-agent-agent-credit-assignment">结论 5：多 agent 优化的核心不是“更多 agent”，而是 credit assignment</h2>
+<p>MASPO、MAPRO、Temporal/Structural Credit 三篇共同指向同一个问题：多 agent 系统里，一个 agent 的局部输出可能局部正确但全局有害。</p>
+<p>可执行规则：</p>
+<ul>
+<li>记录每个 agent 的 local validity。</li>
+<li>记录 successor / downstream utility。</li>
+<li>标记 <code>local_pass_global_fail</code> 的 misalignment cases。</li>
+<li>按 role 和 round 分块更新 prompt，不要每次改全系统。</li>
+<li>如果 topology 固定，至少记录 topology；如果 topology 改变，要把它作为单独变量。</li>
+</ul>
+<p>最小实验设计：</p>
+<ul>
+<li>independent agent optimization</li>
+<li>joint reward optimization</li>
+<li>joint reward + misalignment sampling</li>
+<li>low-credit role update</li>
+<li>low-credit round update</li>
+</ul>
+<h2 id="6prompt-meta-instruction">结论 6：prompt 变长、变复杂、加 meta instruction 不一定是进步</h2>
+<p><code>Why Prompt Optimization Works...</code> 和前两批的 TextReg / PrefPO / flawed textual gradients 形成了更完整的警告：</p>
+<ul>
+<li>meta-instruction 在 math-like 任务中与性能下降相关。</li>
+<li>clarity constraint 在 logical 任务中可能负相关。</li>
+<li>extraneous load 对 sequential task 有负关联。</li>
+<li>长 prompt、重复规则、特例堆积可能只是 dev-set overfitting。</li>
+</ul>
+<p>行动结论：候选选择器要加入 prompt hygiene 和 edit-family logging。</p>
+<p>建议指标：</p>
+<ul>
+<li><code>prompt_length_ratio</code></li>
+<li><code>repetition_ratio</code></li>
+<li><code>edit_family</code></li>
+<li><code>meta_instruction_added</code></li>
+<li><code>complexity_added</code></li>
+<li><code>demo_count_delta</code></li>
+<li><code>rule_specificity_score</code></li>
+<li><code>dev_test_gap</code></li>
+<li><code>OOD_or_stress_delta</code></li>
+</ul>
+<h2 id="7-schema">结论 7：复杂 schema、严格格式、工具调用任务更可能有优化收益</h2>
+<p>KG construction、JTPRO、AutoPDL、Coin Flip 的正例都指向类似条件：当任务有明确输出结构、复杂 schema、工具选择或 latent format capability 时，prompt optimization 更可能找到可利用结构。</p>
+<p>典型正例：</p>
+<ul>
+<li>KG triple extraction：schema relation count 增加、输入变长时，optimized prompt 更稳健。</li>
+<li>JTPRO：大工具集下 TSA/SFA/OSR 可拆解，schema edit 能直接修复 slot/value 错误。</li>
+<li>HelpSteer2：模型有 JSON/rubric 输出能力但 zero-shot 不默认使用，优化能解锁结构。</li>
+<li>AutoPDL：代码或工具任务中 ReAct 等 pattern 能利用执行反馈。</li>
+</ul>
+<p>典型负例：</p>
+<ul>
+<li>自由文本任务、zero-shot 已接近任务格式上限、dev set 极小且噪声大时，复杂 optimizer 可能没有收益。</li>
+</ul>
+<p>行动结论：选首批复现实验时，应优先选结构化抽取、工具调用或格式严格任务，而不是开放生成。</p>
+<h2 id="8memory-memory">结论 8：memory 有用，但只有过滤后的 memory 有用</h2>
+<p>ERM 和 MemAPO 都支持 memory，但它们强调的不是“存得越多越好”：</p>
+<ul>
+<li>MemAPO 把成功模板和错误模式拆成 dual memory。</li>
+<li>ERM 显示 raw feedback memory 不足，过滤和 selective forgetting 才带来增益。</li>
+<li>Prompt Codebooks 把可复用经验进一步部署成 codebook，而不只是检索上下文。</li>
+</ul>
+<p>行动结论：本项目 memory 设计至少需要：</p>
+<ul>
+<li>success template</li>
+<li>error pattern</li>
+<li>source task</li>
+<li>applicability condition</li>
+<li>retrieval reason</li>
+<li>quality score</li>
+<li>stale / forgotten reason</li>
+<li>negative transfer flag</li>
+</ul>
+<h2 id="_2">覆盖矩阵</h2>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>已深读论文</th>
+<th>当前可用结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>critique / textual feedback</td>
+<td>ProTeGi, CriSPO, GEPA, Scaling Textual Gradients, Flawed Textual Gradients, VISTA</td>
+<td>critique 是候选生成信号，不是真梯度；根因假设空间是关键瓶颈。</td>
+</tr>
+<tr>
+<td>evolutionary / search</td>
+<td>PromptBreeder, EvoPrompt, SePO, GEPA, MASPO, MAPRO</td>
+<td>搜索结构和候选选择与 prompt 改写同等重要。</td>
+</tr>
+<tr>
+<td>memory / archive</td>
+<td>ERM, MemAPO, SePO, Prompt Codebooks</td>
+<td>memory 要分类型、过滤、遗忘，并可转成 deployable codebook。</td>
+</tr>
+<tr>
+<td>exemplar optimization</td>
+<td>Teach Better or Show Smarter, ERM, DistillPrompt, AutoPDL</td>
+<td>exemplar selection 经常比 instruction rewrite 更重要。</td>
+</tr>
+<tr>
+<td>prompt hygiene / overfitting</td>
+<td>TextReg, PrefPO, Edit-Level Analysis, Coin Flip</td>
+<td>prompt 膨胀、meta instruction、复杂化和小样本噪声会制造伪提升。</td>
+</tr>
+<tr>
+<td>agent / tool / multi-agent</td>
+<td>AutoPDL, JTPRO, MASPO, MAPRO, Temporal/Structural Credit, SPEAR</td>
+<td>优化对象应扩展到 pattern、tool schema、role、round、topology。</td>
+</tr>
+<tr>
+<td>structured extraction / generation</td>
+<td>KG Construction, CriSPO</td>
+<td>schema/format 复杂度越高，APO 越可能有价值；但跨域迁移要单独测。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">下一步最小实验建议</h2>
+<p>当前最值得做的不是直接复现最大系统，而是做一个可控的四阶段小实验：</p>
+<ol>
+<li>结构化抽取任务：100-300 条样本，带 schema 和严格输出格式。</li>
+<li>pre-optimization gate：zero-shot、20 candidates、headroom、noise floor。</li>
+<li>优化变量对照：
+   - instruction-only
+   - exemplar-only
+   - instruction + exemplar
+   - multi-aspect critique
+   - filtered memory</li>
+<li>安全阀：
+   - prompt length / repetition
+   - edit family
+   - dev-test gap
+   - stress/OOD split
+   - rollback best-seen prompt</li>
+</ol>
+<p>成功标准不应只是主指标提升，而应同时满足：</p>
+<ul>
+<li>主指标提升超过 noise floor。</li>
+<li>minority / rare label 不恶化。</li>
+<li>stress/OOD 不明显下降。</li>
+<li>prompt 没有显著膨胀或重复。</li>
+<li>每次提升能追溯到 candidate、feedback、edit、selector 和评估结果。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_deep_reading_batch3_synthesis.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">可转成普通用户方法的候选</a>
+<a class="lv2" href="#1-optimizer">结论 1：先测优化值不值得做，再跑 optimizer</a>
+<a class="lv2" href="#2-prompt">结论 2：失败分析要先生成“根因假设”，再改 prompt</a>
+<a class="lv2" href="#3-dev-set-exemplar-selection">结论 3：有 dev set 时，exemplar selection 是一等优化变量</a>
+<a class="lv2" href="#4-task-prompt">结论 4：优化对象已经不只是 task prompt</a>
+<a class="lv2" href="#5-agent-agent-credit-assignment">结论 5：多 agent 优化的核心不是“更多 agent”，而是 credit assignment</a>
+<a class="lv2" href="#6prompt-meta-instruction">结论 6：prompt 变长、变复杂、加 meta instruction 不一定是进步</a>
+<a class="lv2" href="#7-schema">结论 7：复杂 schema、严格格式、工具调用任务更可能有优化收益</a>
+<a class="lv2" href="#8memory-memory">结论 8：memory 有用，但只有过滤后的 memory 有用</a>
+<a class="lv2" href="#_2">覆盖矩阵</a>
+<a class="lv2" href="#_3">下一步最小实验建议</a></aside>
+</div>
+
+</body>
+</html>

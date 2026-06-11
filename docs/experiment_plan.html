@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>实验计划 · prompt_evolution</title>
+<style>
+:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
+--teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
+--shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);
+font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
+a{color:var(--blue);text-underline-offset:3px;}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
+border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
+border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
+.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
+grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
+.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
+border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
+.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
+.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
+.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
+.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
+.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
+.content p{margin:0 0 13px;}
+.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
+background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
+overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
+.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
+.content tbody tr:nth-child(even){background:#fbfcfa;}
+.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
+background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
+border-radius:6px;background:#fbfcfa;overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
+.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#46525f">中间层</span><span class="doctitle">实验计划</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="_1">实验计划</h1>
+<p>更新时间：2026-06-08</p>
+<p>状态：候选验证设计，暂不进入完整 benchmark 实现。先完成 M0 资料搜集、洞见提炼、核心结论和 helpful methods 候选，再选择 1-2 个最小实验验证或演示关键洞见/方法。</p>
+<h2 id="m0">M0：资料搜集与综述冻结</h2>
+<p>在实现任何完整 benchmark harness 或自动优化脚本前，先按 <a href="source_collection_plan.md">资料搜集计划</a> 完成论文、行业经验、工程框架和失败案例收集，并形成 insight / conclusion / helpful method 候选。</p>
+<p>M0 完成标准：</p>
+<ul>
+<li>收集 50 个以上候选来源，并记录链接、发布日期、类型、相关性和状态。</li>
+<li>完成 12-15 篇核心论文或框架的结构化笔记。</li>
+<li>整理 10-15 个行业实践、工具文档或工程经验来源。</li>
+<li>形成前沿状态图和方法 taxonomy，覆盖候选生成、候选选择、反馈信号、优化对象、记忆机制和治理机制。</li>
+<li>输出一份 insight / conclusion / helpful method 候选清单。</li>
+<li>输出 2-3 个可复用方法或建议。</li>
+<li>输出 1-2 个最小验证/演示候选，每个候选写清要验证的洞见或方法、目标、假设、输入样本、模型、评估方式、成功标准和主要风险。</li>
+</ul>
+<p>未完成 M0 前，不冻结长期任务、数据集或评分器；但可以为报告中的关键洞见或方法设计一次小规模初步验证。</p>
+<h2 id="_2">初步验证目标</h2>
+<p>构建一个小型、可复现的初步验证，观察关键 insight、conclusion 或 helpful method 是否有支持迹象，同时记录成本、失败模式和过拟合风险。</p>
+<p>初步实验不承担“证明某方法长期有效”的任务，只用于支持、修正或演示最终报告中的洞见与可复用方法。</p>
+<p>当前验证候选以 <a href="insight_method_catalog_20260609.html">Insight / Conclusion / Helpful Method 候选清单</a> 为结构化主入口；面向读者的同口径说明见 <a href="insight_handbook_20260609.html">读者向洞见手册</a>，其「首批最小验证」表与本文 P0–P2 优先级一致。实验优先服务以下方法卡片，而不是追求完整 benchmark 覆盖：</p>
+<ul>
+<li>HM-01：Pre-Optimization Gate，验证自动优化前是否存在可利用 headroom。</li>
+<li>HM-02：Trace-First Critique Rewrite，验证失败 trace / 根因假设是否优于直接 rewrite。</li>
+<li>HM-03：Exemplar Optimization Baseline，防止把 exemplar selection 的收益误写成 instruction rewrite 收益。</li>
+<li>HM-04：Prompt Artifact Ledger，保证 prompt、examples、tool schema、context 和 evaluator 可追踪、可回滚。</li>
+</ul>
+<h2 id="_3">实验选择门槛</h2>
+<p>只有满足以下条件的候选才进入实验计划：</p>
+<ul>
+<li>明确对应一个 insight、conclusion 或 helpful method。</li>
+<li>能通过最小任务验证该洞见的一个关键边界。</li>
+<li>结果无论成功或失败，都能回填到经验总结、反模式或方法 playbook。</li>
+<li>不需要为了演示而实现完整 benchmark harness。</li>
+</ul>
+<h2 id="_4">实验纪律</h2>
+<p>实验设计遵循 <a href="project_principles.md">项目构建原则</a>。每轮实验默认先写清目标、假设、变量、指标和成功标准，再运行优化。</p>
+<ul>
+<li>一次实验尽量只改变一个主要变量，例如 prompt 文案、few-shot 示例、模型参数或评分器。</li>
+<li>如果必须同时改变多个变量，要把该轮标记为多因素实验，结论中不能声称单变量因果。</li>
+<li>每个结论必须能追溯到运行记录、指标、样例输出或失败案例。</li>
+<li>每个实验必须记录它验证的 insight/method，以及验证结果如何改变该洞见或方法的可信度。</li>
+<li>自动改 prompt 的实验必须保留原 prompt、候选 prompt、优化原因、评测结果和回滚点。</li>
+</ul>
+<h2 id="_5">第一阶段任务选择候选</h2>
+<p>优先选择评分明确、运行便宜、错误可解释的任务：</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>输入</th>
+<th>输出</th>
+<th>评分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文本分类</td>
+<td>用户问题 / 工单 / 评论</td>
+<td>固定标签</td>
+<td>accuracy / macro-F1</td>
+</tr>
+<tr>
+<td>信息抽取</td>
+<td>邮件 / 简历 / 商品描述</td>
+<td>JSON schema</td>
+<td>exact match / field F1 / JSON validity</td>
+</tr>
+<tr>
+<td>RAG 问答</td>
+<td>question + retrieved passages</td>
+<td>answer + citation</td>
+<td>answer correctness / citation precision</td>
+</tr>
+<tr>
+<td>工具调用</td>
+<td>用户请求 + tool schema</td>
+<td>function call args</td>
+<td>argument exact match / execution success</td>
+</tr>
+</tbody>
+</table>
+<p>当前只保留候选，不做长期冻结。M0 完成后，再根据文献和行业经验选择最能验证关键洞见或 helpful method 的任务，避免过早排除 RAG、agent 或 tool-use 中更有研究价值的最小任务。</p>
+<h2 id="baselines">Baselines</h2>
+<ol>
+<li>Manual prompt：人工写的清晰 baseline。</li>
+<li>Few-shot prompt：manual + 3-5 个示例。</li>
+<li>APE-style：LLM 生成 N 个候选 instruction，按 dev score 选择。</li>
+<li>ProTeGi-style：从失败样本生成 textual critique，再编辑 prompt。</li>
+<li>DSPy/MIPROv2：如果实验栈使用 Python，可作为强 baseline。</li>
+<li>GEPA-style：记录轨迹并让 optimizer 反思后生成候选，使用 Pareto/validation 选择。</li>
+<li>Memory APO：维护成功策略和失败模式库，测试跨任务复用。</li>
+</ol>
+<h2 id="_6">数据切分</h2>
+<ul>
+<li><code>train</code>: optimizer 可见，用于生成 critique、候选和少样本示例。</li>
+<li><code>dev</code>: optimizer 可见分数，用于选择候选。</li>
+<li><code>validation</code>: 优化过程只看 aggregate score，用于防止过拟合。</li>
+<li><code>test</code>: 完全保留，最后报告。</li>
+<li><code>adversarial</code>: 格式异常、语言混合、边界条件、诱导越权。</li>
+</ul>
+<p>小样本起步配置：</p>
+<ul>
+<li>train 50-100 条</li>
+<li>dev 50 条</li>
+<li>validation 50 条</li>
+<li>test 100 条</li>
+<li>adversarial 30 条</li>
+</ul>
+<h2 id="_7">优化循环</h2>
+<pre><code class="language-text">baseline_prompt
+  -&gt; run eval on train/dev
+  -&gt; collect failures and traces
+  -&gt; optimizer summarizes failure modes
+  -&gt; generate K prompt candidates
+  -&gt; run candidates on dev
+  -&gt; filter by hard constraints
+  -&gt; validate top candidates
+  -&gt; select winner or keep baseline
+  -&gt; write run artifact and prompt diff
+</code></pre>
+<h2 id="_8">候选过滤规则</h2>
+<ul>
+<li>输出 schema 不能变，除非该轮实验明确允许。</li>
+<li>安全/拒答/权限规则不能删除或弱化。</li>
+<li>不允许把测试集答案、具体样本标签、评分器实现泄露进 prompt。</li>
+<li>候选 prompt 超过长度预算则降级或拒绝。</li>
+<li>若 validation 下降超过阈值，即使 dev 上升也不采用。</li>
+</ul>
+<h2 id="_9">指标</h2>
+<p>质量指标：</p>
+<ul>
+<li>主任务分数：accuracy、macro-F1、field F1、exact match。</li>
+<li>格式可靠性：JSON validity、schema compliance。</li>
+<li>鲁棒性：adversarial set score、跨模型 score。</li>
+<li>稳定性：多随机种子或多次采样方差。</li>
+</ul>
+<p>效率指标：</p>
+<ul>
+<li>optimizer 调用次数。</li>
+<li>target model 调用次数。</li>
+<li>token 成本。</li>
+<li>wall-clock time。</li>
+<li>单位分数提升成本。</li>
+</ul>
+<p>治理指标：</p>
+<ul>
+<li>prompt diff 大小。</li>
+<li>自动修改原因是否可解释。</li>
+<li>人工审核通过率。</li>
+<li>回滚次数。</li>
+<li>线上失败案例进入 eval 集的比例。</li>
+</ul>
+<h2 id="_10">运行记录字段</h2>
+<p>每次优化运行至少记录：</p>
+<pre><code class="language-yaml">run_id:
+date:
+insight_or_method_validated:
+task:
+dataset_version:
+target_model:
+optimizer_model:
+prompt_version_before:
+prompt_version_after:
+parameters:
+optimizer_method:
+candidate_count:
+train_score:
+dev_score:
+validation_score:
+test_score:
+adversarial_score:
+token_cost:
+latency:
+accepted:
+rejection_reason:
+top_failure_modes:
+prompt_diff_summary:
+source_files:
+</code></pre>
+<h2 id="_11">里程碑</h2>
+<h3 id="m0_1">M0：资料搜集和综述冻结</h3>
+<ul>
+<li>完成资料搜集计划中的最低覆盖矩阵。</li>
+<li>更新文献地图、行业实践整理和核心论文笔记。</li>
+<li>输出前沿状态图、方法 taxonomy、证据强度说明和资料缺口清单。</li>
+<li>输出 insight / conclusion / helpful method 候选清单。</li>
+<li>输出 2-3 个可复用方法或建议。</li>
+</ul>
+<h3 id="m1">M1：最小验证冻结</h3>
+<ul>
+<li>从 M0 的实验候选中选择 1-2 个最小验证任务。</li>
+<li>明确要验证的 insight/method、验证目标、评分器和成功/失败解释口径。</li>
+<li>准备最小数据集和 baseline prompt，不追求长期 benchmark 完整性。</li>
+</ul>
+<h3 id="m2">M2：初步实验</h3>
+<ul>
+<li>至少实现 manual 与一个改进/优化 baseline。</li>
+<li>每次运行生成可追踪 artifact。</li>
+<li>报告指标、成本、失败案例和结论限制。</li>
+</ul>
+<h3 id="m3">M3：最终说明和报告</h3>
+<ul>
+<li>整合前沿状态、行业经验、核心洞见、helpful methods 和初步验证结果。</li>
+<li>每条关键结论标注证据等级。</li>
+<li>输出最终报告和后续验证路线。</li>
+</ul>
+<h3 id="m4">M4：反思式进化</h3>
+<ul>
+<li>加入轨迹反思和失败模式总结。</li>
+<li>引入 candidate archive 和 validation split。</li>
+<li>和 MIPROv2/GEPA-style baseline 对比。</li>
+</ul>
+<h3 id="m5">M5：记忆与自进化</h3>
+<ul>
+<li>维护成功策略库和失败模式库。</li>
+<li>测试跨任务迁移。</li>
+<li>评估长期漂移和回滚机制。</li>
+</ul>
+<h3 id="m6">M6：系统级扩展</h3>
+<ul>
+<li>扩展到 RAG 或 tool-use。</li>
+<li>优化对象从单 prompt 扩展到 prompt + examples + context + tool policy。</li>
+<li>输出一份自进化 prompt 系统设计报告。</li>
+</ul>
+<h2 id="_12">首个可执行实验建议</h2>
+<p>先做“结构化信息抽取”：</p>
+<ul>
+<li>输入：短邮件或用户请求。</li>
+<li>输出：严格 JSON，如 <code>{intent, entities, urgency}</code>。</li>
+<li>Baseline：手写 system prompt + JSON schema。</li>
+<li>优化目标：field F1、JSON validity、成本。</li>
+<li>失败反思：字段漏抽、错误标签、格式破坏、过度推断。</li>
+</ul>
+<p>第一轮只验证最小闭环：</p>
+<ol>
+<li>跑 zero-shot / manual baseline / 10-20 个候选，形成 pre-optimization gate。</li>
+<li>固定 instruction，比较 no-example、random-example、optimized-example。</li>
+<li>在同一失败样本上比较 direct rewrite 和 trace-first critique rewrite。</li>
+<li>每个候选写入 prompt artifact ledger，记录 diff、score、cost、失败样本、接受/拒绝理由和 rollback point。</li>
+</ol>
+<p>原因：评分清晰、成本低、错误可解释，适合作为 prompt evolution loop 的第一块地基。</p>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/experiment_plan.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#m0">M0：资料搜集与综述冻结</a>
+<a class="lv2" href="#_2">初步验证目标</a>
+<a class="lv2" href="#_3">实验选择门槛</a>
+<a class="lv2" href="#_4">实验纪律</a>
+<a class="lv2" href="#_5">第一阶段任务选择候选</a>
+<a class="lv2" href="#baselines">Baselines</a>
+<a class="lv2" href="#_6">数据切分</a>
+<a class="lv2" href="#_7">优化循环</a>
+<a class="lv2" href="#_8">候选过滤规则</a>
+<a class="lv2" href="#_9">指标</a>
+<a class="lv2" href="#_10">运行记录字段</a>
+<a class="lv2" href="#_11">里程碑</a>
+<a class="lv3" href="#m0_1">M0：资料搜集和综述冻结</a>
+<a class="lv3" href="#m1">M1：最小验证冻结</a>
+<a class="lv3" href="#m2">M2：初步实验</a>
+<a class="lv3" href="#m3">M3：最终说明和报告</a>
+<a class="lv3" href="#m4">M4：反思式进化</a>
+<a class="lv3" href="#m5">M5：记忆与自进化</a>
+<a class="lv3" href="#m6">M6：系统级扩展</a>
+<a class="lv2" href="#_12">首个可执行实验建议</a></aside>
+</div>
+
+</body>
+</html>
