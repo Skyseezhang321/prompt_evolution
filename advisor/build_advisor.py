@@ -589,6 +589,7 @@ const RESOURCES = [
 // 与 v3 报告「分渠道整理」同口径：每渠道一个核心入口，等级标注沿用证据金字塔
 const CHANNEL_REPORTS = [
   { t: 'arXiv（A）· 深读综合 batch3', p: 'docs/arxiv_deep_reading_batch3_synthesis.html' },
+  { t: 'arXiv（A）· 2025/2026 前沿综合', p: 'docs/arxiv_2025_2026_frontier_synthesis_20260612.html' },
   { t: 'GitHub（B）· 渠道洞见综合', p: 'docs/github_repo_channel_synthesis_20260609.html' },
   { t: '其它平台（B）· 洞见卡', p: 'docs/source_batches/web_search_platform_insight_cards_20260609.html' },
   { t: 'Twitter/X（B*）· 洞见卡', p: 'docs/source_batches/twitter_web_insight_cards_20260609.html' },
