@@ -19,7 +19,7 @@ KB_PATH = os.path.join(HERE, "knowledge_base.json")
 VALID_LEVELS = {"A", "B", "C", "D", "recent-preprint"}
 REQUIRED_INSIGHT_FIELDS = [
     "id", "group", "title", "hook", "evidence_level",
-    "triggers", "diagnosis", "steps", "evidence", "boundary", "sources",
+    "triggers", "diagnosis", "steps", "example", "evidence", "boundary", "sources",
 ]
 
 
@@ -70,6 +70,12 @@ def test_required_fields_present():
     for ins in KB["insights"]:
         for f in REQUIRED_INSIGHT_FIELDS:
             assert ins.get(f) not in (None, "", []), f"{ins.get('id')} 缺字段 {f}"
+
+
+def test_examples_marked_as_demo():
+    """上手示例是演示性内容，必须自带「演示」标注，防止演示数字被当成结论。"""
+    for ins in KB["insights"]:
+        assert "演示" in ins["example"], f"{ins['id']} 的 example 缺「演示」标注"
 
 
 def test_evidence_levels_valid():

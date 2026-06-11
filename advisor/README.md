@@ -36,7 +36,7 @@ LLM 模式下后端默认用**语义向量召回**（`baai/bge-m3` via OpenRoute
 
 | 文件 | 作用 |
 |---|---|
-| `knowledge_base.json` | **单一事实来源**：14 条洞见（含触发规则、证据等级、真实数字与出处）、9 个引导问题、反模式表、首批实验。忠实摘自 v4 报告（01–12 与读者向洞见手册同源，13/14 为 v4 新增）。 |
+| `knowledge_base.json` | **单一事实来源**：14 条洞见（含触发规则、证据等级、演示性上手示例、真实数字与出处）、9 个引导问题、反模式表、首批实验。忠实摘自 v4 报告（01–12 与读者向洞见手册同源，13/14 为 v4 新增）。 |
 | `build_advisor.py` | 读 KB → 校验 → 把 KB 内联进自包含 `advisor.html`。 |
 | `advisor.html` | **生成产物**（勿手改）。对话式聊天页，可双击打开（确定性）或经后端托管（LLM 模式）。 |
 | `server.py` | **FastAPI 后端**（v2）。复用 `scripts/llm_clients.py` 调 OpenRouter；对知识库做检索增强、构造受约束系统提示；同源托管 `advisor.html` 与 `/api/chat`、`/api/chat/stream`（SSE 流式）、`/api/health`。 |
@@ -74,11 +74,12 @@ LLM 形态调参（可选，不改 `.env` 全局值）：`ADVISOR_MAX_TOKENS`（
 
 只动 `knowledge_base.json`：
 
-1. 在 `insights[]` 加一条，字段见已有条目（必填：`id/group/title/hook/evidence_level/triggers/diagnosis/steps/evidence/boundary/sources`）。
+1. 在 `insights[]` 加一条，字段见已有条目（必填：`id/group/title/hook/evidence_level/triggers/diagnosis/steps/example/evidence/boundary/sources`）。
 2. `triggers` 用触发 DSL（见下）把它绑定到引导问题的某些答案。
 3. `evidence[].source` 与 `sources[]` 必须指向**真实存在**的仓库文档（测试会校验）。
 4. 数字一律标 `level`（`A` / `B` / `C` / `D` / `recent-preprint`），不得把论文数字写成本项目结论。
-5. `python advisor/build_advisor.py && python -m pytest advisor/test_advisor.py -q`。
+5. `example` 是**演示性上手示例**（贴场景的 prompt 片段 / 字段表 / before-after，`\n` 换行）：文案里必须带「演示」字样（测试会校验），演示数字不得与证据混写；确定性模式渲染成卡片第 ③ 层，LLM 模式作为改写素材进系统提示。
+6. `python advisor/build_advisor.py && python -m pytest advisor/test_advisor.py -q`。
 
 ### 触发 DSL（JS 运行时与 Python 测试同口径）
 

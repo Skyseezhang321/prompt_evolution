@@ -56,6 +56,8 @@ def test_system_prompt_has_constraints():
     assert "该论文设置下成立" in sp    # 诚实口径
     assert "I11" in sp                # 相关洞见进了上下文
     assert "read-paper" in sp         # 方案 B：未覆盖来源指引
+    assert "上手示例" in sp           # 洞见块带演示示例供改写
+    assert "贴合用户场景的具体例子" in sp  # 回答须落到具体示例/方向
 
 
 def test_corpus_loaded():

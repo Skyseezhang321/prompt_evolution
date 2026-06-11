@@ -149,11 +149,14 @@ def retrieve_grounding(message: str):
 def _insight_block(ins: dict) -> str:
     ev = "；".join(f"{e['num']}—{e['note']}（{e['level']}）" for e in ins.get("evidence", []))
     steps = " / ".join(ins.get("steps", []))
+    example = ins.get("example", "").replace("\n", "\n    ")
+    example_line = f"  上手示例（演示性，数字非实验结论，回答时应改写贴合用户场景）：\n    {example}\n" if example else ""
     return (
         f"[{ins['id']} · {ins['evidence_level']}] {ins['title']}\n"
         f"  反直觉点：{ins['hook']}\n"
         f"  诊断：{ins['diagnosis']}\n"
         f"  步骤：{steps}\n"
+        f"{example_line}"
         f"  证据：{ev}\n"
         f"  边界：{ins['boundary']}"
     )
@@ -180,7 +183,10 @@ def build_system_prompt(insights: list[dict], notes: list[dict] = ()) -> str:
         "一手笔记用其 id 如 [paper-coin-flip-2026·A]。\n"
         "3. 论文数字一律视为「该论文设置下成立」，不得说成普适或本项目结论；"
         "本项目尚未复现这些洞见。\n"
-        "4. 结合用户的具体场景给出分层、可执行的建议（诊断→步骤→证据→边界），不要泛泛而谈。\n"
+        "4. 结合用户的具体场景给出分层、可执行的建议（诊断→步骤→示例→证据→边界），不要泛泛而谈：\n"
+        "   每条核心建议都要落到一个贴合用户场景的具体例子或方向——可直接套用的 prompt 片段、字段表、\n"
+        "   before/after 改写、记录格式等，优先把知识库里的「上手示例」改写成用户任务和数据的版本，\n"
+        "   不要原样照搬。示例是演示性内容、不算证据：不得在示例里编造实验数字，也不得把演示数字说成结论。\n"
         "5. 用简体中文，简洁具体，不堆砌。若问题与 prompt 优化无关，礼貌说明本助手范围。\n"
         "6. 若所给材料都未覆盖用户问到的**具体论文/仓库/文章**，明确说未覆盖，并建议把它读进库："
         "论文→read-paper、GitHub 仓库→github-repo-audit、社交/行业文章→article-deep-read。\n\n"

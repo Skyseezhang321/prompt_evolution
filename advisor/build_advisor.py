@@ -25,7 +25,7 @@ OUT_PATH = os.path.join(HERE, "advisor.html")
 
 REQUIRED_INSIGHT_FIELDS = [
     "id", "group", "title", "hook", "evidence_level",
-    "triggers", "diagnosis", "steps", "evidence", "boundary", "sources",
+    "triggers", "diagnosis", "steps", "example", "evidence", "boundary", "sources",
 ]
 VALID_LEVELS = {"A", "B", "C", "D", "recent-preprint"}
 
@@ -253,6 +253,7 @@ a:hover{color:var(--seal);}
 .ev .n small{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.55;}
 .ev .n a{font-size:11.5px;}
 .bound{margin-top:10px;padding:8px 12px;border-left:3px solid var(--amber);background:#faf3e0;border-radius:0 6px 6px 0;font-size:12.5px;color:#5c4c22;}
+.example{padding:9px 12px;border:1px dashed var(--line);border-left:3px solid var(--green);background:var(--paper);border-radius:0 6px 6px 0;font-size:12.8px;color:#3e4336;line-height:1.75;}
 .corr{margin-top:7px;font-size:12px;color:var(--muted);}
 .at-table{width:100%;border-collapse:collapse;border:1px solid var(--line);font-size:12.8px;background:var(--card);}
 .at-table th,.at-table td{padding:9px 12px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top;}
@@ -363,7 +364,8 @@ function card(ins){
     <h3>${ins.title}</h3><p class="hook">${ins.hook}</p>
     <div class="layer"><h4>① 快速诊断</h4><div>${ins.diagnosis}</div></div>
     <div class="layer"><h4>② 可照抄步骤</h4><ul>${steps}</ul></div>
-    <div class="layer"><h4>③ 真实证据（该论文设置下成立）</h4><div class="ev">${ev}</div></div>
+    ${ins.example?`<div class="layer"><h4>③ 上手示例（演示性，非论文数字）</h4><div class="example">${esc(ins.example).replace(/\n/g,'<br>')}</div></div>`:''}
+    <div class="layer"><h4>④ 真实证据（该论文设置下成立）</h4><div class="ev">${ev}</div></div>
     <div class="bound"><b>边界：</b>${ins.boundary}</div>
     ${ins.cross_channel?`<div class="corr"><b>跨渠道互证：</b>${ins.cross_channel}</div>`:''}
     <div class="corr">出处：${src}</div></div>`;

@@ -141,6 +141,7 @@
         "看 headroom（最高候选 − zero-shot）和 noise floor（候选间抖动）。",
         "headroom 没超过 noise floor → 停，别优化。"
       ],
+      "example": "体检表打个样（数字为演示）：zero-shot 0.71｜手写 baseline 0.74｜10 个候选最高 0.76、候选间抖动 ±0.04\n→ headroom = 0.76 − 0.71 = 0.05，跟噪声地板 0.04 基本贴着 → 先别上优化器，把预算花在补样本或精选示例上更划算。",
       "evidence": [
         { "num": "49%", "note": "Coin Flip：72 次优化里 49% 低于 zero-shot（Haiku 4.5）", "level": "recent-preprint", "source": "docs/paper_notes/paper-coin-flip-2026.md" },
         { "num": "~3 步", "note": "ProTeGi：约 3 步达峰，之后多在训练集过拟合", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md" }
@@ -169,6 +170,7 @@
         "暂时别用开放生成当第一块试验田——因果最难看清。",
         "若必须做主观写作，先定义 rubric，否则 metric 不稳。"
       ],
+      "example": "第一批任务这样挑（演示）：\n✔ 客服工单分类——8 个固定标签，准确率可客观算；\n✔ 发票字段抽取——金额/日期/抬头逐字段算 F1；\n✘ 营销文案生成——只能评委打分，评委口味一变分数就变，留到定义好 rubric 再做。",
       "evidence": [
         { "num": "+6.8", "note": "Coin Flip：唯一让 6 种方法全超 zero-shot 的是结构化 JSON 任务 HelpSteer2", "level": "recent-preprint", "source": "docs/paper_notes/paper-coin-flip-2026.md" },
         { "num": "+16% → ~1%", "note": "KG 抽取：同数据集 triple F1 +16%，换数据集只剩约 1%", "level": "A", "source": "docs/paper_notes/paper-apo-kg-construction-2025.md" }
@@ -196,6 +198,7 @@
         "每个失败 case 记：prediction、gold、error_type、critique、candidate_id。",
         "先把 20 条失败整理成「失败类型表」，再让优化器只基于这张表改。"
       ],
+      "example": "失败记录长这样（演示）：\nprediction=2024-01-05｜gold=2024-05-01｜error_type=日期格式歧义｜critique=输入是 DD/MM/YYYY 时被按 MM/DD 解析｜candidate_id=v3\n20 条失败按 error_type 汇总：日期歧义 ×7、金额单位 ×5、漏抽 ×8 → 第一刀先补「日期一律按 DD/MM/YYYY 解析」这条规则，而不是凭感觉重写整段。",
       "evidence": [
         { "num": "+15.3% / 最高 +31%", "note": "ProTeGi：用失败样本生成文字「梯度」再改写，比原始 prompt", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md" },
         { "num": "越改越差", "note": "同论文：让 AutoGPT 自己反馈改 6 轮，反而把起始 prompt 改差；文字「梯度」是比喻非真梯度", "level": "A", "source": "docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md" },
@@ -224,6 +227,7 @@
         "对同一批失败，强制生成 2–3 个互斥根因假设。",
         "每个假设生成一个候选，分别评分；运行记录存 failure_hypothesis 而不只 critique。"
       ],
+      "example": "同一批 12 条抽取失败，先列互斥假设再分头验证（演示）：\nH1 缺规则 → 候选 A：补「金额单位为分」；\nH2 缺示例 → 候选 B：加 1 个嵌套 JSON 示例；\nH3 格式冲突 → 候选 C：删掉与 JSON 输出冲突的 markdown 要求。\n三个候选各自在留出集打分，谁把对应错误类型拉回来用谁；运行记录存 failure_hypothesis=H1/H2/H3。",
       "evidence": [
         { "num": "23.81% → 13.50% → 87.57%", "note": "VISTA：反思式优化器在缺陷种子上反而掉到 13.50%；解耦「假设生成 / 改写」后恢复 87.57%", "level": "recent-preprint", "source": "docs/paper_notes/paper-vista-reflection-dark-2026.md" }
       ],
@@ -250,6 +254,7 @@
         "每轮存 seed / candidates / scores / selection_policy / rejected_reason / best_seen / rollback_point。",
         "生成 5 个候选，按 dev 分 + 格式错误 + 长度三维选 Pareto 候选。"
       ],
+      "example": "候选台账打个样（数字为演示）：\nseed=v1｜candidates=[v2a..v2e]｜dev 分=[0.74, 0.78, 0.77, 0.71, 0.78]｜格式错误=[0, 1, 0, 3, 0]｜长度比=[1.1, 1.4, 1.0, 2.2, 1.2]\n→ 选 v2e（分高、零格式错、没膨胀）；v2b 同分但有格式错，拒；best_seen=v2e 单独存档，下一轮再差也能一键回滚。",
       "evidence": [
         { "num": "0.85 / 0.67 / 0.88", "note": "ProTeGi：beam 选择在 Jailbreak/Liar/Sarcasm 明显优于贪心；bandit > 均匀选", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md" }
       ],
@@ -275,6 +280,7 @@
         "候选选择记录 length_ratio、repetition、edit_family、dev_test_gap、OOD/stress_delta。",
         "候选若变长，必须说明每条新规则绑定哪些失败样本并通过压力测试，否则拒绝。"
       ],
+      "example": "卫生门怎么把关（演示）：候选 v5 比 v1 长 2.3 倍、新增 9 条规则，其中 6 条各只对应 1 个训练样本、说不清防什么\n→ 拒掉 v5，要求改写者给每条新规则标「绑定的失败样本 id + 一句它防什么」，给不出的删掉再重评。",
       "evidence": [
         { "num": "14.7x / 86%", "note": "PrefPO：放任时 TextGrad 撑到 14.7 倍长、86% 在偷改任务本身（PrefPO 仅 37%）", "level": "recent-preprint", "source": "docs/paper_notes/paper-prefpo-2026.md" },
         { "num": "+10.0 / +9.9", "note": "TextReg：加正则化管住膨胀，反而比 TextGrad 更高", "level": "recent-preprint", "source": "docs/paper_notes/paper-textreg-2026.md" }
@@ -304,6 +310,7 @@
         "至少比较 no-example / random-example / optimized-example / instruction+optimized。",
         "固定 instruction，从候选池搜 3 个示例看留出表现。"
       ],
+      "example": "做法（演示）：instruction 一个字不动，从 40 条标注样本里挑 3 个分别覆盖「嵌套字段 / 空值 / 一格多值」易错边界的做 few-shot 示例；\n对照跑 no-example 和随机 3 例，留出集见分晓——常见结局是精选 3 例赢过改了一周的 instruction。",
       "evidence": [
         { "num": "+12.63", "note": "Teach Better：不改 instruction、只优化示例就达 72.92（PaLM 2 / BBH）", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md" },
         { "num": "75.77 > 65.91", "note": "Gemini 1.0 Pro：优化示例 > 只优化 instruction；且精选 3 个 > 全部示例", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md" },
@@ -333,6 +340,7 @@
         "每次优化生成 artifact manifest，拆出各部件并标 mutable/frozen。",
         "评委、测试集、安全规则必须 frozen——防 reward hacking 的底线。"
       ],
+      "example": "artifact manifest 打个样（演示）：\ntask_prompt: v7（mutable）｜examples: 3 个, v2（mutable）｜tool_schema: v1（mutable）\njudge_prompt: v1（frozen）｜test_set: v1（frozen）｜safety_rules: v1（frozen）\n→ 出错先对着 manifest 定位该改哪个部件；frozen 的永远不进搜索空间。",
       "evidence": [
         { "num": "6.5% → 74.0%", "note": "AutoPDL：只把 prompting 模式换对（非重写措辞），FEVER 跳 +67.5pp", "level": "A", "source": "docs/paper_notes/paper-autopdl-2025.md" }
       ],
@@ -358,6 +366,7 @@
         "工具 eval 拆成 Tool Selection / Slot Filling / Overall Success 三个指标分别记。",
         "分别测「只改全局指令 / 只改 schema / 联合」，看瓶颈在哪层。"
       ],
+      "example": "工具描述 before/after（演示）：\nbefore：amount——金额\nafter：amount——金额，整数、单位为分；用户说「¥12.50」→ 填 1250；不确定就置 null 并在 notes 里说明，不要猜。\n→ 这类 Slot Filling 错误往往就此消失，agent 的 system prompt 一个字没改。",
       "evidence": [
         { "num": "51.27% → 64.46%", "note": "JTPRO：联合优化全局指令 + 每工具 schema，o3-mini 整体成功率（ToolACE 1000 工具）", "level": "recent-preprint", "source": "docs/paper_notes/paper-jtpro-2026.md" }
       ],
@@ -383,6 +392,7 @@
         "记忆 schema 含 success_template/error_pattern、source_task、applicability、quality、forget_reason。",
         "别塞历史对话，只检索已验证、匹配当前任务的 3–5 条。"
       ],
+      "example": "记忆条目打个样（演示）：\ntype=error_pattern｜content=日期 DD/MM 与 MM/DD 歧义时按来源国家判断｜source_task=发票抽取｜applicability=含日期字段的抽取任务｜quality=已验证（修复 7 例）\n→ 新任务只检索 applicability 匹配的 3–5 条进上下文；整段历史对话一律不进。",
       "evidence": [
         { "num": "70.7% vs 63.6% ｜ $0.31 vs $0.70", "note": "MemAPO：双记忆比 TextGrad 更好且更便宜", "level": "recent-preprint", "source": "docs/paper_notes/paper-memapo-2026.md" },
         { "num": "第7步 68.6 vs 第13步 58.5", "note": "ERM：过滤记忆收敛近两倍速；原始记忆无收益", "level": "A", "source": "docs/paper_notes/paper-erm-memory-2024.md" }
@@ -409,6 +419,7 @@
         "trace 存 role_id/round_id/local_validity/successor_utility/global_outcome。",
         "标出首次引入错误的 role/round，只改那一块；耦合弱时先做 coupling test。"
       ],
+      "example": "用 trace 三行定位（演示）：\nround1 检索 agent：局部对｜对后续有帮助\nround2 规划 agent：局部对｜但漏传了用户的预算约束 → 对后续帮助低\nround3 执行 agent：拿不到预算 → 全局失败\n→ 第一个引入错误的是 round2 的信息传递，只改规划 agent 的输出格式；检索、执行都不动。",
       "evidence": [
         { "num": "55.13 → 64.63", "note": "Temporal/Structural Credit：credit-guided 在 MedMCQA（+9.50）；无差别更新所有轮反而掉分", "level": "recent-preprint", "source": "docs/paper_notes/paper-temporal-structural-credit-mas-2026.md" },
         { "num": "70.39 vs 65.31", "note": "MASPO：联合优化平均优于顺序 baseline", "level": "recent-preprint", "source": "docs/paper_notes/paper-maspo-2026.md" }
@@ -435,6 +446,7 @@
         "读到技巧先抽六字段：dataset / metric / baseline / model / cost / failure_cases。",
         "缺任一字段就降级为「线索」，进结论前必须追溯论文/官方文档/代码/本项目实验。"
       ],
+      "example": "看到「XX 法让准确率暴涨 30%」先抽六字段（演示）：\ndataset=?｜metric=?｜baseline=?｜model=?｜cost=?｜failure_cases=?\n帖子只给得出 metric 和 model → 降级为「线索」，登记待查；找到一手论文或可复现代码之前，不进结论、不上生产。",
       "evidence": [
         { "num": "口号 vs 机制", "note": "「GEPA 用少 35 倍 rollout 吊打 RL」是传播简化；GEPA 实为反思式 prompt 进化（轨迹 + Pareto 选择），根本不是 RL 系统", "level": "B", "source": "docs/source_batches/twitter_web_analysis_20260608.md" }
       ],
@@ -462,6 +474,7 @@
         "把重复变换纳入廉价 baseline 集：三臂对比 baseline / repetition×2 / padding。",
         "检索结果拼接、表单转写这类信息顺序不可控的场景优先考虑。"
       ],
+      "example": "做法就这么直白（演示）：把整段 prompt 原样复制一遍再发——\n原来：{指令}{文档}{问题} → 变成：{指令}{文档}{问题}{指令}{文档}{问题}\n记得三臂对照：baseline / 重复×2 / 同长度 padding，只有重复显著高于 padding 才算数；推理模式下别用。",
       "evidence": [
         { "num": "47/70 胜 0 负", "note": "非推理模式，7 模型 × 10 配置（McNemar p<0.1）；Padding 对照无效→收益来自重复本身，不是变长", "level": "recent-preprint", "source": "docs/paper_notes/paper-prompt-repetition-2025.md" },
         { "num": "21.33% → 97.33%", "note": "NameIndex 长上下文索引任务（Gemini 2.0 Flash-Lite）；开启 step-by-step 推理后 28 组仅 5 胜，基本无效", "level": "recent-preprint", "source": "docs/paper_notes/paper-prompt-repetition-2025.md" }
@@ -490,6 +503,7 @@
         "评测用 judge 默认 frozen；要改走独立评审与重校准，改后旧分数全部失效重跑。",
         "想优化 judge / optimizer 本身？在开发集上做，且与评测链路物理隔离，否则就是 reward hacking。"
       ],
+      "example": "运行记录补三个版本号（演示）：\ntask_prompt=v12｜optimizer_prompt=op-v3｜judge_prompt=jg-v1（frozen）\n→ 三个月后复跑分数对不上，先查这三个号是否一致；想优化 judge，就在开发集上另起 jg-dev 分支，评测链路的 jg-v1 永远不动。",
       "evidence": [
         { "num": "71.89 → 76.38", "note": "SePO：把 prompt agent 的 system prompt 预训练自进化，五任务平均提升 4.49；去掉 self-improvement 掉回 74.94", "level": "recent-preprint", "source": "docs/paper_notes/paper-sepo-2026.md" },
         { "num": "唯一自指", "note": "PromptBreeder：经典六法中唯一连 mutation prompt 一起进化（hyper-mutation）——「优化优化器」有论文级先例", "level": "A", "source": "docs/paper_notes/paper-promptbreeder-2023.md" }
