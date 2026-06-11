@@ -25,7 +25,7 @@ ROOT_SUB = "v4 · 四层知识体系"
 # (branch label, accent color, leaf fill, [leaf texts])
 BRANCHES = [
     ("证据底座 · 5 个渠道", "#2d67ad", "#e9f0fb", [
-        "arXiv · A：方法机制 + 效应数字（37 篇深读笔记）",
+        "arXiv · A：方法机制 + 效应数字（39 篇深读笔记）",
         "GitHub · B：工程结构 / 治理（core4 已审，正典 5 仓待审）",
         "其它平台 · B：生产工具闭环 / 治理是前提",
         "Twitter/X · B*：采纳信号 / 研究→工具映射（追溯 pending）",
@@ -35,6 +35,7 @@ BRANCHES = [
         "七法主线：APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA",
         "暗线一：反馈信息密度 标量→批评→轨迹（决定样本效率）",
         "暗线二：优化对象升维 单指令→指令+示例→多模块程序",
+        "暗线三：搜索结构 盲采样→beam→MCTS→Pareto 池（独立维度）",
         "六法同框：仅结构化任务全胜；跨模型脆弱（Haiku→Nova 崩盘）",
         "选型六问 + 7 方法簇；打不过 APE/OPRO 下限就别上复杂方法",
     ]),
