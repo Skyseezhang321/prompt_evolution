@@ -54,7 +54,7 @@
 | paper-maspo-2026 | skimmed | high | MASPO: Joint Prompt Optimization for LLM-based Multi-Agent Systems | 2026 | https://arxiv.org/abs/2605.06623 | multi-agent prompt optimization |  | 需深读 |
 | paper-promptolution-2026 | candidate | medium | promptolution | 2026 | https://aclanthology.org/2026.eacl-demo.21/ | prompt optimization tool |  | 需核验 |
 | paper-sepo-2026 | skimmed | high | SePO: Self-Evolving Prompt Agent for System Prompt Optimization | 2026 | https://arxiv.org/abs/2606.04465 | self-evolving prompt optimization |  | 需深读 |
-| paper-prompt-repetition-2025 | candidate | high | Prompt Repetition Improves Non-Reasoning LLMs | 2025-12-17 | https://arxiv.org/abs/2512.14982 | prompt repetition / non-reasoning prompt technique | user_provided_example；2026-06-09 核验 arXiv 摘要，主张在不使用 reasoning 时重复输入 prompt 可提升多个主流模型表现；尚未深读任务、模型、重复方式和边界 | 作为“具体洞见范式”和最小 A/B 实验候选，需写 paper note 后再进入稳定结论 |
+| paper-prompt-repetition-2025 | noted | high | Prompt Repetition Improves Non-Reasoning LLMs | 2025-12-17 | https://arxiv.org/abs/2512.14982 | prompt repetition / non-reasoning prompt technique | user_provided_example；深读笔记 `docs/paper_notes/paper-prompt-repetition-2025.md`；2026-06-11 方法+结果级（Figure 逐格数字未转录） | 已深读；非推理模式 47/70 显著胜 0 负、零输出成本的结构变换，定位为本项目 APO baseline 变换 + 最小三臂 A/B 候选（baseline/×2/padding）；推理模式收益消失（5/28），长 prompt 与输入计费翻倍是边界 |
 
 ## 行业实践与工具
 
