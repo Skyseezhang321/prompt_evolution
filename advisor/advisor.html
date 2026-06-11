@@ -491,6 +491,14 @@ const RESOURCES = [
   { t: '全景脑图（渲染版）', p: 'docs/prompt_evolution_mindmap_20260610.html' },
   { t: '小说体科普《别让 AI 自己改作业》', p: 'docs/popsci_prompt_evolution_story_20260610.html' },
 ];
+// 与 v3 报告「分渠道整理」同口径：每渠道一个核心入口，等级标注沿用证据金字塔
+const CHANNEL_REPORTS = [
+  { t: 'arXiv（A）· 深读综合 batch3', p: 'docs/arxiv_deep_reading_batch3_synthesis.html' },
+  { t: 'GitHub（B）· 渠道洞见综合', p: 'docs/github_repo_channel_synthesis_20260609.html' },
+  { t: '其它平台（B）· 洞见卡', p: 'docs/source_batches/web_search_platform_insight_cards_20260609.html' },
+  { t: 'Twitter/X（B*）· 洞见卡', p: 'docs/source_batches/twitter_web_insight_cards_20260609.html' },
+  { t: '知乎（D）· 洞见卡', p: 'docs/source_batches/zhihu_insight_cards_20260609.html' },
+];
 const insightById = {}; KB.insights.forEach(i => insightById[i.id] = i);
 const leftPanel = document.getElementById('leftPanel');
 const rightPanel = document.getElementById('rightPanel');
@@ -544,6 +552,8 @@ function renderLeft(){
   const sec = (title) => { const h = document.createElement('div'); h.className = 'pan-h'; h.textContent = title; leftPanel.appendChild(h); };
   sec('文档与报告');
   RESOURCES.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
+  sec('分渠道详细报告');
+  CHANNEL_REPORTS.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
   sec('12 条核心洞见');
   let lastG = null;
   KB.insights.forEach(i => {
