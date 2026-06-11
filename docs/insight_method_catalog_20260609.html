@@ -81,7 +81,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <div class="wrap">
 <article class="content">
 <h1 id="insight-conclusion-helpful-method">Insight / Conclusion / Helpful Method 候选清单</h1>
-<p>日期：2026-06-09</p>
+<p>日期：2026-06-09（2026-06-11 追加 I-13 / I-14，与主报告 v4 同步；I-01..12 编号与内容未动）</p>
 <p>定位：本文是最终报告前的“内容整理中间层”。它不替代论文笔记、源码审计或行业实践笔记，而是把现有材料按最新 insight-first 原则压缩成可复用的洞见、结论、方法、反模式和验证候选。</p>
 <p>证据边界：</p>
 <ul>
@@ -297,6 +297,37 @@ main_sources:
   - docs/source_collection_plan.md
 counterexample_or_limit: 高质量工程博客如果包含代码、数据和复现实验，可升级为 stronger evidence。
 next_validation: 对 high-impact social claims 建立 trace-to-primary-source 表。
+</code></pre>
+<h3 id="i-13">I-13：花钱搜索之前，先试零成本的确定性结构变换</h3>
+<pre><code class="language-yaml">insight: causal attention 导致的「信息顺序敏感」是 prompt 性能的结构性失效来源，与措辞质量无关；把整个 prompt 原样重复一遍可以在完全不动语义的情况下修复它。
+user_facing_one_liner: 跑任何花钱的优化器之前，先试一个免费变换——把整个 prompt 原样重复一遍。
+phenomenon: 非推理模式下，`&lt;QUERY&gt;` → `&lt;QUERY&gt;&lt;QUERY&gt;` 在 7 个主流模型 × 10 个 benchmark 配置取得 47/70 显著胜、0 显著负（McNemar p&lt;0.1）；options-first 配置提升大于 question-first；Padding 对照（补到同等长度）无提升；NameIndex 上 Gemini 2.0 Flash-Lite 从 21.33% 提至 97.33%。开启 step-by-step 推理后基本无效（28 组里 5 胜 1 负 22 平）。
+mechanism: causal LM 中靠前的 token 看不到靠后的 token；重复后第二遍的每个 token 都能注意到完整第一遍，近似给 prompt 内部加「第二遍全注意」。推理模型本就常自发复述题目，故收益不叠加。重复发生在可并行的 prefill 阶段，不增加输出长度与时延。
+actionable_rule: 把整 prompt 重复 ×2（长上下文索引类任务试 ×3）纳入廉价 baseline 变换集；任何 APO 方法在本项目报告的增益，先回答「是否打得过这个零智能变换」。
+exact_action_to_try: 取 50-100 条样本做三臂对比 baseline / repetition×2 / padding，记 accuracy、输出格式破坏率、成本，用 McNemar 检验。
+helpful_method: zero-cost transform baseline（挂 HM-01 体检的对照底线）
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-prompt-repetition-2025.md
+counterexample_or_limit: recent-preprint（2025-12），目前为 arXiv 单层证据；推理模式下基本无效且出现 1 个显著下降；只重复局部（如只重复问题）无增益（Shaier 2024）；按 token 计费时输入成本 ×2；超长 prompt 重复会推高 prefill 时延甚至不可行；被测为 2025 年初一代模型，新模型可能已内化复述行为。
+next_validation: 在本项目抽取小任务 + 2026 当代模型上跑三臂 A/B（baseline / ×2 / padding），并把它作为 HM-01 对照底线后测各 APO 方法的净增益还剩多少。
+</code></pre>
+<h3 id="i-14optimizer-judge">I-14：optimizer 和 judge 本身，也是要版本化、可优化的部件</h3>
+<pre><code class="language-yaml">insight: 「负责改 prompt 的 prompt」和「负责打分的 prompt」也在决定优化结果；不版本化它们，实验不可复现；从不审视它们，它们就是隐藏的天花板。
+user_facing_one_liner: 不要只版本化任务 prompt——改 prompt 用的 optimizer prompt 和打分用的 judge prompt 也要进版本账。
+phenomenon: SePO 把 prompt agent 自己的 system prompt 纳入同一套演化流程，五任务平均从 Manual-CoT 的 71.89 提升到 76.38；消融去掉 self-improvement 掉回 74.94；optimizer 固定的 TextGrad（70.39）与 MetaSPO（71.32）平均低于 Manual-CoT。PromptBreeder 的 hyper-mutation（连 mutation prompt 一起进化）同向。web_search WPI-10 与 GitHub autoresearch 的 ledger（GHI-05）独立提出 judge prompt / 优化器配置的版本化。
+mechanism: 固定 optimizer prompt 限制了错误分析和改写策略空间；judge 口味漂移使分数变化无法归因（是任务 prompt 的功劳还是评委变了）；把 optimizer artifact 纳入版本账和评估闭环后，优化能力本身可被审视、训练和迁移。
+actionable_rule: 运行记录把 optimizer_prompt_version、judge_prompt_version、meta_prompt_version 列为必填字段；评测链路的 judge 与测试集一样默认 frozen，要改走独立评审与重校准、旧分数全部失效重跑；优化 judge/optimizer 本身只在开发集上做，且与评测链路物理隔离。
+exact_action_to_try: 给运行记录 schema 加 optimizer_prompt / judge_prompt 版本字段——不需要独立实验，随任意 P0 实验一并生效。
+helpful_method: HM-04 Prompt Artifact Ledger 扩展（optimizer_prompt / judge_prompt 入账）
+evidence_strength: A/B
+main_sources:
+  - docs/paper_notes/paper-sepo-2026.md
+  - docs/paper_notes/paper-promptbreeder-2023.md
+  - docs/source_batches/web_search_platform_insight_cards_20260609.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: SePO 数字为 recent-preprint，需独立复现；「优化 judge」与「frozen evaluator 防作弊」不冲突——被冻结的是评测链路的 judge，被优化的是开发期辅助 judge，两者混用就是 reward hacking；optimizer prompt 变强依赖训练任务与评分器，指标没覆盖的行为不会自动更安全。
+next_validation: 把 optimizer_prompt / judge_prompt 版本字段写入运行记录 schema 随 P0 实验生效；后续消融 fixed optimizer prompt vs self-improved optimizer prompt。
 </code></pre>
 <h2 id="conclusions">当前可采信的核心 conclusions</h2>
 <table>
@@ -548,9 +579,9 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <tr>
 <td>P0</td>
 <td>结构化抽取 pre-gate</td>
-<td>I-01, I-11, HM-01</td>
+<td>I-01, I-11, I-13（对照底线）, HM-01</td>
 <td>100-300 条 JSON 抽取</td>
-<td>判断是否有优化 headroom，校准 noise floor。</td>
+<td>判断是否有优化 headroom，校准 noise floor；体检同时跑 I-13 零成本变换当对照底线。</td>
 </tr>
 <tr>
 <td>P0</td>
@@ -597,7 +628,7 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <li>对 2026 年新 arXiv 论文，最终报告中应标注 <code>recent-preprint</code>，避免过度采信。</li>
 <li>行业工具文档需要记录版本和访问日期，尤其是托管 prompt optimizer 产品的迁移/弃用状态。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_method_catalog_20260609.md</code> 自动生成（2026-06-11 18:22 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_method_catalog_20260609.md</code> 自动生成（2026-06-11 23:14 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">使用方式</a>
 <a class="lv2" href="#_2">核心洞见候选</a>
@@ -613,6 +644,8 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <a class="lv3" href="#i-10-tool-schema">I-10：工具调用任务必须把 tool schema 当作可优化对象</a>
 <a class="lv3" href="#i-11">I-11：结构化任务更适合做第一批验证</a>
 <a class="lv3" href="#i-12">I-12：社媒和二手文章是线索，不是证据</a>
+<a class="lv3" href="#i-13">I-13：花钱搜索之前，先试零成本的确定性结构变换</a>
+<a class="lv3" href="#i-14optimizer-judge">I-14：optimizer 和 judge 本身，也是要版本化、可优化的部件</a>
 <a class="lv2" href="#conclusions">当前可采信的核心 conclusions</a>
 <a class="lv2" href="#helpful-methods">Helpful methods 候选</a>
 <a class="lv3" href="#hm-01pre-optimization-gate">HM-01：Pre-Optimization Gate</a>

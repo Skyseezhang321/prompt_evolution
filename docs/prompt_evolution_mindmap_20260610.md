@@ -1,8 +1,8 @@
 # Prompt 优化与自进化 · 跨渠道全景脑图（Mermaid 源）
 
-日期：2026-06-10
+日期：2026-06-10（2026-06-11 按主报告 v4 结构更新：新增 G 组与洞见 13/14 节点，A–F 未动）
 
-本文件是 [`analysis_report_v3_20260610.html`](./analysis_report_v3_20260610.html) 内嵌 SVG 脑图的**可编辑文本版**。Mermaid 在 GitHub / 多数 Markdown 预览器中可直接渲染；改这里即可重排脑图，再按需重绘 SVG。
+本文件最初是 [`analysis_report_v3_20260610.html`](./analysis_report_v3_20260610.html) 内嵌 SVG 脑图的**可编辑文本版**，现已按 [`analysis_report_v4_20260611.html`](./analysis_report_v4_20260611.html) 的 14 洞见结构更新（v3 内嵌 SVG 仍为 12 洞见旧结构，随 v3 一起冻结）。Mermaid 在 GitHub / 多数 Markdown 预览器中可直接渲染；改这里即可重排脑图，再按需重绘 SVG。
 
 一句话总论：自动优化 prompt 是「先判断值不值得 → 把失败变成可编辑证据 → 多候选 + 验证集筛选 → 可回滚」的**工程纪律**，不是让模型把 prompt 润色一遍。
 
@@ -37,6 +37,9 @@ mindmap
       洞见11 多 agent 先做 credit assignment
     F 听来的方法
       洞见12 社媒/二手 = 线索非证据
+    G 搜索之外 · v4 新增
+      洞见13 先试零成本结构变换（整 prompt 重复 ×2）
+      洞见14 optimizer/judge 也要版本化
     可复用方法 HM
       HM-01 Pre-Optimization Gate
       HM-02 Trace-First Critique Rewrite
@@ -57,7 +60,7 @@ mindmap
       2026 新稿需独立复现（recent-preprint）
       本项目尚无 C 级实验证据
     首批最小验证 P0–P2
-      P0 优化前体检 + 示例 vs 指令
+      P0 优化前体检（含洞见13 零成本变换对照） + 示例 vs 指令
       P1 直接改写 vs 根因假设 / 卫生门
       P2 工具 schema 优化 / 过滤记忆
 ```
@@ -107,6 +110,6 @@ flowchart LR
 
 ## 维护说明
 
-- 这三张图与 v3 报告的 ①全景脑图 / ②证据金字塔 / ⑦首批验证三节同口径；改动后请同步报告对应小节。
-- 节点文案应与 [`insight_method_catalog_20260609.md`](./insight_method_catalog_20260609.md) 的 I-01..I-12 / HM-01..04 / C-01..06 命名保持一致，避免「各说各话」。
+- 全景脑图已按 v4 报告（③ 工作流洞见 A–G 共 14 条）口径组织；证据金字塔与工程纪律闭环两图与 v3/v4 同口径未变。改动后请同步报告对应小节。
+- 节点文案应与 [`insight_method_catalog_20260609.md`](./insight_method_catalog_20260609.md) 的 I-01..I-14 / HM-01..04 / C-01..06 命名保持一致，避免「各说各话」。
 - 内嵌 SVG 由一次性布局脚本生成；如需重绘，按本文件结构重排节点即可。
