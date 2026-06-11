@@ -84,7 +84,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <p>日期：2026-06-12</p>
 <h2 id="0">0. 这份文档是什么、不是什么</h2>
 <p>主报告 v4 的证据层(14 条洞见、方法地图、效应数字)全部锚定 arXiv;知乎、Twitter/X、其它平台(web_search)三个渠道的内容按证据分级只能进入「跨渠道互证、误区清单、渠道分述」三个位置。结果是:三个渠道里一批<strong>与主线结论不冲突、但报告正文没有空间展开</strong>的整理成果,停留在渠道批次文件里,从主报告几乎看不到。</p>
-<p>本文把这部分内容按主题集中整理出来,作为主报告的伴读补充。口径如下:</p>
+<p>本文把这部分内容按主题集中整理出来,作为主报告的伴读补充。2026-06-12 起,主报告 v4 的 ⑧ 末已增补「三渠道逐卡核对」总览块并链接本文;逐卡明细与主题展开仍以本文为唯一载体。口径如下:</p>
 <ul>
 <li><strong>不改变任何证据等级</strong>:知乎仍是 D(线索)、Twitter 仍是 B*(追溯 pending)、web_search 仍是 B。本文只做「整理与呈现」,不做「升格」。</li>
 <li><strong>不新增结论</strong>:所有条目保留原渠道编号(ZHI-xx / HM-ZH-xx / tw-insight-xx / conclusion-xx / method-xx / WPI-xx / WHM-xx),可追溯回批次文件。</li>
@@ -99,7 +99,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <th>编号卡片数</th>
 <th>主线采用</th>
 <th>仅互证提及</th>
-<th>未采用</th>
+<th>未吸收</th>
 <th>本文重点补充的内容</th>
 </tr>
 </thead>
@@ -108,8 +108,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td>知乎</td>
 <td>11(ZHI-01~08 + HM-ZH-01~03)</td>
 <td>5</td>
-<td>5</td>
-<td>1</td>
+<td>6</td>
+<td>0</td>
 <td>误读样本库、工具筛选字段、本土工具线索(§4.6、§5、§2.3)</td>
 </tr>
 <tr>
@@ -117,20 +117,20 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td>19(8 insight + 5 conclusion + 6 method)</td>
 <td>13</td>
 <td>5</td>
-<td>1</td>
+<td>1*</td>
 <td>研究→工具落地映射、七层失败归因、安全优化门(§3、§4.2、§6)</td>
 </tr>
 <tr>
 <td>web_search</td>
 <td>14(WPI-01~10 + WHM-01~04)</td>
-<td>7</td>
+<td>7 + 1 升格候选</td>
 <td>6</td>
-<td>1*</td>
+<td>0</td>
 <td>八工具五维对标全表、阶段选型依据、字段级操作细节(§2.1、§2.2、§4)</td>
 </tr>
 </tbody>
 </table>
-<p>*web_search 的「未采用」主要不是卡片,而是表格类成果(八工具对标全表)未进报告正文。逐卡明细见 §7 附录;「主线采用 / 仅互证」的判定口径:主线采用 = 在 v4 正文或统一目录作为证据引用;仅互证 = 只出现在跨渠道互证、误区表、工具地图或渠道分述。</p>
+<p>*唯一「未吸收」的是 tw-insight-07:它在 v4 ⑧ 的 Twitter 分述里有一笔带过(「tw-07,D 级待深读」),但其思想未被 14 洞见或方法层吸收(见 §6.1)。判定口径:主线采用 = 在 v4 正文或统一目录作为证据引用(WHM-03 为 v4 ⑤ 的第 5 方法升格候选,单列);仅互证 = 只出现在跨渠道互证、误区表、工具地图或渠道分述。另注:web_search 渠道的缺口不在卡片而在表格类成果——八工具对标全表未进 v4 正文(④ 只收了三阶段结论与落地映射),全表见本文 §2.1。</p>
 <h2 id="2-a">2. 主题 A:工具与选型(报告只给三阶段结论,这里是完整版)</h2>
 <h3 id="21-web_search-b">2.1 工具生态五维对标全表(web_search 渠道,B 级)</h3>
 <p>主报告 ④ 只引用了「三阶段」结论;完整对标如下(原始出处:<a href="source_batches/web_search_platform_analysis_20260608.html">其它平台渠道分析</a>)。</p>
@@ -275,7 +275,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <h2 id="5-d-twitter">5. 主题 D:社区理解与传播样本(知乎 / Twitter 独有)</h2>
 <p>这部分对主报告的「误区清单」是原始样本库,对面向中文读者的<a href="popsci_prompt_evolution_story_20260610.html">科普文档</a>与 advisor 建议助手有直接复用价值:</p>
 <ul>
-<li><strong>DSPy 误读样本</strong>(ZHI-03,D,目前未被报告采用):中文社区普遍把 DSPy 简化成「自动改提示词工具」,忽略 signature / module / metric 都需手工定义;这是误区 #2 的中文传播实例。</li>
+<li><strong>DSPy 误读样本</strong>(ZHI-03,D,在 v4 误区表 #2 被引为来源,但样本库本身未展开):中文社区普遍把 DSPy 简化成「自动改提示词工具」,忽略 signature / module / metric 都需手工定义;这是误区 #2 的中文传播实例。</li>
 <li><strong>中文社区六大问题意识</strong>(知乎三层分析):从「找万能提示词模板」到「GEPA 被传成比 RL 更强」的具体传播路径样本,支撑 ZHI-02/03 的误区判定。</li>
 <li><strong>GEPA「35× rollout」简化误读</strong>(Twitter 分析):社媒把 GEPA 传成「效率提升 35 倍」,丢掉了 trace-aware reflection 的真实机制。</li>
 <li><strong>Lyra / 4-D 类「万能模板」与 eval-driven 主线弱相关</strong>(Twitter 分析):明确判定为不入库的边界样本。</li>
@@ -283,7 +283,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </ul>
 <h2 id="6">6. 张力点与未采用项(透明列出,均非观点冲突)</h2>
 <ol>
-<li><strong>tw-insight-07「安全监控 prompt 不能只优化平均分」</strong>(D,未采用):提出 audit budget、monitor failure、safety regression 三类指标,主张「安全边界不应被优化掉」。与 I-10(聚焦 tool schema)关注点错开而非矛盾。值得列为后续专项:主报告的 Safety / Eval / Observability 维度本就弱覆盖(知乎渠道该方向仅约 2 条候选)。</li>
+<li><strong>tw-insight-07「安全监控 prompt 不能只优化平均分」</strong>(D,44 卡中唯一未被洞见层吸收的卡,v4 ⑧ 分述仅一笔带过):提出 audit budget、monitor failure、safety regression 三类指标,主张「安全边界不应被优化掉」。与 I-10(聚焦 tool schema)关注点错开而非矛盾。已列入 v4 ⑨ 采集缺口的后续专项:主报告的 Safety / Eval / Observability 维度本就弱覆盖(知乎渠道该方向仅约 2 条候选)。</li>
 <li><strong>WPI-09 与报告 ④ 的轻微张力</strong>:报告只提工具类别名,未展开阶段选择标准——本文 §2.2 已补全,无需改动报告。</li>
 <li><strong>渠道自报的覆盖缺口</strong>(原文如此,非本文新发现):web_search 渠道真实失败案例 / 事故复盘少于覆盖矩阵要求(应 ≥5 源),Reddit / dev.to 零命中、x_api 未跑;知乎渠道 Safety 方向弱覆盖,不强行凑数。</li>
 </ol>
@@ -318,7 +318,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td>ZHI-03</td>
 <td>DSPy 应解释为 prompt-as-program,不是自动改写器</td>
 <td>D</td>
-<td>未采用</td>
+<td>仅互证(误区表 #2 来源)</td>
 <td>中文开发者简化误读样本(见 §5)</td>
 </tr>
 <tr>
@@ -437,7 +437,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td>tw-insight-07</td>
 <td>安全监控 prompt 不能只优化平均分</td>
 <td>D</td>
-<td>未采用</td>
+<td>未吸收(仅 ⑧ 分述一笔带过)</td>
 <td>安全优化门(见 §6.1)</td>
 </tr>
 <tr>
@@ -644,7 +644,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>采用状态对照的主报告版本:<a href="analysis_report_v4_20260611.html">综合论述报告 v4</a>与<a href="insight_method_catalog_20260609.html">统一目录</a>(2026-06-12 核对)。</li>
 <li>维护规则:当某条内容升级证据等级、回填追溯链或进入统一目录时,更新本文对应行的「采用状态」;若主报告出 v5 并吸收 §2/§3 的工具内容,本文相应章节可收缩为指针。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/platform_insights_supplement_20260612.md</code> 自动生成（2026-06-12 00:52 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/platform_insights_supplement_20260612.md</code> 自动生成（2026-06-12 01:01 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#0">0. 这份文档是什么、不是什么</a>
 <a class="lv2" href="#1">1. 三渠道采用状态总览</a>

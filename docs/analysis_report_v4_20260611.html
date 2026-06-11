@@ -318,7 +318,7 @@
       </div>
       <div class="block">
         <h4>诚实声明</h4>
-        <p>本项目尚无 C 级（本项目实验）证据；全部结论为文献与源码级。GitHub 渠道的正典 optimizer 仓库（gepa / PromptWizard / promptomatix 等 5 个）已登记<b>尚未审计</b>；Twitter 渠道 21 张洞见卡全部 pending 待回填追溯链；知乎渠道定位为线索层。详见 <a href="#coverage">⑨ 边界与缺口</a>。</p>
+        <p>本项目尚无 C 级（本项目实验）证据；全部结论为文献与源码级。GitHub 渠道的正典 optimizer 仓库（gepa / PromptWizard / promptomatix 等 5 个）已登记<b>尚未审计</b>；Twitter 渠道 21 张洞见卡全部 pending 待回填追溯链；知乎渠道定位为线索层。三个社媒/二手渠道全部 44 张编号卡已逐卡核对（2026-06-12）：<b>与主线无观点冲突</b>，未进主线的内容整理见 <a href="./platform_insights_supplement_20260612.html">其他平台内容补充辑</a> 与 ⑧ 末的核对块。详见 <a href="#coverage">⑨ 边界与缺口</a>。</p>
       </div>
     </section>
 
@@ -1311,7 +1311,7 @@ rollback_target</pre>
     <!-- ⑧ CHANNELS -->
     <section id="channels">
       <h2>⑧ 分渠道速览：每个渠道最新收敛了什么</h2>
-      <p class="section-intro">五个渠道按同一模板展开：角色定位、结论（带等级）、本版新吸收、覆盖与缺口、追溯链。渠道的详细产出已分别上提到 ①（方法地图，主要来自 arXiv）、④（工程落地，主要来自 web/Twitter/GitHub）和 ⑥（误区，主要来自知乎/Twitter）。</p>
+      <p class="section-intro">五个渠道按同一模板展开：角色定位、结论（带等级）、本版新吸收、覆盖与缺口、追溯链。渠道的详细产出已分别上提到 ①（方法地图，主要来自 arXiv）、④（工程落地，主要来自 web/Twitter/GitHub）和 ⑥（误区，主要来自知乎/Twitter）。本节末新增三个社媒/二手渠道全部 44 张卡的<b>逐卡核对</b>（2026-06-12）：每张卡进了主线、停在互证、还是没被吸收，一张表说清。</p>
       <div class="grid">
 
         <div class="chan arx">
@@ -1389,6 +1389,25 @@ rollback_target</pre>
         </div>
 
       </div>
+
+      <div class="block" id="channel-audit">
+        <h4>三渠道逐卡核对（2026-06-12）：社媒/二手渠道的内容都去哪了</h4>
+        <p>针对「报告是否几乎只用了 arXiv」的疑问，对知乎、Twitter/X、web_search 三个渠道全部 <b>44 张编号卡</b>逐卡与 14 条洞见、12 条误区做了对照核查。结果：<b>无一张卡与主线结论冲突</b>；主线采用 25 张（另有 1 张为 ⑤ 的升格候选 WHM-03），仅作跨渠道互证 17 张，仅在本节分述里一笔带过、未被洞见层吸收的只有 1 张（tw-insight-07）。</p>
+        <table class="matrix" aria-label="三渠道逐卡核对采用状态">
+          <thead><tr><th>渠道</th><th>编号卡</th><th>主线采用</th><th>仅互证</th><th>未吸收</th><th>未进主线的代表内容</th></tr></thead>
+          <tbody>
+            <tr><td><b>知乎</b></td><td>11</td><td>5</td><td>6</td><td>0</td><td>DSPy/GEPA 误读样本库（误区表只引了结论）、工具文章筛选字段清单、本土工具线索（Coze / Hermes / Manus）</td></tr>
+            <tr><td><b>Twitter/X</b></td><td>19</td><td>13</td><td>5</td><td>1</td><td>安全优化门（tw-insight-07）、七层失败归因的字段版（method-03，待入统一目录）</td></tr>
+            <tr><td><b>web_search</b></td><td>14</td><td>7 + 1 候选</td><td>6</td><td>0</td><td>九工具五维对标全表（④ 只收了三阶段结论）、trial history 最小字段、厂商材料「只采流程」四字段</td></tr>
+          </tbody>
+        </table>
+        <ul class="howto" style="margin-top:10px">
+          <li><b>高采用率 + 零冲突，说明渠道收敛是真实的：</b>约六成卡片进入主线、其余全部同向——社媒/二手渠道与文献层<b>独立</b>指向同一套纪律，这正是 ② 证据金字塔「多层互证」成立的前提。反过来，单渠道独有、其它层无人呼应的主张（如 tw-insight-07），恰好都停在了线索位——分级机制在按设计工作。</li>
+          <li><b>未进主线的内容多数是「粒度错位」，不是「质量不足」：</b>本报告承载原则与结论；字段级操作细节（候选账本字段、七层失败归因、来源快筛矩阵、厂商材料四流程字段）在报告粒度装不下。这部分已按主题集中到补充辑——动手做实验或搭闭环时直接抄那份。</li>
+          <li><b>核对暴露的唯一内容真空是 Safety/Eval 维度：</b>tw-insight-07「安全监控 prompt 不能只优化平均分」（audit budget / monitor failure / safety regression，D 级）是 44 张卡中唯一思想未被任何洞见或方法吸收的；知乎渠道 Safety 方向也仅约 2 条候选——跨渠道同时弱覆盖，已列入 ⑨ 采集缺口。</li>
+        </ul>
+        <p class="src">逐卡明细（每张卡的主张、等级、采用状态、独有信息点）与五主题整理（工具对标全表 / 研究→工具映射 / 字段级细节 / 误读样本库 / 张力点）见 <a href="./platform_insights_supplement_20260612.html">其他平台内容补充辑</a>。GitHub 渠道因已被 ④ 大量吸收，不在该补充辑范围。</p>
+      </div>
     </section>
 
     <!-- ⑨ COVERAGE & FRONTIER -->
@@ -1411,6 +1430,7 @@ rollback_target</pre>
             <li>真实失败案例 / 事故复盘<b>低于覆盖矩阵要求</b>（应 ≥5 源）；reddit / dev.to 0 命中、x_api 未跑——英文从业者失败故事维度未采集。</li>
             <li>Twitter 21 张卡 main_sources 仍指向外部 URL，<b>全部 pending</b>；进入最终报告前须回填仓库内追溯路径。</li>
             <li>知乎 99 候选多数停在 ZH-L1（D）；本项目尚无 C 级实验证据，14 条洞见均未在本项目复现。</li>
+            <li>Safety / Eval / Observability 维度<b>跨渠道弱覆盖</b>：tw-insight-07「安全监控 prompt 不能只优化平均分」（D）的思想未被 14 洞见吸收，知乎该方向仅约 2 条候选——⑧ 的 44 卡核对确认这是唯一的内容真空，列为后续专项。</li>
           </ul>
         </div>
         <div class="insight blue">
@@ -1487,6 +1507,7 @@ rollback_target</pre>
         <li>其它平台：<a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a></li>
         <li>Twitter/X：<a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a></li>
         <li>知乎：<a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a></li>
+        <li>跨渠道补充：<a href="./platform_insights_supplement_20260612.html">其他平台内容补充辑</a>（三渠道 44 卡逐卡采用状态 + 工具对标全表 / 落地映射 / 字段级细节 / 误读样本库 / 张力点五主题整理）</li>
         <li>来源总账：<a href="./source_inventory.md">source_inventory</a> · <a href="./industry_practices.md">industry_practices</a></li>
       </ul>
 
@@ -1512,7 +1533,7 @@ rollback_target</pre>
     </section>
 
     <footer>
-      <p>报告 v4 当前定位：在 v3 的 12 洞见与证据金字塔基础上，升级为「方法地图 → 工作流洞见（14 条）→ 工程落地 → 误区与边界」的四层综合论述。洞见编号 01–12 与统一目录 I-01..12 保持一致，13/14 为本版新增（统一目录 I-13/I-14、读者手册 Part G、advisor 知识库与全景脑图 G 组均已于 2026-06-11 同步完成）。所有标「示意」的 prompt/对话为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；recent-preprint 结论与非 arXiv 渠道的 pending 候选需独立复现/回填追溯后才能采信。实验用于验证、演示和校准这些经验，不作为项目主线本身。更新时间：2026-06-11。</p>
+      <p>报告 v4 当前定位：在 v3 的 12 洞见与证据金字塔基础上，升级为「方法地图 → 工作流洞见（14 条）→ 工程落地 → 误区与边界」的四层综合论述。洞见编号 01–12 与统一目录 I-01..12 保持一致，13/14 为本版新增（统一目录 I-13/I-14、读者手册 Part G、advisor 知识库与全景脑图 G 组均已于 2026-06-11 同步完成）。所有标「示意」的 prompt/对话为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；recent-preprint 结论与非 arXiv 渠道的 pending 候选需独立复现/回填追溯后才能采信。实验用于验证、演示和校准这些经验，不作为项目主线本身。更新时间：2026-06-12（⑧ 增补三渠道 44 卡逐卡核对与补充辑入口，正文结论与洞见编号未动）。</p>
     </footer>
   </div>
 </body>
