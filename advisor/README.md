@@ -2,7 +2,7 @@
 
 面向用户的、**扎根本仓库证据分级知识库**的 prompt 优化建议**对话助手**。聊天形式描述你的场景（任务类型、有无评测集、单/多 agent…），系统挑出适用的洞见，给出**分层、具体、可追溯到出处**的建议。
 
-这是 [跨渠道综合报告 v3](../docs/analysis_report_v3_20260610.html) 从「文档」走向「能用」的落地。
+这是 [跨渠道综合报告 v4](../docs/analysis_report_v4_20260611.html) 从「文档」走向「能用」的落地（v3 已冻结，洞见 01–12 两版同源同编号，13/14 为 v4 新增）。
 
 ## 两种运行形态（同一套前端、同一份知识库）
 
@@ -15,20 +15,20 @@
 
 ### 单入口三栏控制台
 
-页面是一个三栏布局，一个入口看全部内容：**左**＝知识库导览（文档/报告链接 + 分渠道详细报告（arXiv/GitHub/其它平台/Twitter/知乎，与 v3 报告证据金字塔同口径）+ 12 洞见分组 + 反模式 + 首批实验，点条目→右侧看详情）；**中**＝对话；**右**＝详情面板（默认证据等级图例 + 诚实声明；点左侧条目显示其全文卡；每次回答后显示「本轮回答引用的来源」，可点洞见再展开）。窄屏（<1180/<860）左右面板收为抽屉，由顶栏「📚 知识库 / 📄 详情」按钮唤出。
+页面是一个三栏布局，一个入口看全部内容：**左**＝知识库导览（文档/报告链接 + 分渠道详细报告（arXiv/GitHub/其它平台/Twitter/知乎，与主报告 v4 证据金字塔同口径）+ 14 洞见分组（A–G）+ 反模式 + 首批实验，点条目→右侧看详情）；**中**＝对话；**右**＝详情面板（默认证据等级图例 + 诚实声明；点左侧条目显示其全文卡；每次回答后显示「本轮回答引用的来源」，可点洞见再展开）。窄屏（<1180/<860）左右面板收为抽屉，由顶栏「📚 知识库 / 📄 详情」按钮唤出。
 
 ### 与阅读 skill 的集成（方案 A+B）
 
 三个阅读 skill（`read-paper` / `github-repo-audit` / `article-deep-read`）是知识库的**内容供应链**——它们把论文/仓库/文章读成带证据等级的笔记。问答**检索它们的产出，而不是运行时实时跑它们**（实时跑会破坏「只用 vetted 材料」的可追溯保证）：
 
-- **A 扩检索语料**：LLM 模式下，除 12 条洞见外，后端还检索 `corpus_index.json`（42 篇笔记）作补充扎根，回答可引用如 `[paper-vista-reflection-dark-2026·A]`，保留证据等级与出处。
+- **A 扩检索语料**：LLM 模式下，除 14 条洞见外，后端还检索 `corpus_index.json`（43 篇笔记）作补充扎根，回答可引用如 `[paper-vista-reflection-dark-2026·A]`，保留证据等级与出处。
 - **B 来源指引**：若洞见与笔记都未覆盖用户问到的具体来源，回答（及确定性模式的无命中提示）会建议用对应 skill 把它读进库。
 
 新读了笔记后，跑 `python advisor/build_corpus.py && python advisor/build_vectors.py` 重建语料与向量即可被问答检索到。
 
 ### 召回方式：向量优先，关键词兜底
 
-LLM 模式下后端默认用**语义向量召回**（`baai/bge-m3` via OpenRouter）：查询嵌入一次 → 与 `vector_index.json` 的 54 条归一化向量做余弦 → 取 top 洞见 + top 笔记（笔记设相似度下限 `ADVISOR_NOTE_FLOOR`，默认 0.30）。能命中关键词漏掉的语义相关项（如「死记硬背、泛化变差」→ 洞见06 过拟合）。**无向量索引或运行时嵌入失败 → 自动回退 bigram 关键词召回**；确定性（file://）模式始终用关键词。`/api/health` 的 `retrieval` 字段标明当前用的是 `vector` 还是 `keyword`。
+LLM 模式下后端默认用**语义向量召回**（`baai/bge-m3` via OpenRouter）：查询嵌入一次 → 与 `vector_index.json` 的 57 条归一化向量做余弦 → 取 top 洞见 + top 笔记（笔记设相似度下限 `ADVISOR_NOTE_FLOOR`，默认 0.30）。能命中关键词漏掉的语义相关项（如「死记硬背、泛化变差」→ 洞见06 过拟合）。**无向量索引或运行时嵌入失败 → 自动回退 bigram 关键词召回**；确定性（file://）模式始终用关键词。`/api/health` 的 `retrieval` 字段标明当前用的是 `vector` 还是 `keyword`。
 
 > 设计取舍与目标架构（扎根 LLM + 确定性兜底、先引导后自由、确定性内核先上线再叠 LLM）记录在项目记忆与 [CHANGELOG](../CHANGELOG.md)。
 
@@ -36,15 +36,15 @@ LLM 模式下后端默认用**语义向量召回**（`baai/bge-m3` via OpenRoute
 
 | 文件 | 作用 |
 |---|---|
-| `knowledge_base.json` | **单一事实来源**：12 条洞见（含触发规则、证据等级、真实数字与出处）、8 个引导问题、反模式表、首批实验。忠实摘自 v3 报告与读者向洞见手册。 |
+| `knowledge_base.json` | **单一事实来源**：14 条洞见（含触发规则、证据等级、真实数字与出处）、9 个引导问题、反模式表、首批实验。忠实摘自 v4 报告（01–12 与读者向洞见手册同源，13/14 为 v4 新增）。 |
 | `build_advisor.py` | 读 KB → 校验 → 把 KB 内联进自包含 `advisor.html`。 |
 | `advisor.html` | **生成产物**（勿手改）。对话式聊天页，可双击打开（确定性）或经后端托管（LLM 模式）。 |
 | `server.py` | **FastAPI 后端**（v2）。复用 `scripts/llm_clients.py` 调 OpenRouter；对知识库做检索增强、构造受约束系统提示；同源托管 `advisor.html` 与 `/api/chat`、`/api/chat/stream`（SSE 流式）、`/api/health`。 |
 | `requirements.txt` | 后端依赖（`fastapi`、`uvicorn`）。 |
 | `build_corpus.py` | 扫描阅读 skill 产出的 vetted 笔记（`docs/paper_notes/` A、`docs/github_repo_audit_notes/` B、`docs/industry_notes/` 取自标证据等级）→ 生成 `corpus_index.json`。 |
 | `corpus_index.json` | **生成产物**（勿手改）。LLM 模式的补充检索语料：每篇笔记的 id/类型/证据等级/一句话摘要/出处路径。 |
-| `build_vectors.py` | 把 12 洞见 + 42 笔记用 `baai/bge-m3`（OpenRouter）嵌入、L2 归一化 → 生成 `vector_index.json`，供语义向量召回。 |
-| `vector_index.json` | **生成产物**（勿手改）。54 条归一化向量（1024 维）+ 模型名；查询时嵌入一次问题做余弦排序。 |
+| `build_vectors.py` | 把 14 洞见 + 43 笔记用 `baai/bge-m3`（OpenRouter）嵌入、L2 归一化 → 生成 `vector_index.json`，供语义向量召回。 |
+| `vector_index.json` | **生成产物**（勿手改）。57 条归一化向量（1024 维）+ 模型名；查询时嵌入一次问题做余弦排序。 |
 | `test_advisor.py` | KB 完整性 + 出处文件存在 + 触发 DSL 的 golden 场景测试。 |
 | `test_server.py` | 后端检索 / 扎根提示构造 / 端点契约测试（LLM 调用打桩，不触网、不花钱）。 |
 

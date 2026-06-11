@@ -92,7 +92,7 @@ def test_health():
 
 
 def test_vector_index_loaded():
-    assert len(server.VECTORS) >= 50          # 12 洞见 + 42 笔记
+    assert len(server.VECTORS) >= 50          # 14 洞见 + 43 笔记
     assert server.VECTOR_MODEL                 # 如 baai/bge-m3
 
 

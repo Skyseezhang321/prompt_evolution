@@ -233,6 +233,7 @@ a:hover{color:var(--seal);}
 .card.A::before{background:var(--teal);} .card.B::before{background:var(--amber);}
 .card.C::before{background:var(--rose);} .card.D::before{background:var(--violet);}
 .card.E::before{background:var(--green);} .card.F::before{background:var(--slate);}
+.card.G::before{background:var(--seal);}
 .card .cid{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:7px;}
 .card .cid b{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
 .lvl{display:inline-flex;align-items:center;padding:1.5px 8px;border-radius:3px;
@@ -381,7 +382,7 @@ function adviceHTML(a){
   const hit = KB.insights.filter(i => matched(i, a));
   const hitIds = new Set(hit.map(i => i.id));
   const spine = KB.insights.filter(i => i.spine && !hitIds.has(i.id));
-  let h = `<div class="banner"><b>怎么读：</b>这是<b>确定性规则映射、非 LLM 生成</b>，每条都能追溯到出处。论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；12 洞见<b>均尚未在本项目复现</b>。</div>`;
+  let h = `<div class="banner"><b>怎么读：</b>这是<b>确定性规则映射、非 LLM 生成</b>，每条都能追溯到出处。论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；${KB.insights.length} 条洞见<b>均尚未在本项目复现</b>。</div>`;
   h += '<div class="summary"><h3>总诊断</h3>' + topFlags(a).map(x => `<div class="flag ${x.cls}">${x.t}</div>`).join('') + '</div>';
   if (hit.length){ h += '<div class="group-label">高度相关（按你的场景命中）</div>' + hit.map(card).join(''); }
   else { h += '<div class="flag ok">还没有强命中——可能你回答得还少。下面是无论什么场景都该过一遍的「通用纪律」，也可以直接打字追问。</div>'; }
@@ -392,7 +393,7 @@ function adviceHTML(a){
   const exps = rel.length ? rel : KB.experiments;
   h += '<div class="group-label">建议的首批最小验证</div>'
     + exps.map(e => `<div class="exp"><b>${e.priority}</b> · ${e.verify}（${e.insights.join('、')}）→ 最小任务：${e.task}；产出：${e.output}</div>`).join('');
-  h += '<div class="summary" style="margin-top:14px"><h3>记住这三句就够</h3><ul>' + KB.closing.map(c => `<li>${c}</li>`).join('') + '</ul></div>';
+  h += '<div class="summary" style="margin-top:14px"><h3>记住这几句就够</h3><ul>' + KB.closing.map(c => `<li>${c}</li>`).join('') + '</ul></div>';
   return h;
 }
 
@@ -575,8 +576,8 @@ async function init(){
 
 // ---------- 左右面板：知识库导览 + 详情/引用 ----------
 const RESOURCES = [
-  { t: '综合报告 v3（主报告）', p: 'docs/analysis_report_v3_20260610.html' },
-  { t: '读者向洞见手册（12 洞见）', p: 'docs/insight_handbook_20260609.html' },
+  { t: '综合报告 v4（主报告 · 四层结构）', p: 'docs/analysis_report_v4_20260611.html' },
+  { t: '读者向洞见手册（洞见 01–12 详解）', p: 'docs/insight_handbook_20260609.html' },
   { t: 'Insight / Method 候选清单', p: 'docs/insight_method_catalog_20260609.html' },
   { t: '全景脑图（渲染版）', p: 'docs/prompt_evolution_mindmap_20260610.html' },
   { t: '小说体科普《别让 AI 自己改作业》', p: 'docs/popsci_prompt_evolution_story_20260610.html' },
@@ -601,7 +602,7 @@ function rightDefault(){
     + '<p class="pan-p">左侧点开任意<b>洞见 / 反模式 / 实验</b>，详情显示在这里；中间直接打字提问，回答会标注引用并把<b>本轮来源</b>列在这里。</p>'
     + '<div class="pan-h">证据等级</div>'
     + '<p class="pan-p">' + lvlTag('A') + ' 论文/源码并已结构化笔记　' + lvlTag('B') + ' 多源工程实践　' + lvlTag('recent-preprint') + ' 2026 新稿待复现</p>'
-    + '<div class="banner" style="margin-top:10px">论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；12 洞见<b>均尚未在本项目复现</b>。</div>';
+    + '<div class="banner" style="margin-top:10px">论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；' + KB.insights.length + ' 条洞见<b>均尚未在本项目复现</b>。</div>';
 }
 function showInsight(id){ rightPanel.innerHTML = '<div class="pan-h">洞见详情</div>' + card(insightById[id]); openRightIfSmall(); rightPanel.scrollTop = 0; }
 function showAnti(p){
@@ -644,7 +645,7 @@ function renderLeft(){
   RESOURCES.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
   sec('分渠道详细报告');
   CHANNEL_REPORTS.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
-  sec('12 条核心洞见');
+  sec(KB.insights.length + ' 条核心洞见');
   let lastG = null;
   KB.insights.forEach(i => {
     if (i.group_title !== lastG){ const g = document.createElement('div'); g.className = 'nav-group'; g.textContent = i.group_title; leftPanel.appendChild(g); lastG = i.group_title; }

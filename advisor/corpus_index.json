@@ -193,6 +193,14 @@
       "path": "docs/paper_notes/paper-prompt-codebooks-2026.md"
     },
     {
+      "id": "paper-prompt-repetition-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "Prompt Repetition Improves Non-Reasoning LLMs",
+      "summary": "把整个 prompt 原样重复一遍（`<QUERY>` → `<QUERY><QUERY>`），在**关闭推理**时对 7 个主流模型 × 10 个 benchmark 配置取得 47/70 显著提升、0 显著下降（McNemar p<0.1），且**不增加输出长度和端到端时延**（重复只发生在可并行的 prefill 阶段）；机制解释是 causal LM 中靠前的 token 看不到靠后的 token，重复让每个 prompt token 都能注意到完整上下文。代价是输入 token 翻倍（论文未讨论计费成本——our-inference：按 token 计费的输入成本约 ×2）。**开启 step-by-step 推理后收益基本消失**（28 组里 5 胜 1 负 22 平），因为推理模型本来就常自发复述题目。",
+      "path": "docs/paper_notes/paper-prompt-repetition-2025.md"
+    },
+    {
       "id": "paper-promptbreeder-2023",
       "type": "paper",
       "level": "A",

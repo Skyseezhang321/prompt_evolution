@@ -141,6 +141,14 @@ GOLDEN = [
      {"idea_source": "social"}, {"I12"}),
     ("优化后变差 -> 体检 + 根因假设",
      {"tried_autopolish": "got_worse"}, {"I01", "I04"}),
+    ("非推理低延迟路径 -> 零成本结构变换",
+     {"runtime_mode": "non_reasoning"}, {"I13"}),
+    ("想直接跑优化器 -> 先试零成本变换当对照",
+     {"tried_autopolish": "planning_to"}, {"I13"}),
+    ("只能评委打分 -> judge 也要版本化",
+     {"has_evalset": "judge_only"}, {"I14"}),
+    ("优化后变差 -> optimizer/judge 版本化排查归因",
+     {"tried_autopolish": "got_worse"}, {"I14"}),
 ]
 
 

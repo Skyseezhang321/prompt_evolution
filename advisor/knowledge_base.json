@@ -3,9 +3,9 @@
     "name": "Prompt 优化建议系统 · 知识库",
     "version": "v1",
     "updated": "2026-06-11",
-    "derived_from": "docs/analysis_report_v3_20260610.html",
+    "derived_from": "docs/analysis_report_v4_20260611.html",
     "single_source_of_truth": true,
-    "notes": "12 条洞见忠实摘自跨渠道综合报告 v3 与读者向洞见手册。论文数字=该论文设置下成立，不等于在你的任务上成立；12 洞见均尚未在本项目复现验证；标 recent-preprint 的 2026 新稿需独立复现后才能采信。本 JSON 是单一事实来源：advisor.html 由 build_advisor.py 内联生成，第二阶段的扎根 LLM RAG 也复用同一份。",
+    "notes": "14 条洞见忠实摘自跨渠道综合报告 v4（01–12 与 v3 / 读者向洞见手册同源同编号，13/14 为 v4 新增）。论文数字=该论文设置下成立，不等于在你的任务上成立；14 洞见均尚未在本项目复现验证；标 recent-preprint 的 2026 新稿需独立复现后才能采信。本 JSON 是单一事实来源：advisor.html 由 build_advisor.py 内联生成，第二阶段的扎根 LLM RAG 也复用同一份。",
     "evidence_levels": {
       "A": "论文/官方文档/源码并已结构化笔记",
       "B": "多源重复出现的工程实践",
@@ -95,6 +95,17 @@
       ]
     },
     {
+      "id": "runtime_mode",
+      "title": "你的任务主要跑在「非推理」还是「推理」模式？",
+      "hint": "决定零成本的结构变换（如整段重复）适不适用。",
+      "type": "single",
+      "options": [
+        { "id": "non_reasoning", "label": "非推理 / 低延迟直出（分类、抽取、路由）" },
+        { "id": "reasoning", "label": "开启推理 / step-by-step（CoT、思考模式）" },
+        { "id": "unsure_mode", "label": "不确定 / 两种都有" }
+      ]
+    },
+    {
       "id": "idea_source",
       "title": "你手上这个“优化思路”主要是从哪来的？",
       "hint": "热度只说明传播，不说明有效。",
@@ -136,7 +147,7 @@
       ],
       "boundary": "靠多轮搜索才能发现组合结构的任务会被这个体检低估；阈值要按样本量和评分器重校准。",
       "cross_channel": "web_search 的 Optimizer Intake Checklist、Ask HN「AI evals 半成品」痛点、Twitter「先有测试集和评分器」、知乎「从技巧转向 eval 驱动」独立指向同一前置纪律。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I02",
@@ -164,7 +175,7 @@
       ],
       "boundary": "开放生成很重要，只是不适合作为「因果清晰」的首批验证。",
       "cross_channel": "Twitter 把「有留出集、可分类失败、有可解释中间过程」列为方法成立前提；web_search 也强调主观写作必须先定义 rubric。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I03",
@@ -187,11 +198,12 @@
       ],
       "evidence": [
         { "num": "+15.3% / 最高 +31%", "note": "ProTeGi：用失败样本生成文字「梯度」再改写，比原始 prompt", "level": "A", "source": "docs/paper_notes/paper-protegi-2023.md" },
-        { "num": "越改越差", "note": "同论文：让 AutoGPT 自己反馈改 6 轮，反而把起始 prompt 改差；文字「梯度」是比喻非真梯度", "level": "A", "source": "docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md" }
+        { "num": "越改越差", "note": "同论文：让 AutoGPT 自己反馈改 6 轮，反而把起始 prompt 改差；文字「梯度」是比喻非真梯度", "level": "A", "source": "docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md" },
+        { "num": "0.760 vs 0.110", "note": "SPEAR：给 optimizer 配 Python 工具做错误分析，难任务 kappa 大幅超 TextGrad——失败样本多时用代码聚合错误类型，别全塞长上下文", "level": "recent-preprint", "source": "docs/paper_notes/paper-spear-2026.md" }
       ],
       "boundary": "critique 会带评委偏见，必须绑定样本和指标，不能当成真实因果。",
       "cross_channel": "GitHub 的 compare-first rewrite 保留失败证据与 diff；Twitter「让优化器读失败过程而非只读最终分数」；web_search 与知乎都要求按失败 owner 分层诊断。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I04",
@@ -217,7 +229,7 @@
       ],
       "boundary": "开放写作任务根因模糊，多假设验证可能成本大于收益。",
       "cross_channel": "本条目前主要由 arXiv（VISTA）单层支撑，工程渠道尚无独立证据——属「机制清晰、待工程与本项目验证」，已列入 P1。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I05",
@@ -243,7 +255,7 @@
       ],
       "boundary": "搜索预算越大越容易 dev 过拟合，必须有 validation/test 分层兜底。",
       "cross_channel": "GitHub insight cards 把 candidate ledger 列为可复用结构；Twitter「metric+trace 约束下生成并选择候选」是同一原则的业界版。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I06",
@@ -269,7 +281,7 @@
       ],
       "boundary": "有些复杂任务确实需要更明确约束——标准是「必要、可追溯、不过拟合」，不是「短」。",
       "cross_channel": "GitHub 与 web_search 的反模式表都把「只看平均分上升」单列；web_search 另把「采信 vendor 提升 X%」列为同源风险。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I07",
@@ -294,11 +306,12 @@
       ],
       "evidence": [
         { "num": "+12.63", "note": "Teach Better：不改 instruction、只优化示例就达 72.92（PaLM 2 / BBH）", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md" },
-        { "num": "75.77 > 65.91", "note": "Gemini 1.0 Pro：优化示例 > 只优化 instruction；且精选 3 个 > 全部示例", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md" }
+        { "num": "75.77 > 65.91", "note": "Gemini 1.0 Pro：优化示例 > 只优化 instruction；且精选 3 个 > 全部示例", "level": "A", "source": "docs/paper_notes/paper-teach-better-show-smarter-2024.md" },
+        { "num": "5/7", "note": "MIPROv2：联合优化在 7 任务中 5 个最优；分诊规则——多数任务优化 demo 比优化 instruction 更管用，instruction 只在含隐藏条件规则的任务上决定性", "level": "A", "source": "docs/paper_notes/paper-miprov2-2024.md" }
       ],
       "boundary": "上下文紧张、示例分布偏、示例可能泄漏答案时，会伤害泛化。",
       "cross_channel": "主要由 arXiv（Teach Better、ERM、DistillPrompt）支撑；列入 P0 首批验证，正是为了防止把示例收益误记成指令收益。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I08",
@@ -325,7 +338,7 @@
       ],
       "boundary": "简单一次性任务不需要完整 manifest，研究/生产级才需要。",
       "cross_channel": "跨渠道支撑最厚的一条——GitHub frozen evaluator/data 隔离、12-factor-agents 的 context engineering、web_search version ledger、Twitter prompt_as_program_spec、知乎「先声明 mutable/frozen」全部独立指向同一结构。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I09",
@@ -350,7 +363,7 @@
       ],
       "boundary": "外部 API schema 不可改时，用 wrapper 文档或检索上下文承载局部规则。",
       "cross_channel": "web_search 登记的 Vertex AI「用 placeholder_to_content 锁定 prompt 段落」正是「区分可变/冻结段落」在生产工具里的具体实现。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I10",
@@ -376,7 +389,7 @@
       ],
       "boundary": "非平稳/安全敏感任务里，遗忘策略和 opt-out 比「记得多」更重要。",
       "cross_channel": "GitHub 的 ECC memory hooks / evaluator-RAG 原型把有界 memory + trace + verifier + playbook 做成结构参考；知乎社区误区「自进化=什么都记下来」从反面印证。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I11",
@@ -402,7 +415,7 @@
       ],
       "boundary": "agent 交互很弱时，联合优化成本可能不划算——先测耦合再决定。",
       "cross_channel": "本条主要由 arXiv（MASPO / MAPRO / Temporal-Structural Credit）单层支撑，工程渠道尚无独立证据；与洞见 08「先标责任部件、再局部改」属同一治理思路。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
     },
     {
       "id": "I12",
@@ -427,7 +440,63 @@
       ],
       "boundary": "自带代码、数据、可复现实验的高质量工程博客可升级为更强证据——看细节，不看平台。",
       "cross_channel": "Twitter（social_signal_triage / vendor_optimizer_evidence_filter）、web_search（source triage）、知乎（一手来源升格门）三个渠道独立收敛出同一道闸。",
-      "sources": ["docs/analysis_report_v3_20260610.html", "docs/insight_handbook_20260609.md"]
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/insight_handbook_20260609.md"]
+    },
+    {
+      "id": "I13",
+      "group": "G",
+      "group_title": "搜索之外：零成本变换与优化器自身",
+      "title": "花钱搜索之前，先试零成本的确定性结构变换",
+      "hook": "把整个 prompt 原样重复一遍，在非推理模式下跨 7 个模型 47 胜 0 负；而搜索式优化有近一半概率比 zero-shot 还差。",
+      "evidence_level": "recent-preprint",
+      "spine": false,
+      "triggers": [
+        { "any": [
+          { "q": "runtime_mode", "eq": "non_reasoning" },
+          { "q": "tried_autopolish", "eq": "planning_to" }
+        ] }
+      ],
+      "diagnosis": "causal attention 下 prompt 前段 token 看不到后段，「信息顺序」本身就是一个与措辞无关的失效来源。在花钱跑优化器之前，先试「把整段 prompt 原样重复一遍再发」（QUERY → QUERY+QUERY）这类零搜索成本的确定性变换：它不改任何语义、不增加输出长度和时延，却可能直接修复顺序敏感问题；任何优化器报告的增益都应先回答「打得过这个零智能变换吗」。",
+      "steps": [
+        "非推理、低延迟路径（分类 / 抽取 / 短 QA / 路由）先测整段重复 ×2；长上下文索引类任务试 ×3。",
+        "把重复变换纳入廉价 baseline 集：三臂对比 baseline / repetition×2 / padding。",
+        "检索结果拼接、表单转写这类信息顺序不可控的场景优先考虑。"
+      ],
+      "evidence": [
+        { "num": "47/70 胜 0 负", "note": "非推理模式，7 模型 × 10 配置（McNemar p<0.1）；Padding 对照无效→收益来自重复本身，不是变长", "level": "recent-preprint", "source": "docs/paper_notes/paper-prompt-repetition-2025.md" },
+        { "num": "21.33% → 97.33%", "note": "NameIndex 长上下文索引任务（Gemini 2.0 Flash-Lite）；开启 step-by-step 推理后 28 组仅 5 胜，基本无效", "level": "recent-preprint", "source": "docs/paper_notes/paper-prompt-repetition-2025.md" }
+      ],
+      "boundary": "推理模式下基本无效；按 token 计费时输入成本 ×2；只重复局部（如只重复问题）无增益；超长上下文盲目翻倍会推高 prefill 成本；被测为 2025 年初一代模型，新模型可能已内化复述行为（这正是本项目首批 A/B 要校准的）。",
+      "cross_channel": "目前为 arXiv 单层（Google Research，recent-preprint）；机制（causal attention 顺序敏感）与 Modular Prompt Optimization 的 section-local 编辑方向互证。与 Coin Flip 对照读：搜索出的措辞 model-specific 且脆弱，确定性结构变换却跨 7 模型 0 负（两者 setting 不同，此对比为推断）。",
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/paper_notes/paper-prompt-repetition-2025.md"]
+    },
+    {
+      "id": "I14",
+      "group": "G",
+      "group_title": "搜索之外：零成本变换与优化器自身",
+      "title": "optimizer 和 judge 本身，也是要版本化、可优化的部件",
+      "hook": "你用来「改 prompt 的那段 prompt」和「打分的那段 prompt」也在决定结果——不版本化它们，实验不可复现；从不审视它们，它们就是隐藏的天花板。",
+      "evidence_level": "B",
+      "spine": false,
+      "triggers": [
+        { "any": [
+          { "q": "has_evalset", "eq": "judge_only" },
+          { "q": "tried_autopolish", "eq": "got_worse" }
+        ] }
+      ],
+      "diagnosis": "运行记录里只存 task_prompt 的版本是不够的：optimizer_prompt / judge_prompt 没有版本号，三个月后「同样配置」跑不出同样结果，分数变化是任务 prompt 的功劳还是评委口味变了，无法归因。评测用 judge 与测试集一样默认 frozen；想优化 judge / optimizer 本身，在开发集上做，且与评测链路物理隔离。",
+      "steps": [
+        "给 optimizer_prompt、judge_prompt、meta_prompt 各建版本号，列入实验记录必填字段。",
+        "评测用 judge 默认 frozen；要改走独立评审与重校准，改后旧分数全部失效重跑。",
+        "想优化 judge / optimizer 本身？在开发集上做，且与评测链路物理隔离，否则就是 reward hacking。"
+      ],
+      "evidence": [
+        { "num": "71.89 → 76.38", "note": "SePO：把 prompt agent 的 system prompt 预训练自进化，五任务平均提升 4.49；去掉 self-improvement 掉回 74.94", "level": "recent-preprint", "source": "docs/paper_notes/paper-sepo-2026.md" },
+        { "num": "唯一自指", "note": "PromptBreeder：经典六法中唯一连 mutation prompt 一起进化（hyper-mutation）——「优化优化器」有论文级先例", "level": "A", "source": "docs/paper_notes/paper-promptbreeder-2023.md" }
+      ],
+      "boundary": "「优化 judge」与「frozen evaluator 防作弊」不冲突——被冻结的是评测链路的 judge，被优化的是开发期辅助 judge；两者必须物理分开，混用就是 reward hacking。",
+      "cross_channel": "web_search WPI-10「judge prompt 也应被版本化、评估和优化」；GitHub autoresearch 的 ledger 把优化器配置与结果绑定（GHI-05）；arXiv batch1 结论 C-03「optimizer 本身是需要版本化的 artifact」。三层独立指向同一治理对象。",
+      "sources": ["docs/analysis_report_v4_20260611.html", "docs/paper_notes/paper-sepo-2026.md"]
     }
   ],
 
@@ -438,11 +507,13 @@
     { "name": "允许 optimizer 改 evaluator / test", "why": "直接 reward hacking。", "trigger": "评分器/测试集进入可变搜索空间。", "defense": "frozen evaluator/data", "channels": "GitHub（autoresearch 审计）" },
     { "name": "raw memory 无界追加", "why": "继承坏反馈、隐私泄漏、跨任务污染。", "trigger": "把历史对话整体塞进上下文。", "defense": "洞见 10 过滤记忆 + 遗忘", "channels": "arXiv（ERM/MemAPO）·GitHub·知乎" },
     { "name": "用社媒热度 / vendor 百分比当证据", "why": "热度只说明传播；vendor 数字任务/指标/展示偏向叙事。", "trigger": "按转发数排序方法 / 引用无 dataset 披露的提升数字。", "defense": "洞见 12 source triage", "channels": "Twitter·web·知乎" },
+    { "name": "把「有测试」当「方法有效」", "why": "tests 常只覆盖安装/格式/配置；可审计 ≠ 有效。", "trigger": "用「仓库带 CI/测试」为方法效果背书。", "defense": "测试入口与效果主张分开登记", "channels": "GitHub（GHI-11）" },
     { "name": "多 agent 一起重写", "why": "无法判断哪个 role/round 引起变化。", "trigger": "失败后无差别更新所有 agent/轮。", "defense": "洞见 11 credit ledger", "channels": "arXiv（MASPO/MAPRO）·Twitter" },
     { "name": "工具调用只改 system prompt", "why": "tool schema/slot 错误无法被修复。", "trigger": "tool-use 失败只反复改 agent 指令。", "defense": "洞见 09 schema 联合优化", "channels": "arXiv（JTPRO）·web（Vertex 锁段）" }
   ],
 
   "experiments": [
+    { "priority": "P0", "verify": "零成本变换三臂 A/B（baseline / repetition×2 / padding）", "insights": ["I13"], "task": "50–100 条小评测集（分类或选择题）", "output": "建立零智能对照底线；校准 2026 代模型是否已内化复述行为" },
     { "priority": "P0", "verify": "优化前体检（headroom / noise floor）", "insights": ["I01", "I02"], "task": "100–300 条 JSON 抽取", "output": "判断有无优化空间，校准噪声地板" },
     { "priority": "P0", "verify": "示例优化 vs 指令优化", "insights": ["I07"], "task": "同一抽取任务", "output": "防止把示例收益误记成指令收益" },
     { "priority": "P1", "verify": "直接改写 vs 根因假设改写", "insights": ["I03", "I04"], "task": "失败清晰的抽取/分类", "output": "判断根因假设是否改善留出表现" },
@@ -452,7 +523,8 @@
   ],
 
   "closing": [
-    "优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱。",
+    "优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱；顺手先测零成本的结构变换当对照底线。",
+    "选方法看你的系统能产出什么反馈信号（标量 / 批评 / 轨迹）；有 dev set 先优化示例而不是指令。",
     "改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色。",
     "更长、更多、更复杂都不是默认的好，先证明它没带来过拟合、污染或归因困难。"
   ]
