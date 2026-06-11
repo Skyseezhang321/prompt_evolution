@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt 优化与自进化：跨渠道综合论述报告 v4</title>
+  <style>
+    :root {
+      --bg: #f5f7f5;
+      --paper: #ffffff;
+      --ink: #202329;
+      --muted: #626b74;
+      --line: #d8ded8;
+      --soft: #edf1ed;
+      --teal: #257d72;
+      --blue: #2d67ad;
+      --amber: #af6b08;
+      --rose: #b44a5c;
+      --violet: #665bb4;
+      --green: #4f7e33;
+      --slate: #46525f;
+      --shadow: 0 14px 34px rgba(29, 35, 40, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--blue); text-underline-offset: 3px; }
+
+    .page { max-width: 1180px; margin: 0 auto; padding: 28px 24px 72px; }
+
+    header, section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    header { overflow: hidden; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.28fr 0.72fr;
+      gap: 30px;
+      padding: 38px;
+      border-top: 6px solid var(--teal);
+    }
+
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1 { margin-bottom: 16px; font-size: 33px; line-height: 1.18; font-weight: 760; }
+    h2 { margin-bottom: 14px; font-size: 24px; line-height: 1.3; }
+    h3 { margin-bottom: 9px; font-size: 18px; line-height: 1.4; }
+    h4 { margin-bottom: 6px; font-size: 14px; color: var(--muted); font-weight: 720; letter-spacing: .02em; }
+
+    .lead { max-width: 780px; color: #3f464e; font-size: 18px; line-height: 1.75; }
+
+    .meta-grid { display: grid; gap: 10px; align-content: start; }
+    .meta { padding: 13px 14px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); }
+    .meta strong { display: block; margin-bottom: 3px; color: var(--muted); font-size: 13px; }
+    .meta span { display: block; font-weight: 640; line-height: 1.5; }
+
+    nav {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 16px 38px 22px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfa;
+    }
+    nav a {
+      display: inline-flex; align-items: center; min-height: 34px;
+      padding: 5px 11px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; color: var(--ink); font-size: 14px; text-decoration: none;
+    }
+    nav a:hover { border-color: var(--teal); color: var(--teal); }
+    nav a.to-advisor { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 650; }
+    nav a.to-advisor:hover { background: #1c655c; border-color: #1c655c; color: #fff; }
+
+    section { margin-top: 22px; padding: 30px; }
+    .section-intro { max-width: 940px; color: var(--muted); }
+
+    .part-label {
+      display: inline-block; margin-bottom: 6px; padding: 2px 10px;
+      border-radius: 999px; background: var(--soft); border: 1px solid var(--line);
+      color: var(--slate); font-size: 13px; font-weight: 700;
+    }
+
+    .grid { display: grid; gap: 18px; margin-top: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .insight {
+      padding: 20px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-top: 4px solid var(--teal);
+    }
+    .insight.blue { border-top-color: var(--blue); }
+    .insight.amber { border-top-color: var(--amber); }
+    .insight.rose { border-top-color: var(--rose); }
+    .insight.violet { border-top-color: var(--violet); }
+    .insight.green { border-top-color: var(--green); }
+    .insight.slate { border-top-color: var(--slate); }
+
+    .insight .badge-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .id-badge { font-size: 13px; font-weight: 760; color: var(--slate); }
+
+    .tag {
+      display: inline-flex; align-items: center; min-height: 24px;
+      padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px;
+      background: var(--soft); color: #3d444b; font-size: 12px; font-weight: 650;
+    }
+    .tag.a { background: #e8f3ee; border-color: #b8d9cb; color: #17614f; }
+    .tag.b { background: #e9f0fb; border-color: #b9caeb; color: #214f95; }
+    .tag.d { background: #f1eef8; border-color: #cfc6e8; color: #4f3f8f; }
+    .tag.pre { background: #fbe8ed; border-color: #e6b6c2; color: #96364c; }
+    .tag.new { background: #fff3df; border-color: #ecc98f; color: #7a5208; }
+
+    .hook { font-weight: 600; color: #2a2f36; }
+
+    .block { margin-top: 14px; }
+    .block h4 .em { color: var(--ink); }
+
+    .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+    .code {
+      margin: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px;
+      background: #fbfcfa; color: #2a2f36;
+      font-family: "Cascadia Code", "Consolas", "SFMono-Regular", monospace;
+      font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word;
+    }
+    .code.bad { border-left: 3px solid var(--rose); }
+    .code.good { border-left: 3px solid var(--green); }
+    .code .cmt { color: var(--rose); }
+
+    .stat { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
+    .stat .num {
+      flex: 1; min-width: 150px; padding: 10px 12px;
+      border: 1px solid var(--line); border-radius: 6px; background: #fff;
+    }
+    .stat .num b { display: block; font-size: 23px; line-height: 1.1; font-weight: 770; color: var(--ink); }
+    .stat .num small { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+
+    .howto { margin: 6px 0 0; padding-left: 18px; }
+    .howto li { margin-bottom: 4px; }
+
+    .src { margin-top: 8px; color: var(--muted); font-size: 12.5px; }
+    .limit { margin-top: 10px; padding: 9px 12px; border-left: 3px solid var(--amber); background: #fff8ea; border-radius: 6px; font-size: 13.5px; color: #5a4a2a; }
+    .corro { margin-top: 10px; padding: 9px 12px; border-left: 3px solid var(--teal); background: #eef6f3; border-radius: 6px; font-size: 13px; color: #234b44; }
+    .corro b { color: var(--teal); }
+
+    .callout { margin-top: 18px; padding: 16px 18px; border-left: 4px solid var(--blue); border-radius: var(--radius); background: #eef4fc; }
+
+    .matrix { width: 100%; border: 1px solid var(--line); border-collapse: collapse; border-radius: var(--radius); overflow: hidden; margin-top: 16px; }
+    .matrix th, .matrix td { padding: 11px 13px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-size: 13.5px; }
+    .matrix th { background: #eef1ed; color: #3d444b; font-weight: 720; }
+    .matrix tr:last-child td { border-bottom: 0; }
+    .matrix code { font-size: 12px; }
+    .matrix td.hi { background: #e8f3ee; font-weight: 700; }
+
+    /* four-layer overview */
+    .layerbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+    .layerbar .lb {
+      padding: 14px 15px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-top: 4px solid var(--teal); font-size: 13.5px;
+    }
+    .layerbar .lb b { display: block; margin-bottom: 4px; font-size: 15px; }
+    .layerbar .lb small { color: var(--muted); }
+    .layerbar .lb.l2 { border-top-color: var(--blue); }
+    .layerbar .lb.l3 { border-top-color: var(--amber); }
+    .layerbar .lb.l4 { border-top-color: var(--rose); }
+
+    /* decision guide */
+    .flow { margin: 10px 0 0; padding-left: 22px; counter-reset: step; }
+    .flow li { margin-bottom: 9px; }
+    .flow li b { color: var(--ink); }
+
+    /* evidence pyramid */
+    .pyramid { display: flex; flex-direction: column; align-items: center; gap: 7px; margin: 18px 0 6px; }
+    .pyramid .lvl {
+      color: #fff; border-radius: 6px; padding: 11px 16px; text-align: center;
+      font-weight: 650; font-size: 14px; line-height: 1.4; box-shadow: var(--shadow);
+    }
+    .pyramid .lvl small { display: block; font-weight: 500; font-size: 12px; opacity: .92; }
+
+    /* channel cards */
+    .chan {
+      padding: 22px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-left: 6px solid var(--blue);
+    }
+    .chan.gh { border-left-color: var(--green); }
+    .chan.web { border-left-color: var(--amber); }
+    .chan.tw { border-left-color: var(--blue); }
+    .chan.zh { border-left-color: var(--rose); }
+    .chan.arx { border-left-color: var(--teal); }
+    .chan h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+    .chan .role { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+    .chan .field { margin-top: 13px; }
+    .chan .field h4 { margin-bottom: 4px; }
+    .chan ul { margin: 4px 0 0; padding-left: 18px; }
+    .chan li { margin-bottom: 4px; font-size: 14px; }
+
+    .source-list { columns: 2; column-gap: 34px; padding-left: 18px; }
+    .source-list li { break-inside: avoid; margin-bottom: 8px; }
+
+    footer { margin-top: 22px; padding: 18px 4px 0; color: var(--muted); font-size: 13.5px; }
+
+    @media (max-width: 920px) {
+      .hero, .grid.two { grid-template-columns: 1fr; }
+      .ba { grid-template-columns: 1fr; }
+      .source-list { columns: 1; }
+      .layerbar { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 14px 12px 42px; }
+      .hero, nav, section { padding: 22px; }
+      h1 { font-size: 26px; }
+      .matrix { display: block; overflow-x: auto; }
+      .layerbar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="hero">
+        <div>
+          <h1>Prompt 优化与自进化：跨渠道综合论述报告 v4</h1>
+          <p class="lead">这一版把 v3 固化的「12 条洞见单层结构」升级为<strong>四层知识体系</strong>：<b>方法地图</b>（这个领域有什么方法、我该怎么选）→ <b>工作流洞见</b>（动手优化时该守什么纪律，12 条扩到 14 条）→ <b>工程落地</b>（在生产里怎么把优化运营起来）→ <b>误区与边界</b>（怎么不被热度、旧框架和自己骗）。每一层都直接长在五个渠道（arXiv / GitHub / 其它平台 / Twitter/X / 知乎）最新一轮深挖的产出上。</p>
+          <div class="badge-row" style="margin-top:12px">
+            <span class="tag new">方法地图与选型导引</span>
+            <span class="tag a">14 条洞见（+2 新增）</span>
+            <span class="tag b">工程落地层</span>
+            <span class="tag d">12 条误区澄清</span>
+            <span class="tag pre">范围边界 + frontier 缺口</span>
+          </div>
+          <div class="layerbar">
+            <div class="lb"><b>① 方法地图</b><small>七法演进谱系、六法同框对比、选型导引、7 方法簇</small></div>
+            <div class="lb l2"><b>③ 工作流洞见</b><small>14 条纪律，按一次优化的动作顺序组织（A–G）</small></div>
+            <div class="lb l3"><b>④ 工程落地</b><small>五元组、工具成熟度分层、研究→工具映射、发布门</small></div>
+            <div class="lb l4"><b>⑥⑨ 误区与边界</b><small>12 条误读澄清、范围声明、frontier 缺口</small></div>
+          </div>
+        </div>
+        <div class="meta-grid">
+          <div class="meta">
+            <strong>一句话总结论</strong>
+            <span>自动优化 prompt 不是「让模型把 prompt 改好」，而是一套「先判断值不值得 → 选对方法与部件 → 把失败变成可编辑证据 → 多候选 + 验证集筛选 → 带版本与回滚地运营」的工程纪律。</span>
+          </div>
+          <div class="meta">
+            <strong>怎么读这里的证据</strong>
+            <span>A=论文/官方文档/源码并已结构化笔记；B=多源重复出现的工程实践；C=本项目实验（暂无）；D=综合推测/线索。论文数字=该论文设置下成立，不等于在你的任务上成立；标「示意」的 prompt/对话为讲解虚构。</span>
+          </div>
+          <div class="meta">
+            <strong>本项目验证状态</strong>
+            <span>截至 2026-06-11：37 篇论文深读笔记、4 个 GitHub 仓库源码审计。14 条洞见均「尚未在本项目复现验证」；非 arXiv 渠道部分候选仍 pending；2026 新稿（recent-preprint）需独立复现后才能采信。</span>
+          </div>
+        </div>
+      </div>
+      <nav aria-label="页面导航">
+        <a class="to-advisor" href="../advisor/advisor.html">💬 对话助手主页</a>
+        <a href="#summary">⓪ 执行摘要</a>
+        <a href="#map">① 方法地图</a>
+        <a href="#pyramid">② 证据金字塔</a>
+        <a href="#partA">A 值不值得</a>
+        <a href="#partB">B 从失败学</a>
+        <a href="#partC">C 别被骗</a>
+        <a href="#partD">D 改什么</a>
+        <a href="#partE">E 记忆/多agent</a>
+        <a href="#partF">F 听来的</a>
+        <a href="#partG">G 新增</a>
+        <a href="#engineering">④ 工程落地</a>
+        <a href="#methods">⑤ 可复用方法</a>
+        <a href="#myths">⑥ 误区澄清</a>
+        <a href="#risks">⑦ 反模式/风险</a>
+        <a href="#channels">⑧ 分渠道速览</a>
+        <a href="#coverage">⑨ 边界与缺口</a>
+        <a href="#roadmap">⑩ 首批验证</a>
+        <a href="#sources">⑪ 证据索引</a>
+      </nav>
+    </header>
+
+    <section>
+      <div class="callout">
+        <strong>这版相对 v3 改了什么：</strong> v3 的「6 组 12 条」框架在 v2（2026-06-09）时代定型；此后各渠道的持续深挖产出了这个框架装不下的整层内容。v4 的改动：<b>①</b> 新增「执行摘要」与「方法地图」（七法演进谱系、六法同框对比、选型导引、7 方法簇）——回答 v3 没回答的「方法从哪来、彼此什么关系、我该选哪个」；<b>②</b> 洞见从 12 条扩到 14 条（13 零成本结构变换、14 optimizer/judge 也要版本化），<b>旧编号 01–12 含义不变</b>（读者手册、对话助手、统一目录都依赖这套编号），4 条旧洞见证据升级（03 +SPEAR 代码工具诊断、06 升为主动 hygiene 指标、07 +MIPROv2 分诊规则、11 +时间维度）；<b>③</b> 新增「工程落地」层（五元组、工具成熟度分层、研究→工具落地映射、发布门与账本）与「误区澄清」12 条；<b>④</b> 覆盖一节升级为「范围边界 + frontier 缺口」的显式声明，证据索引新增 repo↔paper 对照表。<a href="./analysis_report_v3_20260610.html">v3</a>、<a href="./analysis_report_v2_20260609.html">v2</a> 与 <a href="./analysis_report_v1_20260608.html">v1</a> 保留作对照与回滚。
+      </div>
+    </section>
+
+    <!-- ⓪ EXECUTIVE SUMMARY -->
+    <section id="summary">
+      <h2>⓪ 执行摘要</h2>
+      <p class="section-intro">一页读完本报告的主要判断。每条都能在正文找到证据链；证据等级标注见页眉说明。</p>
+      <div class="block">
+        <h4>总判断</h4>
+        <p>截至 2026-06，自动 prompt 优化（APO）领域已经从「找一个更聪明的改写算法」收敛到「建一套可审计的优化工程」：方法侧的真正分类轴是<b>反馈信号的信息密度</b>（标量 → 批评 → 完整轨迹），工程侧的入场券是<b>五件套</b>（prompt + dataset + metric + trace + constraints）。算法和基础设施缺一不可——论文给的是机制和数字，生产里跑得起来靠的是版本、trace、验证集隔离和回滚。</p>
+      </div>
+      <div class="block">
+        <h4>五个最重要的可执行判断</h4>
+        <ol class="howto">
+          <li><b>优化之前先体检。</b>某些设置下 49% 的优化运行比 zero-shot 还差（Coin Flip，72 次运行，Haiku 4.5）；唯一让 6 种方法全部正收益的是结构化 JSON 输出任务。headroom 没超过噪声地板就别花钱。<span class="tag a">A</span></li>
+          <li><b>有 dev set 时，先优化示例，不是指令。</b>MIPROv2 的分诊结论：多数任务优化 bootstrapped demonstration 比优化 instruction 更管用，联合优化在 7 任务中 5 个最优；instruction 优化只在「有隐藏条件规则」的任务上决定性。<span class="tag a">A</span></li>
+          <li><b>反馈信息密度决定样本效率。</b>从标量（APE/OPRO）到失败批评（ProTeGi/TextGrad）到完整执行轨迹（GEPA），单位 rollout 榨取的信息持续上升——GEPA 用约 3,936 rollouts 超过用 24,000 rollouts 的 GRPO（RL）。选方法先看你的系统能产出什么信号。<span class="tag a">A</span></li>
+          <li><b>零成本结构变换是新的对照底线。</b>把整个 prompt 原样重复一遍，在非推理模式下跨 7 个模型 47/70 显著胜、0 显著负——任何搜索式优化的增益都应先回答「打得过这个零智能变换吗」。<span class="tag a">A</span><span class="tag pre">recent</span></li>
+          <li><b>没有五件套就没有优化闭环。</b>optimizer 的输入是 <code>prompt + dataset + metric + trace + constraints</code>，不是一段待润色的文本；缺 eval 时所谓优化只是风格化改写。这是四个工程渠道独立收敛的同一结论。<span class="tag b">B</span></li>
+        </ol>
+      </div>
+      <div class="block">
+        <h4>最大风险</h4>
+        <p>prompt 膨胀式过拟合（放任时 TextGrad 把 prompt 撑到 14.7 倍长、86% 在偷改任务定义）、reward hacking（optimizer 摸到 evaluator）、记忆污染（未过滤历史造成跨任务负迁移）、vendor 数字幻觉（任务/指标/展示偏向叙事）、以及<b>跨模型脆弱性</b>——同一套方法在 Haiku 上全胜的配置，换到 Nova Lite 上 24 个均值里 14 个低于 zero-shot。</p>
+      </div>
+      <div class="block">
+        <h4>诚实声明</h4>
+        <p>本项目尚无 C 级（本项目实验）证据；全部结论为文献与源码级。GitHub 渠道的正典 optimizer 仓库（gepa / PromptWizard / promptomatix 等 5 个）已登记<b>尚未审计</b>；Twitter 渠道 21 张洞见卡全部 pending 待回填追溯链；知乎渠道定位为线索层。详见 <a href="#coverage">⑨ 边界与缺口</a>。</p>
+      </div>
+    </section>
+
+    <!-- ① METHOD MAP -->
+    <section id="map">
+      <h2>① 方法地图：七法演进、同框对比与怎么选</h2>
+      <p class="section-intro">v3 只给了「该守什么纪律」，没回答「这个领域有什么方法、彼此什么关系、我该选哪个」。这一节补上：先看主线七法怎么一步步演进，再看唯一可公平横比的同框架数字，最后给一条选型导引。完整叙述见 <a href="./apo_seven_methods_primer_20260611.html">APO 七法主线详解</a> 与 <a href="./classic_optimizer_methods_comparison_20260610.html">经典六法横向对比</a>。</p>
+
+      <div class="block">
+        <h4>主线七法演进谱系（基线锚点，非排行榜）</h4>
+        <table class="matrix" aria-label="七法演进谱系">
+          <thead><tr><th>方法</th><th>年份</th><th>反馈信号</th><th>优化对象</th><th>信号家族</th><th>留下的洞（被谁补上）</th></tr></thead>
+          <tbody>
+            <tr><td><b>APE</b></td><td>2022</td><td>小训练集标量分</td><td>单条 instruction</td><td>标量</td><td>不利用失败信息、搜索近乎盲目 → ProTeGi</td></tr>
+            <tr><td><b>ProTeGi</b></td><td>2023</td><td>失败样本的自然语言批评</td><td>单条 prompt</td><td>critique</td><td>约 3 步达峰即过拟合；批评可能误导 → TextGrad / VISTA</td></tr>
+            <tr><td><b>OPRO</b></td><td>2023</td><td>历史 (prompt, 分数) 升序轨迹</td><td>单条 instruction</td><td>标量</td><td>不知道为什么失败；最优 prompt 高度 model-specific → critique/trace 线</td></tr>
+            <tr><td><b>DSPy</b></td><td>2023</td><td>metric pass/fail（trace 用于筛 demo）</td><td>多模块程序，主要是 demonstration</td><td>标量（含 trace 筛选）</td><td>instruction 层没有自动优化 → MIPROv2</td></tr>
+            <tr><td><b>TextGrad</b></td><td>2024</td><td>逐节点反传的文本批评</td><td>任意文本变量</td><td>critique</td><td>「梯度」是隐喻非真梯度；成本高、约束堆多后不可靠 → GEPA / TextReg</td></tr>
+            <tr><td><b>MIPROv2</b></td><td>2024</td><td>metric + 贝叶斯代理模型</td><td>各模块 instruction × demo 组合</td><td>标量</td><td>推不出隐藏规则、只能在固定候选集里选 → GEPA</td></tr>
+            <tr><td><b>GEPA</b></td><td>2025</td><td>完整 execution/evaluation trace 的反思</td><td>多模块 prompt 池（Pareto 前沿）</td><td>trace</td><td>AIME-2025 仍低于 GRPO；优势依赖 feedback 质量</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>两条暗线：</strong> ① <b>反馈信息密度决定样本效率</b>——标量 → 批评 → 轨迹，单位 rollout 被榨取的信息持续上升，直接对应 GEPA 对 GRPO 最高省 35 倍 rollouts 的主张；评估方法时按「标量 / critique / trace」三层分类，不要混为「LLM 改 prompt」。② <b>优化对象的升维依赖程序抽象</b>——从单指令到指令+演示到多模块系统，DSPy 的 signature/module/编译抽象是底座，MIPROv2 与 GEPA 都长在其上；任何结果都必须连同程序结构与优化策略一起记录才可复现。
+        </div>
+      </div>
+
+      <div class="block">
+        <h4>同框对比：唯一可公平横比的数字（Coin Flip 同框架，LLM-judge 0–100）</h4>
+        <table class="matrix" aria-label="六法同框对比">
+          <thead><tr><th>Claude Haiku 4.5</th><th>Zero-Shot</th><th>APE</th><th>OPRO</th><th>EvoPrompt</th><th>PromptBreeder</th><th>DSPy-style</th><th>PROSE</th></tr></thead>
+          <tbody>
+            <tr><td><b>HelpSteer2（结构化 JSON）</b></td><td>68.0</td><td>69.3</td><td>73.8</td><td class="hi">74.8</td><td>74.6</td><td>69.8</td><td>74.4</td></tr>
+            <tr><td><b>其余三任务（Feedback-Bench / WildBench / XSum）</b></td><td colspan="7">平均增益为负或近零；6 法彼此差异统计上不显著</td></tr>
+          </tbody>
+        </table>
+        <ul class="howto" style="margin-top:10px">
+          <li><b>全表只有 HelpSteer2 上每个 optimizer 都超过 zero-shot</b>——再次印证「结构化、可客观打分的任务才有稳定 headroom」（洞见 02）。</li>
+          <li><b>跨模型脆弱性</b>：同一框架换到 Amazon Nova Lite，24 个 method×task 均值中 14 个低于 zero-shot；Haiku 上 HelpSteer2 的 6/6 全胜崩到 1/6。「在模型 X 上有效」不可默认迁移。</li>
+          <li><b>PROSE 是负结果</b>：在 fitness 里加风险项（mean+Sharpe+DRO）没有可测的稳健性优势——不稳定来自上游（headroom 与任务耦合），不是选择信号不够聪明。</li>
+          <li><b>跨论文原始分数不可横比</b>（任务、模型、年代都不同）；任何「X 比 Y 强」的断言必须绑定同一模型+任务+预算。</li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h4>选型导引：六个问题问完再选方法</h4>
+        <ol class="flow">
+          <li><b>有留出集和评分器吗？</b>没有 → 先别选方法，去凑五件套（<a href="#engineering">④ 工程落地</a>）；缺 eval 时任何「优化」都只是风格化改写。</li>
+          <li><b>headroom 体检过了吗？</b>用 HM-01 跑体检（洞见 01）；headroom 没超过噪声地板 → 停。顺手先测<b>零成本结构变换</b>（洞见 13）当对照底线。</li>
+          <li><b>有 dev set？</b>先跑示例优化基线（HM-03）：多数任务它比改 instruction 更有效（MIPROv2 / Teach Better）。</li>
+          <li><b>任务有「隐藏条件规则、少量样例表达不了」？</b>是 → 才值得上 instruction 优化（MIPROv2 分诊结论）；否则示例 + 轻量指令微调即可。</li>
+          <li><b>系统能产出可解释 trace（agent / 工具 / 多模块）？</b>能 → 反思式方法（GEPA 类）才有信息密度优势；只能给标量分 → 优势收窄，老老实实用 APE/OPRO 风格搜索。</li>
+          <li><b>复杂方法打得过下限基线吗？</b>任何新方法的对照组至少含 APE（propose-then-select）与 OPRO（标量轨迹）；打不过就不值得引入。</li>
+        </ol>
+      </div>
+
+      <div class="block">
+        <h4>完整版图：7 个方法簇（taxonomy）</h4>
+        <table class="matrix" aria-label="方法簇">
+          <thead><tr><th>簇</th><th>代表方法</th><th>一句话</th></tr></thead>
+          <tbody>
+            <tr><td>① 经典 APO 与基线锚点</td><td>APE → ProTeGi → OPRO → EvoPrompt → PromptBreeder</td><td>生成-筛选与早期搜索范式，任何实验的下限对照</td></tr>
+            <tr><td>② Textual gradient 与反思式优化</td><td>ProTeGi → TextGrad → CriSPO → Modular PO → TextReg → VISTA</td><td>用自然语言批评驱动改写；「梯度」是比喻，须配根因假设与正则化</td></tr>
+            <tr><td>③ 进化、自指与记忆型自进化</td><td>PromptBreeder → GEPA → MemAPO → SePO → Prompt Codebooks</td><td>种群 + 反思 + 记忆；只有过滤后的记忆有用</td></tr>
+            <tr><td>④ Prompt-as-Program 与框架化工具</td><td>DSPy → AutoPDL → Promptomatix → promptolution</td><td>把 prompt 升维成可编译的程序对象</td></tr>
+            <tr><td>⑤ Agent / 多 agent / 工具链优化</td><td>AutoPDL → SPEAR → MASPO → MAPRO → JTPRO</td><td>优化对象扩展到 pattern、tool schema 与多 agent credit</td></tr>
+            <tr><td>⑥ 偏好、judge 与治理</td><td>PrefPO → LLM Prompt Duel → prompt-opt jailbreaking 研究</td><td>低标签信号、judge 卫生与安全边界</td></tr>
+            <tr><td>⑦ 应用型 APO 与经验研究</td><td>KG Construction → AutoMedPrompt → ArchEHR-QA → APRIL</td><td>领域实证：收益依赖 schema 复杂度与任务结构</td></tr>
+          </tbody>
+        </table>
+        <p class="src">7 簇完整矩阵与逐篇映射见 <a href="./arxiv_top80_taxonomy.html">arXiv top80 taxonomy</a>；外部完整性校验（对照 3 篇综述，结论：声明范围内无整块遗漏）见 <a href="./arxiv_taxonomy_completeness_check_20260610.md">taxonomy 完整性校验</a>。</p>
+      </div>
+    </section>
+
+    <!-- ② EVIDENCE PYRAMID -->
+    <section id="pyramid">
+      <h2>② 跨渠道证据金字塔：证据是怎么叠起来的</h2>
+      <p class="section-intro">五个渠道不是平行的「信息源」，而是<strong>不同强度、不同职责的证据层</strong>。越靠下越接近一手机制证据（arXiv），越靠上越偏传播信号（知乎）。一条洞见越能被多层独立支撑，越值得采信；任何单层、尤其是上层（社媒/二手）都不足以单独支撑强结论。</p>
+
+      <div class="pyramid">
+        <div class="lvl" style="background:var(--rose); width:46%">知乎 · D（线索）<small>中文社区理解、误区集中点、问题框定 —— 只发现，不证明</small></div>
+        <div class="lvl" style="background:var(--blue); width:60%">Twitter/X · B*（待验证）<small>采纳信号、研究→工具落地映射、去炒作边界 —— 追溯链 pending</small></div>
+        <div class="lvl" style="background:var(--amber); width:74%">其它平台 / web_search · B<small>生产工具闭环（intake→version→rollback→observability）、治理是前提</small></div>
+        <div class="lvl" style="background:var(--green); width:87%">GitHub 源码 · B（部分 D）<small>工程结构、frozen evaluator、artifact ledger、compare-first rewrite</small></div>
+        <div class="lvl" style="background:var(--teal); width:100%">arXiv 论文 · A<small>方法机制、消融、各论文设置下的效应数字（地基层，最强且最可追溯）</small></div>
+      </div>
+
+      <table class="matrix" aria-label="跨渠道证据矩阵">
+        <thead><tr><th>渠道</th><th>等级</th><th>它能证明什么</th><th>它不能证明什么</th><th>核心文件</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>arXiv 论文</b></td><td><span class="tag a">A</span></td>
+            <td>方法机制、消融、各论文设置下的效应数字；方法分类与演进谱系（本版 ① 整层的地基）。</td>
+            <td>论文数字不等于在你的任务上成立；2026 新稿需独立复现。</td>
+            <td><a href="./apo_seven_methods_primer_20260611.html">七法 primer</a> · <a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.html">taxonomy</a></td>
+          </tr>
+          <tr>
+            <td><b>GitHub 源码</b></td><td><span class="tag b">B</span> <span class="tag d">部分 D</span></td>
+            <td>工程结构与治理：frozen evaluator/data 隔离、artifact ledger、compare-first rewrite、有界 memory 生命周期（本版 ④ 的源码级证据）。</td>
+            <td>不能单独证明某 optimizer 稳定提分（受限召回 + core4-only 审计的选择偏差）。</td>
+            <td><a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.html">insight_cards</a></td>
+          </tr>
+          <tr>
+            <td><b>其它平台 / web_search</b></td><td><span class="tag b">B</span></td>
+            <td>生产工程闭环地图（Arize / Promptfoo / Langfuse / OPIK / LangSmith）：优化必须绑定数据集→版本→回滚→可观测；治理是前提而非事后。</td>
+            <td>vendor 提升百分比不可直接迁移，只迁移流程字段；二手转贴只算 pointer。</td>
+            <td><a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a></td>
+          </tr>
+          <tr>
+            <td><b>Twitter/X</b></td><td><span class="tag b">B*</span> <span class="tag pre">待验证</span></td>
+            <td>采纳信号与「研究方法→工具集成」的落地映射（本版 ④ 映射表的主要来源）；最常见误读边界。</td>
+            <td>社媒热度≠有效；21 张候选卡 main_sources 仍指向外部 URL，全部 pending。</td>
+            <td><a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a></td>
+          </tr>
+          <tr>
+            <td><b>知乎</b></td><td><span class="tag d">D</span> <span class="tag">线索</span></td>
+            <td>中文社区理解与误区集中点（本版 ⑥ 误区清单的主要来源）；把研究问题重新框定为工程关切。</td>
+            <td>不做效应证明、不替代 baseline；ZH-L1→D 表示「发现，非证明」。</td>
+            <td><a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>读金字塔的方法：</strong> 把 arXiv 当「机制与数字」、GitHub 当「在代码里长什么样」、其它平台当「在生产里怎么落地治理」、Twitter 当「业界在用什么、误读在哪」、知乎当「中文社区怎么理解」。当一条洞见同时被 arXiv（A）+ 至少一个工程渠道（B）独立支撑时，它在本报告里才被当作较强候选；只在上两层出现的，一律标为线索。
+      </div>
+    </section>
+
+    <!-- ③ PART A -->
+    <section id="partA">
+      <span class="part-label">③ 工作流洞见 Part A（14 条主干 · 编号与统一目录 I-01..12 对应，13/14 为本版新增）</span>
+      <h2>动手之前：这个任务值不值得优化？</h2>
+      <p class="section-intro">最容易被跳过、也最省钱的一步：在花钱跑优化器之前，先确认有没有提升空间、以及任务类型能不能让你看清效果。</p>
+      <div class="grid two">
+
+        <div class="insight">
+          <div class="badge-row"><span class="id-badge">洞见 01</span><span class="tag a">证据 A</span></div>
+          <h3>先确认有没有提升空间，再花钱跑优化器</h3>
+          <p class="hook">自动优化不是稳赚的——某些设置下，它有近一半概率让 prompt 比 zero-shot 还差。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code">工单三分类，初版 prompt：
+「把工单分到：投诉/咨询/退款」
+30 条样本测：准确率 82%</pre>
+              <pre class="code bad">优化器跑 6 轮 → 又长又"专业"的新 prompt
+dev：87% ↑（看起来涨了）
+<span class="cmt">100 条测试集：79% ↓ 比最初还低</span>
+那 5 分是小样本噪声里捡的</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>49%</b><small>Coin Flip：72 次优化里 49% 低于 zero-shot（Haiku 4.5）</small></div>
+              <div class="num"><b>~3 步</b><small>ProTeGi：约 3 步达峰，之后多在训练集过拟合</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>（recent-preprint）、<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>；「在选择信号里加风险项也救不回来」的受控反例见 <a href="./paper_notes/paper-prose-2026.md">prose-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ol class="howto">
+              <li>跑 zero-shot + 手写 baseline，各记一分。</li>
+              <li>生成 10–20 个候选，用同一批 20 条留出样本打分。</li>
+              <li>看 headroom（最高候选 − zero-shot）和 noise floor（候选间抖动）。</li>
+              <li>headroom 没超过 noise floor → 停，别优化。</li>
+            </ol>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>web_search 的 WHM-01「Optimizer Intake Checklist」与 Ask HN「AI evals 半成品」痛点信号、Twitter tw-insight-01「先有测试集和评分器」、知乎 ZHI-01「从技巧转向 eval 驱动」均独立指向同一前置纪律。</div>
+          <div class="limit">边界：靠多轮搜索才能发现组合结构的任务会被这个体检低估；阈值要按样本量和评分器重校准。</div>
+        </div>
+
+        <div class="insight blue">
+          <div class="badge-row"><span class="id-badge">洞见 02</span><span class="tag b">证据 A/B</span></div>
+          <h3>第一批先选「能客观打分」的任务</h3>
+          <p class="hook">任务类型决定你能不能看清优化有没有用。开放写作就算优化了，你也分不清是真变好还是评委口味变了。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">任务甲：把工单总结成一句话
+只能靠另一个模型当评委打分
+评委口味天天变 → 分数变化无法归因</pre>
+              <pre class="code good">任务乙：抽成 {intent, entities, urgency} JSON
+漏抽 urgency → field F1 该列直接掉
+失败能拆成 漏抽/标错/格式坏/过度推断</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>+6.8</b><small>Coin Flip：唯一让 6 种方法全超 zero-shot 的是结构化 JSON 任务 HelpSteer2</small></div>
+              <div class="num"><b>+16% → ~1%</b><small>KG 抽取：同数据集 triple F1 +16%，换数据集只剩约 1%</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>、<a href="./paper_notes/paper-apo-kg-construction-2025.md">apo-kg-construction-2025</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>第一批验证选：信息抽取（JSON）、文本分类、工具调用。</li>
+              <li>暂时别用开放生成当第一块试验田——因果最难看清。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>对应统一目录 I-11；Twitter conclusion-01/02 把「有留出集、可分类失败、有可解释中间过程」列为方法成立前提；web_search WPI 也强调主观写作任务必须先定义 rubric，否则 metric 不稳。</div>
+          <div class="limit">边界：开放生成很重要，只是不适合作为「因果清晰」的首批验证。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART B -->
+    <section id="partB">
+      <span class="part-label">③ 工作流洞见 Part B</span>
+      <h2>怎么从失败里学到东西</h2>
+      <p class="section-intro">分数告诉你「坏了」，文字诊断和根因假设才告诉你「该改哪里」。这是 prompt 改进真正的燃料。术语提醒：所谓「文字梯度」只是工程比喻，不是数学梯度——本报告统一按「反馈驱动改写」理解。</p>
+      <div class="grid two">
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">洞见 03</span><span class="tag a">证据 A</span><span class="tag new">证据升级</span></div>
+          <h3>把失败样本变成「可编辑的证据」，不只是一个分数</h3>
+          <p class="hook">accuracy 那个数字无从下手；一句具体的失败诊断才直接指向 prompt 该补什么。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code">工单：「我要退货并且投诉客服态度」
+模型抽出 intent: 投诉（漏了 退款）
+
+只记分数 → 这条 = 错（一个红叉，没线索）
+记成证据 → "当一条工单同时含『动作请求』和『情绪』时，
+            模型只抓情绪、漏掉动作" ← 直接告诉你该补哪条规则</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>+15.3% / 最高 +31%</b><small>ProTeGi：用失败样本生成文字反馈再改写，比原始 prompt</small></div>
+              <div class="num"><b>0.760 vs 0.110</b><small>SPEAR：给 optimizer 配 Python 工具做错误分析，难任务 kappa 大幅超 TextGrad</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-spear-2026.md">spear-2026</a>（recent-preprint：错误分析可以用代码工具而不只靠长上下文）、<a href="./paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">textual-gradients-flawed-metaphor-2025</a>（「梯度」是比喻，非真梯度）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>每个失败 case 记：prediction、gold、error_type、critique、candidate_id。</li>
+              <li>先把 20 条失败整理成「失败类型表」，再让优化器只基于这张表改。</li>
+              <li>失败样本多时（&gt;100 条），考虑让分析跑在代码里（pandas/groupby 聚合错误类型）而不是全塞进上下文——SPEAR 显示长上下文聚合不可靠。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>GitHub 的 compare-first rewrite（linshenkx/prompt-optimizer 源码）保留失败证据与 diff；Twitter tw-insight-02「让优化器读失败过程，而不只读最终分数」；web_search WHM-03 与知乎 HM-ZH-02 都要求按失败 owner 分层诊断。</div>
+          <div class="limit">边界：critique 会带评委偏见，必须绑定样本和指标，不能当成真实因果。Flawed-Metaphor 的警告：文字反馈的提升常来自格式与 meta-instruction，甚至 prevalence hacking——把 critique 当线索，不当真理。</div>
+        </div>
+
+        <div class="insight rose">
+          <div class="badge-row"><span class="id-badge">洞见 04</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>先列「失败根因假设」，再改 prompt</h3>
+          <p class="hook">反思式优化器最常见的翻车，是一开始就猜错方向，然后在错误方向上越改越自信。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code">urgency 判错 30%。不要直接"让模型改好"，先列假设：
+ A 缺判定标准   → 候选A：补 urgency 判定规则
+ B 缺边界示例   → 候选B：加 2 个"看似急其实不急"的例子
+ C 中性词误判   → 候选C：声明"尽快/马上"不单独构成紧急
+三个候选都在 minibatch 验证，谁真把 30% 拉回来用谁</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>23.81% → 13.50% → 87.57%</b><small>VISTA：GEPA 在缺陷种子上反而掉到 13.50%；解耦"假设生成/改写"后恢复 87.57%</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-vista-reflection-dark-2026.md">vista-reflection-dark-2026</a>、<a href="./paper_notes/paper-llm-prompt-optimizers-2024.md">llm-prompt-optimizers-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>对同一批失败，强制生成 2–3 个互斥根因假设（缺规则/缺示例/格式冲突）。</li>
+              <li>每个假设生成一个候选，分别评分；运行记录存 failure_hypothesis 而不只 critique。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>本条目前主要由 arXiv（VISTA）单层支撑，工程渠道尚无独立证据——属于「机制清晰、待工程与本项目验证」类，已列入 P1。</div>
+          <div class="limit">边界：开放写作任务根因模糊，多假设验证可能成本大于收益。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART C -->
+    <section id="partC">
+      <span class="part-label">③ 工作流洞见 Part C</span>
+      <h2>别让模型骗你：候选选择与防膨胀</h2>
+      <p class="section-intro">LLM 候选方差极大。怎么"选"和怎么防"越改越长"，是把伪提升挡在门外的两道闸。</p>
+      <div class="grid two">
+
+        <div class="insight violet">
+          <div class="badge-row"><span class="id-badge">洞见 05</span><span class="tag a">证据 A</span></div>
+          <h3>不要采用第一版，多生几个再用验证集选</h3>
+          <p class="hook">「怎么选候选」和「怎么生成候选」一样重要。把选择权交给验证集，别让模型自评"我这版最好"。</p>
+          <div class="block">
+            <h4>一个例子（示意）：一张候选账</h4>
+            <pre class="code">候选  dev分  格式错  长度   选不选
+C1   0.86   0%    1.0x   ✔候选
+C2   0.88   6%    1.2x   ✗弃（格式错升高）
+C3   0.87   0%    2.4x   ✗弃（太长，疑似过拟合）
+C5   0.86   0%    1.0x   ✔候选
+不是只挑 dev 最高的 C2，而是综合三维选；best-seen 永不被直接覆盖</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>0.85 / 0.67 / 0.88</b><small>ProTeGi：beam 选择在 Jailbreak/Liar/Sarcasm 明显优于贪心；bandit &gt; 均匀选</small></div>
+              <div class="num"><b>+12.44 vs +6.05</b><small>GEPA 消融：Pareto 候选池本身是主要贡献，明显优于贪心选择</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-gepa-2026.md">gepa-2026</a>、<a href="./paper_notes/paper-promptbreeder-2023.md">promptbreeder-2023</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>每轮存 seed/candidates/scores/selection_policy/rejected_reason/best_seen/rollback_point。</li>
+              <li>生成 5 个候选，按 dev 分 + 格式错误 + 长度三维选 Pareto 候选。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>GitHub insight cards 把 candidate ledger 列为可复用结构（→ HM-04）；Twitter method-01「metric+trace 约束下生成并选择候选」对比 scalar-only 与 trace-aware 反馈，是同一原则的业界版。</div>
+          <div class="limit">边界：搜索预算越大越容易 dev 过拟合，必须有 validation/test 分层兜底。</div>
+        </div>
+
+        <div class="insight green">
+          <div class="badge-row"><span class="id-badge">洞见 06</span><span class="tag a">证据 A</span><span class="tag new">证据升级</span></div>
+          <h3>prompt 卫生是主动优化指标：变长、变复杂往往是过拟合不是进步</h3>
+          <p class="hook">优化后更长、规则更多、看起来更专业，很可能是在给训练样本打补丁。卫生（hygiene）不该只是事后检查，要进选择函数。</p>
+          <div class="block">
+            <h4>一个例子（示意）：优化器加的"伪规律"</h4>
+            <pre class="code bad">- 若提到「发票」且含数字，intent 一定是退款   <span class="cmt">← 某条样本的补丁</span>
+- 若出现「经理/投诉」，urgency 一律 high      <span class="cmt">← 局部特例当全局规则</span>
+- 感叹号超过两个 → 倾向 high                 <span class="cmt">← 在拟合标注者习惯</span>
+dev +5，压力测试集 −8</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>14.7x / 86%</b><small>PrefPO：放任时 TextGrad 撑到 14.7 倍长、86% 在偷改任务本身（PrefPO 仅 37%）</small></div>
+              <div class="num"><b>+10.0 / +9.9</b><small>TextReg：加长度+范围正则化管住膨胀，反而比 TextGrad 更高</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-prefpo-2026.md">prefpo-2026</a>、<a href="./paper_notes/paper-textreg-2026.md">textreg-2026</a>、<a href="./paper_notes/paper-causal-edit-level-2026.md">causal-edit-level-2026</a>（均 recent-preprint；后者显示 meta-instruction、复杂化对数学/多跳任务有负关联——不同任务对编辑方向的反应是异质的）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>把 hygiene 写进候选选择：length_ratio、repetition、edit_family、dev_test_gap、OOD/stress_delta 与 dev 分一起进 Pareto。</li>
+              <li>候选若变长，必须说明每条新规则绑定哪些失败样本并通过压力测试，否则拒绝。</li>
+              <li>过拟合不只是 dev-test gap：规则变窄（scope 收缩）和表示膨胀同样是信号（TextReg 的形式化）。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>GitHub 与 web_search 的反模式表都把「只看平均分上升」单列（可能掩盖 schema 漂移、少数类回退、安全退化、成本膨胀）；web_search 另把「采信 vendor 提升 X%」列为同源风险。综述视角下这条线就是「约束优化」（constrained optimization）的实证版。</div>
+          <div class="limit">边界：有些复杂任务确实需要更明确约束——标准是「必要、可追溯、不过拟合」，不是「短」。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART D -->
+    <section id="partD">
+      <span class="part-label">③ 工作流洞见 Part D</span>
+      <h2>到底该改什么（不只是那段 prompt）</h2>
+      <p class="section-intro">真实系统里失败可能来自示例、prompting 模式、工具描述——先标清你改的是哪个部件，否则无法归因。</p>
+      <div class="grid two">
+
+        <div class="insight">
+          <div class="badge-row"><span class="id-badge">洞见 07</span><span class="tag a">证据 A</span><span class="tag new">证据升级</span></div>
+          <h3>有开发集时，选「给模型看的例子」常比改 instruction 更有效</h3>
+          <p class="hook">大家本能去改 instruction 措辞，却忽略了常更有效的变量——给模型看哪几个示例。这条已从单篇支撑升级为多篇独立支撑。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code good">instruction 不动，只换 3 个精选示例（覆盖易错边界）：
+ 例1 动作+情绪并存：要退货还要投诉 → intent:[退款,投诉]
+ 例2 看似急其实不急：方便时帮我看下 → urgency: low
+ 例3 多实体：订单 123 和 456 都改地址 → entities:[123,456]
+往往比绞尽脑汁重写 instruction 收益更大</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>+12.63</b><small>Teach Better：不改 instruction、只优化示例就达 72.92（PaLM 2 / BBH）</small></div>
+              <div class="num"><b>5/7</b><small>MIPROv2：联合优化在 7 任务中 5 个最优；分诊结论——多数任务 demo 优化 &gt; instruction 优化</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-teach-better-show-smarter-2024.md">teach-better-show-smarter-2024</a>、<a href="./paper_notes/paper-miprov2-2024.md">miprov2-2024</a>、<a href="./paper_notes/paper-erm-memory-2024.md">erm-memory-2024</a>（exemplar factory）；instruction 与 demo 互补的证据见 <a href="./paper_notes/paper-textgrad-2024.md">textgrad-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>至少比较 no-example / random-example / optimized-example / instruction+optimized。</li>
+              <li>固定 instruction，从候选池搜 3 个示例看留出表现。</li>
+              <li>分诊规则：任务含「隐藏条件规则、少量样例表达不了」时，instruction 优化才是决定性的（MIPROv2 HotPotQA Conditional 例证）。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>对应统一目录 I-05 / HM-03，由 arXiv 多篇（Teach Better、MIPROv2、ERM、DistillPrompt）支撑；列入 P0 首批验证，正是为了防止把示例收益误记成指令收益。</div>
+          <div class="limit">边界：上下文紧张、示例分布偏、示例可能泄漏答案时，会伤害泛化。</div>
+        </div>
+
+        <div class="insight blue">
+          <div class="badge-row"><span class="id-badge">洞见 08</span><span class="tag b">证据 A/B</span></div>
+          <h3>先标清楚你改的是哪个「部件」</h3>
+          <p class="hook">失败可能来自示例、prompting 模式、工具 schema、agent 角色、记忆或评委，不只是 system prompt。</p>
+          <div class="block">
+            <h4>一个例子（示意）：artifact 清单</h4>
+            <pre class="code">task_prompt        v3   [mutable]
+examples           v2   [mutable]
+prompting_pattern  Zero-Shot [mutable]  ← 真 bug 常在这：该用 CoT/ReAct 却用 Zero-Shot
+tool_schema        v1   [mutable]
+evaluator          v1   [FROZEN]  ← 评委不许改（防作弊）
+safety_rules       v1   [FROZEN]  ← 安全/权限不进搜索空间</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>6.5% → 74.0%</b><small>AutoPDL：只把 prompting 模式换对（非重写措辞），FEVER 跳 +67.5pp</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-autopdl-2025.md">autopdl-2025</a>、<a href="./paper_notes/paper-jtpro-2026.md">jtpro-2026</a>、<a href="./paper_notes/paper-prompt-codebooks-2026.md">prompt-codebooks-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>每次优化生成 artifact manifest，拆出各部件并标 mutable/frozen。</li>
+              <li>评委、测试集、安全规则必须 frozen——防 reward hacking 的底线。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>这是跨渠道支撑最厚的一条——GitHub 的 frozen evaluator/data 隔离（karpathy/autoresearch）与 12-factor-agents 的 context engineering、web_search 的 WHM-02 version ledger、Twitter method-04 prompt_as_program_spec、知乎 ZHI-06「先声明 mutable / frozen」全部独立指向同一结构。</div>
+          <div class="limit">边界：简单一次性任务不需要完整 manifest，研究/生产级才需要。</div>
+        </div>
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">洞见 09</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>工具调错时，改的常是「工具说明」，不是 agent 指令</h3>
+          <p class="hook">失败常来自工具描述和参数语义本身；改 agent 的 system prompt 再多遍也没用。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">改 agent 指令（无效）：
+"请正确填写金额"
+→ 模型仍不知道单位，传 amount: 99.5</pre>
+              <pre class="code good">改工具 schema（有效）：
+amount: integer
+// 单位「分」，99 元应填 9900，不接受小数</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>51.27% → 64.46%</b><small>JTPRO：联合优化全局指令 + 每工具 schema，o3-mini 整体成功率（ToolACE 1000 工具）</small></div>
+              <div class="num"><b>选对≠成功</b><small>ETID：工具选得准但成功率低，瓶颈是 slot-filling 不是选择</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-jtpro-2026.md">jtpro-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>工具 eval 拆成 Tool Selection / Slot Filling / Overall Success 三个指标分别记。</li>
+              <li>分别测「只改全局指令 / 只改 schema / 联合」，看瓶颈在哪层。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>web_search 登记的 Vertex AI「用 placeholder_to_content 锁定 prompt 段落」SO 问答，正是「区分可变/冻结段落」在生产工具里的具体实现，呼应 frozen/mutable 边界。</div>
+          <div class="limit">边界：外部 API schema 不可改时，用 wrapper 文档或检索上下文承载局部规则。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART E -->
+    <section id="partE">
+      <span class="part-label">③ 工作流洞见 Part E</span>
+      <h2>记忆与多 agent：更多 ≠ 更好</h2>
+      <p class="section-intro">加记忆、加 agent 听起来总是好的，但未经筛选的记忆会污染优化，整体重写会让你无法归因。</p>
+      <div class="grid two">
+
+        <div class="insight slate">
+          <div class="badge-row"><span class="id-badge">洞见 10</span><span class="tag b">证据 A/B</span></div>
+          <h3>只有「过滤后的记忆」才有用</h3>
+          <p class="hook">未经筛选地堆历史，会造成跨任务负迁移，还更贵。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">无界记忆：把所有历史对话塞进上下文
+→ 把 A 产品线的退款规则错套到 B 产品线工单</pre>
+              <pre class="code good">过滤记忆：每条带元数据
+ content / source_task / applicability
+ quality_score / retrieval_reason / forget_after
+只取 3–5 条已验证、且适用条件匹配的</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>70.7% vs 63.6%｜$0.31 vs $0.70</b><small>MemAPO：双记忆（成功模板+错误模式）比 TextGrad 更好且更便宜</small></div>
+              <div class="num"><b>第7步 68.6 vs 第13步 58.5</b><small>ERM：过滤记忆收敛近两倍速；原始记忆无收益</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-memapo-2026.md">memapo-2026</a>（recent-preprint）、<a href="./paper_notes/paper-erm-memory-2024.md">erm-memory-2024</a>；离散代码本作为更紧凑的记忆形式见 <a href="./paper_notes/paper-prompt-codebooks-2026.md">prompt-codebooks-2026</a>（HotpotQA prompt 短 14.1 倍）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>记忆 schema 含 success_template/error_pattern、source_task、applicability、quality、forget_reason。</li>
+              <li>别塞历史对话，只检索已验证、匹配当前任务的 3–5 条。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>GitHub 的 ECC memory hooks（session-start / pre-compact / session-end / tool-observation 四个生命周期触发点）把有界 memory 做成结构参考；知乎 ZHI-06 与社区误区「自进化=什么都记下来」从反面印证。</div>
+          <div class="limit">边界：非平稳/安全敏感任务里，遗忘策略和 opt-out 比「记得多」更重要。</div>
+        </div>
+
+        <div class="insight rose">
+          <div class="badge-row"><span class="id-badge">洞见 11</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span><span class="tag new">证据升级</span></div>
+          <h3>多 agent 出错，先找「是谁、在哪一轮」的责任，别整个重写</h3>
+          <p class="hook">核心难题不是加更多 agent，而是 credit assignment——而且它有两个维度：结构（哪个角色）和时间（哪一轮）。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code">抽取 → 补全 → 回复，最终回复错了。看 trace：
+ agent_1 抽取  local_valid ✗  ← urgency 在这里就丢了
+ agent_2 补全  local_valid ✓  （基于错误输入 = local_pass_global_fail）
+ agent_3 回复  local_valid ✓
+根因在 agent_1，只改 agent_1，别动另两个</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>55.13 → 64.63</b><small>Temporal/Structural Credit：credit-guided 在 MedMCQA（+9.50）；无差别更新所有轮反而掉分</small></div>
+              <div class="num"><b>70.39 vs 65.31</b><small>MASPO：联合优化平均优于顺序 baseline；专门收集「局部成功、全局失败」的错配样本</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-temporal-structural-credit-mas-2026.md">temporal-structural-credit-mas-2026</a>（时间轮次 × 结构角色双轴分解 + 交替更新）、<a href="./paper_notes/paper-maspo-2026.md">maspo-2026</a>、<a href="./paper_notes/paper-mapro-2025.md">mapro-2025</a>（沿拓扑传播 credit）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>trace 存 role_id/<b>round_id</b>/local_validity/successor_utility/global_outcome——时间和结构两个维度都要。</li>
+              <li>标出首次引入错误的 role/round，只改那一块；耦合弱时先做 coupling test。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>本条主要由 arXiv（MASPO / MAPRO / Temporal-Structural Credit）单层支撑，三篇互补不矛盾（拓扑 / 错配检测 / 时间-结构分解），工程渠道尚无独立证据；与洞见 08 的「先标责任部件、再局部改」属同一治理思路。</div>
+          <div class="limit">边界：agent 交互很弱时，联合优化成本可能不划算——先测耦合再决定。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART F -->
+    <section id="partF">
+      <span class="part-label">③ 工作流洞见 Part F</span>
+      <h2>怎么对待「听来的」方法</h2>
+      <p class="section-intro">热度只说明传播，不说明有效。二手传播会放大结论、丢掉边界和版本。这一条把上面几层的渠道纪律收口；完整的误区清单见 <a href="#myths">⑥ 误区澄清</a>。</p>
+      <div class="grid">
+        <div class="insight green">
+          <div class="badge-row"><span class="id-badge">洞见 12</span><span class="tag b">证据 B</span></div>
+          <h3>社媒和二手文章是「线索」，不是「证据」</h3>
+          <p class="hook">一个方法被反复转发，只能说明它热，不能说明它有效。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <div class="ba">
+              <pre class="code bad">爆款：「GEPA 用少 35 倍 rollout 吊打 RL！」
+当证据 → 直接信「GEPA 能替代 RL」</pre>
+              <pre class="code good">当线索 → 翻原论文发现：
+GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
+根本不是 RL 系统；AIME-2025 上仍低于 GRPO；
+"替代 RL"是传播简化出的口号</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>读到技巧先抽六字段：dataset / metric / baseline / model / cost / failure_cases。</li>
+              <li>缺任一字段就降级为「线索」，进结论前必须追溯论文/官方文档/代码/本项目实验。</li>
+            </ul>
+          </div>
+          <p class="src">来源：<a href="./source_batches/twitter_web_analysis_20260608.html">twitter_web_analysis_20260608</a>、<a href="./source_batches/web_search_platform_analysis_20260608.html">web_search_platform_analysis_20260608</a></p>
+          <div class="corro"><b>跨渠道互证（本条由社媒/二手渠道共同提出）：</b>Twitter 把它做成 method-05 social_signal_triage（六类标签）与 method-06 vendor_optimizer_evidence_filter；web_search 做成 WHM-04 source triage；知乎做成净新增 HM-ZH-03「一手来源升格门」。三个渠道独立收敛出同一道闸。</div>
+          <div class="limit">边界：自带代码、数据、可复现实验的高质量工程博客可升级为更强证据——看细节，不看平台。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART G (NEW) -->
+    <section id="partG">
+      <span class="part-label">③ 工作流洞见 Part G · 本版新增</span>
+      <h2>搜索之外：零成本变换与「优化器自身」</h2>
+      <p class="section-intro">v3 的 12 条洞见全部围绕「搜索/优化循环」构建。各渠道这一轮深挖暴露了两个循环之外的盲区：一个是<b>不用搜索的确定性结构变换</b>（比所有搜索方法都便宜、却常被跳过的对照），一个是<b>循环里被当成空气的 optimizer 与 judge 本身</b>。</p>
+      <div class="grid two">
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">洞见 13</span><span class="tag a">证据 A</span><span class="tag pre">recent-preprint</span><span class="tag new">本版新增</span></div>
+          <h3>花钱搜索之前，先试零成本的确定性结构变换</h3>
+          <p class="hook">一个不改任何语义的固定变换——把整个 prompt 原样重复一遍——在非推理模式下跨 7 个模型 47 胜 0 负；而搜索式优化有近一半概率比 zero-shot 还差。</p>
+          <div class="block">
+            <h4>一个例子（真实任务，论文数字）</h4>
+            <pre class="code">变换：&lt;QUERY&gt;  →  &lt;QUERY&gt;&lt;QUERY&gt;（原样重复，无任何措辞修改）
+
+NameIndex（50 个名字取第 25 个）：
+Gemini 2.0 Flash-Lite  21.33% → <span class="cmt">97.33%</span>
+机制：causal attention 下 prompt 前段 token 看不到后段；
+重复后第二遍的每个 token 都能注意到完整第一遍</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>47/70 胜 0 负</b><small>非推理模式，7 模型 × 10 配置，McNemar p&lt;0.1；Padding 对照无效→收益来自重复本身</small></div>
+              <div class="num"><b>5/28</b><small>开启 step-by-step 推理后基本无效（推理模型本就常自发复述题目）</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-prompt-repetition-2025.md">prompt-repetition-2025</a>（Google Research；不增加输出长度与时延，重复发生在可并行的 prefill 阶段）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>非推理、低延迟生产路径（分类/抽取/短 QA/路由）先测重复 ×2；长上下文索引类任务试 ×3。</li>
+              <li>把它纳入<b>廉价 baseline 变换集</b>：任何 APO 方法在本项目报告的增益，先回答「打得过这个零智能变换吗」。</li>
+              <li>信息顺序不可控的场景（检索结果拼接、表单转写）优先考虑——order 敏感性正是它修复的对象。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>目前为 arXiv 单层（recent-preprint）；机制（causal attention 顺序敏感）与 Modular Prompt Optimization 的 section-local 编辑方向互证。与 Coin Flip 的对照读法：搜索出来的措辞 model-specific 且脆弱，确定性结构变换却跨 7 模型 0 负——「结构」可能比「措辞」更可迁移（两者 setting 不同，此对比为推断）。</div>
+          <div class="limit">边界：推理模式下基本无效；按 token 计费时输入成本 ×2；只重复局部（如只重复问题）无增益；超长上下文盲目翻倍会推高 prefill 成本；被测为 2025 年初一代模型，新模型可能已内化复述行为——这正是本项目 P0 三臂 A/B 要校准的。</div>
+        </div>
+
+        <div class="insight slate">
+          <div class="badge-row"><span class="id-badge">洞见 14</span><span class="tag b">证据 A/B</span><span class="tag new">本版新增</span></div>
+          <h3>optimizer 和 judge 本身，也是要版本化、可优化的部件</h3>
+          <p class="hook">你用来「改 prompt 的那段 prompt」和「打分的那段 prompt」也在决定结果——不版本化它们，实验不可复现；从不审视它们，它们就是隐藏的天花板。</p>
+          <div class="block">
+            <h4>一个例子（示意）</h4>
+            <pre class="code bad">运行记录只存了 task_prompt v3
+optimizer_prompt / judge_prompt 没有版本号
+→ 三个月后"同样配置"跑不出同样结果
+→ 分数变化是任务 prompt 的功劳还是评委口味变了？无法归因</pre>
+          </div>
+          <div class="block">
+            <h4>论文怎么说</h4>
+            <div class="stat">
+              <div class="num"><b>71.89 → 76.38</b><small>SePO：把 prompt agent 的 system prompt 预训练自进化；去掉 self-improvement 掉回 74.94</small></div>
+              <div class="num"><b>唯一自指</b><small>PromptBreeder：六法中唯一连 mutation prompt 一起进化（hyper-mutation）</small></div>
+            </div>
+            <p class="src">来源：<a href="./paper_notes/paper-sepo-2026.md">sepo-2026</a>（recent-preprint）、<a href="./paper_notes/paper-promptbreeder-2023.md">promptbreeder-2023</a>；judge 版本化为 web_search WPI-10（B 级）</p>
+          </div>
+          <div class="block">
+            <h4>你该怎么做</h4>
+            <ul class="howto">
+              <li>给 optimizer_prompt、judge_prompt、meta_prompt 各建版本号，列入实验记录必填字段。</li>
+              <li>评测用 judge 与测试集一样默认 frozen；要改走独立评审与重校准，改后旧分数全部失效重跑。</li>
+              <li>想优化 judge/optimizer 本身？在开发集上做，且与评测链路物理隔离。</li>
+            </ul>
+          </div>
+          <div class="corro"><b>跨渠道互证：</b>web_search WPI-10「judge prompt 也应被版本化、评估和优化」；GitHub autoresearch 的 ledger 把优化器配置与结果绑定（GHI-05）；arXiv batch1 结论 C-03「optimizer 本身是需要版本化的 artifact」。三层独立指向同一治理对象。</div>
+          <div class="limit">边界：「优化 judge」与「frozen evaluator 防作弊」不冲突——被冻结的是<b>评测链路</b>的 judge，被优化的是<b>开发期辅助</b> judge；两者必须物理分开，混用就是 reward hacking（见反模式表）。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ④ ENGINEERING -->
+    <section id="engineering">
+      <h2>④ 工程落地：从论文到生产的闭环</h2>
+      <p class="section-intro">v3 把工具散落在分渠道速览里一笔带过。这一层把 web_search、Twitter 与 GitHub 三个工程渠道的产出合并成可执行的落地地图：先凑五件套，再按项目成熟度选工具，最后把发布与回滚做成门。</p>
+
+      <div class="callout">
+        <strong>入场券（五件套）：</strong> optimizer 的输入是 <code>prompt + dataset + metric + trace + constraints</code>，不是一段待润色的文本。缺 eval 时所谓「自动优化」只是风格化改写——这是 web_search（WPI-01）、Twitter（conclusion-01）、知乎（ZHI-01）、GitHub（GHI-04）四个渠道独立收敛的同一结论。
+      </div>
+
+      <div class="block">
+        <h4>工具选型按项目成熟度分层（不要一开始上重平台）</h4>
+        <table class="matrix" aria-label="工具成熟度分层">
+          <thead><tr><th>阶段</th><th>你处在什么状态</th><th>该用什么</th><th>它解决什么</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>阶段 1 · 起步</b></td>
+              <td>还没有稳定 eval，prompt 改动靠感觉</td>
+              <td>Promptfoo（CLI eval gate）+ Hugging Face cookbook（方法发现与可运行样例）</td>
+              <td>先有「每次改动过不过线」的轻量闸门；配置文件进 Git 即版本管理</td>
+            </tr>
+            <tr>
+              <td><b>阶段 2 · 迭代</b></td>
+              <td>有 eval 了，开始多版本、多人改 prompt</td>
+              <td>Langfuse（prompt version + trace linking）/ LangSmith + Promptim（prompt commit、staging/production）/ Humanloop（prompt 即配置）</td>
+              <td>版本、diff、owner、environment、rollback——线上回归能追到具体改动</td>
+            </tr>
+            <tr>
+              <td><b>阶段 3 · 运营</b></td>
+              <td>优化进入常态，需要 optimizer + 可观测闭环</td>
+              <td>OPIK（agent optimizer SDK，G-Eval、OptimizationResult）/ Arize Phoenix（数据→评估→优化→对比的闭环样板）；Weaviate 一侧划清 context engineering 与 prompt 优化的变量边界</td>
+              <td>优化 trial 历史、judge 版本化、observability 与 side-by-side 实验</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="src">依据：web_search WPI-09「工具选择按阶段匹配」与八工具五维对标（定位/优化对象/反馈信号/版本回滚/项目价值），完整表见 <a href="./source_batches/web_search_platform_analysis_20260608.html">web_search_platform_analysis</a>。已有线上流量和多人协作的团队可更早引入治理平台。</p>
+      </div>
+
+      <div class="block">
+        <h4>研究 → 工具落地映射（业界已经把哪些论文方法做成了产品）</h4>
+        <table class="matrix" aria-label="研究到工具映射">
+          <thead><tr><th>研究方向</th><th>代表论文/框架</th><th>已落地的工具/厂商</th><th>采信口径</th></tr></thead>
+          <tbody>
+            <tr><td>反思式 prompt 进化</td><td>GEPA</td><td>Pydantic AI/Evals、DSPy GEPA、LangSmith（OpenTelemetry tracing）</td><td>B*：采纳信号，效果须回原论文与本项目实验</td></tr>
+            <tr><td>Prompt-as-Program</td><td>DSPy / MIPROv2</td><td>LangChain Promptim、Scale3 DSPyground</td><td>B：框架定位清晰，优化层（demo vs instruction）要说清</td></tr>
+            <tr><td>Prompt 版本化与发布</td><td>（工程实践综合）</td><td>LangSmith Prompt Hub、Langfuse、Promptfoo、Humanloop、OpenAI Prompt Optimizer</td><td>B：流程字段可直接抄</td></tr>
+            <tr><td>产品化 APO</td><td>（多论文综合）</td><td>Google Vertex AI Prompt Optimizer（placeholder_to_content 锁段）、Microsoft PromptWizard、Salesforce Promptomatix、AWS Bedrock 优化/迁移工具</td><td>B/D：采流程，<b>不采提升百分比</b></td></tr>
+            <tr><td>记忆与自进化 agent</td><td>MemAPO / SePO</td><td>Hermes Agent、Manus、OpenClaw（中文社区线索）</td><td>D：线索层，须按 mutable/frozen 声明核验</td></tr>
+          </tbody>
+        </table>
+        <p class="src">依据：Twitter 渠道 21 张 source cards 的「研究→工具集成」映射（追溯链 pending，见 ⑨）与知乎工具实践线索；正典 optimizer 仓库的源码审计仍在第二轮 backlog（见 ⑪ repo↔paper 对照表）。</p>
+      </div>
+
+      <div class="block">
+        <h4>发布门与账本：把「可回滚」做成结构，不是口号</h4>
+        <div class="ba">
+          <pre class="code good">发布流程（Twitter method-02 / web WHM-02 综合）：
+candidate → offline eval（frozen 测试集）
+→ risk checklist（格式/安全/成本回归）
+→ approval → staging → production
+→ 保留 rollback_target，随时一步回退</pre>
+          <pre class="code good">候选账本最小字段（GitHub autoresearch results.tsv
++ web WHM-02 综合）：
+candidate_id / parent / diff+reason
+artifact_versions（含 optimizer_prompt、judge_prompt）
+score / format_error / cost / status
+  (accepted | rejected | rolled_back | needs_more_data)
+rollback_target</pre>
+        </div>
+        <ul class="howto" style="margin-top:10px">
+          <li><b>frozen evaluator 的源码级范例</b>：karpathy/autoresearch 在 <code>prepare.py</code> 里把评估函数直接标注 "DO NOT CHANGE — this is the fixed metric"——原则写进代码而不是文档（GHI-04）。</li>
+          <li><b>记忆生命周期要有触发点</b>：affaan-m/ecc 的 memory hooks 定义了 session-start / pre-compact / session-end / tool-observation 四个钩子——记忆的写入、压缩与遗忘各有明确时机，而非无界追加（GHI-09/10）。</li>
+          <li><b>校准样本要主动对抗</b>：linshenkx/prompt-optimizer 的 calibration 集刻意包含 overfit 触发样本与 schema 漂移触发样本——用来测优化流程自己会不会被骗（GHI-03）。</li>
+          <li><b>「有测试」≠「方法有效」</b>：tests 可能只覆盖安装/格式/配置；可审计性与效果主张要分开记（GHI-11，已入反模式表）。</li>
+        </ul>
+      </div>
+
+      <div class="callout">
+        <strong>arXiv 与工程渠道的分工（不是矛盾）：</strong> 论文说「我们找到了更好的优化算法」，工程渠道说「算法再好，没有闭环基础设施就跑不起来」。论文优化出来的 prompt ≠ 能上线的 prompt——优化收益若没有版本化、trace 与验证集隔离托底，会被消耗在不可审计与难以回滚上。两层都要。
+      </div>
+    </section>
+
+    <!-- ⑤ METHODS -->
+    <section id="methods">
+      <h2>⑤ 可复用方法：4 个统一方法 + 1 个升格候选</h2>
+      <p class="section-intro">所有渠道的方法卡归一到 <a href="./insight_method_catalog_20260609.html">统一目录</a> 的 4 个 helpful methods；本版根据 web_search 渠道证据，把「Context-First Diagnosis」列为第 5 个方法的升格候选（待统一目录收录）。</p>
+      <table class="matrix" aria-label="可复用方法">
+        <thead><tr><th>方法</th><th>解决的问题</th><th>关键步骤（最小字段）</th><th>各渠道同源方法卡</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>HM-01</b><br>Pre-Optimization Gate</td>
+            <td>避免在没有 headroom 的任务上浪费 optimizer 成本。</td>
+            <td>跑 zero-shot + 手写 baseline → 生成 10–20 候选 → 同一评分器评估 → 算 best_gain / score_spread / format_error / cost → 不超噪声阈值就止损。<b>本版补充：</b>体检同时跑洞见 13 的零成本变换当对照底线。</td>
+            <td>web WHM-01；Twitter tw-insight-01；知乎 HM-ZH-01；arXiv coin-flip。</td>
+          </tr>
+          <tr>
+            <td><b>HM-02</b><br>Trace-First Critique Rewrite</td>
+            <td>直接让 LLM 改 prompt 不可审计、易误判根因。</td>
+            <td>失败样本生成 error_type/critique → 2–3 个 failure hypotheses → 每假设一候选 → validation 选择 → 记 diff/理由/回滚点。失败样本多时用代码工具聚合（SPEAR）。</td>
+            <td>GitHub compare-first rewrite；Twitter method-01；web WHM-03；知乎 HM-ZH-02；arXiv ProTeGi/VISTA/SPEAR。</td>
+          </tr>
+          <tr>
+            <td><b>HM-03</b><br>Exemplar Optimization Baseline</td>
+            <td>防止高估 instruction rewrite 的价值。</td>
+            <td>固定 instruction → 比 no-example / random / optimized → 再比 instruction+optimized → 只在 hidden/test 报告泛化。分诊：任务含隐藏条件规则才优先改 instruction（MIPROv2）。</td>
+            <td>arXiv Teach Better / MIPROv2 / ERM / DistillPrompt（工程渠道暂无独立证据，列入 P0）。</td>
+          </tr>
+          <tr>
+            <td><b>HM-04</b><br>Prompt Artifact Ledger</td>
+            <td>prompt/examples/tool schema/context/evaluator 混改导致不可归因、不可回滚。</td>
+            <td>每个 artifact 建版本 + 标 mutable/frozen → 每候选记分数/失败/成本/接受拒绝理由 → 保存 rollback point。<b>本版补充：</b>optimizer_prompt 与 judge_prompt 也入账（洞见 14）。</td>
+            <td>GitHub frozen evaluator/artifact + results.tsv；web WHM-02 version ledger；Twitter method-02/04；知乎 ZHI-06。</td>
+          </tr>
+          <tr>
+            <td><b>HM-05（升格候选）</b><br>Context-First Diagnosis</td>
+            <td>把检索/记忆/工具/历史的问题误判为 prompt 问题，把「上下文变好」误记成「optimizer 有效」。</td>
+            <td>失败样例带完整 trace → 归因到 instruction/retrieval/memory/tool/history/schema/judge 七类 owner → 每次只改一个 → 失败来自 context 的不计入 prompt 优化收益。</td>
+            <td>web WHM-03（完整卡）；Twitter method-03 prompt_context_variable_audit；知乎 ZHI-04；12-factor-agents（GHI-08）。<b>状态：待入统一目录。</b></td>
+          </tr>
+          <tr>
+            <td><b>线索分流</b><br>Source Evidence Triage（I-12）</td>
+            <td>把社媒/二手热度挡在结论之外。</td>
+            <td>抽 dataset/metric/baseline/model/cost/failure 六字段 → 缺任一即降级为 pointer → 进结论前追溯一手来源。</td>
+            <td>Twitter method-05/06；web WHM-04；知乎 HM-ZH-03（净新增升格门）。</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src">完整 YAML 字段（required_inputs / evaluation_metrics / misuse_or_anti_pattern / rollback_plan / next_experiment）见 <a href="./insight_method_catalog_20260609.html">insight_method_catalog_20260609.md</a>；字段定义口径以 <a href="./insight_field_standard.html">insight_field_standard.md</a> 为准。</p>
+    </section>
+
+    <!-- ⑥ MYTHS -->
+    <section id="myths">
+      <h2>⑥ 误区澄清：12 个最常见的误读</h2>
+      <p class="section-intro">知乎与 Twitter 渠道的独特价值不是证明什么，而是暴露「大家正在怎么误解」。这里把两渠道收敛的误区合并去重成 12 条——每一条都在真实传播中反复出现。</p>
+      <table class="matrix" aria-label="误区澄清">
+        <thead><tr><th>#</th><th>误读</th><th>实际情况</th><th>出处</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>「GEPA 全面超过 / 替代 RL」</td><td>GEPA 是反思式 prompt 进化（trace + Pareto），不是 RL 系统；AIME-2025 上仍低于 GRPO；优势依赖 feedback 质量，评价只能给标量时优势收窄。</td><td>知乎 ZHI-02 / Twitter conclusion-02 / arXiv A 级</td></tr>
+          <tr><td>2</td><td>「DSPy 是自动改提示词工具」</td><td>DSPy 是编程框架（signature/module/metric 都要手工定义）；2023 版优化的是 demonstration，instruction 自动优化要到 MIPROv2。</td><td>知乎 ZHI-03 / arXiv dspy/miprov2</td></tr>
+          <tr><td>3</td><td>「文字梯度 = 梯度下降」</td><td>是工程比喻：不可加、不可组合、错误标签常不伤害结果；提升常来自格式与 meta-instruction，甚至 prevalence hacking。</td><td>arXiv Flawed-Metaphor（2025-12）</td></tr>
+          <tr><td>4</td><td>「让模型优化一下 prompt 就行」</td><td>没有留出集和评分器时，只能得到「更像 prompt 的文本」，无法判断变好变坏。</td><td>Twitter conclusion-01 / 全渠道</td></tr>
+          <tr><td>5</td><td>「优化后更长更专业 = 更好」</td><td>多为训练样本补丁；放任时 TextGrad prompt 长 14.7 倍、86% 在偷改任务定义。</td><td>arXiv PrefPO/TextReg（洞见 06）</td></tr>
+          <tr><td>6</td><td>「context engineering = 写更长 prompt」</td><td>是检索/记忆/工具输出/历史压缩的分变量工程；prompt 优化只是其严格子集。</td><td>知乎 ZHI-04 / Context Engineering 综述</td></tr>
+          <tr><td>7</td><td>「自进化 = 什么都记下来」</td><td>未过滤记忆造成跨任务负迁移还更贵；每条记忆要有来源、适用范围、验证与遗忘策略。</td><td>arXiv ERM/MemAPO / 知乎 / GitHub ECC</td></tr>
+          <tr><td>8</td><td>「转发多 / star 多 = 方法有效」</td><td>热度只说明传播；多个二手来源指向同一论文时，证据强度由原论文决定。</td><td>全渠道（洞见 12）</td></tr>
+          <tr><td>9</td><td>「厂商提升百分比 / demo 截图 = 证据」</td><td>任务、指标、展示都可能偏向产品叙事；只采流程字段，数字默认降级。</td><td>web WPI-07 / Twitter conclusion-05</td></tr>
+          <tr><td>10</td><td>「仓库有测试 = 方法有效」</td><td>tests 可能只覆盖安装/格式/配置；「可审计」与「有效」是两个主张，分开记。</td><td>GitHub GHI-11</td></tr>
+          <tr><td>11</td><td>「prompt 技巧跨模型通用」</td><td>OPRO 搜出的钥匙短语高度 model-specific；Haiku 上 6/6 全胜的配置在 Nova Lite 崩到 1/6。</td><td>arXiv OPRO / coin-flip（① 方法地图）</td></tr>
+          <tr><td>12</td><td>「一次多改几个变量更快」</td><td>prompt/context/model/evaluator 同时改 → 指标变化无法归因，形成伪结论；一次只改一层。</td><td>全渠道 / CLAUDE.md 同款纪律</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ⑦ RISKS -->
+    <section id="risks">
+      <h2>⑦ 反模式与风险治理（跨渠道合并）</h2>
+      <p class="section-intro">把五个渠道各自的反模式表合并去重，按「为什么危险 → 触发条件 → 对应防线」组织。这是把伪提升、污染和归因困难挡在门外的清单。</p>
+      <table class="matrix" aria-label="反模式合并">
+        <thead><tr><th>反模式</th><th>为什么危险</th><th>触发条件</th><th>对应防线</th><th>证据渠道</th></tr></thead>
+        <tbody>
+          <tr><td>让模型直接「优化一下 prompt」</td><td>无目标、无评估、无回滚，输出只是润色或随机改写。</td><td>无留出集/评分器/失败样本就调用优化器。</td><td>HM-01、HM-02</td><td>arXiv·GitHub·web·Twitter·知乎</td></tr>
+          <tr><td>只看平均分上升</td><td>掩盖 schema 漂移、少数类回退、安全退化、成本膨胀。</td><td>优化目标只设平均分，无 regression/critical failure set。</td><td>分层指标 + stress split</td><td>arXiv·GitHub·web·Twitter</td></tr>
+          <tr><td>prompt 越改越长</td><td>多半是训练样本补丁与规则冲突（过拟合）。</td><td>候选长度增加超阈值且无样本绑定。</td><td>hygiene gate（洞见06）</td><td>arXiv·GitHub·web</td></tr>
+          <tr><td>允许 optimizer 改 evaluator / test</td><td>直接 reward hacking。</td><td>评分器/测试集进入可变搜索空间；开发期 judge 与评测 judge 混用。</td><td>frozen evaluator/data + 物理隔离（洞见14）</td><td>GitHub（autoresearch 审计）·web WPI-10</td></tr>
+          <tr><td>raw memory 无界追加</td><td>继承坏反馈、隐私泄漏、跨任务污染。</td><td>把历史对话整体塞进上下文。</td><td>filtered memory + lifecycle hooks</td><td>arXiv（ERM/MemAPO）·GitHub（ECC）·知乎</td></tr>
+          <tr><td>用社媒热度 / vendor 百分比当证据</td><td>热度只说明传播；vendor 数字任务/指标/展示偏向叙事。</td><td>按转发数排序方法 / 引用无 dataset 披露的提升数字。</td><td>source triage（I-12）</td><td>Twitter·web·知乎</td></tr>
+          <tr><td>把「有测试」当「方法有效」</td><td>tests 常只覆盖安装/格式/配置；可审计 ≠ 有效。</td><td>用「仓库带 CI/测试」为方法效果背书。</td><td>测试入口与效果主张分开登记</td><td>GitHub（GHI-11）</td></tr>
+          <tr><td>多 agent 一起重写</td><td>无法判断哪个 role/round 引起变化。</td><td>失败后无差别更新所有 agent/轮。</td><td>credit ledger（洞见11，含时间维度）</td><td>arXiv（MASPO/MAPRO/T-S Credit）·Twitter</td></tr>
+          <tr><td>工具调用只改 system prompt</td><td>tool schema/slot 错误无法被修复。</td><td>tool-use 失败只反复改 agent 指令。</td><td>schema 联合优化（洞见09）</td><td>arXiv（JTPRO）·web（Vertex 锁段）</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ⑧ CHANNELS -->
+    <section id="channels">
+      <h2>⑧ 分渠道速览：每个渠道最新收敛了什么</h2>
+      <p class="section-intro">五个渠道按同一模板展开：角色定位、结论（带等级）、本版新吸收、覆盖与缺口、追溯链。渠道的详细产出已分别上提到 ①（方法地图，主要来自 arXiv）、④（工程落地，主要来自 web/Twitter/GitHub）和 ⑥（误区，主要来自知乎/Twitter）。</p>
+      <div class="grid">
+
+        <div class="chan arx">
+          <h3>arXiv 论文渠道 <span class="tag a">A 级地基</span></h3>
+          <p class="role">角色定位：提供方法机制、消融与效应数字，是 14 洞见与整个 ① 方法地图层的一手证据底座。</p>
+          <div class="field"><h4>结论</h4>
+            <ul>
+              <li>基线主干已闭合并成文：APE → ProTeGi → OPRO → DSPy → TextGrad → MIPROv2 → GEPA（<a href="./apo_seven_methods_primer_20260611.html">七法 primer</a>），进化分支与受控反例另见 <a href="./classic_optimizer_methods_comparison_20260610.html">六法横向对比</a>。</li>
+              <li>反馈信号三层（标量/critique/trace）是真正的方法分类轴；「文字梯度」是比喻（C-06），one-shot rewrite 是弱 baseline。</li>
+              <li>prompt bloat / dev overfitting / judge hacking / memory pollution 是自进化主要风险。</li>
+              <li>taxonomy 经 3 篇综述外部校验：声明范围内无整块遗漏；frontier 缺口见 ⑨。</li>
+            </ul>
+          </div>
+          <div class="field"><h4>本版新吸收（晚于或未被 v3 采纳的 5 篇）</h4><ul><li>prompt-repetition-2025（→ 洞见 13）、SePO（→ 洞见 14）、SPEAR（→ 洞见 03 升级）、Flawed-Metaphor（→ 术语与边界）、Temporal-Structural Credit（→ 洞见 11 时间维度）。</li></ul></div>
+          <div class="field"><h4>覆盖与缺口</h4><ul><li>37 篇深读笔记（含 3 篇综述）；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺；bi-level/thought-driven 定向搜索待跑；2026 新稿统一标 recent-preprint。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>每篇笔记含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。核心入口 <a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a>、<a href="./arxiv_top80_taxonomy.html">taxonomy</a>、<a href="./literature_map.html">文献地图（paper_notes 全目录）</a>。</li></ul></div>
+        </div>
+
+        <div class="chan gh">
+          <h3>GitHub 源码渠道 <span class="tag b">B（部分 D）</span></h3>
+          <p class="role">角色定位：提供「自进化在代码里长什么样」——工程结构与治理，而非效果证明。本版把 GHI 全部 12 条列出（v3 只展示了 4 条）。</p>
+          <div class="field"><h4>结论 GHI-01..12（按仓库分组）</h4>
+            <ul>
+              <li><b>linshenkx/prompt-optimizer：</b>① compare/synthesis/rewrite 三段式比直接改写更可审计；② 结构化 payload 与 JSON contract 是边界控制工具；③ calibration 样本要主动对抗过拟合与 schema 漂移。</li>
+              <li><b>karpathy/autoresearch：</b>④ 自进化循环必须冻结 evaluator/data/harness（源码级 "DO NOT CHANGE"）；⑤ 候选改动需要 commit+metric+resource+status 的 ledger；⑥ 保留候选时显式计入复杂度与失败处理成本。</li>
+              <li><b>humanlayer/12-factor-agents：</b>⑦ prompt 是一等代码资产，不外包给框架黑盒；⑧ 优化边界应扩展到 context packaging（RAG/history/tools/memory/output schema）。</li>
+              <li><b>affaan-m/ecc：</b>⑨ memory 必须有边界（本地优先/长度上限/opt-out）；⑩ 经验沉淀要保存 scenario/trace/verifier result/playbook 的完整 artifact 链。</li>
+              <li><b>core4 综合：</b>⑪「有 tests」只说明可审计性 ≠ 方法有效；⑫ GitHub 渠道更适合证工程结构——「直接 optimizer 效果证据稀缺」是受限召回 + core4-only 选择偏差所致（C-06 降级标注）。</li>
+            </ul>
+          </div>
+          <div class="field"><h4>覆盖与已知偏差</h4><ul><li>discovery 仅 8 查询冒烟（240→85→6，无 GITHUB_TOKEN）；正典 optimizer 5 仓库<strong>已登记尚未审计</strong>（第二轮 backlog，见 ⑪ 对照表）；未挖 issues/PR/release 的真实漂移与回滚。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>固定 commit 克隆 + 机器扫描 + 人工审计笔记。核心入口 <a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a>、<a href="./github_repo_insight_cards_20260608.html">insight_cards</a>、<a href="./github_repo_source_audit_workflow_20260608.html">audit_workflow</a>。</li></ul></div>
+        </div>
+
+        <div class="chan web">
+          <h3>其它平台 / web_search 渠道 <span class="tag b">B</span></h3>
+          <p class="role">角色定位：提供生产工程闭环地图与可观测治理证据——不是「谁更强」，而是「怎么把优化运营起来」。本版把该渠道整层上提为 ④ 工程落地。</p>
+          <div class="field"><h4>结论 WPI-01..10（压缩版）</h4>
+            <ul>
+              <li>intake 必查 dataset/metric/baseline/约束（01）；版本账本绑定 trace/eval/成本/回滚点（02）；trial history 与被拒候选是学习资料（03）。</li>
+              <li>cookbook-first 优于二手摘要（04）；prompt 管理/可观测是治理层非效果证据（05）；context 与 prompt 分变量验证（06）。</li>
+              <li>vendor benchmark 采流程不采数字（07）；二手帖只算传播地图（08）；工具按阶段匹配（09）；<b>judge prompt 也要版本化、评估和优化（10 → 洞见 14）</b>。</li>
+            </ul>
+          </div>
+          <div class="field"><h4>方法</h4><ul><li>WHM-01 Intake Checklist → HM-01；WHM-02 Version Ledger → HM-04；<b>WHM-03 Context-First Diagnosis → 本版升格候选 HM-05</b>；WHM-04 Source Triage → I-12。</li></ul></div>
+          <div class="field"><h4>覆盖与缺口</h4><ul><li>web_search 465 / HN ~24 / SE 1 / RSS 1 / reddit·dev.to 0 / x_api 未跑；社区批次约半数是 GEPA 转贴 + Show HN 发布；<strong>真实失败案例 / 事故复盘低于覆盖矩阵要求（应 ≥5 源）</strong>。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>净新增 3 条（AWS Bedrock、Vertex placeholder_to_content、Ask HN evals 痛点）；L1–L4 → A/B/C/D 换算表已建。核心入口 <a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a>。</li></ul></div>
+        </div>
+
+        <div class="chan tw">
+          <h3>Twitter/X 渠道 <span class="tag b">B*（待验证）</span></h3>
+          <p class="role">角色定位：采纳信号与「研究方法→工具集成」的落地映射（已上提为 ④ 的映射表），以及社媒误读边界——是 source discovery / adoption index，不是效果证据。</p>
+          <div class="field"><h4>洞见与结论（tw-insight-01..08 / conclusion-01..05 要点）</h4>
+            <ul>
+              <li>先有测试集和评分器再谈自动改 prompt（tw-01）；让优化器读失败过程而非只读分数（tw-02）；把任务写成 program 再编译（tw-03）；prompt 要像代码一样可比较/审核/回滚（tw-04）。</li>
+              <li>安全监控场景的 prompt 优化要看 audit budget 与 monitor failure，不只平均分（tw-07，D 级待深读）。</li>
+              <li>conclusion-05：所有来自 X / 媒体转发 / 厂商 benchmark 的性能主张默认降级。</li>
+            </ul>
+          </div>
+          <div class="field"><h4>覆盖与状态</h4><ul><li>120 候选闭账：21 张 source cards / ~34 排除降级 / ~60 去重转贴簇；<strong>全部 pending</strong>——main_sources 仍为外部 URL，须回填仓库内路径后才能进最终报告（GEPA 论文笔记已写，为升级铺路；DSPy/MIPRO/versioning 笔记待补）。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>已回填稳定来源：Pydantic GEPA、LangChain Promptim、Microsoft PromptWizard、Scale3 DSPyground、Salesforce Promptomatix。核心入口 <a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a>。</li></ul></div>
+        </div>
+
+        <div class="chan zh">
+          <h3>知乎渠道 <span class="tag d">D（线索）</span></h3>
+          <p class="role">角色定位：中文社区理解、误区集中点（已上提为 ⑥ 误区清单的主要来源）与工程问题框定——线索层，不做效果证明。</p>
+          <div class="field"><h4>洞见（ZHI-01..08 要点）</h4>
+            <ul>
+              <li>prompt 优化从「技巧」转向「eval 驱动迭代」（01，B）；GEPA 核心是 trace-aware reflection（02，B）；agent 自进化要先声明 mutable/frozen（06，B）。</li>
+              <li>中文来源适合解释与误区层、不适合效果证明（07，D）；脱离 eval 的泛技巧是需降权的反模式（08，D）。</li>
+              <li>本土工具线索：Coze 工作流化优化器、OPIK、Hermes/Manus 的记忆与技能实践——按 ZHI-05 标准（须暴露评估输入/候选改动/运行结果三类字段）筛选后才值得深读。</li>
+            </ul>
+          </div>
+          <div class="field"><h4>证据收敛与追溯链</h4><ul><li>99 候选多数 ZH-L1→D（发现非证明）；仅经 GEPA / MemAPO / SePO 仓库笔记交叉的升 B；Safety/Eval/Observability 方向仅 ~2 条候选，判定弱覆盖。核心入口 <a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a>。</li></ul></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ⑨ COVERAGE & FRONTIER -->
+    <section id="coverage">
+      <h2>⑨ 覆盖、范围边界与 frontier 缺口</h2>
+      <p class="section-intro">这一节把「我们没覆盖什么」分成三类说清楚：<b>采集缺口</b>（想覆盖但还没做到）、<b>刻意边界</b>(选择不做)、<b>frontier 缺口</b>（领域里新出现、我们还没有格子的方向）。避免读者把「整理过」误读成「覆盖全了」。</p>
+
+      <div class="grid two">
+        <div class="insight amber">
+          <h3>采集缺口 · GitHub：受限召回 + 选择偏差</h3>
+          <ul class="howto">
+            <li>discovery 仅 8 查询冒烟（240→85→6，无 token），「直接 optimizer 不多」已降级为受限结论（C-06）。</li>
+            <li>正典 optimizer gepa / PromptWizard / promptomatix / AutoPrompt / dspyground <b>尚未审计</b>（第二轮 backlog，对照表见 ⑪）。</li>
+            <li>未挖 issues/PR/discussions/release——真实漂移、回滚、事故都在那里。</li>
+          </ul>
+        </div>
+        <div class="insight amber">
+          <h3>采集缺口 · 失败案例与追溯链</h3>
+          <ul class="howto">
+            <li>真实失败案例 / 事故复盘<b>低于覆盖矩阵要求</b>（应 ≥5 源）；reddit / dev.to 0 命中、x_api 未跑——英文从业者失败故事维度未采集。</li>
+            <li>Twitter 21 张卡 main_sources 仍指向外部 URL，<b>全部 pending</b>；进入最终报告前须回填仓库内追溯路径。</li>
+            <li>知乎 99 候选多数停在 ZH-L1（D）；本项目尚无 C 级实验证据，14 条洞见均未在本项目复现。</li>
+          </ul>
+        </div>
+        <div class="insight blue">
+          <h3>刻意边界：我们选择不做什么</h3>
+          <ul class="howto">
+            <li><b>soft / continuous prompt tuning</b>（prefix/embedding 级)——聚焦离散自然语言 prompt，评分规则显式排除。</li>
+            <li><b>multimodal</b>（text-to-image/video、VLM prompt 优化）——两份综述都列为方向，本项目明确不做。</li>
+            <li><b>完整 context-engineering 系统</b>（RAG 架构、检索器优化、多 agent 通信协议）——当边界材料；但「上下文压缩」与「智能上下文组装」两条与 prompt 优化同构，已登记 backlog。</li>
+            <li>这些是范围选择，不是疏漏——依据 <a href="./arxiv_taxonomy_completeness_check_20260610.md">taxonomy 完整性校验</a>（对照 3 篇综述）。</li>
+          </ul>
+        </div>
+        <div class="insight rose">
+          <h3>frontier 缺口：领域有、我们还没有格子的方向</h3>
+          <ul class="howto">
+            <li><b>bi-level / thought-driven prompt 优化（推理模型 o1/R1 时代）</b>——唯一「整块相邻且完全缺席」的方向，<b>下一次定向 arXiv 搜索的最高优先级</b>。</li>
+            <li>task-agnostic / online 优化（无 Dval、意图漂移、非平稳）——与自进化主线相关，值得一次定向搜索。</li>
+            <li>constrained optimization——本报告的 hygiene 主题（洞见 06）就是它的实证版，理论外壳待补。</li>
+            <li>multi-task / negative transfer——与记忆过滤（洞见 10）合并讨论。</li>
+            <li>簇内偏轻子机制（学习型评分、token 级编辑、bandit 筛选、MoE 路由）——已知存在、刻意不深入，仅留指针。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑩ ROADMAP -->
+    <section id="roadmap">
+      <h2>⑩ 把这些用起来：首批最小验证</h2>
+      <p class="section-intro">最值得本项目先动手验证的几条——成本低、错误可解释、跨渠道支撑强。详细设计见 <a href="./experiment_plan.html">实验计划</a>，与统一目录的 P0–P2 同口径；本版新增「零成本变换三臂 A/B」为最便宜的 P0。</p>
+      <table class="matrix" aria-label="首批验证">
+        <thead><tr><th>优先级</th><th>验证什么</th><th>对应洞见</th><th>最小任务</th><th>无论成败都能产出</th></tr></thead>
+        <tbody>
+          <tr><td>P0</td><td><b>零成本变换三臂 A/B（baseline / repetition×2 / padding）</b></td><td>13</td><td>50–100 条小评测集（分类或选择题）</td><td>建立零智能对照底线；校准 2026 代模型是否已内化复述行为</td></tr>
+          <tr><td>P0</td><td>优化前体检（headroom / noise floor）</td><td>01、02</td><td>100–300 条 JSON 抽取</td><td>判断有无优化空间，校准噪声地板</td></tr>
+          <tr><td>P0</td><td>示例优化 vs 指令优化</td><td>07</td><td>同一抽取任务</td><td>防止把示例收益误记成指令收益</td></tr>
+          <tr><td>P1</td><td>直接改写 vs 根因假设改写</td><td>03、04</td><td>失败清晰的抽取/分类</td><td>判断根因假设是否改善留出表现</td></tr>
+          <tr><td>P1</td><td>只看性能 vs 加卫生门</td><td>06</td><td>同一候选池</td><td>判断防膨胀门是否减少伪提升</td></tr>
+          <tr><td>P2</td><td>工具 schema 优化</td><td>09</td><td>20–50 个相似工具</td><td>判断改 schema 是否优于只改全局指令</td></tr>
+          <tr><td>P2</td><td>过滤记忆 vs 原始记忆</td><td>10</td><td>两个相近 + 一个异质任务</td><td>判断记忆是否降本或带来负迁移</td></tr>
+        </tbody>
+      </table>
+      <p class="src">洞见 14（optimizer/judge 版本化）不需要独立实验——把 optimizer_prompt / judge_prompt 版本字段加进运行记录 schema 即可落地，随任意 P0 实验一并生效。</p>
+      <div class="callout">
+        <strong>给读者的四条总结：</strong>① 优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱，顺手先测零成本的结构变换当底线；② 选方法看你的系统能产出什么反馈信号（标量 / 批评 / 轨迹），有 dev set 先优化示例而不是指令；③ 改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色；④ 更长、更多、更复杂都不是默认的好——先证明它没带来过拟合、污染或归因困难。
+      </div>
+    </section>
+
+    <!-- ⑪ SOURCES -->
+    <section id="sources">
+      <h2>⑪ 证据索引与追溯链</h2>
+      <p class="section-intro">本页是可视化综合，完整论述见各层源文档，再逐层追溯到论文/源码原文。</p>
+
+      <h4 style="margin-top:6px">方法地图层（本版新增的 ① 层来源）</h4>
+      <ul class="source-list">
+        <li><a href="./apo_seven_methods_primer_20260611.html">APO 七法主线详解（演进谱系）</a></li>
+        <li><a href="./classic_optimizer_methods_comparison_20260610.html">经典六法横向对比（同框架数字）</a></li>
+        <li><a href="./arxiv_top80_taxonomy.html">7 方法簇 taxonomy</a></li>
+        <li><a href="./arxiv_taxonomy_completeness_check_20260610.md">taxonomy 外部完整性校验（3 综述对照）</a></li>
+      </ul>
+
+      <h4 style="margin-top:12px">综合与中间层</h4>
+      <ul class="source-list">
+        <li><a href="./insight_handbook_20260609.html">读者向洞见手册（12 洞见完整版，13/14 待同步）</a></li>
+        <li><a href="./insight_method_catalog_20260609.html">Insight / Conclusion / Method 候选清单（结构化）</a></li>
+        <li><a href="./insight_field_standard.html">字段定义规范（A/B/C/D 等级与各类型 schema）</a></li>
+        <li><a href="./final_report_outline.html">最终报告结构</a></li>
+        <li><a href="./experiment_plan.html">实验计划（P0–P2）</a></li>
+        <li><a href="./prompt_evolution_mindmap_20260610.html">全景脑图 Mermaid 源（v3 结构，待按 v4 更新）</a></li>
+      </ul>
+
+      <h4 style="margin-top:12px">分渠道整理</h4>
+      <ul class="source-list">
+        <li>arXiv：<a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.html">taxonomy</a> · <a href="./literature_map.html">文献地图（paper_notes 全目录）</a>（37 篇）</li>
+        <li>GitHub：<a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.html">insight_cards</a> · <a href="./github_repo_source_audit_workflow_20260608.html">audit_workflow</a></li>
+        <li>其它平台：<a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a></li>
+        <li>Twitter/X：<a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a></li>
+        <li>知乎：<a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a></li>
+        <li>来源总账：<a href="./source_inventory.md">source_inventory</a> · <a href="./industry_practices.md">industry_practices</a></li>
+      </ul>
+
+      <h4 style="margin-top:12px">repo ↔ paper 对照表（跨源互证管理）</h4>
+      <table class="matrix" aria-label="repo paper 对照">
+        <thead><tr><th>仓库</th><th>关联论文</th><th>论文深读</th><th>源码审计</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>gepa-ai/gepa</td><td>GEPA (2507.19457)</td><td>✅ A 级笔记</td><td>⏳ 待审</td><td>L4 互证候选，<b>补审优先级最高</b></td></tr>
+          <tr><td>microsoft/PromptWizard</td><td>PromptWizard (2405.18369)</td><td>❌ 未写</td><td>⏳ 待审</td><td>先补论文笔记再审码</td></tr>
+          <tr><td>SalesforceAIResearch/promptomatix</td><td>Promptomatix (2507.14241)</td><td>❌ skimmed</td><td>⏳ 待审</td><td>先深读论文</td></tr>
+          <tr><td>Eladlev/AutoPrompt</td><td>Intent-based Prompt Calibration (2402.03099)</td><td>❌ candidate</td><td>⏳ 待审</td><td>与 LangChain Promptim 区分命名</td></tr>
+          <tr><td>Scale3-Labs/dspyground</td><td>（GEPA harness，无独立论文）</td><td>—</td><td>⏳ 待审</td><td>agent optimizer 工程案例</td></tr>
+          <tr><td>linshenkx/prompt-optimizer · karpathy/autoresearch · humanlayer/12-factor-agents · affaan-m/ecc</td><td>（无对应论文）</td><td>—</td><td>✅ 已审（固定 commit）</td><td>靠本项目实验升级证据</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin-top:12px">历史版本（对照 / 回滚）</h4>
+      <ul class="source-list">
+        <li><a href="./analysis_report_v3_20260610.html">v3 报告（12 洞见 + 脑图 + 金字塔 + 分渠道速览，已冻结）</a></li>
+        <li><a href="./analysis_report_v2_20260609.html">v2 报告（按洞见组织，arXiv 为主）</a></li>
+        <li><a href="./analysis_report_v1_20260608.html">v1 报告（按渠道组织，最早版本）</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>报告 v4 当前定位：在 v3 的 12 洞见与证据金字塔基础上，升级为「方法地图 → 工作流洞见（14 条）→ 工程落地 → 误区与边界」的四层综合论述。洞见编号 01–12 与统一目录 I-01..12 保持一致，13/14 为本版新增（统一目录与读者手册的同步列入后续任务）。所有标「示意」的 prompt/对话为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；recent-preprint 结论与非 arXiv 渠道的 pending 候选需独立复现/回填追溯后才能采信。实验用于验证、演示和校准这些经验，不作为项目主线本身。更新时间：2026-06-11。</p>
+    </footer>
+  </div>
+</body>
+</html>
