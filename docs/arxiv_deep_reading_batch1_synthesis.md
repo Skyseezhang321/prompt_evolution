@@ -90,6 +90,8 @@ MPO 的结论和 GEPA 的多模块设置相互支持：
 
 ## 当前未证事项
 
+> 2026-06-12 补注：本节为 Batch 1 时点判断。其中最后一条「prompt length 是否应作为优化目标」已在后续批次获得方法化方向（Batch 2 的 TextReg regularization gradient、PrefPO hygiene 评估，及 Batch 3 结论 6 的 hygiene 指标集），见 `docs/arxiv_deep_reading_batch2_synthesis.md` 与 `docs/arxiv_deep_reading_batch3_synthesis.md`；其余各条截至 2026-06-12 仍未证。
+
 - 这些论文结果能否迁移到中文任务，还没有证据。
 - Prompt optimizer 自我改进是否会带来安全退化，目前只看到 SePO 的讨论，缺少强实验。
 - Python sandbox 型 optimizer 是否值得用于开放生成任务，SPEAR 的证据主要来自 structured judge tasks。

@@ -2,6 +2,8 @@
 
 更新时间：2026-06-09
 
+> **历史快照（2026-06-12 冻结）：** 本文系 top80 标题/摘要级一读产出，此后未随深读批次更新，不再维护。可执行方法的现行单一事实来源是 [Insight / Method 统一目录](insight_method_catalog_20260609.md)与[主报告 v4](analysis_report_v4_20260611.html)的工程落地层；arXiv 渠道深读综合见 [Batch 3 综合](arxiv_deep_reading_batch3_synthesis.md)。本文保留作研究过程存档。
+
 数据来源：`outputs/arxiv_prompt_search/arxiv_focus_top80_20260608T131514Z.csv`
 
 定位：把 `arxiv_top80_overview.md`、`arxiv_top80_taxonomy.md` 和 `arxiv_top80_key_papers.md` 中的抽象判断翻译成具体问题、可执行方案和最小验证任务。本文中的例子是面向本项目的工程化示例，不是论文原文实验样例；论文原始证据需要后续在 `docs/paper_notes/` 中逐篇核验。
