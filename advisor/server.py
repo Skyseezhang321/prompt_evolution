@@ -24,7 +24,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -316,7 +316,9 @@ def index():
 
 
 # 文档/报告页顶部「💬 对话助手主页」用相对链接 ../advisor/advisor.html（file:// 与
-# 静态托管直接可达）；后端托管时该路径不在 /docs 挂载内，这里加别名路由兜住。
+# 静态托管直接可达）；后端托管时该路径不在 /docs 挂载内，这里重定向回根路由。
+# 不能直接 FileResponse：页面里 api/* 为相对路径，在 /advisor/ 下会解析成
+# /advisor/api/* → 404，导致 LLM 模式静默失效（实跑日志已踩中）。
 @app.get("/advisor/advisor.html", include_in_schema=False)
 def advisor_alias():
-    return FileResponse(str(HERE / "advisor.html"))
+    return RedirectResponse("/", status_code=302)

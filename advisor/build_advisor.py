@@ -262,6 +262,23 @@ a:hover{color:var(--seal);}
 .exp{padding:10px 13px;border:1px solid var(--line-soft);border-radius:8px;background:var(--paper);margin-bottom:8px;font-size:12.8px;}
 .exp b{color:var(--teal-deep);font-family:var(--mono);}
 .llm-ans{font-size:14.4px;line-height:1.82;}
+.llm-ans p{margin:0 0 9px;} .llm-ans>*:last-child{margin-bottom:0;}
+.llm-ans h3,.llm-ans h4{font-family:var(--serif);margin:14px 0 7px;line-height:1.5;font-weight:700;}
+.llm-ans>h3:first-child,.llm-ans>h4:first-child{margin-top:2px;}
+.llm-ans h3{font-size:15.5px;padding-bottom:4px;border-bottom:1px solid var(--line-soft);}
+.llm-ans h4{font-size:14.2px;color:#2c3227;}
+.llm-ans ul,.llm-ans ol{margin:4px 0 10px;padding-left:22px;}
+.llm-ans li{margin-bottom:4px;} .llm-ans li>ul{margin:4px 0 0;}
+.llm-ans code{font-family:var(--mono);font-size:.88em;background:var(--soft);
+  border:1px solid var(--line-soft);border-radius:4px;padding:0 4px;}
+.llm-ans pre{margin:6px 0 12px;padding:10px 13px;border:1px solid var(--line-soft);
+  border-left:3px solid var(--teal);border-radius:6px;background:var(--paper);overflow-x:auto;}
+.llm-ans pre code{display:block;background:none;border:0;padding:0;font-size:12.6px;line-height:1.6;white-space:pre;}
+.llm-ans blockquote{margin:6px 0 10px;padding:8px 13px;border-left:3px solid var(--seal);
+  background:var(--seal-soft);border-radius:0 6px 6px 0;}
+.llm-ans hr{border:0;border-top:1px dashed var(--line);margin:12px 0;}
+.llm-ans table{margin:6px 0 12px;}
+.llm-ans strong{font-weight:700;}
 .llm-ans b{font-family:var(--mono);font-weight:600;font-size:.86em;color:#175e4b;background:#e6f1ea;
   border:1px solid #bcd7c8;border-radius:4px;padding:0 5px;margin:0 1px;}
 .cursor{display:inline-block;width:7px;height:15px;background:var(--teal);margin-left:2px;vertical-align:text-bottom;animation:blink 1s steps(2,start) infinite;}
@@ -496,9 +513,84 @@ function contextFromAnswers(){
   Q.forEach(q => { const a = state.answers[q.id]; if (a){ const o = q.options.find(x => x.id === a); if (o) parts.push(q.id + '=' + o.label); } });
   return parts.join('; ');
 }
+// ---------- 轻量 Markdown 渲染（零依赖，file:// 离线可用）----------
+// LLM 回答按 markdown 输出，这里支持其常用子集：标题 / 粗体 / 行内代码 / 代码块 /
+// 列表（一层嵌套）/ 表格 / 引用 / 分隔线 / 链接；其余文本原样保留。
+// 安全：先 esc() 转义全部 HTML 再做结构转换；流式时每个增量全量重渲染（文本量小）。
+function mdInline(s){
+  return s
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/\[((?:I\d{2}|paper-|repo-|practice-)[^\]]*)\]/g, '<b>[$1]</b>');  // 引用芯片
+}
+function renderMarkdown(text){
+  const lines = esc(text).split('\n');
+  const out = [];
+  let i = 0, para = [], list = null;
+  const flushPara = () => { if (para.length){ out.push('<p>' + para.join('<br>') + '</p>'); para = []; } };
+  const flushList = () => {
+    if (!list) return;
+    let h = '<' + list.type + '>';
+    for (let k = 0; k < list.items.length; k++){
+      h += '<li>' + list.items[k].html;
+      const subs = [];
+      while (k + 1 < list.items.length && list.items[k + 1].ind >= 2){ subs.push(list.items[++k]); }
+      if (subs.length) h += '<ul>' + subs.map(s => '<li>' + s.html + '</li>').join('') + '</ul>';
+      h += '</li>';
+    }
+    out.push(h + '</' + list.type + '>'); list = null;
+  };
+  while (i < lines.length){
+    const raw = lines[i], t = raw.trim();
+    if (/^```/.test(t)){                       // 代码块（流式未闭合时吞到当前末尾）
+      flushPara(); flushList();
+      const code = []; i++;
+      while (i < lines.length && !/^```/.test(lines[i].trim())){ code.push(lines[i]); i++; }
+      i++; out.push('<pre><code>' + code.join('\n') + '</code></pre>'); continue;
+    }
+    if (!t){ flushPara(); flushList(); i++; continue; }
+    if (/^\|.*\|$/.test(t)){                   // 表格（第二行为 |---| 分隔时取表头）
+      flushPara(); flushList();
+      const rows = [];
+      while (i < lines.length && /^\|.*\|$/.test(lines[i].trim())){ rows.push(lines[i].trim()); i++; }
+      const cells = r => r.replace(/^\||\|$/g, '').split('|').map(c => mdInline(c.trim()));
+      const isSep = r => /^[\s|:\-]+$/.test(r);
+      let h = '<table class="at-table">', body = rows;
+      if (rows.length >= 2 && isSep(rows[1])){
+        h += '<thead><tr>' + cells(rows[0]).map(c => '<th>' + c + '</th>').join('') + '</tr></thead>';
+        body = rows.slice(2);
+      }
+      h += '<tbody>' + body.filter(r => !isSep(r)).map(r =>
+        '<tr>' + cells(r).map(c => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody>';
+      out.push(h + '</table>'); continue;
+    }
+    let m = t.match(/^(#{1,4})\s+(.*)$/);      // 标题：#/## → h3，###/#### → h4
+    if (m){ flushPara(); flushList(); const tag = m[1].length <= 2 ? 'h3' : 'h4';
+      out.push('<' + tag + '>' + mdInline(m[2]) + '</' + tag + '>'); i++; continue; }
+    if (/^(-{3,}|\*{3,})$/.test(t)){ flushPara(); flushList(); out.push('<hr>'); i++; continue; }
+    if (/^&gt;\s?/.test(t)){                   // 引用（esc 已把 > 转成 &gt;）
+      flushPara(); flushList();
+      const q = [];
+      while (i < lines.length && /^&gt;\s?/.test(lines[i].trim())){ q.push(mdInline(lines[i].trim().replace(/^&gt;\s?/, ''))); i++; }
+      out.push('<blockquote>' + q.join('<br>') + '</blockquote>'); continue;
+    }
+    m = raw.match(/^(\s*)([-*•]|\d+[.、)])\s+(.*)$/);   // 列表项（缩进≥2 作一层子项）
+    if (m){
+      flushPara();
+      const type = /^\d/.test(m[2]) ? 'ol' : 'ul';
+      if (!list || (list.type !== type && m[1].length < 2)){ flushList(); list = { type, items: [] }; }
+      list.items.push({ ind: m[1].length, html: mdInline(m[3]) });
+      i++; continue;
+    }
+    flushList();
+    para.push(mdInline(t)); i++;
+  }
+  flushPara(); flushList();
+  return out.join('');
+}
 function renderAnswer(text){
-  let h = esc(text).replace(/\n/g, '<br>').replace(/\[(I\d{2}[^\]]*)\]/g, '<b>[$1]</b>');
-  return `<div class="llm-ans">${h}</div>`;
+  return `<div class="llm-ans">${renderMarkdown(text)}</div>`;
 }
 function citedRefs(cited){
   if (!cited || !cited.length) return '';
