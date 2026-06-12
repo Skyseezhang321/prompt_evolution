@@ -26,6 +26,7 @@
 
 ### Changed
 
+- 分享物料**时效同步**（用户问「读者向洞见与分享 Deck 要不要随 v4 同步」，审计结论：洞见手册无需动——头部已是 14 洞见 + v4 口径，文中两处「12」均为准确的上下文表述；分享物料有 4 处过期）：`docs/share_deck_20260612.html` 三处——标题页与项目数字页「37 篇论文深读」→ 39 篇（GrIPS/PromptAgent 补读后口径）、方法地图页「两条暗线」升级为**三条**（新增 ③ 搜索结构是独立维度：盲采样→beam→MCTS→Pareto 池，PromptAgent 同等探索量消融 MCTS 0.754 vs beam 0.697 与 GEPA Pareto 消融互证，数字与 primer/笔记同口径）；`docs/project_onepager_20260612.html` 一处——项目数字 37 → 39。验证：脚本核验 6 项全过（新值就位、无「37 篇/两条暗线」残留）。影响范围：两份独立分享 HTML 各几行（均不在 build_doc_html 渲染管线内）；洞见手册、deck 其余页（v1→v4 演进页的历史表述「v2 按 12 洞见组织」属准确史实）未动。回滚点：还原 4 处文字即可。
 - `advisor/README.md` 新增「**远程服务器部署**」小节（随 Python 3.8 兼容修复同批，源自 sg-spark1 实际部署）：拉代码即可启动（三个生成产物已入库、服务器无需跑 build 脚本）、`--host 0.0.0.0` 对外监听示例、`/api/health` 部署后验证口径（insights=14 / corpus=43 / llm_available）、Python 版本要求（≥3.8，含 pydantic 注解写法约定）、常驻托管与公网暴露访问控制提醒。影响范围：仅 advisor/README.md；根 README 的一行指针无需变。
 
 ### Fixed

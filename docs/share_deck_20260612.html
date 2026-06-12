@@ -75,7 +75,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
 <section class="slide">
   <p class="mono" style="color:var(--seal);letter-spacing:.2em">PROMPT EVOLUTION · 2026-06-12</p>
   <h1>别让 AI 自己改作业</h1>
-  <p class="big" style="font-size:1.5em">Prompt 优化与自进化的证据级调研<br><span class="sub" style="font-size:.75em">5 天 · 5 个渠道 · 37 篇论文深读 · 14 条工程纪律 · 1 个能聊天的知识库</span></p>
+  <p class="big" style="font-size:1.5em">Prompt 优化与自进化的证据级调研<br><span class="sub" style="font-size:.75em">5 天 · 5 个渠道 · 39 篇论文深读 · 14 条工程纪律 · 1 个能聊天的知识库</span></p>
   <p class="sub" style="margin-top:2em">仓库：github.com/Skyseezhang321/prompt_evolution（公开共建）<br>导航：<span class="kbd">→</span>/<span class="kbd">空格</span> 下一页 · <span class="kbd">←</span> 上一页 · <span class="kbd">Home</span> 回封面</p>
 </section>
 
@@ -108,7 +108,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
   <h2><span class="no">02 · 我们做了什么</span>不是又一个优化器，是一份可追溯的证据地图</h2>
   <div class="grid g4">
     <div class="card"><b class="n">5</b><small>证据渠道：arXiv / GitHub / 平台与工具 / Twitter·X / 知乎</small></div>
-    <div class="card"><b class="n">37</b><small>论文深读笔记（含本地 PDF + SHA256，可逐条回溯）</small></div>
+    <div class="card"><b class="n">39</b><small>论文深读笔记（含本地 PDF + SHA256，可逐条回溯）</small></div>
     <div class="card"><b class="n">4 + 5</b><small>仓库源码审计（固定 commit）+ 5 个正典 optimizer 待审</small></div>
     <div class="card"><b class="n">14</b><small>工作流洞见（每条带数字、边界、跨渠道互证）</small></div>
     <div class="card"><b class="n">4 + 1</b><small>可复用方法 HM-01..04 + 1 个升格候选</small></div>
@@ -150,7 +150,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
       <tr><td><b>GEPA</b></td><td>2025</td><td><b>完整执行轨迹的反思</b></td><td>多模块 prompt 池（Pareto）</td><td>trace</td></tr>
     </tbody>
   </table>
-  <p class="callout">两条暗线：① <b>反馈信息密度决定样本效率</b>——GEPA 用 ~3,936 rollouts 超过用 24,000 的 GRPO（RL），省 35 倍；② <b>优化对象升维靠程序抽象</b>——从单指令到指令+示例到多模块系统。</p>
+  <p class="callout">三条暗线：① <b>反馈信息密度决定样本效率</b>——GEPA 用 ~3,936 rollouts 超过用 24,000 的 GRPO（RL），省 35 倍；② <b>优化对象升维靠程序抽象</b>——从单指令到指令+示例到多模块系统；③ <b>搜索结构是独立维度</b>——盲采样 → beam → MCTS → Pareto 池，PromptAgent 同等探索量消融（MCTS 0.754 vs beam 0.697）与 GEPA「Pareto 选择是主要贡献」互证。</p>
 </section>
 
 <!-- 7 同框对比 -->
