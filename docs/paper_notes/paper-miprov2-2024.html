@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIPRO / Optimizing Instructions and Demonstrations for Multi-Stage LM Programs · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">MIPRO / Optimizing Instructions and Demonstrations for Multi-Stage LM Programs</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-mipro-optimizing-instructions-and-demonstrations-for-multi-stage-lm-programs">Paper Note: MIPRO / Optimizing Instructions and Demonstrations for Multi-Stage LM Programs</h1>
+<p>论文：Optimizing Instructions and Demonstrations for Multi-Stage Language Model Programs（提出 MIPRO；DSPy 实现中称 MIPROv2）</p>
+<p>链接：https://arxiv.org/abs/2406.11695</p>
+<p>source_id：paper-miprov2-2024</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search（经典锚点补读）</p>
+<p>新颖性判断：duplicate-but-foundational-baseline（DSPy 的 instruction+demo 联合优化器，GEPA/SPEAR 等的主要对照 baseline）</p>
+<p>阅读日期：2026-06-10</p>
+<p>reviewed_by：Claude</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2406.11695/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>F00093AF256C7B3E5168C2E98FBB8C4847232A8838C91BAAD4540CB4F19C91F7</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2406.11695/paper.txt</code></p>
+<p>local_text_sha256：<code>4B3FF3CB3019D74549885DD405F4F3AAB9200616E3B9AD56ACC441DB025B5D08</code></p>
+<p>evidence_level：method-and-results-read（读了问题形式化、proposal/credit-assignment 三×三策略、MIPRO 及变体、7 任务 benchmark 主表 Table 2、5 条 lesson 和 limitations；部分附录预算/重要性分数略读）</p>
+<p>版本说明：本地 PDF 为 v2（2024-10-06）。论文方法名为 MIPRO，DSPy 库里对应 <code>MIPROv2</code>，本项目 inventory 用 <code>paper-miprov2-2024</code>。</p>
+<h2 id="_1">一句话结论</h2>
+<p>MIPRO 把 [[paper-dspy-2023]] 没解决的"多阶段 LM program 里 <strong>instruction</strong> 怎么自动优化"补上，并把问题干净地形式化为两个挑战：(1) <strong>proposal</strong>——prompt 空间太大，怎么采到少量高质量候选；(2) <strong>credit assignment</strong>——只有 program 级 metric、没有 module 级标签，怎么把功劳/过错分到各 module。它的答案是"bootstrap demonstration + grounded instruction proposal + 贝叶斯(TPE) 在 mini-batch 上联合搜索"。最重要的实证结论对本项目是一记定调：<strong>在多数任务上，优化 bootstrapped demonstration 比优化 instruction 更管用；instruction 优化只在'有不显然、又无法靠少量样例表达的条件规则'的任务上才是决定性的</strong>——而联合优化(MIPRO)在 7 个任务里 5 个最好。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：优化任意多阶段 LM program 的 prompt（多跳检索 QA、分类、NLI、claim 验证等）。</li>
+<li>优化对象：每个 module 的 <strong>free-form instruction + few-shot demonstration</strong>（弱假设：无 module 级标签、无梯度、无 logprob、只有 program 和一个 metric + 训练输入）。</li>
+<li>目标指标：任意 program 级 metric（EM、accuracy、Recall@21、custom）。</li>
+<li>约束：proposal 候选要少而精；credit assignment 不能依赖中间标签。</li>
+</ul>
+<h2 id="3-proposal-3-credit-assignment">方法摘要（3 proposal × 3 credit-assignment）</h2>
+<ul>
+<li>候选如何生成（proposal）：
+  1. <strong>Bootstrap demonstrations</strong>：训练输入跑过 program，保留 metric 达标的 trace，把各 module 的 input/output 当候选 demo（DSPy 的 rejection sampling）。
+  2. <strong>Grounding</strong>：构造一个 zero-shot program 给 proposer LM 喂"数据集模式摘要 + program 控制流摘要 + bootstrapped demo + 历史 instruction 及其分数"，让它写出 task-grounded instruction。
+  3. <strong>Learning to propose</strong>：把 proposal 的超参（温度、是否给 data/program summary、给哪条 tip、给哪组 demo）参数化，用贝叶斯模型跨 trial 学最优 proposal 策略。</li>
+<li>如何选择候选（credit assignment）：
+  1. <strong>Greedy</strong>：一次只改一个 module——能避免错误归因，但低效且"某 module 不先改好别的就看不出收益"；实验里性价比差。
+  2. <strong>Surrogate（MIPRO 采用）</strong>：用 Optuna 的 TPE 建贝叶斯代理模型，预测"instruction×demo 组合"的质量，在 <strong>mini-batch</strong> 上评估更新先验；贝叶斯对噪声鲁棒。缺点：只能在固定候选集里选，不能改进候选本身。
+  3. <strong>History-based</strong>：让足够强的 proposer LM 从历史评估里同时做 credit assignment 和提新 instruction（OPRO 式，Module-Level / Program-Level）。</li>
+<li>反馈如何获得：program 级 metric 分数（mini-batch 估计 + 周期性全训练集评估）。</li>
+<li>是否使用记忆/archive：贝叶斯代理模型的历史 trial 充当隐式 archive；保留最高分参数化。</li>
+<li>是否优化 optimizer 自身：MIPRO++ 是——它 meta-optimize proposal 策略的超参（把"怎么提 proposal"也纳入贝叶斯搜索）。</li>
+<li>关键变体：<strong>0-Shot MIPRO</strong>（只优化 instruction）、<strong>Bayesian Bootstrap</strong>（只优化 demo）、<strong>MIPRO++ / 0-Shot MIPRO++</strong>（meta-optimize proposal 超参）。</li>
+</ul>
+<h2 id="_3">实验设置</h2>
+<ul>
+<li>数据集/程序（7 个，Table 1）：ScoNe(NLI/CoT)、HotPotQA(多跳检索, 2 module/3 调用)、HoVer(4-hop claim 验证, Recall@21)、HotPotQA Conditional(按答案类型改格式的条件规则任务)、Iris(分类/CoT)、Iris-Typo(seed prompt 带拼写错)、Heart Disease(分类/answer ensemble)。</li>
+<li>切分：500 train / 500 dev / 2k test。</li>
+<li>模型：proposer LM = GPT-3.5（温度 0.7，写 instruction）；task LM = <strong>Llama-3-8B</strong>（program 内执行）；bootstrap teacher 默认 Llama-3-8B，难任务(ScoNe/HoVer)换 GPT-4o。</li>
+<li>baselines：未优化 program；instruction-only(Module-Level OPRO ±Grounding, 0-Shot MIPRO/++)；demo-only(Bootstrap RS, Bayesian Bootstrap)；joint(MIPRO)。</li>
+<li>预算/统计：每任务 20–50 trials（mini-batch 实际 trial 更多），每法每任务 5 次运行，Wilcoxon signed-rank 检验显著性。</li>
+</ul>
+<h2 id="_4">主要结果</h2>
+<p>论文直接报告（Table 2，test，5 次平均；摘要：5/7 任务超 baseline，最高 +13%）：</p>
+<ul>
+<li><strong>Lesson 1 — demo 优化通常胜过 instruction 优化</strong>：Bootstrap RS 在除 HotPotQA Conditional 外所有任务都打败"最佳 instruction-only optimizer"（Wilcoxon 显著）。强 demo 传递的是"成功推理行为"，不只是任务格式（不同 demo 集表现方差很大）。</li>
+<li><strong>Lesson 2 — 联合优化(MIPRO)总体最好</strong>：7 任务里 5 个 MIPRO 最优（如 ScoNe 79.4、HotPotQA 46.4、HoVer 39.0、HotPotQA Cond 28.1、Iris 88.6）。例外 HotPotQA、Heart Disease、Iris-no-typo。</li>
+<li><strong>Lesson 3 — instruction 优化在"条件规则不显然且无法靠少量样例表达"的任务上是决定性的</strong>：HotPotQA Conditional、Iris-Typo 上，连 0-shot instruction 优化都超过 demo-only；instruction optimizer 甚至能修正 seed prompt 里的拼写错。</li>
+<li><strong>Lesson 4 — grounding 总体有益但最优策略因任务而异</strong>：grounding 对 HotPotQA/HoVer 是必要的，却伤害 ScoNe；MIPRO++ 能学到任务专属 proposal 策略救回 ScoNe。贝叶斯重要性分数显示：<strong>meta-prompt 里的 bootstrapped demo 选择和那条"tip"重要性最高</strong>，data summary 的重要性因任务大幅波动。</li>
+<li><strong>Lesson 5 — optimizer 排名依赖预算</strong>：Module-Level OPRO / 0-Shot MIPRO / MIPRO++ 互有胜负；mini-batch 的 0-Shot MIPRO 可能在低预算占优，MIPRO++ 可能在高预算占优。</li>
+</ul>
+<h2 id="_5">失败案例和局限</h2>
+<ul>
+<li><strong>optimizer 推不出复杂任务规则</strong>：没有手写 seed prompt 时，instruction optimizer 无法从 grounding 里推全条件规则（Heart Disease 用无判据的 seed 就吃亏）。这是本版的硬限制——"自动化"仍依赖人给的规则种子。</li>
+<li><strong>固定预算、未扫低/高预算</strong>：optimizer 之间的取舍随预算变，本文只在固定预算下比，结论有预算依赖性。</li>
+<li><strong>固定 proposer + task LM，跨模型未验证</strong>：明确列为 limitation；换模型是否稳定未知。</li>
+<li><strong>demo 集高方差</strong>：bootstrapped demo 的好坏波动大，选错 demo 集会明显掉分（Appendix G）——"自举不等于稳定"。</li>
+<li><strong>credit assignment 仍是近似</strong>：greedy 低效、surrogate 只能在固定候选里选、history-based 依赖"足够强的 proposer LM 能从长历史里正确分配 credit"（长历史信息易丢失）。三者都没真正解决 module 级归因。</li>
+<li><strong>Program-Level OPRO 不如 Module-Level</strong>：把整条多阶段轨迹丢给 LM 让它自己分 credit，复杂且无额外收益——长轨迹里信息丢失。</li>
+</ul>
+<h2 id="_6">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 多数任务上&quot;优化示例&quot;比&quot;优化指令&quot;更管用；指令优化只在特定条件下决定性。
+evidence_type: direct-result + ablation
+paper_evidence:
+  section: &quot;6 (Lessons 1-3)&quot;
+  table_or_figure: &quot;Table 2&quot;
+  quote_or_paraphrase: &quot;Bootstrap RS 在除 HotPotQA Conditional 外全部任务打败最佳 instruction-only；instruction 优化只在'条件规则不显然且无法靠少量样例表达'时(HotPotQA Cond/Iris-Typo)胜出。&quot;
+mechanism: demo 直接示范成功推理行为；instruction 在规则无法被样例覆盖时才提供不可替代的信息。
+actionable_rule: 选优化策略前先判任务类型——格式/行为类先试 demo 优化；含隐藏条件规则的先试 instruction 优化；默认跑联合(MIPRO)。与 [[paper-teach-better-show-smarter-2024]]、[[paper-textgrad-2024]] 互补性结论一致。
+counterexample_or_limit: HotPotQA 这类最终模块 in-distribution 的简单 QA，instruction 优化收益低。
+minimal_experiment: 同任务跑 instruction-only / demo-only / joint 三格，并按&quot;是否含隐藏条件规则&quot;分层看哪格赢。
+confidence: high
+</code></pre>
+<pre><code class="language-yaml">insight: 把 credit assignment 与 proposal 解耦，用贝叶斯代理在 mini-batch 上选组合，是对噪声鲁棒的多阶段优化骨架。
+evidence_type: direct-method
+paper_evidence:
+  section: &quot;3.2, 4.3&quot;
+  table_or_figure: &quot;Figure 4&quot;
+  quote_or_paraphrase: &quot;MIPRO 用 TPE 贝叶斯模型在 mini-batch 上学 instruction×demo 组合的质量，proposer 只管提候选，credit assignment 交给代理模型。&quot;
+mechanism: 贝叶斯把不确定性纳入搜索，mini-batch 降单次评估成本，让有限预算探索更多组合。
+actionable_rule: 本项目多组件优化默认&quot;proposal 与 selection 分离 + mini-batch 代理评估 + 周期性全集复核&quot;，而不是让一个 LM 一次性既改又选（对照 OPRO 的纯 history-based [[paper-opro-2023]]）。
+counterexample_or_limit: 代理只能在固定候选集里选，无法改进候选本身；小验证集下仍会过拟合。
+minimal_experiment: 同候选集下比较 greedy / 贝叶斯代理 / history-based 三种选择的样本效率与最终测试分。
+confidence: high
+</code></pre>
+<pre><code class="language-yaml">insight: 自动 instruction 优化器仍推不出复杂任务的隐藏规则，需要人写 seed prompt。
+evidence_type: direct-result + author-claim
+paper_evidence:
+  section: &quot;6 (Lesson 3), Limitations&quot;
+  table_or_figure: &quot;Table 2 (Heart Disease, HotPotQA Cond)&quot;
+  quote_or_paraphrase: &quot;缺判据 seed 的 Heart Disease 上 instruction 优化吃亏；作者明言 optimizer 无法仅靠 grounding 推全任务规则。&quot;
+mechanism: grounding 提供数据/程序线索，但不足以外推一套完整条件规则；规则仍需人注入。
+actionable_rule: 本项目把&quot;业务规则/约束&quot;当人写不可自动改写层(对齐 H3)，optimizer 只在其上做措辞与示例优化；不要指望 optimizer 凭空补规则。
+counterexample_or_limit: 规则可由少量样例表达时，demo 自举即可，无需人写规则。
+minimal_experiment: 同任务对比&quot;有判据 seed + 优化&quot;vs&quot;空 seed + 优化&quot;，量化人写规则的边际贡献。
+confidence: high
+</code></pre>
+<h2 id="_7">对本项目的启发</h2>
+<blockquote>
+<p>字段定义与 insight / conclusion / helpful method 的区分口径见 <code>docs/insight_field_standard.md</code>。</p>
+</blockquote>
+<ul>
+<li>conclusion：MIPRO 是 instruction+demo <strong>联合优化的基线锚点</strong>，并给出本项目可直接采信的分诊规则——多数任务 demo 优化更强，instruction 优化只在隐藏条件规则任务上决定性，联合最稳(5/7)。但 optimizer 推不出规则、跨模型未验证、demo 高方差。</li>
+<li>helpful method：把"bootstrap demo + grounded instruction proposal + 贝叶斯 mini-batch 选择"作为多组件 optimizer 的标准骨架；并把 proposal↔selection 解耦当默认工程结构。</li>
+<li>anti-pattern / limit：默认"优化 prompt = 改 instruction"（多数任务该先优化 demo）；指望 optimizer 凭 grounding 补全业务规则；用单一 dev 全量评估而不 mini-batch（浪费预算）。</li>
+<li>适用场景：DSPy 式多阶段 program、有 program 级 metric、无 module 级标签、想在有限预算下联合调 instruction+demo。</li>
+<li>误用风险：忽略 demo 集高方差直接上线；跨模型迁移不重测；小 dev 选择过拟合（[[paper-coin-flip-2026]]）。</li>
+</ul>
+<h2 id="_8">最小验证或演示计划</h2>
+<ul>
+<li>要验证的 insight / method：分诊规则（按"是否含隐藏条件规则"决定先优化 instruction 还是 demo），以及 proposal↔selection 解耦骨架。</li>
+<li>最小验证任务：一个"含隐藏条件规则"的结构化任务（仿 HotPotQA Conditional）+ 一个"格式/行为类"任务，各 300–500 样本。</li>
+<li>需要实现的模块：(1) bootstrap demo（trace 过滤）；(2) grounded instruction proposer；(3) TPE/贝叶斯 mini-batch 选择器；(4) instruction-only / demo-only / joint 三格 + 5 次运行 + 显著性检验。</li>
+<li>观察指标：各格 test 分与显著性、demo 集方差、达到目标分的 trial 数、跨模型迁移 delta、train-dev-test gap。</li>
+<li>预计风险：demo 高方差需多 seed；贝叶斯在小 mini-batch 上不稳；缺判据 seed 时 instruction 优化无力（要先注入规则种子）。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-miprov2-2024.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#3-proposal-3-credit-assignment">方法摘要（3 proposal × 3 credit-assignment）</a>
+<a class="lv2" href="#_3">实验设置</a>
+<a class="lv2" href="#_4">主要结果</a>
+<a class="lv2" href="#_5">失败案例和局限</a>
+<a class="lv2" href="#_6">洞见卡片</a>
+<a class="lv2" href="#_7">对本项目的启发</a>
+<a class="lv2" href="#_8">最小验证或演示计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

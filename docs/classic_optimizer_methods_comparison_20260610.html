@@ -103,37 +103,37 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td><strong>APE</strong></td>
 <td>2022</td>
 <td>最简奠基锚点：LLM 提案一批 instruction + 在小训练集上按分选最优（propose-then-select），无梯度无迭代</td>
-<td><a href="paper_notes/paper-ape-2022.md">paper-ape-2022.md</a></td>
+<td><a href="paper_notes/paper-ape-2022.html">paper-ape-2022.md</a></td>
 </tr>
 <tr>
 <td><strong>OPRO</strong></td>
 <td>2023</td>
 <td>LLM-as-optimizer 基线：把"历史 prompt+分数"升序塞进 meta-prompt，让 LLM 看分数模式生成全新候选（纯标量轨迹）</td>
-<td><a href="paper_notes/paper-opro-2023.md">paper-opro-2023.md</a></td>
+<td><a href="paper_notes/paper-opro-2023.html">paper-opro-2023.md</a></td>
 </tr>
 <tr>
 <td><strong>EvoPrompt</strong></td>
 <td>2023/24</td>
 <td>把经典 GA/DE 翻译成 LLM 能执行的语义算子：EA 管 selection/update，LLM 管 crossover/mutation</td>
-<td><a href="paper_notes/paper-evoprompt-2024.md">paper-evoprompt-2024.md</a></td>
+<td><a href="paper_notes/paper-evoprompt-2024.html">paper-evoprompt-2024.md</a></td>
 </tr>
 <tr>
 <td><strong>PromptBreeder</strong></td>
 <td>2023</td>
 <td>自指进化：连 mutation prompt 一起进化（hyper-mutation），同时学"任务 prompt"和"怎么改 prompt"</td>
-<td><a href="paper_notes/paper-promptbreeder-2023.md">paper-promptbreeder-2023.md</a></td>
+<td><a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023.md</a></td>
 </tr>
 <tr>
 <td><strong>DSPy-style</strong></td>
 <td>2023</td>
 <td>prompt-as-program：signature 声明 + module 组合 + teleprompter 编译；本版主要<strong>自举 demonstration</strong> 而非 instruction</td>
-<td><a href="paper_notes/paper-dspy-2023.md">paper-dspy-2023.md</a>（+ <a href="paper_notes/paper-miprov2-2024.md">miprov2</a> 补 instruction 层）</td>
+<td><a href="paper_notes/paper-dspy-2023.html">paper-dspy-2023.md</a>（+ <a href="paper_notes/paper-miprov2-2024.html">miprov2</a> 补 instruction 层）</td>
 </tr>
 <tr>
 <td><strong>PROSE</strong></td>
 <td>2026</td>
 <td>coin-flip 自建受控反例：结构化分解 + 多算子进化 + <strong>风险感知选择</strong>（mean+Sharpe+DRO）；用来证伪"risk-aware 选择有用"，结论是无优势</td>
-<td><a href="paper_notes/paper-prose-2026.md">paper-prose-2026.md</a></td>
+<td><a href="paper_notes/paper-prose-2026.html">paper-prose-2026.md</a></td>
 </tr>
 </tbody>
 </table>
@@ -517,7 +517,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>结构化/模块化 prompt：[[paper-modular-prompt-optimization-2026]]</li>
 <li>字段与证据口径：<code>docs/insight_field_standard.md</code></li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/classic_optimizer_methods_comparison_20260610.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/classic_optimizer_methods_comparison_20260610.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话定位</a>
 <a class="lv2" href="#_2">五维结构化对比</a>

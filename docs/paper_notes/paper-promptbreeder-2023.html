@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PromptBreeder · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">PromptBreeder</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-promptbreeder">Paper Note: PromptBreeder</h1>
+<p>论文：PromptBreeder: Self-Referential Self-Improvement via Prompt Evolution</p>
+<p>链接：https://arxiv.org/abs/2309.16797</p>
+<p>source_id：paper-promptbreeder-2023</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：foundational</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2309.16797/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>0E5B44B77D345581509BB58B009FA7FEF9928BF8C090B2A056E8916F25D974A0</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2309.16797/paper.txt</code></p>
+<p>local_text_sha256：<code>A21EE9C153027E59CDD643E398B418874E770F923F2D06BDEFB562AF5B681D1F</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>PromptBreeder 的真正洞见不是“用遗传算法搜索 prompt”，而是把 mutation prompt 也放进演化对象中，让系统同时学习“任务 prompt”和“如何改任务 prompt”；但它也暴露了早期 prompt evolution 的典型风险：搜索空间大、成本高，few-shot context 可能支配结果，task prompt 甚至会漂成无意义文本。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：给定一个 domain problem description，自动演化 task prompts，提高 LLM 在该领域的训练/测试表现。</li>
+<li>优化对象：task prompts、mutation prompts、少量 few-shot contexts，以及某些运行中可变超参。</li>
+<li>适用任务：算术推理、commonsense reasoning、instruction induction、ETHOS hate speech classification。</li>
+<li>目标指标：训练 batch fitness 和最终 test accuracy。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：每个 evolution unit 包含 task prompts、mutation prompt、few-shot contexts。LLM 根据 mutation prompt 改写 task prompt。</li>
+<li>自指机制：mutation prompt 本身也会被 hyper-mutation prompt 改写，形成 <code>M' = LLM(H + M)</code>。</li>
+<li>搜索机制：binary tournament genetic algorithm。抽两个个体，保留高 fitness 个体，mutate 后覆盖低 fitness 个体。</li>
+<li>主要 mutation operators：</li>
+<li>zero-order / first-order prompt generation。</li>
+<li>EDA population-based mutation。</li>
+<li>lineage-based mutation。</li>
+<li>zero-order / first-order hyper-mutation。</li>
+<li>Lamarckian mutation，从正确 working-out 反推 prompt。</li>
+<li>prompt crossover 和 context shuffling。</li>
+<li>多样性维护：BERT embedding similarity filtering、fitness sharing、随机字符前缀、mutation temperature 演化。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>模型：PaLM 2-L。</li>
+<li>主要设置：population size 50；通常 20-30 generations；fitness 用训练集中随机 100 个 Q&amp;A batch 的 accuracy。</li>
+<li>长跑设置：一般 1-2k fitness evaluations；数据集未自带 split 时按 50/50 train/test 切分。</li>
+<li>对照：CoT、PoT、Plan-and-Solve、PS+、APE、OPRO、Manual-CoT、Auto-CoT。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>表 1 中，PromptBreeder 在 PaLM 2-L 上的 zero-shot 结果：MultiArith 99.7、SingleEq 96.4、AddSub 87.8、SVAMP 90.2、SQA 71.8、CSQA 85.4、AQuA-RAT 62.2、GSM8K 83.9，整体高于 PS+、APE、OPRO 等对照。</li>
+<li>few-shot PromptBreeder 在 MultiArith 100.0、SingleEq 98.9、SVAMP 93.7、SQA 80.2、CSQA 85.9、AQuA-RAT 64.6、GSM8K 83.5 等任务上继续保持强表现。</li>
+<li>ETHOS 上，PromptBreeder 演化出的两阶段长 prompt 达到 89%，高于手写 prompt 80%。</li>
+<li>GSM8K 中最有效 mutation prompt 包括“summarise and improve”“simplify into separate sentences”“explain as a good teacher”等；最高成功率 24.13%。</li>
+<li>mutation operator 有效性中，zero-order hyper-mutation 产生改善的比例最高，为 42%，lineage-based mutation 26%，first-order hyper-mutation 23%。</li>
+<li>消融显示，大多数 self-referential components 被移除后 fitness 下降；ETHOS 欠指定任务中，移除 Lamarckian context-to-prompt mutation 从 81.6% 降到 64.6%。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>论文附录显示，few-shot evolution 中 contexts 可能主导 fitness，task prompts 有时漂成 nonsense，例如只剩 “mutant”。</li>
+<li>早期设置成本高：population 50、1-2k fitness evaluations，并且每次 fitness evaluation 又要跑 100 样本 batch。</li>
+<li>LLM 不一定能理解显式 fitness values；作者在 EDA mutation 中不给 LLM fitness 分数，因为 preliminary experiments 里 LLM 倾向复制高分条目。</li>
+<li>方法有大量 mutation operators 和启发式，多变量同时变化，因果归因困难。</li>
+<li>主要基于 PaLM 2-L 和早期基准，和现代 agent/workflow 场景仍需重新验证。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 自进化 prompt 的最小闭环不只是优化 task prompt，还要优化 mutation prompt。
+evidence_type: method + ablation
+paper_evidence:
+  section: &quot;3.2, 5, Appendix L&quot;
+  table_or_figure: &quot;Table 7, Table 8, Figure 4&quot;
+  quote_or_paraphrase: &quot;hyper-mutation operators 直接改 mutation prompts；移除 self-referential operators 在多数数据集上伤害 fitness。&quot;
+mechanism: mutation prompt 决定搜索方向；固定 mutation prompt 会把搜索限制在人工预设的改写风格里。
+actionable_rule: 记录并版本化 optimizer/mutation prompt，不要只记录最终 task prompt。
+counterexample_or_limit: 自指操作数量多，收益可能和 population diversity、context evolution、selection 交织。
+minimal_experiment: fixed mutation prompt vs evolved mutation prompt under same candidate budget。
+confidence: high-for-evolutionary-prompt-search
+</code></pre>
+<pre><code class="language-yaml">insight: 成功样例可以反向蒸馏成 prompt，但也可能让 context 盖过 prompt 本身。
+evidence_type: method + limitation
+paper_evidence:
+  section: &quot;3.2.4, Appendix J.5, Appendix L&quot;
+  table_or_figure: &quot;ETHOS ablation, few-shot examples&quot;
+  quote_or_paraphrase: &quot;Lamarckian mutation 从正确 working-out 反推 task prompt；但 few-shot evolution 中 contexts dominate，task prompts 可漂成 nonsense。&quot;
+mechanism: successful working-out 包含任务求解过程信息，能诱导规则；但 evaluation 若依赖 few-shot context，prompt 字符串本身可能不再承担主要功能。
+actionable_rule: 做 prompt evolution 时要分开评估 instruction-only、context-only、instruction+context。
+counterexample_or_limit: 如果 demos 很强，优化器可能只是选择/污染 demos，而不是学到可解释规则。
+minimal_experiment: evolved instruction with fixed demos vs evolved demos with fixed instruction。
+confidence: medium-high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>“prompt 自进化”需要至少区分 task prompt、mutation prompt、selection policy、context examples。</li>
+<li>第一批实验不应一次启用九种 mutation operators，否则难以解释提升来源。</li>
+<li>对所有候选要记录 <code>operator_type</code> 和 <code>parent_id</code>，否则无法复盘哪类 mutation 真正有效。</li>
+<li>Few-shot context 必须做单独消融，防止把 demo 选择误判成 prompt 规则进化。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：一个小型分类/抽取任务，100-300 条训练样本。</li>
+<li>变量：</li>
+<li>fixed mutation prompt vs evolved mutation prompt。</li>
+<li>direct mutation vs lineage mutation vs Lamarckian mutation。</li>
+<li>instruction-only vs instruction+few-shot。</li>
+<li>指标：test accuracy、prompt length、operator success rate、context-only ablation、每轮成本。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-promptbreeder-2023.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit-Level Analysis / Why Prompt Optimization Works and Sometimes Doesn&#x27;t · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">Edit-Level Analysis / Why Prompt Optimization Works and Sometimes Doesn&#x27;t</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-edit-level-analysis-why-prompt-optimization-works-and-sometimes-doesnt">Paper Note: Edit-Level Analysis / Why Prompt Optimization Works and Sometimes Doesn't</h1>
+<p>论文：Why Prompt Optimization Works, and Why It Sometimes Doesn't: A Causal-Inspired Edit-Level Analysis</p>
+<p>链接：https://arxiv.org/abs/2605.26655</p>
+<p>source_id：paper-causal-edit-level-2026</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：new-hypothesis</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2605.26655/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>CB4067269B43794749130F64E9A4E78DDBF27811E33FE0C2D935446523759C9B</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2605.26655/paper.txt</code></p>
+<p>local_text_sha256：<code>EBB79661922A05A979D5E984C8BC59593E891F603688203DDAAEAF8B8FBCA0C6</code></p>
+<p>evidence_level：analysis-results-limitation-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>这篇论文把一个常见误区讲清楚：prompt optimizer 的编辑不是“越清楚、越复杂、越多 meta instruction 越好”；不同任务类型对 edit family 的反应相反，数学和多跳任务尤其可能被复杂化和 meta-instruction 伤害。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：分析 DSPy、TextGrad、GEPA 等优化轨迹中的 prompt edit。</li>
+<li>优化对象：不是提出新 optimizer，而是评估不同 edit feature / motif 与 performance delta 的关系。</li>
+<li>目标指标：IPTW-adjusted ACMGD 等关联性估计。</li>
+<li>约束：作者明确声明是 observational analysis，不主张强因果结论。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：使用已有 optimizer 产生的 prompt pairs。</li>
+<li>反馈如何获得：比较 edit 前后 performance delta。</li>
+<li>如何选择候选：不涉及候选选择；重点是事后估计 edit family 的任务条件化关联。</li>
+<li>是否使用记忆/archive：分析 2,095 DSPy pairs、17,708 TextGrad/GEPA pairs 等轨迹。</li>
+<li>是否优化 optimizer 自身：否；提出 edit-conditioned optimizer design 的方向。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集/任务组：commonsense、mathematical、logical、sequential、multihop。</li>
+<li>模型：使用 GPT-4o annotation、surface text features 和 literal text-diff motifs 三种表示。</li>
+<li>baselines：不是 baseline 对比，而是多视角关联估计和 LOO 稳定性检查。</li>
+<li>train/dev/test 切分：分析已有 prompt comparison 数据。</li>
+<li>成本或调用次数：主要为离线分析。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<ul>
+<li>BH-FDR corrected associations 包括：Extraneous_load x sequential 为 -0.060；Metacognition x sequential 为 +0.062。</li>
+<li>Edit motif 层面，meta_instruction x math 为 -0.103，clarity_constraint x logical 为 -0.083，均为显著负关联。</li>
+<li>表面特征复现多个方向：word_count 对应 extraneous load，step_words 对 logical/sequential 更正向，对 multihop 更负向。</li>
+<li>83% headline sign patterns 在 leave-one-out exclusion 下保持方向，说明不是完全由单个数据集驱动。</li>
+<li>作者强调这些是 adjusted associational contrasts，不是因果效应。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>观察性研究不能证明某类 edit 导致性能变化；残余混杂来自 optimizer trajectory、backbone、组合编辑等。</li>
+<li>部分 task group 只有较少数据集，sequential 等结果有 benchmark-sensitive 风险。</li>
+<li>结果是 optimizer 和 benchmark 条件下的诊断启发，不能直接转成硬规则。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: prompt edit family 应该按任务类型设先验，尤其要警惕 math/multihop 中的复杂化和 meta-instruction。
+evidence_type: observational-analysis
+paper_evidence:
+  section: &quot;4.3 Heterogeneous Effects; 6 Conclusion&quot;
+  table_or_figure: &quot;Table 2, Table 3, Table 4&quot;
+  quote_or_paraphrase: &quot;meta_instruction x math 和 clarity_constraint x logical 呈显著负关联；metacognition x sequential 正关联。&quot;
+mechanism: 某些任务已经需要清晰算法步骤，额外 meta instruction 可能增加噪声或分散模型执行。
+actionable_rule: 选择候选 prompt 时加入 edit-family logging 和 task-conditioned penalties。
+counterexample_or_limit: 关联不是因果；需要后续做干预实验验证。
+minimal_experiment: math任务上允许/禁止 meta-instruction edits；sequential任务上允许/禁止 metacognitive edits。
+confidence: medium
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>每次 prompt diff 应自动标注 edit family：length、CoT、meta-instruction、clarity constraint、demo count 等。</li>
+<li>optimizer 不能只按分数选 prompt，还应检查 prompt 是否通过复杂化、重复和 meta 语言堆砌获得 dev 提升。</li>
+<li>这篇可直接转成我们的 prompt hygiene / edit prior 实验。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：一个 math-like、一个 sequential-like、一个 multihop-like 任务。</li>
+<li>需要实现的模块：prompt diff classifier、edit-family flags、task-conditioned selector、ablation gate。</li>
+<li>预计风险：edit family 自动标注误差；多个编辑同时出现导致归因困难；样本量不足。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-causal-edit-level-2026.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

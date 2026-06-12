@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modular Prompt Optimization · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">Modular Prompt Optimization</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-modular-prompt-optimization">Paper Note: Modular Prompt Optimization</h1>
+<p>论文：Modular Prompt Optimization: Optimizing Structured Prompts with Section-Local Textual Gradients</p>
+<p>链接：https://arxiv.org/abs/2601.04055</p>
+<p>source_id：paper-modular-prompt-optimization-2026</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：actionable-experiment</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2601.04055/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>A00A2DAECEE4C33D4F400591252E0BFBD1087035FC6793ACF596694516E84E57</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2601.04055/paper.txt</code></p>
+<p>local_text_sha256：<code>02523F4DEC18CCAEC0F308BD06856D7A0BCBBB77E0D368374D224DBFCEB47A40</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>MPO 把 prompt 结构本身当成优化约束：固定 role/context/task/constraints/output_format 等 schema，只对每个 section 生成局部 textual feedback 并去重合并；这为本项目提供了最直接的“可回滚 prompt 优化”实验方案。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：提升小型开源 instruction-tuned LMs 在 reasoning benchmarks 上的表现。</li>
+<li>优化对象：结构化 prompt 的 semantic sections，而不是整段 prompt。</li>
+<li>目标指标：ARC-Challenge 和 MMLU accuracy。</li>
+<li>约束：保持 prompt schema 固定，不改变模型参数，不改变 prompt topology。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：把初始 prompt 分解成 fixed semantic sections：System Role、Relevant Context、Task Details、Constraints、Output Format；critic model 对每个 section 生成 section-local textual gradient。</li>
+<li>反馈如何获得：critic 看到当前 section 和周围 prompt context，给出局部自然语言改进建议。</li>
+<li>如何选择候选：论文文本主要描述 section update、aggregation、de-duplication 和重组；未读到复杂 beam/Pareto 选择机制。</li>
+<li>是否使用记忆/archive：否。</li>
+<li>是否优化 optimizer 自身：否。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：</li>
+<li>ARC-Challenge：1119 training examples，1172 test examples。</li>
+<li>MMLU：3000 training subset，1400 held-out test examples。</li>
+<li>模型：LLaMA-3 8B-Instruct，Mistral-7B-Instruct。</li>
+<li>baselines：</li>
+<li>Untuned structured prompt。</li>
+<li>TextGrad。</li>
+<li>train/dev/test 切分：论文报告 training subset 和 test / held-out test，但本文未核到 dev selection 细节。</li>
+<li>成本或调用次数：未读到明确 token/call/runtime 成本。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>ARC-Challenge：</li>
+<li>LLaMA-3 8B-Instruct：Untuned 75.0，TextGrad 75.67，MPO 79.10。</li>
+<li>Mistral-7B-Instruct：Untuned 70.73，TextGrad 70.30，MPO 73.04。</li>
+<li>MMLU：</li>
+<li>LLaMA-3 8B-Instruct：Untuned 57.21，TextGrad 56.40，MPO 61.50。</li>
+<li>Mistral-7B-Instruct：Untuned 53.79，TextGrad 53.70，MPO 55.50。</li>
+<li>论文强调 TextGrad 在 MMLU 上相对 untuned prompt 下降，而 MPO 在两个模型和两个任务上都提升。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<p>论文直接报告 / 未报告：</p>
+<ul>
+<li>论文 future work 提到需要研究 critic model 选择对优化稳定性和迁移的影响。</li>
+<li>论文 future work 提到需要研究 structured optimization 是否会放大或缓解 unsafe / jailbreak behaviors。</li>
+<li>当前实验只覆盖 ARC-Challenge、MMLU 和两个小型开源模型，未覆盖 agent、tool-use、生成任务或生产格式约束。</li>
+<li>未读到明确成本报告、失败样例、prompt 长度变化曲线、train/dev/test selection 细节或 ablation。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 结构化 prompt 比整段 prompt 更适合自动优化，因为它把优化对象和不可变约束分开。
+evidence_type: direct-method + direct-result
+paper_evidence:
+  section: &quot;1 Introduction; 3 Approach; 4 Results&quot;
+  table_or_figure: &quot;Figure 1, Table 1, Table 2&quot;
+  quote_or_paraphrase: &quot;MPO 固定 System Role、Relevant Context、Task Details、Constraints、Output Format，并对每个 section 做局部 textual gradients；结果在 ARC/MMLU 上超过 TextGrad 和 untuned structured prompt。&quot;
+mechanism: section-local feedback 降低 unrelated instructions 之间的干扰，固定 schema 防止自由重写破坏 prompt topology，de-duplication 减少 prompt bloat。
+actionable_rule: 本项目的第一个 prompt 优化实验应采用 frozen/mutable section schema，每轮只允许修改一个 section。
+counterexample_or_limit: 论文未报告 agent/tool-use、格式约束、安全边界或成本；schema 设计仍需要人工参与。
+minimal_experiment: whole-prompt rewrite vs section-local rewrite，观察 task score、format violation、frozen section violation 和 prompt length growth。
+confidence: medium-high-for-structured-reasoning-prompts; medium-for-production-agent-prompts
+</code></pre>
+<pre><code class="language-yaml">insight: TextGrad 类全局更新可能不如局部更新稳定，尤其当 prompt 已有明确结构时。
+evidence_type: direct-result
+paper_evidence:
+  section: &quot;4 Results&quot;
+  table_or_figure: &quot;Table 1, Table 2&quot;
+  quote_or_paraphrase: &quot;TextGrad 在 MMLU 两个模型上低于 untuned structured prompt，而 MPO 在全部设置上提升。&quot;
+mechanism: 全局 textual feedback 可能改动无关 section 或引入干扰；局部反馈把错误归因限制在 section 内。
+actionable_rule: 如果 prompt 已经包含 role/constraints/output_format，不应默认让 optimizer 重写整段 prompt。
+counterexample_or_limit: 论文未给出足够 ablation 证明具体收益来自局部化、去重还是 schema 本身。
+minimal_experiment: structured baseline vs TextGrad-style whole prompt vs MPO-style section-local。
+confidence: medium
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>这是最适合马上转成 <code>docs/experiment_plan.md</code> 的实验方向。</li>
+<li>本项目的 prompt variant log 应记录：</li>
+<li><code>schema_version</code></li>
+<li><code>mutable_sections</code></li>
+<li><code>frozen_sections</code></li>
+<li><code>changed_section</code></li>
+<li><code>section_diff</code></li>
+<li><code>deduplication_action</code></li>
+<li><code>frozen_section_violation</code></li>
+<li>若后续自动优化系统 prompt 或 tool policy，必须先实现 frozen section 检查。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：结构化分类或抽取任务，prompt 至少含 role/task/constraints/output_format。</li>
+<li>需要实现的模块：</li>
+<li>prompt schema parser。</li>
+<li>section-local critic。</li>
+<li>section updater。</li>
+<li>de-duplication / consolidation。</li>
+<li>frozen-section guard。</li>
+<li>预计风险：</li>
+<li>schema 人工设计偏差。</li>
+<li>critic 质量影响大。</li>
+<li>只在小模型 reasoning 任务上有效，未必迁移到 agent/tool-use。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-modular-prompt-optimization-2026.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JTPRO / Joint Tool-Prompt Reflective Optimization · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">JTPRO / Joint Tool-Prompt Reflective Optimization</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-jtpro-joint-tool-prompt-reflective-optimization">Paper Note: JTPRO / Joint Tool-Prompt Reflective Optimization</h1>
+<p>论文：JTPRO: A Joint Tool-Prompt Reflective Optimization Framework for Language Agents</p>
+<p>链接：https://arxiv.org/abs/2604.19821</p>
+<p>source_id：paper-jtpro-2026</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：actionable-experiment</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2604.19821/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>EB565688A1EF0CC35A67BE24E5656EAEBF357138DC93CB9557FA0EC32CFBF1A5</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2604.19821/paper.txt</code></p>
+<p>local_text_sha256：<code>2BD9B4B93129937B1884B22E06C456385A03CCB5350A7BD7E4EEB6084D530CB5</code></p>
+<p>evidence_level：method-results-ablation-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>JTPRO 的核心工程洞见是：工具 agent 的失败不只在 global instruction，也常在 per-tool schema 和 slot 描述；真正的优化对象应是“全局策略 + 工具局部描述 + 共享 slot 语义”的联合 context。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：大工具集合中的 tool selection 和 argument slot filling。</li>
+<li>优化对象：global instruction prompt P 和每个工具的 schema/argument descriptions。</li>
+<li>目标指标：Tool Selection Accuracy (TSA)、Slot Filling Accuracy (SFA)、Overall Success Rate (OSR)。</li>
+<li>约束：不合并/别名化工具，不训练模型；保持工具本地差异并减少重复 schema 文本。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：基于 rollout failures 提出 localized edits，更新 global instruction 和相关 tool/slot schema。</li>
+<li>反馈如何获得：比较 predicted tool-call trace 与 gold trace，诊断 tool confusion、missing slots、value format errors。</li>
+<li>如何选择候选：GEPA-style Pareto candidate pool；minibatch 改善后再在 validation 上接受。</li>
+<li>是否使用记忆/archive：维护 candidate context pool 和 validation-best context。</li>
+<li>是否优化 optimizer 自身：否。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：ETID、ToolACE-300/500/750/1000、SEAL-Tools。</li>
+<li>模型：GPT-4o mini、o3-mini、GPT-5 等。</li>
+<li>baselines：Base、GEPA、JTPRO；另比较 CoT-style/MIPRO 等。</li>
+<li>train/dev/test 切分：ETID Train-1/2/4 examples per tool，固定 test 404；ToolACE fixed Train/Val/Test；SEAL-Tools Train 600/Val 100/Test 100。</li>
+<li>成本或调用次数：按 minibatch rollout、Pareto select、validation acceptance 循环。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<ul>
+<li>ToolACE 1000 tools 上，o3-mini OSR 从 Base 51.27 到 JTPRO 64.46，提升 13.19；GPT-5 从 62.37 到 73.55。</li>
+<li>ToolACE 中工具数增加主要打击 TSA，JTPRO 通过减少 tool confusion 提升 OSR。</li>
+<li>ETID 中 Base TSA 已高，但 OSR 低，说明瓶颈在 slot/value；JTPRO 在 GPT-4o mini Train-4ex 中 OSR 从 46.53 到 66.83，提升 20.30。</li>
+<li>SEAL-Tools 中，JTPRO 稳定提升 SFA/OSR，例如 GPT-5 OSR 从 28.8 到 33.6。</li>
+<li>作者强调 joint refinement 优于只优化 global prompt 或只优化 tool specs，因为错误同时来自选择策略和工具局部语义。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>当前评估以 call-level correctness 为主，不执行真实后端工具，不能覆盖 runtime side effects。</li>
+<li>主要处理并行多工具和 schema-rich 工具；对长链依赖工具调用的覆盖有限。</li>
+<li>需要 labeled tool-call traces，低数据或无标签场景下成本较高。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 工具 agent 的 prompt 优化必须把 tool schema 当作可优化 artifact。
+evidence_type: method + benchmark-result
+paper_evidence:
+  section: &quot;6 Results and Analysis&quot;
+  table_or_figure: &quot;Table 2, Table 3, Table 4&quot;
+  quote_or_paraphrase: &quot;ToolACE 主要是 TSA 瓶颈，ETID 主要是 SFA/slot-value 瓶颈；JTPRO 联合改两者。&quot;
+mechanism: global instruction 解决策略选择，per-tool schema 解决歧义和参数格式，shared slot rules 降低重复冲突。
+actionable_rule: tool-use eval 日志要分开记录 TSA、SFA、OSR，并允许 optimizer 修改工具描述而不只改 agent prompt。
+counterexample_or_limit: 如果工具 schema 来自外部不可修改 API，需要用 wrapper docs 或 retrieval context 承载改写。
+minimal_experiment: global-prompt-only vs schema-only vs joint global+schema optimization。
+confidence: high-for-tool-agent-settings
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>研究 prompt evolution 时，必须把“prompt artifact”扩展到 tool descriptions、argument docs、format rules。</li>
+<li>对工具调用任务，主指标不能只看最终 answer，要拆成 selected tool、slots、values。</li>
+<li>JTPRO 的 slot semantics globalization 可转成我们自己的 schema hygiene 检查：重复参数规则应上提到 global rule。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：20-50 个相似工具的 synthetic tool-selection + slot-filling benchmark。</li>
+<li>需要实现的模块：tool-call trace evaluator、TSA/SFA/OSR metrics、schema edit generator、global slot rule merger。</li>
+<li>预计风险：真实工具 schema 不可修改；schema edit 引入冲突；gold traces 构造成本高。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-jtpro-2026.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

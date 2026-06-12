@@ -24,6 +24,10 @@
 
 <!-- 将下一批重要变更写在这里。 -->
 
+### Added
+
+- **论文笔记全量 HTML 渲染**（此前各入口页 213 处链接直指 `docs/paper_notes/*.md`，浏览器点开是纯文本）：`scripts/build_doc_html.py` 新增 `discover_paper_notes()` 自动发现 `docs/paper_notes/paper-*.md`（排除 template.md）入列 PAGES，标签「论文笔记」（紫 #5e54a8），标题取笔记首个 H1（去「Paper Note:」前缀），返回链接指向文献地图（其余页面仍回 v3 报告）；同时把既往 session 手工过滤 PAGES 的做法固化为位置参数前缀过滤（`python scripts/build_doc_html.py [prefix ...]`，CONVERTED 保持全量不影响链接改写）。本次按过滤重建 50 页：39 篇论文笔记新 HTML + 11 个源 md 引用论文笔记的渲染页（链接自动改写 .md→.html）；另外三个手工维护的综合报告 `analysis_report_v2/v3/v4.html` 共 82 处 `./paper_notes/paper-*.md` 链接脚本批量改 `.html`。advisor 端：`advisor/build_advisor.py` 的 `repoLink()` 增加 HTML_READY 白名单改写（paper_notes/paper-\*、source_batches/\*、insight_handbook 三类 .md 引用改链渲染页；industry/audit notes 暂无 HTML 保持 .md），重建 `advisor.html`，`pytest advisor/test_advisor.py` 10 项全过。影响范围：构建脚本两个 + 生成 HTML（39 新 + 12 重建）+ 三个报告链接后缀；所有 md 源文件未动。回滚点：还原两个脚本与三个报告后删除 `docs/paper_notes/*.html` 并重跑两个 build 脚本。
+
 ### Changed
 
 - Batch 3 综合**对照前沿综合复审后小修**（用户问「batch3 是早期版本，要不要调整」，审计结论：八条结论与数字均与 06-12 核验过的前沿综合同口径，批次快照定位保留，不做重写；仅修三处）：`docs/arxiv_deep_reading_batch3_synthesis.md`——① 头部 06-12 补充追加「另注定位」：本文作为批次视角综合总入口的角色写明，补 Batch 1/2 综合的指针（此前外部文档均指向本文但本文无回链）；② 结论 6 标注 `Why Prompt Optimization Works...` 即清单中的 Edit-Level Causal-Inspired Analysis（同一论文两种称呼无法对应）；③ 覆盖矩阵补入此前遗漏的 Are LLMs Good Prompt Optimizers?（critique 行）与 Modular Prompt Optimization（行名改「agent / tool / 模块分块」，结论补 section），并加补注说明口径不变（批次累计 27 篇）。HTML 已按 PAGES 过滤只重建本页。影响范围：该 md/html 各一处头部 + 一处结论 + 矩阵两行；八条结论编号与正文判断未动（Batch 1 综合按编号引用结论 6）。回滚点：还原该 md 三处并重跑渲染即可。（用户问「读者向洞见与分享 Deck 要不要随 v4 同步」，审计结论：洞见手册无需动——头部已是 14 洞见 + v4 口径，文中两处「12」均为准确的上下文表述；分享物料有 4 处过期）：`docs/share_deck_20260612.html` 三处——标题页与项目数字页「37 篇论文深读」→ 39 篇（GrIPS/PromptAgent 补读后口径）、方法地图页「两条暗线」升级为**三条**（新增 ③ 搜索结构是独立维度：盲采样→beam→MCTS→Pareto 池，PromptAgent 同等探索量消融 MCTS 0.754 vs beam 0.697 与 GEPA Pareto 消融互证，数字与 primer/笔记同口径）；`docs/project_onepager_20260612.html` 一处——项目数字 37 → 39。验证：脚本核验 6 项全过（新值就位、无「37 篇/两条暗线」残留）。影响范围：两份独立分享 HTML 各几行（均不在 build_doc_html 渲染管线内）；洞见手册、deck 其余页（v1→v4 演进页的历史表述「v2 按 12 洞见组织」属准确史实）未动。回滚点：还原 4 处文字即可。
