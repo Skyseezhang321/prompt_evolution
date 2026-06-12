@@ -1,5 +1,8 @@
 import unittest
+from pathlib import Path
+from unittest import mock
 
+import scripts.git_wecom_notify as git_wecom_notify
 from scripts.git_wecom_notify import (
     ZERO_SHA,
     build_push_notification,
@@ -49,6 +52,39 @@ class GitWeComNotifyTests(unittest.TestCase):
         self.assertIn("main: `0123456789ab`", content)
         self.assertIn("https://example.com/repo.git", content)
         self.assertNotIn("token", content)
+
+    def test_git_decodes_output_as_utf8(self):
+        with mock.patch.object(git_wecom_notify.subprocess, "run") as run:
+            run.return_value = mock.Mock(stdout="中文提交\n")
+            output = git_wecom_notify._git("show", "-s")
+
+        self.assertEqual(output, "中文提交\n")
+        self.assertEqual(run.call_args.kwargs["encoding"], "utf-8")
+        self.assertEqual(run.call_args.kwargs["errors"], "replace")
+
+    def test_git_returns_empty_string_when_stdout_is_none(self):
+        with mock.patch.object(git_wecom_notify.subprocess, "run") as run:
+            run.return_value = mock.Mock(stdout=None)
+            output = git_wecom_notify._git("show", "-s")
+
+        self.assertEqual(output, "")
+
+    def test_send_commit_notification_degrades_when_commit_info_unreadable(self):
+        with (
+            mock.patch.object(git_wecom_notify, "repo_root", return_value=Path("repo")),
+            mock.patch.object(git_wecom_notify, "load_dotenv"),
+            mock.patch.object(git_wecom_notify, "_current_branch", return_value="main"),
+            mock.patch.object(git_wecom_notify, "_git", return_value=""),
+            mock.patch.object(
+                git_wecom_notify, "send_repository_notification", return_value={"ok": True}
+            ) as send,
+        ):
+            result = git_wecom_notify.send_commit_notification(dry_run=True)
+
+        self.assertEqual(result, {"ok": True})
+        content = send.call_args.args[0]
+        self.assertIn("已降级为简化通知", content)
+        self.assertIn("- branch: main", content)
 
 
 if __name__ == "__main__":
