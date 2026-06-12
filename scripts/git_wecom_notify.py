@@ -48,24 +48,35 @@ def send_commit_notification(dry_run: bool = False) -> dict:
     root = repo_root()
     load_dotenv(root / ".env")
     branch = _current_branch()
-    commit_hash, short_hash, subject, author_name, author_email = _git(
+    fields = _git(
         "show",
         "-s",
         "--format=%H%x00%h%x00%s%x00%an%x00%ae",
         "HEAD",
-    ).split("\x00")
+    ).strip().split("\x00")
 
-    content = "\n".join(
-        [
-            "### Prompt Evolution commit completed",
-            f"- repo: {root.name}",
-            f"- branch: {branch}",
-            f"- commit: `{short_hash}`",
-            f"- subject: {subject}",
-            f"- author: {author_name} <{author_email}>",
-            f"- full_sha: `{commit_hash}`",
-        ]
-    )
+    if len(fields) == 5:
+        commit_hash, short_hash, subject, author_name, author_email = fields
+        content = "\n".join(
+            [
+                "### Prompt Evolution commit completed",
+                f"- repo: {root.name}",
+                f"- branch: {branch}",
+                f"- commit: `{short_hash}`",
+                f"- subject: {subject}",
+                f"- author: {author_name} <{author_email}>",
+                f"- full_sha: `{commit_hash}`",
+            ]
+        )
+    else:
+        content = "\n".join(
+            [
+                "### Prompt Evolution commit completed",
+                f"- repo: {root.name}",
+                f"- branch: {branch}",
+                "- detail: 提交详情读取失败，已降级为简化通知",
+            ]
+        )
     return send_repository_notification(content, dry_run=dry_run, repo=root)
 
 
@@ -158,14 +169,19 @@ def _redact_url(url: str) -> str:
 
 
 def _git(*args: str, check: bool = True) -> str:
+    # git emits UTF-8 (i18n.logOutputEncoding default); without an explicit
+    # encoding, Windows decodes with the locale codec (GBK) and Chinese commit
+    # messages raise UnicodeDecodeError, leaving result.stdout as None.
     result = subprocess.run(
         ["git", *args],
         check=check,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-    return result.stdout
+    return result.stdout or ""
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:

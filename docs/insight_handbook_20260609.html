@@ -5,62 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>读者向洞见手册 · prompt_evolution</title>
 <style>
-:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
---teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
---shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
 *{box-sizing:border-box;} html{scroll-behavior:smooth;}
-body{margin:0;background:var(--bg);color:var(--ink);
-font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
-a{color:var(--blue);text-underline-offset:3px;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
 .topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
-padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
-border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
-.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
-border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
-.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
-.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
 .topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
-.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
-grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
 .content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
-.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
-border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
-.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
-.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
-.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
-.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
-.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
-.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
-.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
-.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
-.content p{margin:0 0 13px;}
-.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
 .content li{margin-bottom:5px;}
 .content li>p{margin:0;}
 .content a{font-weight:500;}
-.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
-.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
-background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
 .content blockquote p:last-child{margin-bottom:0;}
-.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
-overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
-.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
-.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
-.content tbody tr:nth-child(even){background:#fbfcfa;}
-.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
-background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
-.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
-border-radius:6px;background:#fbfcfa;overflow-x:auto;}
-.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
-.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
-.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
 @media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
-@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#46525f">中间层</span><span class="doctitle">读者向洞见手册</span></div>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4d5246">中间层</span><span class="doctitle">读者向洞见手册</span><span class="mark">Prompt Evolution · 研究档案</span></div>
 <div class="wrap">
 <article class="content">
 <h1 id="prompt">Prompt 优化与自进化：读者向洞见手册</h1>
@@ -78,7 +95,7 @@ border-radius:6px;background:#fbfcfa;overflow-x:auto;}
 <p>另外，<strong>手册里所有带「示意」字样的 prompt、数字、对话，都是为了讲清概念虚构的，不是真实实验数据</strong>。真实数据只出现在「论文怎么说」一栏，且都给了出处文件。</p>
 <h2 id="_3">一句话总结论</h2>
 <p>如果你只记一句话：<strong>自动优化 prompt 不是「让模型把 prompt 改好」这么一回事，而是一套「先判断值不值得优化 → 把失败变成可编辑证据 → 生成多个候选并用验证集筛选 → 记录版本与回滚」的工程纪律。缺了纪律，「优化」往往只是改写，甚至是退步。</strong></p>
-<p>下面 12 条洞见按你实际会遇到的顺序展开。</p>
+<p>下面 14 条洞见按你实际会遇到的顺序展开（13、14 为 2026-06-11 随主报告 v4 新增的 Part G，01–12 编号与内容未动）。</p>
 <hr>
 <h2 id="part-a">Part A. 动手之前：这个任务值不值得优化？</h2>
 <h3 id="01">洞见 01 · 先确认有没有提升空间，再花钱跑优化器</h3>
@@ -393,13 +410,57 @@ trace 里保存 <code>role_id</code>、<code>round_id</code>、<code>local_valid
 <li><strong>当线索（对）</strong>：去翻原论文，你会发现 GEPA 其实是<strong>反思式 prompt 进化</strong>——靠执行轨迹生成自然语言反思 + Pareto 前沿选择，<strong>根本不是一个 RL 系统</strong>。「替代 RL」是传播过程中被简化出来的口号。</li>
 </ul>
 <p><strong>论文/材料怎么说</strong>
-- 本项目的 Twitter/X 批次分析记录了这个典型误读：GEPA 在社媒上被反复框成「RL 替代品 / 35x fewer rollouts」，但其机制是用执行轨迹做反思，不是策略梯度。来源：<a href="source_batches/twitter_web_analysis_20260608.md">twitter_web_analysis_20260608.md</a></p>
+- 本项目的 Twitter/X 批次分析记录了这个典型误读：GEPA 在社媒上被反复框成「RL 替代品 / 35x fewer rollouts」，但其机制是用执行轨迹做反思，不是策略梯度。来源：<a href="source_batches/twitter_web_analysis_20260608.html">twitter_web_analysis_20260608.md</a></p>
 <p><strong>你该怎么做</strong>
 读到一个技巧时，先抽六个字段：<code>dataset</code>、<code>metric</code>、<code>baseline</code>、<code>model</code>、<code>cost</code>、<code>failure_cases</code>。<strong>任何一个缺失，就把它降级为「线索」</strong>，只能当作「去查一手来源」的指针，不能进结论。进结论前必须追溯到论文、官方文档、代码，或本项目自己的实验。</p>
 <p><strong>边界</strong>：高质量工程博客如果<strong>自带代码、数据和可复现实验</strong>，可以升级为更强的证据——关键看它给不给可核验的细节，不看它发在哪个平台。</p>
 <hr>
+<h2 id="part-g">Part G. 搜索之外：零成本变换与「优化器自身」（本版新增）</h2>
+<p>前面 12 条洞见全部围绕「搜索/优化循环」构建。这一部分补两个循环之外的盲区：一个是<strong>不用搜索的确定性结构变换</strong>（比所有搜索方法都便宜、却常被跳过的对照），一个是<strong>循环里被当成空气的 optimizer 与 judge 本身</strong>。</p>
+<h3 id="13">洞见 13 · 花钱搜索之前，先试零成本的确定性结构变换</h3>
+<blockquote>
+<p>对应清单 I-13｜论文证据强度 A｜本项目已验证：否（<code>recent-preprint</code> 证据）</p>
+</blockquote>
+<p><strong>反直觉点</strong>：有一个不改任何语义、不用任何搜索的免费变换——<strong>把整个 prompt 原样重复一遍</strong>——在非推理模式下跨 7 个模型 47 胜 0 负；而搜索式优化（洞见 01）有接近一半的概率比 zero-shot 还差。</p>
+<p><strong>它具体长什么样（真实任务，论文数字）</strong></p>
+<pre><code>变换：&lt;QUERY&gt;  →  &lt;QUERY&gt;&lt;QUERY&gt;（原样重复，无任何措辞修改）
+
+NameIndex（50 个名字取第 25 个）：
+Gemini 2.0 Flash-Lite  21.33% → 97.33%
+</code></pre>
+<p>机制：causal attention 下，prompt 前段的 token <strong>看不到</strong>后段的内容（多选题里「问题在前还是选项在前」表现不同，就是这个症状）；重复之后，第二遍的每个 token 都能注意到完整的第一遍，相当于免费给 prompt 内部加了一次「全注意」。重复发生在可并行的 prefill 阶段，所以<strong>不增加输出长度和时延</strong>。</p>
+<p><strong>论文怎么说</strong>
+- <em>Prompt Repetition Improves Non-Reasoning LLMs</em>（Google Research，2025-12，<code>recent-preprint</code>）：关闭推理时，7 模型 × 10 benchmark 配置 <strong>47/70 显著胜、0 显著负</strong>（McNemar p&lt;0.1）；<strong>Padding 对照（把 prompt 用句点补到同等长度）无提升</strong>——增益来自「重复」本身，不是「变长」；开启 step-by-step 推理后基本无效（<strong>28 组里 5 胜 1 负 22 平</strong>，推理模型本就常自发复述题目）。来源：<a href="paper_notes/paper-prompt-repetition-2025.md">paper-prompt-repetition-2025.md</a>
+- 对照读法：Coin Flip 显示搜索出来的措辞 model-specific 且脆弱（洞见 01），而这个确定性结构变换跨 7 模型 0 负——「结构」可能比「措辞」更可迁移（两者 setting 不同，此对比为推断）。</p>
+<p><strong>你该怎么做</strong>
+1. 非推理、低延迟生产路径（分类 / 抽取 / 短 QA / 路由）先测重复 ×2；长上下文索引类任务试 ×3。
+2. 把它纳入<strong>廉价 baseline 变换集</strong>：任何自动优化方法报告的增益，先回答「打得过这个零智能变换吗」（做洞见 01 体检时顺手一起跑）。
+3. 上下文内信息顺序不可控的场景（检索结果拼接、表单转写）优先考虑——order 敏感性正是它修复的对象。</p>
+<p><strong>边界</strong>：推理模式下基本无效（还出现 1 个显著下降）；按 token 计费时<strong>输入成本 ×2</strong>；只重复局部（如只重复问题）无增益；超长上下文盲目翻倍会推高 prefill 成本甚至不可行；被测均为 2025 年初一代模型，新模型可能已内化复述行为——这正是本项目 P0 三臂 A/B（baseline / 重复×2 / padding）要校准的。</p>
+<hr>
+<h3 id="14-optimizer-judge">洞见 14 · optimizer 和 judge 本身，也是要版本化、可优化的部件</h3>
+<blockquote>
+<p>对应清单 I-14｜论文证据强度 A/B｜本项目已验证：否（SePO 数字为 <code>recent-preprint</code>）</p>
+</blockquote>
+<p><strong>反直觉点</strong>：你的优化系统里最不被质疑的两段 prompt，是「<strong>负责改 prompt 的那段 prompt</strong>」（optimizer）和「<strong>负责打分的那段 prompt</strong>」（judge）。它们也在决定结果——不版本化它们，实验不可复现；从不审视它们，它们就是隐藏的天花板。</p>
+<p><strong>它具体长什么样（示意）</strong></p>
+<pre><code>运行记录只存了 task_prompt v3
+optimizer_prompt / judge_prompt 没有版本号
+→ 三个月后「同样配置」跑不出同样结果
+→ 分数变化是任务 prompt 的功劳，还是评委口味变了？无法归因
+</code></pre>
+<p><strong>论文怎么说</strong>
+- SePO（2026，<code>recent-preprint</code>）：把 prompt agent 自己的 system prompt 也纳入演化流程并多任务预训练，五任务平均<strong>从 Manual-CoT 的 71.89 提到 76.38</strong>；消融去掉 self-improvement <strong>掉回 74.94</strong>；而 optimizer 固定的 TextGrad（70.39）、MetaSPO（71.32）平均还不如 Manual-CoT——论文正是归因于「optimizer 本身固定」。来源：<a href="paper_notes/paper-sepo-2026.md">paper-sepo-2026.md</a>
+- PromptBreeder（2023）：经典六法中<strong>唯一连 mutation prompt 一起进化</strong>（hyper-mutation）的方法，是这条思路的早期形态。来源：<a href="paper_notes/paper-promptbreeder-2023.md">paper-promptbreeder-2023.md</a>
+- 工程渠道互证：web_search WPI-10「judge prompt 也应被版本化、评估和优化」（B 级），GitHub autoresearch 的 ledger 把优化器配置与结果绑定（GHI-05）。来源：<a href="source_batches/web_search_platform_insight_cards_20260609.html">web_search_platform_insight_cards_20260609.md</a>、<a href="github_repo_insight_cards_20260608.html">github_repo_insight_cards_20260608.md</a></p>
+<p><strong>你该怎么做</strong>
+1. 给 <code>optimizer_prompt</code>、<code>judge_prompt</code>、<code>meta_prompt</code> 各建版本号，列入实验运行记录的必填字段（这条不需要独立实验，随任意 P0 实验一并生效）。
+2. 评测用的 judge 与测试集一样<strong>默认 frozen</strong>；要改必须走独立评审与重校准，改后旧分数全部失效重跑。
+3. 想优化 judge / optimizer 本身？在<strong>开发集</strong>上做，且与评测链路<strong>物理隔离</strong>。</p>
+<p><strong>边界</strong>：「优化 judge」与洞见 08 的「frozen evaluator 防作弊」不冲突——被冻结的是<strong>评测链路</strong>的 judge，被优化的是<strong>开发期辅助</strong> judge；两者必须物理分开，混用就是 reward hacking。optimizer prompt 变强依赖训练任务与评分器，指标没覆盖的行为不会自动更安全。</p>
+<hr>
 <h2 id="_4">把这些用起来：首批最小验证</h2>
-<p>上面 12 条洞见里，最值得本项目<strong>先动手验证</strong>的是这几条（成本低、错误可解释、跨渠道支撑强）：</p>
+<p>上面 14 条洞见里，最值得本项目<strong>先动手验证</strong>的是这几条（成本低、错误可解释、跨渠道支撑强）：</p>
 <table>
 <thead>
 <tr>
@@ -414,9 +475,9 @@ trace 里保存 <code>role_id</code>、<code>round_id</code>、<code>local_valid
 <tr>
 <td>P0</td>
 <td>优化前体检（headroom/noise floor）</td>
-<td>01、02</td>
+<td>01、02、13（对照底线）</td>
 <td>100–300 条 JSON 抽取</td>
-<td>判断有没有优化空间，校准噪声地板</td>
+<td>判断有没有优化空间，校准噪声地板；顺手跑洞见 13 零成本变换当对照底线</td>
 </tr>
 <tr>
 <td>P0</td>
@@ -464,7 +525,7 @@ trace 里保存 <code>role_id</code>、<code>round_id</code>、<code>local_valid
 </ol>
 <hr>
 <p><em>本手册所有标「示意」的例子均为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；<code>recent-preprint</code> 结论需独立复现后才能采信。证据追溯入口见各条「论文怎么说」中的文件链接。</em></p>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_handbook_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_handbook_20260609.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">这本手册是写给谁的</a>
 <a class="lv2" href="#_2">怎么读这本手册里的「证据」</a>
@@ -487,9 +548,30 @@ trace 里保存 <code>role_id</code>、<code>round_id</code>、<code>local_valid
 <a class="lv3" href="#11-agent">洞见 11 · 多 agent 系统出错，先找「是谁的责任」，别整个系统一起重写</a>
 <a class="lv2" href="#part-f">Part F. 怎么对待「听来的」方法</a>
 <a class="lv3" href="#12">洞见 12 · 社媒和二手文章是「线索」，不是「证据」</a>
+<a class="lv2" href="#part-g">Part G. 搜索之外：零成本变换与「优化器自身」（本版新增）</a>
+<a class="lv3" href="#13">洞见 13 · 花钱搜索之前，先试零成本的确定性结构变换</a>
+<a class="lv3" href="#14-optimizer-judge">洞见 14 · optimizer 和 judge 本身，也是要版本化、可优化的部件</a>
 <a class="lv2" href="#_4">把这些用起来：首批最小验证</a>
 <a class="lv2" href="#_5">给读者的三条总结</a></aside>
 </div>
 
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
 </body>
 </html>

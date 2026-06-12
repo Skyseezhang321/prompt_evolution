@@ -2,6 +2,8 @@
 
 更新时间：2026-06-09
 
+> **历史快照（2026-06-12 冻结）：** 本文系 top80 标题/摘要级一读产出，此后未随深读批次更新，不再维护。洞见的现行单一事实来源是 [Insight / Method 统一目录](insight_method_catalog_20260609.md)（I-01..14）与[主报告 v4](analysis_report_v4_20260611.html)；arXiv 渠道深读综合见 [Batch 3 综合](arxiv_deep_reading_batch3_synthesis.md)，全部 37 篇笔记目录见[文献地图](literature_map.md)。本文保留作研究过程存档。
+
 数据来源：`outputs/arxiv_prompt_search/arxiv_focus_top80_20260608T131514Z.csv`
 
 定位：本文不是论文目录，也不是实验操作手册，而是从 top80 论文中提炼“可复用洞见”。每条洞见都尽量写成可判断、可迁移、可验证的经验。

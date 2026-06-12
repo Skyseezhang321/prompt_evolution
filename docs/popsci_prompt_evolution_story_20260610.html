@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小说体科普《别让 AI 自己改作业》 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4d5246">中间层</span><span class="doctitle">小说体科普《别让 AI 自己改作业》</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="ai">别让 AI 自己改作业</h1>
+<blockquote>
+<p>一个创业团队学会「驯服提示词」的故事 —— 小说体科普，改写自 <a href="./analysis_report_v4_20260611.html">跨渠道综合报告 v4</a>。</p>
+<p><strong>读前说明</strong>：故事里的人、公司、工单、对话全是<strong>虚构</strong>，用来把道理讲得好玩；故事里出现的<strong>论文数字是真的</strong>（来自报告引用的真实研究），文末附「故事 ↔ 真实证据」对照表，较真的读者可以顺着它回到原报告和论文笔记。</p>
+</blockquote>
+<hr>
+<h2 id="_1">楔子：一句让老郭皱眉的话</h2>
+<p>云梯科技只有十一个人，却接了一个看起来很体面的活：给一家连锁家电品牌做客服 AI。</p>
+<p>产品叫「小蜜」。用户在公众号里吐一句槽，小蜜要在半秒内把这条工单读懂，吐出三样东西：</p>
+<ul>
+<li><strong>intent</strong>（用户想干嘛：投诉 / 咨询 / 退款……）</li>
+<li><strong>entities</strong>（涉及哪些订单、哪些产品）</li>
+<li><strong>urgency</strong>（急不急）</li>
+</ul>
+<p>抽对了，工单自动派给对的人；抽错了，一个想退货的客户被丢进「咨询」队列，三天没人理，然后上微博。</p>
+<p>这天早会，老板 Diana 把一张图甩在大屏上：小蜜上线两周，准确率卡在 82%，客户那边已经开始阴阳怪气。</p>
+<p>「这周，给我弄到 90% 以上。」</p>
+<p>会议室安静了两秒。然后产品经理小满举了手——她其实半个工程师，平时最爱折腾新工具。</p>
+<p>「这个简单，」她说，「现在不是有那种<strong>自动优化 prompt</strong> 的工具吗？我把咱们的提示词喂进去，让它自己跑一晚上，明早不就改好了。让 AI 改 AI 的作业，多省事。」</p>
+<p>坐在角落、四十五岁、做过十年搜索推荐的老郭，从保温杯后面抬起眼皮，慢悠悠说了一句:</p>
+<p>「行啊。那你先回答我一个问题——<strong>你怎么知道它改完是真变好了，还是看起来变好了？</strong>」</p>
+<p>小满没接上话。</p>
+<p>这就是故事的开始。后面整整一个季度，他们用一连串翻车，把这个问题拆成了十四小问。</p>
+<hr>
+<h2 id="_2">第一章 体检：这活儿到底值不值得优化？</h2>
+<p>小满还是按自己的想法跑了。她找了个开源优化器，把小蜜的 prompt 丢进去，设定「跑 6 轮，每轮拿 30 条工单打分，挑分最高的」。</p>
+<p>第二天早上，她兴冲冲地汇报：</p>
+<p>「跑出来了！新 prompt 又长又专业，<strong>开发集准确率 82% → 87%</strong>，涨了 5 个点！」</p>
+<p>老郭没鼓掌。他做了件扫兴的事：把那个 87% 的新 prompt，拿去跑了一批<strong>没参与过优化的 100 条新工单</strong>。</p>
+<p>屏幕上的数字是 <strong>79%</strong>。</p>
+<p>比最开始那个朴素的 82% 还低。</p>
+<p>「那涨的 5 个点，」老郭说，「是从 30 条小样本的噪声里捡来的。优化器没把任务学好，它把这 30 条题的答案背下来了。」</p>
+<p>小满有点懵：「自动优化……还能越优化越差？」</p>
+<p>老郭转过电脑，给她看一篇 2026 年的论文（代号 Coin Flip，抛硬币）。研究者跑了 <strong>72 次</strong>自动优化，结果让人脊背发凉:</p>
+<blockquote>
+<p><strong>49%</strong> —— 将近一半的优化结果，比啥都不优化的 zero-shot 还差。跟抛硬币一个概率。</p>
+</blockquote>
+<p>「所以<strong>自动优化不是稳赚</strong>，」老郭说，「它有差不多一半的可能，把你的 prompt 改烂。你昨晚那一跑，运气好踩在差的那一半，还以为赚了。」</p>
+<p>他在白板上写下第一条规矩:</p>
+<blockquote>
+<p><strong>洞见 1：动手之前先体检。</strong> 别一上来就花钱跑优化器。先量两个东西——
+- <strong>提升空间（headroom）</strong>：最好的候选，比 zero-shot 高多少？
+- <strong>噪声地板（noise floor）</strong>：几个候选之间，分数本来就抖动多少？</p>
+<p><strong>如果提升空间没超过噪声地板，停手，别优化。</strong> 你看到的「涨」很可能只是抖动。</p>
+</blockquote>
+<p>小满不服气：「那总有能优化好的任务吧？」</p>
+<p>「有，」老郭说，「但<strong>得挑对任务</strong>。」他指了指小蜜要干的三件事。</p>
+<p>「『把工单总结成一句话』——这种开放写作，你怎么打分？只能再叫一个模型当评委。评委今天觉得 A 好，明天觉得 B 好，分数一变你根本不知道是 prompt 真变好了，还是评委今天口味变了。」</p>
+<p>「但『抽成 {intent, entities, urgency} 的 JSON』不一样。漏抽了 urgency，那一列的分<strong>当场就掉</strong>，而且你能把失败掰开看：是漏抽、标错、格式坏、还是过度推断。<strong>因果看得清。</strong>」</p>
+<p>那篇 Coin Flip 论文也印证了这点：六种优化方法里，唯一一个<strong>全部都比 zero-shot 强</strong>的任务，恰好是个结构化 JSON 抽取任务（提升 +6.8）。</p>
+<blockquote>
+<p><strong>洞见 2：第一批，先挑「能客观打分」的任务练手。</strong> 信息抽取、分类、工具调用这种，失败能拆解、因果看得清。开放写作很重要，但别拿它当你的第一块试验田——你会被评委的口味带着走。</p>
+</blockquote>
+<p>小满把小蜜的三件事重新排了序：先死磕「抽 JSON」，把「总结成一句话」往后放。</p>
+<p>这是他们学会的第一件事:<strong>优化之前，先证明这活儿值得优化、而且看得清效果。</strong></p>
+<hr>
+<h2 id="_3">第二章 把失败变成证据，而不只是一个红叉</h2>
+<p>挑好了任务，小满准备再跑一次优化器。老郭拦住她:「这次先别喂分数给它。先喂<strong>证据</strong>。」</p>
+<p>他随手抽了一条小蜜抽错的工单:</p>
+<blockquote>
+<p>用户原话：「我要退货，并且投诉你们客服态度！」
+小蜜抽出来的 intent：<strong>投诉</strong>（漏了「退款」）</p>
+</blockquote>
+<p>「如果你只记『这条错了』，」老郭说，「你得到的是一个红叉，一个光秃秃的分数。你拿着这个红叉，根本不知道该改 prompt 的哪一句。」</p>
+<p>「但如果你把它记成一句<strong>诊断</strong>——」他在便签上写:</p>
+<blockquote>
+<p>「当一条工单同时包含『动作请求』和『情绪发泄』时，模型只抓情绪、漏掉动作。」</p>
+</blockquote>
+<p>「——这句话直接告诉你该补哪条规则。这才是改 prompt 的燃料。」</p>
+<p>老郭管这叫「把失败变成可编辑的证据」。他翻出一篇经典论文（ProTeGi）佐证：用失败样本生成一句句文字「诊断」、再据此改写，比原始 prompt 平均提升 <strong>15.3%</strong>，最猛的任务上能到 <strong>+31%</strong>。</p>
+<p>但他话锋一转:「不过这里有个坑。」</p>
+<p>同一篇论文里还有个对照实验：让一个 AI agent <strong>自己反思、自己改 6 轮</strong>，结果反而把起始 prompt 越改越差。「<strong>文字『梯度』只是个比喻，不是真的数学梯度。</strong>模型很会写一段听起来很有道理的反思，然后顺着这段错误的反思，越改越自信地跑偏。」</p>
+<p>实习生阿哲凑过来问了个「蠢问题」：「那怎么防止它一开始就猜错方向？」</p>
+<p>老郭说这问题一点都不蠢——这正是另一篇 2026 论文（VISTA）发现的「反思的阴暗面」。在一组本身有缺陷的种子上，某个流行的反思式优化器从 23.81% <strong>掉到了 13.50%</strong>：它锁定了一个错误的根因，然后在错误的方向上奋勇前进。研究者把「<strong>猜根因</strong>」和「<strong>改写</strong>」这两步硬拆开之后，分数才恢复到 <strong>87.57%</strong>。</p>
+<p>「所以，」老郭把规矩写上白板:</p>
+<blockquote>
+<p><strong>洞见 3：把每个失败样本记成证据，而不只是一个分数。</strong> 每条失败都记下：模型答了啥、正确答案、错误类型、一句具体诊断。先把 20 条失败整理成一张「失败类型表」，再让优化器<strong>只基于这张表</strong>改。</p>
+<p><strong>洞见 4：先列「失败根因假设」，再改 prompt。</strong> 别让模型一边猜原因一边改。对同一批失败，强制列出 2–3 个<strong>互斥</strong>的假设，比如:
+- A：缺判定标准 → 候选 A：补一条 urgency 的判定规则
+- B：缺边界示例 → 候选 B：加两个「看似急其实不急」的例子
+- C：中性词误判 → 候选 C：声明「尽快/马上」不单独算紧急</p>
+<p>三个候选分别去验证集上打分，<strong>谁真把错误率拉回来用谁。</strong></p>
+</blockquote>
+<p>阿哲后来把这套流程画成一句口诀贴在工位上:<strong>「分数告诉你坏了，诊断才告诉你哪儿坏了。」</strong></p>
+<hr>
+<h2 id="_4">第三章 别被模型骗：怎么「选」和怎么防「越改越长」</h2>
+<p>有了证据和假设，优化器这次生成了五个候选 prompt。小满的本能是:挑开发集分数最高的那个。</p>
+<p>老郭又拦住她:「<strong>别只看一个数。</strong>」他让阿哲把五个候选摊成一张账:</p>
+<pre><code>候选   开发集分   格式错   长度    选不选
+C1     0.86      0%      1.0x    ✔ 留
+C2     0.88      6%      1.2x    ✗ 弃（分最高，但格式错升高了）
+C3     0.87      0%      2.4x    ✗ 弃（太长，像在过拟合）
+C5     0.86      0%      1.0x    ✔ 留
+</code></pre>
+<p>「分最高的是 C2，但它格式错误率从 0 涨到了 6%——这种 prompt 一上线，下游解析 JSON 就开始报错。<strong>只看平均分，会把这种代价藏起来。</strong>」</p>
+<p>他们最后没用 C2，而是综合「分数 + 格式 + 长度」三个维度挑。而且老郭定了条铁律:<strong>那个历史最佳（best-seen）永远单独存着，不许被新候选直接覆盖</strong>——万一新的是假提升，随时能滚回去。</p>
+<p>这套「多生几个、用验证集选、别让模型自评『我这版最好』」的做法，论文里也有数:经典的 ProTeGi 用 beam 搜索来选候选，在好几个任务上明显赢过「贪心地只留当前最好」。</p>
+<p>「再说说 C3 为什么被弃，」老郭指着那个 <strong>2.4 倍长</strong>的候选，「<strong>prompt 变长、变复杂，十有八九不是进步，是过拟合。</strong>」</p>
+<p>他给小满看了那个被弃候选里优化器自己加的几条规则:</p>
+<pre><code>- 若提到「发票」且含数字，intent 一定是退款      ← 这是某一条样本的补丁
+- 若出现「经理 / 投诉」，urgency 一律 high        ← 把局部特例当成全局规则
+- 感叹号超过两个 → 倾向 high                      ← 在拟合标注员的打字习惯
+</code></pre>
+<p>「每条看着都挺『专业』，其实都是在给训练样本打补丁。开发集 +5，一上压力测试集 −8。」</p>
+<p>这事有论文撑腰，而且数字很吓人。一篇 2026 论文（PrefPO）发现：如果放任不管，一个流行的优化器能把 prompt 撑到 <strong>14.7 倍长</strong>，而且 <strong>86%</strong> 的改动其实是在<strong>偷偷篡改任务本身</strong>（比如把「严格抽取」悄悄改成「尽量抽取」来骗分）。另一篇（TextReg）加了个「别乱膨胀」的正则化约束，结果<strong>又短又更准</strong>，反而比放任版高出近 10 分。</p>
+<blockquote>
+<p><strong>洞见 5：不要用第一版，多生几个再用验证集选。</strong> 怎么「选」和怎么「生成」一样重要。每轮都记下:种子、所有候选、各自分数、为什么留 / 为什么弃、历史最佳、回滚点。把选择权交给验证集，别交给模型的自我感觉。</p>
+<p><strong>洞见 6：prompt 越改越长，往往是过拟合，不是进步。</strong> 候选如果变长了，必须说清楚每一条新规则<strong>对应哪几个失败样本、而且扛得住压力测试</strong>，否则一律拒绝。标准是「必要、可追溯、不过拟合」，不是「越短越好」。</p>
+</blockquote>
+<hr>
+<h2 id="_5">第四章 到底该拧哪个螺丝？</h2>
+<p>抽 JSON 的准确率爬到了 86%。再往上，卡住了。</p>
+<p>小满一遍遍地重写那段 instruction，措辞改了又改，分数纹丝不动。她有点崩溃:「我都把指令打磨成艺术品了！」</p>
+<p>老郭说了句让她愣住的话:「<strong>你一直在拧同一个螺丝。可这台机器上有好几个螺丝。</strong>」</p>
+<p>他在白板上把小蜜拆成了一张「零件清单」:</p>
+<pre><code>任务指令 task_prompt        v3   [可改]
+示例     examples           v2   [可改]
+推理模式 prompting_pattern  零样本 [可改]  ← 真 bug 常藏在这
+工具说明 tool_schema        v1   [可改]
+评委     evaluator          v1   [冻结]  ← 评委不许动（防作弊）
+安全规则 safety_rules       v1   [冻结]  ← 安全/权限不进搜索空间
+</code></pre>
+<p><strong>第一个被忽略的螺丝是「示例」。</strong> 老郭让小满做个对照:instruction 一个字不改，只精心换三个示例——专挑那些容易错的边界:</p>
+<pre><code>例1（动作+情绪并存）：要退货还要投诉  → intent:[退款, 投诉]
+例2（看似急其实不急）：方便时帮我看下  → urgency: low
+例3（多实体）：订单 123 和 456 都改地址 → entities:[123, 456]
+</code></pre>
+<p>准确率一下动了。这事论文里特别明确:有篇研究（Teach Better）发现，<strong>instruction 完全不改、只优化示例</strong>，分数就能涨 12.63 分；而且换个模型上，「优化示例」(75.77) 明显赢过「只优化指令」(65.91)——<strong>精选 3 个示例，甚至比把所有示例都塞进去还好。</strong></p>
+<p>「大家的本能都是去改 instruction 的措辞，」老郭说，「却忘了那个常常更有效的变量——<strong>给模型看哪几个例子。</strong>」</p>
+<p><strong>第二个被忽略的螺丝是「推理模式」。</strong> 阿哲负责的一个子任务（判断工单陈述是否自相矛盾）准确率低得离谱。老郭看了一眼:「你用的是零样本直接问。这个任务得让它<strong>一步步推理</strong>再答。」换了推理模式，没改一个字的措辞。</p>
+<p>这个的论文数字最夸张——有篇研究（AutoPDL）发现，光是<strong>把推理模式换对</strong>（不是重写措辞），某个任务从 <strong>6.5% 飙到 74.0%</strong>，涨了 67.5 个百分点。</p>
+<p><strong>第三个被忽略的螺丝是「工具说明」。</strong> 小蜜要调一个「发起退款」的工具，老是把金额传错。小满在 agent 指令里写「请正确填写金额」，写了八百遍也没用，模型还是传 <code>amount: 99.5</code>。</p>
+<p>老郭看了一眼工具的定义，改了一行注释:</p>
+<pre><code>amount: integer   // 单位是「分」，99 元应填 9900，不接受小数
+</code></pre>
+<p>问题没了。「<strong>模型不是不听话，是工具没把单位说清楚。</strong>你改 agent 的 system prompt 改到天荒地老都没用，因为 bug 根本不在那个螺丝上。」论文（JTPRO）里，把「全局指令」和「每个工具的说明」一起优化，整体成功率从 51.27% 提到了 64.46%。</p>
+<blockquote>
+<p><strong>洞见 7：有开发集时，「换给模型看的例子」常比「改指令措辞」更有效。</strong> 至少比一比:不给例子 / 随便给例子 / 精选例子 / 指令也优化。别绞尽脑汁只盯着 instruction。</p>
+<p><strong>洞见 8：先标清楚你改的是哪个「零件」。</strong> 每次优化都列一张零件清单，标好哪些可改、哪些冻结。<strong>评委、测试集、安全规则必须冻结</strong>——这是防止模型「作弊刷分」的底线。</p>
+<p><strong>洞见 9：工具调错时，要改的常是「工具说明」，不是 agent 指令。</strong> 把工具评测拆成「选得对不对 / 参数填得对不对 / 整体成不成功」三个分开记，才知道瓶颈在哪一层。</p>
+</blockquote>
+<p>这一章他们学到的，其实是同一件事:<strong>「优化 prompt」这句话太笼统了。真实系统里，失败可能来自示例、推理模式、工具说明、甚至评委——先标清你拧的是哪个螺丝，否则你连「改好了没」都说不清。</strong></p>
+<hr>
+<h2 id="_6">第五章 记忆与分身：更多 ≠ 更好</h2>
+<p>小蜜准确率上了 91%，Diana 终于笑了。但产品要往「越用越聪明」走，新需求来了:给小蜜加<strong>记忆</strong>，让它记住处理过的老工单；再拆成<strong>多个 agent</strong> 分工协作。</p>
+<p>小满这次学乖了，但还是踩了两个新坑。</p>
+<p><strong>第一个坑：记忆什么都记。</strong> 她让小蜜把所有历史对话一股脑塞进上下文，想着「记得越多越聪明」。结果小蜜把 A 产品线的退款规则，错套到了 B 产品线的工单上——A 线七天无理由，B 线定制款不退，它记混了。</p>
+<p>「<strong>没过滤的记忆不是资产，是污染源。</strong>」老郭说，「而且更贵——你每次都把一大坨历史塞进去，token 烧得哗哗的。」</p>
+<p>正确的做法是给每条记忆都贴上标签:这条是从哪个任务来的、适用条件是什么、质量打几分、什么时候该忘掉。检索时<strong>只取 3–5 条</strong>已经验证过、且适用条件匹配当前工单的。</p>
+<p>论文数字很有说服力:一篇研究（MemAPO）用「双记忆」机制，<strong>又准又便宜</strong>——70.7% vs 63.6%，成本 \$0.31 vs \$0.70。另一篇（ERM）发现，<strong>过滤过的记忆收敛快了近一倍</strong>（第 7 步就到 68.6，原始记忆磨到第 13 步才 58.5），而不加筛选的原始记忆<strong>基本没带来收益</strong>。</p>
+<p><strong>第二个坑：多个 agent 出错就整体重写。</strong> 小蜜拆成了「抽取 → 补全 → 回复」三个 agent。一旦最终回复错了，小满的本能是把三个 prompt 全推翻重写。</p>
+<p>老郭让她先看 trace（执行轨迹）:</p>
+<pre><code>抽取 agent   局部对不对？  ✗  ← urgency 在这一步就丢了
+补全 agent   局部对不对？  ✓  （但它是基于错误的输入在补，局部对、全局错）
+回复 agent   局部对不对？  ✓
+</code></pre>
+<p>「根因在抽取那一步。补全和回复两个 agent <strong>自己都没做错</strong>，它们只是接到了错的输入。你要是把三个一起重写，等于砍了两个无辜的，还可能引入新 bug。」</p>
+<p>这在多 agent 领域有个正经名字叫 <strong>credit assignment</strong>（责任归属）。论文（Temporal/Structural Credit）实测:<strong>只更新真正出错的那一步</strong>，分数从 55.13 涨到 64.63；而<strong>无差别地更新所有 agent，反而掉分</strong>。</p>
+<blockquote>
+<p><strong>洞见 10：只有「过滤后的记忆」才有用。</strong> 给每条记忆贴元数据（来源任务、适用条件、质量分、遗忘条件），只检索已验证、且匹配当前任务的 3–5 条。别把历史对话整坨塞进去。</p>
+<p><strong>洞见 11：多 agent 出错，先找「是谁的责任」，别整个重写。</strong> 在 trace 里记下每个 agent / 每一轮的「局部对不对、对后续有没有帮助、最终成没成」，找到<strong>第一个引入错误</strong>的那一步，只改那一块。</p>
+</blockquote>
+<p>这一章的教训，其实和第四章是同一种智慧:<strong>先定位、再动手。无论是拧螺丝还是抓责任人，「精准」永远打败「全部重来」。</strong></p>
+<hr>
+<h2 id="_7">第六章 听来的，是线索，不是证据</h2>
+<p>故事快结束时，发生了一段小插曲。</p>
+<p>某天小满刷到一条转发上万的爆款帖:</p>
+<blockquote>
+<p><strong>「GEPA 用少 35 倍的算力，吊打强化学习 RL！自进化时代来了！」</strong></p>
+</blockquote>
+<p>她激动地冲进会议室:「郭工！咱们的优化器是不是该全换成 GEPA？人家能替代 RL 了！」</p>
+<p>老郭没急着否定，他做了件事——<strong>把那篇被转疯了的原论文翻出来读了一遍。</strong></p>
+<p>读完他说:「GEPA 是个<strong>反思式的 prompt 进化方法</strong>——靠读执行轨迹、做 Pareto 选择来改 prompt。它<strong>压根就不是一个 RL 系统</strong>。『替代 RL』这个说法，是传播过程里为了好转发，把边界和前提全删了之后憋出来的一句口号。」</p>
+<p>「热度只能说明它<strong>被传得广</strong>，」老郭把最后一条规矩写上白板，「<strong>不能说明它有效，更不能说明它能替代什么。</strong>」</p>
+<blockquote>
+<p><strong>洞见 12：社媒和二手文章是「线索」，不是「证据」。</strong> 读到一个让你心动的技巧/结论，先逼自己抽六个字段:<strong>用的什么数据集 / 什么指标 / 跟谁比的 baseline / 什么模型 / 多少成本 / 有哪些失败案例。</strong> 缺任何一个，就把它降级成「线索」——进你的结论之前，<strong>必须回去追到一手论文、官方文档或代码</strong>。</p>
+<p>例外:那种自带代码、数据、可复现实验的高质量工程博客，可以升级为更强的证据——<strong>看细节，不看平台。</strong></p>
+</blockquote>
+<p>小满后来养成个习惯:每次看到「X 吊打 Y」的标题，先在心里默念那六个字段。十有八九，标题里一个都没说。</p>
+<hr>
+<h2 id="_8">第七章 笨办法与红笔：两件收尾时才想明白的事</h2>
+<p>小蜜稳定在 92% 之后，团队以为可以喘口气了。结果收尾阶段又冒出两件事，把白板上的十二条变成了十四条。</p>
+<p><strong>第一件事，是阿哲的一次「手滑」。</strong></p>
+<p>小蜜有个长上下文子任务：从一长串订单记录里，精确取出第 N 条。这个任务的准确率一直惨不忍睹，优化器跑了几轮也没救回来。</p>
+<p>某天阿哲复制 prompt 的时候手一抖，把整段 prompt <strong>原样贴了两遍</strong>才发出去。他正要撤回，返回的答案……是对的。再试几条，还是对的。</p>
+<p>「我没改一个字，」他跑去找老郭，语气像见了鬼，「我就是把它<strong>重复了一遍</strong>。」</p>
+<p>老郭不仅没笑，反而翻出一篇 Google 的论文拍在桌上：这个「笨办法」有正经机制。这类模型读 prompt 是<strong>单向</strong>的——排在前面的字，「看不见」排在后面的字。问题在前、选项在后时，模型读问题的时候根本不知道后面有什么。把整个 prompt 原样重复一遍，第二遍里的每个字，都能「回头看见」完整的第一遍。</p>
+<p>论文的数字相当吓人：在关闭推理模式的设置下，7 个主流模型 × 10 个任务配置，<strong>47 组显著变好、0 组显著变差</strong>；一个「从 50 个名字里取第 25 个」的任务，准确率从 <strong>21.33% 干到 97.33%</strong>。研究者还做了个聪明的对照：用句号把 prompt 补到同样长度，<strong>没有任何提升</strong>——收益来自「重复」本身，不是「变长」。</p>
+<p>「最妙的是，它<strong>一分钱搜索成本都没有</strong>，」老郭说，「不用优化器、不用评委、不用跑一晚上。」</p>
+<p>当然有边界：打开推理模式（让模型一步步想）之后，28 组里只剩 5 组有提升——推理模型本来就爱把题目自己复述一遍；而且按输入 token 计费的话，成本要乘二。</p>
+<p>但这件事给老郭最大的触动在另一层。他把写满优化实验的排期表拿出来，在最顶上加了一行：</p>
+<blockquote>
+<p><strong>洞见 13：花钱搜索之前，先试零成本的「笨办法」。</strong> 把「整段重复」这类确定性变换设成所有优化实验的<strong>及格线</strong>——任何花了钱、跑了搜索得到的提升，先回答一个问题：<strong>打得过这个零智能的笨办法吗？</strong> 打不过，说明你优化了个寂寞。</p>
+</blockquote>
+<p><strong>第二件事，是一次失败的「复现」。</strong></p>
+<p>Diana 让小满把季度初那次最成功的优化，拿到另一条产品线上复制一遍。小满信心满满：prompt 版本、模型、参数、数据集，运行记录里全都有，照着跑就行。</p>
+<p>结果数字对不上。同样的 task_prompt v3、同样的模型，分数差了好几个点。</p>
+<p>查了两天，原因让人哭笑不得：这三个月里，他们升级过<strong>优化器用来改 prompt 的那段 meta-prompt</strong>，也调过<strong>评委 prompt</strong> 的措辞——而这两样东西，运行记录里<strong>连个版本号都没有</strong>。</p>
+<p>「我们给每份作业都编了号，」老郭苦笑，「却忘了给<strong>改作业的红笔</strong>和<strong>打分的老师</strong>编号。」</p>
+<p>这个坑，学界也是最近才系统说清。一篇 2026 年的论文（SePO）干脆把「优化器自己的 system prompt」当成训练对象去进化，五个任务的平均分从 71.89 提到 <strong>76.38</strong>；把其中「自我改进」环节去掉，立刻掉回 74.94——<strong>优化器本身的质量，真金白银地影响结果</strong>。再往前翻，经典的 PromptBreeder 早就玩过「连变异规则一起进化」的自指操作。</p>
+<blockquote>
+<p><strong>洞见 14：optimizer 和 judge 本身，也是要版本化的零件。</strong> 给「改 prompt 的 prompt」和「打分的 prompt」各编一个版本号，写进每次运行记录。<strong>评测用的评委必须冻结</strong>——要改，走独立评审，改完旧分数全部作废重跑。想优化评委本身？可以，但只能动<strong>开发期的辅助评委</strong>，而且要和评测链路<strong>物理隔离</strong>——不然就是第四章说过的「作弊刷分」。</p>
+</blockquote>
+<p>阿哲把这两条总结成一句新口诀：<strong>「最便宜的办法先试，最容易忘的零件先编号。」</strong></p>
+<hr>
+<h2 id="_9">尾声：老郭白板上最后留下的三句话</h2>
+<p>那个季度结束，小蜜稳在了 92%，而且——更重要的是——<strong>他们能说清每一分是怎么来的，也能在任何一步滚回去。</strong></p>
+<p>收工那天，老郭把白板上密密麻麻的十四条擦掉，只留下三句话。他说，要是哪天忘了前面所有细节，记住这三句就够了:</p>
+<blockquote>
+<p><strong>一、动手之前先问「值不值得」。</strong> 提升空间没超过噪声地板，就别花那个钱——而且先拿第七章那个零成本的笨办法垫个底，打不过它的优化都白跑。</p>
+<p><strong>二、改 prompt 的本质，是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色一遍。</strong></p>
+<p><strong>三、更长、更多、更复杂，都不是默认的好。</strong> 先证明它没带来过拟合、没带来污染、没让你说不清因果。</p>
+</blockquote>
+<p>小满看着这三句话，忽然想起季度初自己那句「让 AI 改 AI 的作业，多省事」。</p>
+<p>她现在知道答案了:让模型自己改 prompt，技术上当然可以。但<strong>「改」很容易，「知道改对了没有」才是真功夫</strong>——而后者，恰恰是模型替你包办不了的那部分。</p>
+<p>那不是一个能让你睡个好觉的优化器。那是一套工程纪律。</p>
+<p>—— 完 ——</p>
+<hr>
+<h2 id="_10">附录：故事 ↔ 真实证据对照表（给较真的读者）</h2>
+<p>故事是虚构的，下面每条对应的研究和数字是真的，可顺链接回到原报告与论文笔记。证据等级沿用报告口径:<strong>A=论文/源码并已结构化笔记；B=多源重复出现的工程实践；recent-preprint=2026 新稿，需独立复现后才能采信</strong>。<strong>注意:论文里的数字是在「该论文的设置下」成立，不等于在你的任务上一定成立。</strong></p>
+<table>
+<thead>
+<tr>
+<th>故事情节</th>
+<th>对应洞见</th>
+<th>真实证据（数字均来自原论文设置）</th>
+<th>等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>优化器把开发集刷到 87%、新数据却掉到 79%</td>
+<td>洞见 1 体检</td>
+<td>Coin Flip：72 次优化 <strong>49%</strong> 低于 zero-shot；ProTeGi 约 <strong>3 步</strong>达峰后过拟合</td>
+<td>A / recent-preprint</td>
+</tr>
+<tr>
+<td>「抽 JSON」比「总结一句话」更适合先练手</td>
+<td>洞见 2 选任务</td>
+<td>Coin Flip：唯一让六法全超 zero-shot 的是结构化 JSON 任务（<strong>+6.8</strong>）；KG 抽取换数据集后 <strong>+16% → ~1%</strong></td>
+<td>A / recent-preprint</td>
+</tr>
+<tr>
+<td>把失败记成一句诊断，而不是一个红叉</td>
+<td>洞见 3 失败即证据</td>
+<td>ProTeGi：文字「梯度」改写 <strong>+15.3% / 最高 +31%</strong>；自反馈 6 轮反而变差</td>
+<td>A</td>
+</tr>
+<tr>
+<td>先列互斥根因假设、再分别改</td>
+<td>洞见 4 根因假设</td>
+<td>VISTA：缺陷种子上 23.81% <strong>→ 13.50%</strong>，解耦假设/改写后恢复 <strong>87.57%</strong></td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>五个候选摊成账、综合三维选、best-seen 单独存</td>
+<td>洞见 5 多候选筛选</td>
+<td>ProTeGi：beam 选择优于贪心（0.85 / 0.67 / 0.88）</td>
+<td>A</td>
+</tr>
+<tr>
+<td>弃掉 2.4 倍长、加了伪规律的候选</td>
+<td>洞见 6 防膨胀</td>
+<td>PrefPO：放任时撑到 <strong>14.7 倍</strong>长、<strong>86%</strong> 在偷改任务；TextReg 加正则反而 <strong>+10.0 / +9.9</strong></td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>instruction 不改、只换 3 个精选示例</td>
+<td>洞见 7 示例优化</td>
+<td>Teach Better：只优化示例 <strong>+12.63</strong>；优化示例 75.77 &gt; 只优化指令 65.91；精选 3 个 &gt; 全部</td>
+<td>A</td>
+</tr>
+<tr>
+<td>把小蜜拆成「零件清单」、评委/安全冻结</td>
+<td>洞见 8 标清部件</td>
+<td>AutoPDL：只换对推理模式，FEVER <strong>6.5% → 74.0%</strong>（+67.5pp）</td>
+<td>A</td>
+</tr>
+<tr>
+<td>改工具注释「单位是分」而非改 agent 指令</td>
+<td>洞见 9 改工具 schema</td>
+<td>JTPRO：联合优化指令+工具 schema，<strong>51.27% → 64.46%</strong>（ToolACE 1000 工具）</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>记忆贴标签、只取 3–5 条匹配的</td>
+<td>洞见 10 过滤记忆</td>
+<td>MemAPO：<strong>70.7% vs 63.6%</strong>，\$0.31 vs \$0.70；ERM：过滤记忆收敛近两倍速</td>
+<td>recent-preprint / A</td>
+</tr>
+<tr>
+<td>看 trace 找到出错那一步、只改它</td>
+<td>洞见 11 责任归属</td>
+<td>Temporal/Structural Credit：credit-guided <strong>55.13 → 64.63</strong>，无差别更新反而掉分</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>翻原论文戳破「GEPA 替代 RL」口号</td>
+<td>洞见 12 线索非证据</td>
+<td>GEPA 实为反思式 prompt 进化（轨迹 + Pareto 选择），非 RL 系统；「替代 RL」是传播简化</td>
+<td>B</td>
+</tr>
+<tr>
+<td>阿哲手滑把 prompt 原样贴了两遍，长上下文任务暴涨</td>
+<td>洞见 13 零成本变换</td>
+<td>Prompt Repetition（Google）：非推理模式 7 模型 × 10 配置 <strong>47/70 显著胜 0 负</strong>；NameIndex <strong>21.33% → 97.33%</strong>；Padding 对照无效；开推理后 28 组仅 5 胜；输入成本 ×2</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>「同样配置」复现不出来——改作业的红笔和打分的老师没编号</td>
+<td>洞见 14 红笔也要版本化</td>
+<td>SePO：把 optimizer 的 system prompt 预训练自进化，<strong>71.89 → 76.38</strong>，去掉自我改进掉回 74.94；PromptBreeder 的 hyper-mutation 为自指先例</td>
+<td>recent-preprint / A</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>诚实声明（与原报告同口径）</strong>：截至 2026-06-11，这 14 条洞见<strong>都尚未在本项目复现验证</strong>；标 recent-preprint 的 2026 新稿需独立复现后才能采信。故事是为了好读而做的虚构演绎，<strong>不能替代</strong>原报告里的证据链。想看完整论述、方法地图、证据金字塔和分渠道追溯，请回到 <a href="./analysis_report_v4_20260611.html">跨渠道综合报告 v4</a> 与 <a href="./insight_handbook_20260609.html">读者向洞见手册</a>。</p>
+</blockquote>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/popsci_prompt_evolution_story_20260610.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">楔子：一句让老郭皱眉的话</a>
+<a class="lv2" href="#_2">第一章 体检：这活儿到底值不值得优化？</a>
+<a class="lv2" href="#_3">第二章 把失败变成证据，而不只是一个红叉</a>
+<a class="lv2" href="#_4">第三章 别被模型骗：怎么「选」和怎么防「越改越长」</a>
+<a class="lv2" href="#_5">第四章 到底该拧哪个螺丝？</a>
+<a class="lv2" href="#_6">第五章 记忆与分身：更多 ≠ 更好</a>
+<a class="lv2" href="#_7">第六章 听来的，是线索，不是证据</a>
+<a class="lv2" href="#_8">第七章 笨办法与红笔：两件收尾时才想明白的事</a>
+<a class="lv2" href="#_9">尾声：老郭白板上最后留下的三句话</a>
+<a class="lv2" href="#_10">附录：故事 ↔ 真实证据对照表（给较真的读者）</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

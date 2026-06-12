@@ -26,13 +26,14 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | paper-autoprompt-2020 | skimmed | medium | AutoPrompt: Eliciting Knowledge from Language Models with Automatically Generated Prompts | 2020 | https://aclanthology.org/2020.emnlp-main.346/ | gradient-guided prompt search |  | 需深读历史脉络 |
 | paper-rlprompt-2022 | skimmed | medium | RLPrompt: Optimizing Discrete Text Prompts | 2022 | https://aclanthology.org/2022.emnlp-main.222/ | reinforcement learning prompt search |  | 需判断相关性 |
-| paper-grips-2022 | skimmed | high | GrIPS: Gradient-free, Edit-based Instruction Search for Prompting Large Language Models | 2022/2023 | https://aclanthology.org/2023.eacl-main.277/ | gradient-free instruction search |  | 需深读 |
+| paper-grips-2022 | noted | high | GrIPS: Gradient-free, Edit-based Instruction Search for Prompting Large Language Models | 2022/2023 | https://aclanthology.org/2023.eacl-main.277/ | gradient-free instruction search | 深读笔记 `docs/paper_notes/paper-grips-2022.md`；2026-06-12 全文证据级 | 已深读；前史锚点——v1 早于 APE 八个月的免梯度短语编辑搜索（无 LLM 生成器），"语义不连贯编辑照样涨分"与 flawed-metaphor 跨年代互证 |
 | paper-ape-2022 | noted | high | Large Language Models are Human-Level Prompt Engineers / APE | 2022 | https://arxiv.org/abs/2211.01910 | automatic prompt generation | 深读笔记 `docs/paper_notes/paper-ape-2022.md`；2026-06-10 全文证据级 | 已深读；propose-then-select 最简下限基线与"选择口径=部署场景"过拟合戒律来源 |
 | paper-protegi-2023 | skimmed | high | Automatic Prompt Optimization with Gradient Descent and Beam Search / ProTeGi | 2023 | https://arxiv.org/abs/2305.03495 | textual gradient / beam search |  | 需深读 |
 | paper-opro-2023 | noted | high | Optimization by PROmpting / OPRO | 2023 | https://arxiv.org/abs/2309.03409 | LLM-as-optimizer | 深读笔记 `docs/paper_notes/paper-opro-2023.md`；2026-06-10 全文证据级 | 已深读；轨迹驱动 LLM-as-optimizer 基线，"默认不留验证集"作反面对照 |
 | paper-promptbreeder-2023 | candidate | high | PromptBreeder | 2023 | https://arxiv.org/abs/2309.16797 | evolutionary / self-referential optimization |  | 需深读 |
 | paper-evoprompt-2023 | skimmed | high | Connecting Large Language Models with Evolutionary Algorithms Yields Powerful Prompt Optimizers / EvoPrompt | 2023 | https://arxiv.org/abs/2309.08532 | evolutionary prompt optimization |  | 需深读 |
 | paper-dspy-2023 | noted | high | DSPy | 2023/2024 | https://arxiv.org/abs/2310.03714 | prompt-as-program | 深读笔记 `docs/paper_notes/paper-dspy-2023.md`；2026-06-10 全文证据级 | 已深读；prompt-as-program 奠基，本版优化 demonstration（instruction 优化见 MIPROv2） |
+| paper-promptagent-2023 | noted | high | PromptAgent: Strategic Planning with Language Models Enables Expert-level Prompt Optimization | 2023 | https://arxiv.org/abs/2310.16427 | MCTS planning + error feedback | 深读笔记 `docs/paper_notes/paper-promptagent-2023.md`；2026-06-12 全文证据级 | 已深读；主线结构评审中发现的缺环——critique 线的搜索结构 beam→MCTS→Pareto 演进中的规划搜索一支，同等探索量下 MCTS 胜 beam/greedy |
 | paper-intent-calibration-2024 | candidate | medium | Intent-based Prompt Calibration: Enhancing prompt optimization with synthetic boundary cases | 2024 | https://arxiv.org/abs/2402.03099 | synthetic boundary cases |  | 需核验 |
 | paper-crispo-2024 | candidate | medium | CriSPO: Multi-Aspect Critique-Suggestion-guided Automatic Prompt Optimization for Text Generation | 2024 | https://arxiv.org/abs/2410.02748 | critique-suggestion APO |  | 需核验 |
 | paper-human-feedback-2024 | skimmed | high | Prompt Optimization with Human Feedback | 2024 | https://arxiv.org/abs/2405.17346 | human preference feedback / dueling bandits |  | 需深读 |
@@ -54,7 +55,7 @@
 | paper-maspo-2026 | skimmed | high | MASPO: Joint Prompt Optimization for LLM-based Multi-Agent Systems | 2026 | https://arxiv.org/abs/2605.06623 | multi-agent prompt optimization |  | 需深读 |
 | paper-promptolution-2026 | candidate | medium | promptolution | 2026 | https://aclanthology.org/2026.eacl-demo.21/ | prompt optimization tool |  | 需核验 |
 | paper-sepo-2026 | skimmed | high | SePO: Self-Evolving Prompt Agent for System Prompt Optimization | 2026 | https://arxiv.org/abs/2606.04465 | self-evolving prompt optimization |  | 需深读 |
-| paper-prompt-repetition-2025 | candidate | high | Prompt Repetition Improves Non-Reasoning LLMs | 2025-12-17 | https://arxiv.org/abs/2512.14982 | prompt repetition / non-reasoning prompt technique | user_provided_example；2026-06-09 核验 arXiv 摘要，主张在不使用 reasoning 时重复输入 prompt 可提升多个主流模型表现；尚未深读任务、模型、重复方式和边界 | 作为“具体洞见范式”和最小 A/B 实验候选，需写 paper note 后再进入稳定结论 |
+| paper-prompt-repetition-2025 | noted | high | Prompt Repetition Improves Non-Reasoning LLMs | 2025-12-17 | https://arxiv.org/abs/2512.14982 | prompt repetition / non-reasoning prompt technique | user_provided_example；深读笔记 `docs/paper_notes/paper-prompt-repetition-2025.md`；2026-06-11 方法+结果级（Figure 逐格数字未转录） | 已深读；非推理模式 47/70 显著胜 0 负、零输出成本的结构变换，定位为本项目 APO baseline 变换 + 最小三臂 A/B 候选（baseline/×2/padding）；推理模式收益消失（5/28），长 prompt 与输入计费翻倍是边界 |
 
 ## 行业实践与工具
 

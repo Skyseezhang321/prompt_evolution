@@ -1,0 +1,106 @@
+# arXiv 2025/2026 前沿深读综合
+
+日期：2026-06-12
+
+定位：把[文献地图全目录](literature_map.md)中 2025/2026 年的 25 篇深读笔记做**时间切片综合**，回答「最近两年这个领域在发生什么、和经典方法时代有什么不同」。逐篇详细证据仍在各 paper note；按阅读批次组织的综合见 [Batch 1–3 综合](arxiv_deep_reading_batch3_synthesis.md)；本文只做跨论文的时间线叙事与共识/张力收敛，不替代任何一处。
+
+范围与口径：25 篇 = 文献地图年份口径下 2025 年 10 篇 + 2026 年 15 篇（GEPA arXiv 首发 2507，笔记按 2026 口径命名归组；PROSE 为 coin-flip 内部基线、无独立 arXiv ID）。arXiv 首发 ID 跨 2502–2606，采集截至 2026-06-08 的 top80 检索与后续定向补读。
+
+证据边界：论文级综合，材料全部来自既有深读笔记，所有数字与笔记同口径核验；**不是本项目复现结论**，2026 年新稿尤其需要独立复现后才能当稳定规律使用。
+
+## 一页结论
+
+1. **「新方法起名字」的时代（2022–2024）结束了。** 2025/2026 的 25 篇里，只有 GEPA 一篇算「确立新主线的命名方法」；其余的产出形态是诊断（值不值得优化、改对了没）、形式化（多 agent credit assignment）、对象升维（工具 schema / pattern / codebook）、自进化（optimizer 自身）、卫生与正则（防伪提升）。
+2. **优化前置 gate 成为跨论文共识。** Coin Flip 给出最强约束（Haiku 72 次优化运行 49% 低于 zero-shot）；APO-KG 给出正面条件（schema 越复杂收益越明显，跨数据集迁移只剩约 1% F1 增益）；Prompt Repetition 给出零成本对照底线（非推理模式 47/70 显著胜 0 负）。
+3. **「分数涨了 ≠ 真的变好了」有了可操作的检测面。** PrefPO 量化了 prompt hacking 率（TextGrad 86% vs PrefPO 37% vs Minimal 31%）；TextReg 把 overfitting 做成正则化对象（OOD 上多任务 +8~+11.8）；Edit-Level 因果分析给出 edit-family 先验（meta_instruction × math = -0.103）。
+4. **多 agent 优化的真主题是 credit assignment，不是更多 agent。** MASPO（misalignment 显式建模）、MAPRO（MAP 推断 + belief propagation）、Temporal/Structural Credit（按 role/round 分块更新）三条路线殊途同归。
+5. **Optimizer 本身成为被管理、被优化的 artifact。** SePO 消融（去 self-improvement 76.38→74.94）、SPEAR（rigid loop 显著差于 free-form agent）、PrefPO（升级 optimizer +11.5 > 升级 discriminator +6.1）从三个方向证明同一件事。
+6. **真正的缺口在推理模型。** 25 篇中没有一篇处理 bi-level / thought-driven（o1/R1 时代把 prompt 当推理控制器）；这与 [taxonomy 完整性校验](arxiv_taxonomy_completeness_check_20260610.md)的结论一致，是登记在案的最高优先定向搜索方向。
+
+## 时间线：这两年的论文形态怎么变的
+
+按 arXiv 首发月份看，2025/2026 有清楚的节奏：
+
+- **2025 上半年（2502–2507）：领域自我盘点。** 两份优化视角综述（[APO Survey](paper_notes/paper-apo-survey-2025.md)、[APE Survey](paper_notes/paper-ape-survey-2025.md)）和 [Context Engineering Survey](paper_notes/paper-context-engineering-2025.md) 先后把领域装进统一框架并点名 frontier；同期 [AutoPDL](paper_notes/paper-autopdl-2025.md)（2504）把 prompting pattern 变成搜索变量，[Scaling Textual Gradients](paper_notes/paper-scaling-textual-gradients-2025.md)（2506）暴露文本梯度的 context wall，[APO-KG](paper_notes/paper-apo-kg-construction-2025.md)（2506）给出「什么条件下值得优化」的实证。
+- **2025 年 7 月：[GEPA](paper_notes/paper-gepa-2026.md)（2507）确立新主线。** 轨迹反思 + Pareto 候选保留，在 Qwen3 8B 上 aggregate 45.23→54.85、超过 GRPO 的 48.91，平均只用约 3,936 rollouts（GRPO 固定 24,000）。这是 2025/2026 唯一一个进入「七法主线」的命名方法。
+- **2025 下半年（2508–2512）：升维与降温并行。** [DistillPrompt](paper_notes/paper-distillprompt-2025.md)（2508）、[MAPRO](paper_notes/paper-mapro-2025.md)（2510）继续拓宽优化对象；年末出现「降温双响」——[Flawed Metaphor](paper_notes/paper-textual-gradients-flawed-metaphor-2025.md)（2512）拆掉文本梯度的隐喻外壳，[Prompt Repetition](paper_notes/paper-prompt-repetition-2025.md)（2512）证明一个零智能变换就能打平很多优化场景。
+- **2026 上半年（2601–2606）：半年 14 篇密集落地，三条线并行。** 对象升维（[JTPRO](paper_notes/paper-jtpro-2026.md)、[MASPO](paper_notes/paper-maspo-2026.md)、[Prompt Codebooks](paper_notes/paper-prompt-codebooks-2026.md)、[Temporal/Structural Credit](paper_notes/paper-temporal-structural-credit-mas-2026.md)、[Modular PO](paper_notes/paper-modular-prompt-optimization-2026.md)）、自进化（[SePO](paper_notes/paper-sepo-2026.md)、[MemAPO](paper_notes/paper-memapo-2026.md)）、卫生与诊断（[TextReg](paper_notes/paper-textreg-2026.md)、[PrefPO](paper_notes/paper-prefpo-2026.md)、[Edit-Level](paper_notes/paper-causal-edit-level-2026.md)、[VISTA](paper_notes/paper-vista-reflection-dark-2026.md)、[Coin Flip](paper_notes/paper-coin-flip-2026.md)、[SPEAR](paper_notes/paper-spear-2026.md)）。最新一篇 SePO（2606）距本文采集只差几天。
+
+## 转向一：先问值不值得、再问改对了没（降温与诊断）
+
+这是 2025/2026 最有辨识度的一条线：领域开始系统性地审问自己。
+
+- **[Coin Flip](paper_notes/paper-coin-flip-2026.md)（2604）**给出最强实践约束：compound AI 设置下，Claude Haiku 4.5 的 72 次优化运行 49% 低于 zero-shot；Nova Lite 24 个 method×task means 中 14 个低于 zero-shot；agent 间 interaction 在所有测试中 F<1 且 p>0.52（耦合很弱，joint optimization 缺乏前提）。它的可操作输出是 pre-optimization gate：zero-shot baseline → 10–20 候选估 headroom 与 noise floor → coupling test → 不过阈值就停。唯一全方法正收益的任务 HelpSteer2 最佳提升 +6.8，其余任务最佳仅 +1.1 / +0.7 / +0.6。
+- **PROSE（同论文 Appendix C，[笔记](paper_notes/paper-prose-2026.md)）**是作者自建的受控反例：结构化五段分解 + 6 算子进化 + 风险调整 fitness（0.70·均分 + 0.15·Sharpe + 0.15·DRO）全开，仍无可测稳健性优势——「在选择端加风险工程」救不回脆弱性。注意它是内部基线、非独立文献。
+- **[VISTA](paper_notes/paper-vista-reflection-dark-2026.md)（2603）**给反思式优化一个结构性反例：defective GSM8K seed 上 GEPA 从 23.81% 降到 13.50%（根因从未进入它的假设空间），把「根因假设生成」与「按假设改写」解耦并行验证后恢复到 87.57%；跨模型迁移上 GEPA 优化结果在 Qwen3-4B 只剩 22.74%，VISTA 仍有 86.05%。
+- **[Flawed Metaphor](paper_notes/paper-textual-gradients-flawed-metaphor-2025.md)（2512）**用破坏性消融拆隐喻：错误 evaluation labels 通常不降低 test 表现、100 步训练无梯度式 overfitting、高分 prompt 可能靠 prevalence hacking（强烈禁止 minority class「unknown」）。结论是方法对比必须控制候选数量与选择预算，否则「梯度」的功劳可能只是「多采样」。
+- **[Prompt Repetition](paper_notes/paper-prompt-repetition-2025.md)（2512）**提供零成本对照底线：`<QUERY><QUERY>` 在非推理模式下 7 模型 × 10 配置 47/70 显著胜 0 负（NameIndex 21.33%→97.33%），Padding 对照无效，推理模式 28 组仅 5 胜。任何 optimizer 报告增益前，先回答有没有打过这个零智能变换。
+- **[APO-KG](paper_notes/paper-apo-kg-construction-2025.md)（2506）**是这条线的正面拼图：复杂 schema / 长输入 / 严格格式下收益明显（ECR triple F1 最高 +16%，rel=100 时 0.62→0.72），但跨数据集迁移只剩约 1% F1 增益（同数据集约 8% 或更多）——优化是「复杂度放大器下的稳健性工具」，不是普适增益。
+
+**收敛：**「值不值得优化」第一次有了可执行的判定流程（headroom / noise floor / coupling / 零成本对照），「改对了没」第一次有了结构性的失败解释（假设空间、prevalence hacking、迁移坍缩）。
+
+## 转向二：优化对象升维——从一段 prompt 到 artifact graph
+
+2025/2026 的方法论论文几乎不再问「怎么改一段 instruction」，而是把可优化对象拆开、扩大：
+
+- **[AutoPDL](paper_notes/paper-autopdl-2025.md)**：pattern 本身是最大搜索变量——FEVER 上 Granite 13B 从 6.5% 到 74.0%（最佳是 3-shot ReWOO，不是更好的 instruction）；但最优 pattern 随任务和模型高度变化，GPT-4o-mini 迁移时 MBPP+ 无提升。
+- **[JTPRO](paper_notes/paper-jtpro-2026.md)**：工具 agent 的失败常在 per-tool schema 和 slot 描述，不在 global instruction——ToolACE 1000 tools 上 o3-mini OSR 51.27→64.46，GPT-5 62.37→73.55；ETID GPT-4o mini 46.53→66.83。
+- **[Modular PO](paper_notes/paper-modular-prompt-optimization-2026.md)**：固定 schema、只做 section-local 编辑——ARC-Challenge 上 LLaMA-3 8B 75.0→79.10（TextGrad 仅 75.67），MMLU 57.21→61.50（TextGrad 反降到 56.40）。这是「可回滚优化」最直接的实验方案。
+- **[Prompt Codebooks](paper_notes/paper-prompt-codebooks-2026.md)**：把 prompt 优化成按输入路由的可复用 instinct 单元——HotpotQA 相对 MIPROv2 prompt 缩短 14.1 倍、aggregate 缩短 9.6 倍，性能仍超 GEPA（IFBench 41.33，+2.72）。
+- **[MASPO](paper_notes/paper-maspo-2026.md) / [MAPRO](paper_notes/paper-mapro-2025.md) / [Temporal-Structural Credit](paper_notes/paper-temporal-structural-credit-mas-2026.md)**：三条多 agent 路线共同把「该改谁、改哪一轮」形式化——MASPO 用 misalignment cases + joint reward（Sequential MAS 平均 70.39 vs baseline 65.31，去掉 Joint Evaluate 降到 67.77）；MAPRO 用 max-product belief propagation 做 MAP 推断（去掉 demonstration-guided reward 后 HumanEval-ET 80.21→76.04、CodeContest 31.52→29.70）；Temporal/Structural Credit 只更新低 credit 的 role 或 round（MedMCQA LLaMA3-8B Debate 55.13→64.63）。
+- **[SPEAR](paper_notes/paper-spear-2026.md)**：连 optimizer 的工具与自治都是变量——给 optimizer 一个 Python sandbox 做 confusion matrix / groupby 式错误分析，工业任务上 0.760 vs TextGrad 0.110（job location kappa）、BBH-7 平均 0.938 vs GEPA 0.628；把完整 DataFrame 塞进上下文只能恢复差距的 2%，固定 rigid loop 显著差于 free-form agent；78 个归档 run 中 0 个低于 seed（auto-rollback 护住下限）。
+
+**收敛：**本项目 v4 报告把这条线总结为「优化对象已是 artifact graph」（prompt、pattern、tool schema、slot、role、round、codebook、optimizer 工具与策略），版本化也必须升级到 artifact graph 级别——这 8 篇是该判断的全部一手证据。
+
+## 转向三：从一次性优化到自进化与经验复用
+
+- **[GEPA](paper_notes/paper-gepa-2026.md)**：主线锚点。轨迹反思 + Pareto frontier，Qwen3 8B aggregate 45.23→54.85（GRPO 48.91、MIPROv2 47.84），约 3,936 rollouts 对 GRPO 的 24,000；消融显示 Pareto 选择本身贡献巨大（GEPA +12.44 vs SelectBestCandidate +6.05）；生成的 prompt 比 MIPROv2 短 9.2 倍。边界同样清楚：AIME-2025 上 32.00 低于 GRPO 的 38.00，无可靠 trace 时退化为普通改写。
+- **[SePO](paper_notes/paper-sepo-2026.md)**：把「负责改 prompt 的 prompt agent 自己的系统 prompt」纳入演化——Manual-CoT 71.89→SePO-Generalist 76.38，去掉 self-improvement 掉到 74.94、去掉 open-ended evolution 掉到 72.64；多任务预训练成本 37.14 美元摊到五任务约 7.43 美元/任务，且能迁移到预训练未含的任务（Sudoku 96.95→99.90）。这是本项目洞见 14「optimizer/judge 也要版本化」的核心证据。
+- **[MemAPO](paper_notes/paper-memapo-2026.md)**：成功模板与错误模式分开记忆（CTM/EPM 双 memory）——GPT-4o-mini 平均 70.7% vs TextGrad 63.6%，成本反而降低 58.6%（平均 0.31 美元 vs 0.70 美元）；AQuA-RAT 上双 memory 61.7→82.5（单独 CTM/EPM 仅 80.5/77.9）。
+- **[DistillPrompt](paper_notes/paper-distillprompt-2025.md)**：样例先蒸馏成任务原则再压缩聚合，相对 Grips 全数据集平均提升 20.12%——经验复用的另一条低成本路径。
+- **[Scaling Textual Gradients](paper_notes/paper-scaling-textual-gradients-2025.md)**：full-batch 文本梯度约 50 样本即撞 context wall；把历史高分 prompt 当动量分布采样（TSGD-M），TREC 81.92→83.36、GSM8K 93.15→94.04——「历史经验进采样分布、不进上下文」。
+
+**收敛：**自进化的工程含义不是「让系统自由改自己」，而是**把 optimizer 一侧的所有 artifact（它的 prompt、工具、记忆、采样分布）纳入与 task prompt 同等的版本化、评估与回滚纪律**。SePO 的消融、SPEAR 的 rigid-loop 对照、PrefPO 的「升级 optimizer（+11.5）比升级 discriminator（+6.1）更有效」从三个独立方向支持同一结论。
+
+## 转向四：从「分数涨了」到「真的变好了」（卫生、正则与约束）
+
+- **[PrefPO](paper_notes/paper-prefpo-2026.md)**：把卫生做进评估——BBH 平均 0.875（MIPROv2 0.873、GEPA 0.870、TextGrad 0.850）的同时，prompt 长度只膨胀 4.7 倍（TextGrad 14.7 倍、Minimal 变体 2.2 倍）、重复率 0.044（TextGrad 0.117、Minimal 0.012）、prompt hacking 率 37%（TextGrad 86%、Minimal 31%，未优化 baseline 12.8%）。「性能高但又长又重复又钻指标空子」的 prompt 不算优化成功。
+- **[TextReg](paper_notes/paper-textreg-2026.md)**：把 overfitting 做成正则化对象——task gradient 之外生成 regularization gradient，控制长度增长与规则收窄；OOD 上相对 TextGrad 多任务 +8~+11.8（Phi-3.5-Mini 上 Logical Deduction 5obj +11.8），而 TextGrad/REVOLVE 经常 OOD 低于未优化 CoT。范围限制明确：仅 single-turn、规则清晰的推理任务。
+- **[Edit-Level 因果分析](paper_notes/paper-causal-edit-level-2026.md)**：对 2,095 DSPy pairs + 17,708 TextGrad/GEPA pairs 做观察性分析——meta_instruction × math = -0.103、clarity_constraint × logical = -0.083、extraneous_load × sequential = -0.060；83% 的关联方向在 leave-one-out 下稳定。不同任务对 edit family 反应相反，「越清楚、越复杂越好」是误区。
+
+**收敛：**加上 Flawed Metaphor 的 prevalence hacking 案例，这四篇合起来给出一个可直接落地的「伪提升检测面」：length ratio、repetition ratio、seed similarity、edit family、minority class 表现、OOD/stress delta、hacking flag——本项目 v4 工程落地层的发布门与账本字段即由此而来。
+
+## 综述层：领域的自我定位
+
+三篇综述（均 2025）不产出新方法，但完成了两件事：
+
+1. **统一框架**：APO Survey 用 5 阶段流程 anatomy（seed → 评估反馈 → 候选生成 → 筛选保留 → 迭代深度）；APE Survey 用「优化空间 × 目标函数（含约束）× 优化方法」三轴；Context Engineering Survey 把 prompt 优化定位为 context engineering 大图中「Context Retrieval & Generation」下的一个基础组件——确认本项目「黑盒、离散、自然语言 prompt」的范围是一个合理的窄切面。
+2. **共同点名 frontier**：constrained optimization（长度/可读性约束的形式化——和转向四的 hygiene 实证天然相接）、multi-task 与 negative transfer、online/task-agnostic 优化、多目标 Pareto。**只有 APE Survey 点名了 bi-level / thought-driven（o1/R1 推理模型作为高层控制器）**——而这恰是 25 篇实证论文全部缺席的方向。
+
+这三篇已用于 [taxonomy 外部完整性校验](arxiv_taxonomy_completeness_check_20260610.md)：7 簇无整块遗漏，缺的是上述 frontier。
+
+## 两个张力：不一致如何收敛成适用条件
+
+2025/2026 最有价值的不是单篇结论，而是论文之间的「表面矛盾」被收敛成了适用条件：
+
+1. **反思有用（GEPA）vs 反思有害（VISTA）。** 统一条件：反馈信号里有没有轨迹级诊断信息、真实根因在不在 optimizer 的假设空间内。有轨迹、根因可见 → 反思式优化样本效率极高；根因结构性缺席 → 反思越多偏越远，需要假设生成与改写解耦。
+2. **大增益（JTPRO +13.19pp / AutoPDL +67.5pp / SPEAR 0.110→0.760）vs 抛硬币（Coin Flip 49% 低于 zero-shot）。** 统一条件：任务结构。有复杂 schema、工具选择、严格格式、latent capability 未被默认激活 → 优化有可利用结构；自由文本、zero-shot 已近上限、dev set 小且噪声大 → 优化是在噪声里做昂贵搜索。
+
+这两条「张力 → 条件」的收敛，是把 2025/2026 文献当成整体读才能拿到的东西，也是本项目选型六问与 pre-optimization gate 的文献基础。
+
+## 2025/2026 仍未覆盖的（诚实清点）
+
+- **bi-level / thought-driven**：25 篇无一篇；仅 APE Survey 概念性点名。推理模型时代「prompt 作为推理控制器」的优化，是当前库里整块缺席的方向，已登记为最高优先定向搜索（top80 采样可能根本采不到，需要换检索词）。
+- **task-agnostic / online 优化**：生产环境无 dev set 的推理时优化，只有 memory 类工作间接触及。
+- **constrained optimization 的理论外壳**：hygiene/length 有大量实证（转向四），但「Γ(P)≤κ」式的形式化求解尚无代表作进入库内。
+- **multi-task negative transfer**：MemAPO/SePO 的跨任务结果是正面案例，系统性的负迁移研究未覆盖。
+
+## 对本项目的输入
+
+1. **检查链已经齐了。** 优化前（Coin Flip gate + Prompt Repetition 零成本对照）→ 优化中（轨迹/假设/代码三类反馈信号、artifact 分块编辑）→ 优化后（PrefPO/TextReg/Edit-Level 卫生面板 + OOD split）构成完整闭环；这正是 v4 工程落地层五件套与发布门的文献来源，本文不另起清单。
+2. **首批实验的选型依据更硬了。** 「结构化抽取 / 工具调用 / 严格格式优先，开放生成靠后」现在有 APO-KG、JTPRO、AutoPDL、Coin Flip 四篇从正反两面支撑（详见 [Batch 3 综合](arxiv_deep_reading_batch3_synthesis.md)的最小实验建议）。
+3. **下一步采集动作明确：** 定向搜索 bi-level / thought-driven；其次按 APE Survey 的 constrained/multi-task/online 三个轴各补 1–2 篇代表作。
+
+## 追溯
+
+本文材料 = 25 篇深读笔记（清单与逐篇链接见[文献地图全目录](literature_map.md)的 2025/2026 行）。相关综合文档：[Batch 1–3 综合](arxiv_deep_reading_batch3_synthesis.md)（批次视角）、[taxonomy](arxiv_top80_taxonomy.md) 与[完整性校验](arxiv_taxonomy_completeness_check_20260610.md)（覆盖视角）、[APO 七法主线详解](apo_seven_methods_primer_20260611.md)（经典锚点视角）、主报告 v4（全渠道视角）。所有数字撰写时已逐一回查笔记原文核验；个别论文图表为位图未转录的（如 Flawed Metaphor 的多数图表数字），本文只引用其正文陈述的趋势并已注明。

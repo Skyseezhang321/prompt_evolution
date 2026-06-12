@@ -16,6 +16,16 @@ source_id：
 
 reviewed_by：
 
+local_pdf_path：
+
+local_pdf_sha256：
+
+local_text_path：
+
+local_text_sha256：
+
+evidence_level：
+
 ## 一句话结论
 
 

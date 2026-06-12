@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>prompt_evolution · 一页纸总览（2026-06-12）</title>
+<style>
+:root{
+  --paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+  --teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+  --blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;
+  --serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+  --sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  --mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:#edeadd;color:var(--ink);font-family:var(--sans);font-size:12.5px;line-height:1.55;}
+.sheet{max-width:880px;margin:18px auto;background:var(--paper);border:1px solid var(--line);
+  border-top:5px solid var(--teal);border-radius:8px;padding:26px 30px 20px;
+  box-shadow:0 1px 2px rgba(35,40,32,.05),0 18px 40px -26px rgba(35,40,32,.35);}
+h1{font-family:var(--serif);font-size:23px;margin:0 0 2px;font-weight:760;}
+h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line);padding-bottom:4px;margin:16px 0 8px;}
+.tagline{color:#474d3f;font-size:13px;margin:0 0 4px;}
+.tagline b{color:var(--seal);}
+.meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
+.nums{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:6px;}
+.nums .n{background:var(--card);border:1px solid var(--line-soft);border-radius:7px;padding:7px 9px;text-align:center;}
+.nums .n b{display:block;font-family:var(--mono);font-size:17px;color:var(--teal-deep);line-height:1.2;}
+.nums .n small{color:var(--muted);font-size:9.5px;line-height:1.3;display:block;margin-top:1px;}
+.layers{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.layers .l{border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:7px;background:var(--card);padding:7px 9px;}
+.layers .l:nth-child(2){border-top-color:var(--violet);} .layers .l:nth-child(3){border-top-color:var(--amber);} .layers .l:nth-child(4){border-top-color:var(--rose);}
+.layers b{display:block;font-size:12px;margin-bottom:1px;}
+.layers small{color:var(--muted);font-size:10px;line-height:1.4;display:block;}
+table{width:100%;border-collapse:collapse;font-size:11px;background:var(--card);border:1px solid var(--line);}
+th,td{padding:4.5px 8px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top;}
+th{background:var(--soft);font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#565b4c;}
+tr:last-child td{border-bottom:0;}
+td.num{font-family:var(--mono);font-weight:700;color:var(--teal-deep);white-space:nowrap;}
+.cols{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;}
+ul{margin:2px 0 0;padding-left:16px;} li{margin-bottom:2.5px;}
+.honest{margin-top:10px;padding:7px 10px;border-left:3px solid var(--seal);background:var(--seal-soft);border-radius:0 6px 6px 0;font-size:10.5px;color:#6e3325;}
+.foot{margin-top:12px;padding-top:8px;border-top:1px solid var(--line);display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;color:var(--muted);flex-wrap:wrap;gap:4px;}
+@media print{ body{background:#fff;} .sheet{margin:0;border:none;box-shadow:none;max-width:none;} }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <h1>别让 AI 自己改作业 —— prompt_evolution 项目一页纸</h1>
+  <p class="tagline">Prompt 优化与自进化的<b>证据级</b>调研：不是又一个优化器，是一份可逐条回溯的领域证据地图 + 一套用 AI agent 搭起来的研究流水线。</p>
+  <p class="meta">github.com/Skyseezhang321/prompt_evolution · 2026-06-08 启动 · 更新 2026-06-12 · MIT · 公开共建</p>
+
+  <h2>项目数字</h2>
+  <div class="nums">
+    <div class="n"><b>5</b><small>证据渠道<br>arXiv→知乎</small></div>
+    <div class="n"><b>37</b><small>论文深读笔记<br>含 SHA256 快照</small></div>
+    <div class="n"><b>4+5</b><small>仓库审计<br>固定 commit / 待审</small></div>
+    <div class="n"><b>14</b><small>工作流洞见<br>带数字与边界</small></div>
+    <div class="n"><b>9/12</b><small>反模式<br>/ 误区澄清</small></div>
+    <div class="n"><b>v1→v4</b><small>主报告自身<br>迭代 4 版可回滚</small></div>
+  </div>
+
+  <h2>四层知识体系（主报告 v4 的组织方式）</h2>
+  <div class="layers">
+    <div class="l"><b>① 方法地图</b><small>七法演进谱系 · 反馈三层（标量→批评→轨迹）· 六法同框对比 · 选型六问</small></div>
+    <div class="l"><b>② 工作流洞见 ×14</b><small>按一次优化的动作顺序分 A–G 七组：体检→学失败→防骗→选部件→记忆/多 agent→信息纪律→搜索之外</small></div>
+    <div class="l"><b>③ 工程落地</b><small>五件套（prompt+dataset+metric+trace+constraints）· 工具三阶段 · 发布门与账本</small></div>
+    <div class="l"><b>④ 误区与边界</b><small>12 条社区误读澄清 · 刻意不做的范围声明 · frontier 缺口（bi-level 最优先）</small></div>
+  </div>
+
+  <div class="cols" style="margin-top:14px">
+    <div>
+      <h2 style="margin-top:0">五条最值得带走的洞见</h2>
+      <table>
+        <thead><tr><th>#</th><th>一句话</th><th>关键数字</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>动手前先体检：自动优化接近抛硬币</td><td class="num">49% 低于 zero-shot</td></tr>
+          <tr><td>07</td><td>有 dev set 时，改示例常胜过改指令</td><td class="num">+12.63 / 5⁄7 任务</td></tr>
+          <tr><td>13</td><td>零成本：整段 prompt 原样重复一遍（非推理模式）</td><td class="num">47⁄70 胜 0 负</td></tr>
+          <tr><td>06</td><td>越改越长是过拟合：卫生指标要进选择函数</td><td class="num">14.7× 长 / 86% 偷改任务</td></tr>
+          <tr><td>14</td><td>optimizer 和 judge 也要版本化（红笔编号）</td><td class="num">71.89 → 76.38</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2 style="margin-top:0">四个口味的入口</h2>
+      <ul style="font-size:11.5px">
+        <li><b>较真版</b>：跨渠道综合报告 v4（docs/analysis_report_v4_20260611.html）</li>
+        <li><b>速读版</b>：读者向洞见手册（14 洞见，Part A–G）</li>
+        <li><b>地铁版</b>：小说体科普《别让 AI 自己改作业》（七章）</li>
+        <li><b>直接问版</b>：对话助手 advisor/advisor.html——确定性内核 + 扎根 LLM，回答强制引用洞见编号与证据等级</li>
+      </ul>
+      <h2>证据纪律</h2>
+      <ul style="font-size:11.5px">
+        <li>A=论文/源码已结构化笔记 · B=多源工程实践 · C=本项目实验 · D=线索</li>
+        <li>强候选 = arXiv（A）+ ≥1 工程渠道（B）独立支撑</li>
+        <li>社媒/二手过六字段门（dataset/metric/baseline/model/cost/failure）才升级</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="honest"><b>诚实声明：</b>14 条洞见均尚未在本项目复现（首条自有验证「零成本三臂 A/B」已列 P0）；Twitter 21 卡追溯 pending；正典 optimizer 5 仓库待审；recent-preprint 需独立复现后采信。论文数字 = 该论文设置下成立，不等于在你的任务上成立。</div>
+
+  <div class="foot">
+    <span>参与：仓库 Research Signal issue 提线索 → 新颖性判断 → 结构化笔记 → 洞见卡 → 验证</span>
+    <span>本页可直接打印（Ctrl+P）</span>
+  </div>
+</div>
+</body>
+</html>

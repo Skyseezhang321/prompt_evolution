@@ -14,7 +14,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Iterator, Mapping, Optional, Sequence
 
 ENV_OPENAI_API_KEY = "OPENAI_API_KEY"
 ENV_OPENAI_BASE_URL = "OPENAI_BASE_URL"
@@ -34,6 +34,9 @@ ENV_OPENROUTER_MAX_TOKENS = "OPENROUTER_MAX_TOKENS"
 ENV_OPENROUTER_TEMPERATURE = "OPENROUTER_TEMPERATURE"
 ENV_OPENROUTER_HTTP_REFERER = "OPENROUTER_HTTP_REFERER"
 ENV_OPENROUTER_APP_TITLE = "OPENROUTER_APP_TITLE"
+ENV_OPENROUTER_EMBED_MODEL = "OPENROUTER_EMBED_MODEL"
+DEFAULT_OPENROUTER_EMBED_MODEL = "baai/bge-m3"
+OPENROUTER_EMBEDDINGS_PATH = "/embeddings"
 
 DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_OPENAI_MODEL = "gpt-5.5"
@@ -311,6 +314,99 @@ def call_openrouter_chat(
         return _dry_run_result("openrouter", url, headers, payload)
 
     return _post_json(url, headers, payload, resolved_config.timeout)
+
+
+def stream_openrouter_chat(
+    messages: Sequence[Mapping[str, str]],
+    config: Optional[OpenRouterConfig] = None,
+    model: Optional[str] = None,
+) -> Iterator[str]:
+    """Stream OpenRouter chat completions, yielding visible content text deltas.
+
+    Parses the SSE response (``data: {...}`` lines, terminated by ``data: [DONE]``)
+    and yields each ``choices[0].delta.content`` chunk. Reasoning-only deltas are
+    skipped. Raises LLMRequestError on transport/HTTP errors.
+    """
+    resolved_config = config or resolve_openrouter_config()
+    if model:
+        resolved_config = replace(resolved_config, model=model)
+    payload = build_openrouter_chat_payload(messages, config=resolved_config)
+    payload["stream"] = True
+    url = _join_url(resolved_config.base_url, OPENROUTER_CHAT_COMPLETIONS_PATH)
+    headers = _build_headers(
+        resolved_config.api_key,
+        {
+            "HTTP-Referer": resolved_config.http_referer,
+            "X-OpenRouter-Title": resolved_config.app_title,
+        },
+    )
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    request = urllib.request.Request(url, data=body, headers=dict(headers), method="POST")
+
+    try:
+        response = urllib.request.urlopen(request, timeout=resolved_config.timeout)
+    except urllib.error.HTTPError as exc:
+        response_text = exc.read().decode("utf-8", errors="replace")
+        raise LLMRequestError(f"LLM API HTTP {exc.code}: {response_text}") from exc
+    except urllib.error.URLError as exc:
+        raise LLMRequestError(f"LLM API request failed: {exc}") from exc
+
+    with response:
+        for raw_line in response:
+            line = raw_line.decode("utf-8", errors="replace").strip()
+            if not line or not line.startswith("data:"):
+                continue
+            data = line[len("data:"):].strip()
+            if data == "[DONE]":
+                break
+            try:
+                obj = json.loads(data)
+            except json.JSONDecodeError:
+                continue
+            choices = obj.get("choices") or []
+            if not choices or not isinstance(choices[0], Mapping):
+                continue
+            delta = choices[0].get("delta") or {}
+            chunk = delta.get("content")
+            if chunk:
+                yield chunk
+
+
+def embed_openrouter(
+    texts: "str | Sequence[str]",
+    model: Optional[str] = None,
+    config: Optional[OpenRouterConfig] = None,
+) -> list[list[float]]:
+    """Return embedding vectors for ``texts`` via OpenRouter's /embeddings endpoint.
+
+    OpenRouter exposes an OpenAI-compatible embeddings API; default model is
+    ``baai/bge-m3`` (1024-dim, multilingual). Reuses OpenRouter config/headers.
+    Raises LLMRequestError on transport/HTTP errors.
+    """
+    if isinstance(texts, str):
+        texts = [texts]
+    texts = list(texts)
+    if not texts:
+        return []
+
+    resolved_config = config or resolve_openrouter_config()
+    embed_model = model or _read_str_env(ENV_OPENROUTER_EMBED_MODEL, DEFAULT_OPENROUTER_EMBED_MODEL)
+    url = _join_url(resolved_config.base_url, OPENROUTER_EMBEDDINGS_PATH)
+    headers = _build_headers(
+        resolved_config.api_key,
+        {
+            "HTTP-Referer": resolved_config.http_referer,
+            "X-OpenRouter-Title": resolved_config.app_title,
+        },
+    )
+    payload = {"model": embed_model, "input": texts}
+    response = _post_json(url, headers, payload, resolved_config.timeout)
+
+    data = response.get("data")
+    if not isinstance(data, list) or len(data) != len(texts):
+        raise LLMRequestError("embeddings response missing or mismatched data[]")
+    ordered = sorted(data, key=lambda d: d.get("index", 0) if isinstance(d, Mapping) else 0)
+    return [list(item.get("embedding", [])) for item in ordered]
 
 
 def extract_openai_text(response: Mapping[str, Any]) -> str:

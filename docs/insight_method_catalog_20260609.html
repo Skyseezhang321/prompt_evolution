@@ -5,66 +5,83 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Insight / Conclusion / Method 候选清单 · prompt_evolution</title>
 <style>
-:root{--bg:#f5f7f5;--paper:#fff;--ink:#202329;--muted:#626b74;--line:#d8ded8;--soft:#edf1ed;
---teal:#257d72;--blue:#2d67ad;--amber:#af6b08;--rose:#b44a5c;--violet:#665bb4;--green:#4f7e33;--slate:#46525f;
---shadow:0 14px 34px rgba(29,35,40,.08);--radius:8px;}
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
 *{box-sizing:border-box;} html{scroll-behavior:smooth;}
-body{margin:0;background:var(--bg);color:var(--ink);
-font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.78;}
-a{color:var(--blue);text-underline-offset:3px;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
 .topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
-padding:11px 22px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(6px);
-border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02);}
-.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);
-border-radius:999px;background:#fff;color:var(--ink);font-size:13.5px;font-weight:650;text-decoration:none;}
-.topbar a.back:hover{border-color:var(--teal);color:var(--teal);}
-.topbar .chip{padding:3px 11px;border-radius:999px;color:#fff;font-size:12.5px;font-weight:700;}
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
 .topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
-.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;
-grid-template-columns:minmax(0,1fr) 244px;gap:34px;align-items:start;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
 .content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-box-shadow:var(--shadow);padding:36px 40px;min-width:0;}
-.toc{position:sticky;top:64px;align-self:start;font-size:13.5px;border:1px solid var(--line);
-border-radius:var(--radius);background:#fbfcfa;padding:16px 16px;max-height:calc(100vh - 90px);overflow:auto;}
-.toc h4{margin:0 0 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
-.toc a{display:block;padding:3px 0;color:#3d444b;text-decoration:none;line-height:1.45;border-left:2px solid transparent;padding-left:10px;margin-left:-2px;}
-.toc a:hover{color:var(--teal);border-left-color:var(--teal);}
-.toc a.lv3{padding-left:22px;font-size:12.8px;color:#5a626b;}
-.content h1{margin:0 0 6px;font-size:30px;line-height:1.2;font-weight:760;}
-.content h2{margin:34px 0 12px;padding-bottom:7px;font-size:23px;border-bottom:2px solid var(--soft);scroll-margin-top:64px;}
-.content h3{margin:24px 0 9px;font-size:18.5px;color:#2a2f36;scroll-margin-top:64px;}
-.content h4{margin:18px 0 6px;font-size:15px;color:var(--slate);}
-.content p{margin:0 0 13px;}
-.content ul,.content ol{margin:0 0 13px;padding-left:24px;}
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
 .content li{margin-bottom:5px;}
 .content li>p{margin:0;}
 .content a{font-weight:500;}
-.content hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
-.content blockquote{margin:0 0 14px;padding:11px 16px;border-left:4px solid var(--blue);
-background:#eef4fc;border-radius:0 var(--radius) var(--radius) 0;color:#2c3a4d;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
 .content blockquote p:last-child{margin-bottom:0;}
-.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:var(--radius);
-overflow:hidden;margin:6px 0 18px;font-size:14px;display:block;overflow-x:auto;}
-.content thead th{background:#eef1ed;color:#3d444b;font-weight:720;text-align:left;}
-.content th,.content td{padding:10px 13px;border:1px solid var(--line);vertical-align:top;line-height:1.6;}
-.content tbody tr:nth-child(even){background:#fbfcfa;}
-.content code{font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;font-size:.9em;
-background:#eef1ed;border:1px solid var(--line);border-radius:4px;padding:1px 5px;}
-.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--teal);
-border-radius:6px;background:#fbfcfa;overflow-x:auto;}
-.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2a2f36;}
-.content pre.mermaid{background:#fff;border-left:1px solid var(--line);text-align:center;}
-.genfoot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
 @media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
-@media (max-width:640px){.content{padding:24px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#46525f">中间层</span><span class="doctitle">Insight / Conclusion / Method 候选清单</span></div>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4d5246">中间层</span><span class="doctitle">Insight / Conclusion / Method 候选清单</span><span class="mark">Prompt Evolution · 研究档案</span></div>
 <div class="wrap">
 <article class="content">
 <h1 id="insight-conclusion-helpful-method">Insight / Conclusion / Helpful Method 候选清单</h1>
-<p>日期：2026-06-09</p>
+<p>日期：2026-06-09（2026-06-11 追加 I-13 / I-14，与主报告 v4 同步；I-01..12 编号与内容未动）</p>
 <p>定位：本文是最终报告前的“内容整理中间层”。它不替代论文笔记、源码审计或行业实践笔记，而是把现有材料按最新 insight-first 原则压缩成可复用的洞见、结论、方法、反模式和验证候选。</p>
 <p>证据边界：</p>
 <ul>
@@ -280,6 +297,37 @@ main_sources:
   - docs/source_collection_plan.md
 counterexample_or_limit: 高质量工程博客如果包含代码、数据和复现实验，可升级为 stronger evidence。
 next_validation: 对 high-impact social claims 建立 trace-to-primary-source 表。
+</code></pre>
+<h3 id="i-13">I-13：花钱搜索之前，先试零成本的确定性结构变换</h3>
+<pre><code class="language-yaml">insight: causal attention 导致的「信息顺序敏感」是 prompt 性能的结构性失效来源，与措辞质量无关；把整个 prompt 原样重复一遍可以在完全不动语义的情况下修复它。
+user_facing_one_liner: 跑任何花钱的优化器之前，先试一个免费变换——把整个 prompt 原样重复一遍。
+phenomenon: 非推理模式下，`&lt;QUERY&gt;` → `&lt;QUERY&gt;&lt;QUERY&gt;` 在 7 个主流模型 × 10 个 benchmark 配置取得 47/70 显著胜、0 显著负（McNemar p&lt;0.1）；options-first 配置提升大于 question-first；Padding 对照（补到同等长度）无提升；NameIndex 上 Gemini 2.0 Flash-Lite 从 21.33% 提至 97.33%。开启 step-by-step 推理后基本无效（28 组里 5 胜 1 负 22 平）。
+mechanism: causal LM 中靠前的 token 看不到靠后的 token；重复后第二遍的每个 token 都能注意到完整第一遍，近似给 prompt 内部加「第二遍全注意」。推理模型本就常自发复述题目，故收益不叠加。重复发生在可并行的 prefill 阶段，不增加输出长度与时延。
+actionable_rule: 把整 prompt 重复 ×2（长上下文索引类任务试 ×3）纳入廉价 baseline 变换集；任何 APO 方法在本项目报告的增益，先回答「是否打得过这个零智能变换」。
+exact_action_to_try: 取 50-100 条样本做三臂对比 baseline / repetition×2 / padding，记 accuracy、输出格式破坏率、成本，用 McNemar 检验。
+helpful_method: zero-cost transform baseline（挂 HM-01 体检的对照底线）
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-prompt-repetition-2025.md
+counterexample_or_limit: recent-preprint（2025-12），目前为 arXiv 单层证据；推理模式下基本无效且出现 1 个显著下降；只重复局部（如只重复问题）无增益（Shaier 2024）；按 token 计费时输入成本 ×2；超长 prompt 重复会推高 prefill 时延甚至不可行；被测为 2025 年初一代模型，新模型可能已内化复述行为。
+next_validation: 在本项目抽取小任务 + 2026 当代模型上跑三臂 A/B（baseline / ×2 / padding），并把它作为 HM-01 对照底线后测各 APO 方法的净增益还剩多少。
+</code></pre>
+<h3 id="i-14optimizer-judge">I-14：optimizer 和 judge 本身，也是要版本化、可优化的部件</h3>
+<pre><code class="language-yaml">insight: 「负责改 prompt 的 prompt」和「负责打分的 prompt」也在决定优化结果；不版本化它们，实验不可复现；从不审视它们，它们就是隐藏的天花板。
+user_facing_one_liner: 不要只版本化任务 prompt——改 prompt 用的 optimizer prompt 和打分用的 judge prompt 也要进版本账。
+phenomenon: SePO 把 prompt agent 自己的 system prompt 纳入同一套演化流程，五任务平均从 Manual-CoT 的 71.89 提升到 76.38；消融去掉 self-improvement 掉回 74.94；optimizer 固定的 TextGrad（70.39）与 MetaSPO（71.32）平均低于 Manual-CoT。PromptBreeder 的 hyper-mutation（连 mutation prompt 一起进化）同向。web_search WPI-10 与 GitHub autoresearch 的 ledger（GHI-05）独立提出 judge prompt / 优化器配置的版本化。
+mechanism: 固定 optimizer prompt 限制了错误分析和改写策略空间；judge 口味漂移使分数变化无法归因（是任务 prompt 的功劳还是评委变了）；把 optimizer artifact 纳入版本账和评估闭环后，优化能力本身可被审视、训练和迁移。
+actionable_rule: 运行记录把 optimizer_prompt_version、judge_prompt_version、meta_prompt_version 列为必填字段；评测链路的 judge 与测试集一样默认 frozen，要改走独立评审与重校准、旧分数全部失效重跑；优化 judge/optimizer 本身只在开发集上做，且与评测链路物理隔离。
+exact_action_to_try: 给运行记录 schema 加 optimizer_prompt / judge_prompt 版本字段——不需要独立实验，随任意 P0 实验一并生效。
+helpful_method: HM-04 Prompt Artifact Ledger 扩展（optimizer_prompt / judge_prompt 入账）
+evidence_strength: A/B
+main_sources:
+  - docs/paper_notes/paper-sepo-2026.md
+  - docs/paper_notes/paper-promptbreeder-2023.md
+  - docs/source_batches/web_search_platform_insight_cards_20260609.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: SePO 数字为 recent-preprint，需独立复现；「优化 judge」与「frozen evaluator 防作弊」不冲突——被冻结的是评测链路的 judge，被优化的是开发期辅助 judge，两者混用就是 reward hacking；optimizer prompt 变强依赖训练任务与评分器，指标没覆盖的行为不会自动更安全。
+next_validation: 把 optimizer_prompt / judge_prompt 版本字段写入运行记录 schema 随 P0 实验生效；后续消融 fixed optimizer prompt vs self-improved optimizer prompt。
 </code></pre>
 <h2 id="conclusions">当前可采信的核心 conclusions</h2>
 <table>
@@ -531,9 +579,9 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <tr>
 <td>P0</td>
 <td>结构化抽取 pre-gate</td>
-<td>I-01, I-11, HM-01</td>
+<td>I-01, I-11, I-13（对照底线）, HM-01</td>
 <td>100-300 条 JSON 抽取</td>
-<td>判断是否有优化 headroom，校准 noise floor。</td>
+<td>判断是否有优化 headroom，校准 noise floor；体检同时跑 I-13 零成本变换当对照底线。</td>
 </tr>
 <tr>
 <td>P0</td>
@@ -580,7 +628,7 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <li>对 2026 年新 arXiv 论文，最终报告中应标注 <code>recent-preprint</code>，避免过度采信。</li>
 <li>行业工具文档需要记录版本和访问日期，尤其是托管 prompt optimizer 产品的迁移/弃用状态。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_method_catalog_20260609.md</code> 自动生成（2026-06-10 18:35 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_method_catalog_20260609.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">使用方式</a>
 <a class="lv2" href="#_2">核心洞见候选</a>
@@ -596,6 +644,8 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <a class="lv3" href="#i-10-tool-schema">I-10：工具调用任务必须把 tool schema 当作可优化对象</a>
 <a class="lv3" href="#i-11">I-11：结构化任务更适合做第一批验证</a>
 <a class="lv3" href="#i-12">I-12：社媒和二手文章是线索，不是证据</a>
+<a class="lv3" href="#i-13">I-13：花钱搜索之前，先试零成本的确定性结构变换</a>
+<a class="lv3" href="#i-14optimizer-judge">I-14：optimizer 和 judge 本身，也是要版本化、可优化的部件</a>
 <a class="lv2" href="#conclusions">当前可采信的核心 conclusions</a>
 <a class="lv2" href="#helpful-methods">Helpful methods 候选</a>
 <a class="lv3" href="#hm-01pre-optimization-gate">HM-01：Pre-Optimization Gate</a>
@@ -607,5 +657,23 @@ next_experiment: 为首个实验 runner 输出 `prompt_runs.jsonl`。
 <a class="lv2" href="#_5">进入最终报告前的缺口</a></aside>
 </div>
 
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
 </body>
 </html>

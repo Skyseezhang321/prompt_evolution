@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>别让 AI 自己改作业 · 分享 Deck（2026-06-12）</title>
+<style>
+:root{
+  --bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+  --line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+  --teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;
+  --seal:#b23f2e;--seal-soft:#f8ece6;
+  --blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+  --serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+  --sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  --mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:clamp(15px,1.45vw,21px);line-height:1.6;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);}
+.slide{display:none;position:relative;z-index:1;min-height:100vh;padding:7vh 9vw 11vh;flex-direction:column;justify-content:center;}
+.slide.active{display:flex;}
+h1{font-family:var(--serif);font-size:2.6em;line-height:1.2;margin:0 0 .4em;font-weight:760;}
+h2{font-family:var(--serif);font-size:1.75em;line-height:1.25;margin:0 0 .7em;font-weight:740;}
+h2 .no{color:var(--seal);font-family:var(--mono);font-size:.62em;letter-spacing:.18em;display:block;margin-bottom:.5em;}
+p{margin:.3em 0;}
+.big{font-family:var(--serif);font-size:2.1em;line-height:1.45;font-weight:700;max-width:22em;}
+.big em{color:var(--seal);font-style:normal;}
+.sub{color:var(--muted);font-size:.95em;}
+.huge{font-family:var(--mono);font-size:6.5em;font-weight:760;color:var(--seal);line-height:1;margin:.1em 0;}
+.grid{display:grid;gap:.8em;margin-top:.9em;}
+.g2{grid-template-columns:1fr 1fr;} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.75em 1em;
+  box-shadow:0 1px 2px rgba(35,40,32,.05),0 14px 30px -24px rgba(35,40,32,.35);}
+.card b.n{display:block;font-family:var(--mono);font-size:1.9em;color:var(--teal-deep);line-height:1.15;}
+.card small{color:var(--muted);display:block;margin-top:.15em;font-size:.78em;line-height:1.45;}
+.card.accent{border-top:3px solid var(--teal);} .card.warn{border-top:3px solid var(--seal);}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);font-size:.82em;margin-top:.8em;}
+th,td{padding:.5em .7em;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top;}
+th{background:var(--soft);font-family:var(--mono);font-size:.82em;letter-spacing:.1em;color:var(--slate);text-transform:uppercase;}
+tr:last-child td{border-bottom:0;}
+td.hi{background:var(--teal-soft);font-weight:700;}
+ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
+.tag{display:inline-block;padding:.05em .55em;border-radius:4px;border:1px solid var(--line);
+  background:var(--soft);font-family:var(--mono);font-size:.7em;font-weight:700;letter-spacing:.08em;color:#565b4c;vertical-align:middle;}
+.tag.a{background:#e6f1ea;border-color:#bcd7c8;color:#175e4b;}
+.tag.b{background:#e9effa;border-color:#bccbe8;color:#23508f;}
+.tag.pre{background:var(--seal-soft);border-color:#e2bdaf;color:#a03c28;}
+.callout{margin-top:1em;padding:.7em 1em;border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 8px 8px 0;font-size:.92em;}
+.callout.red{border-left-color:var(--seal);background:var(--seal-soft);}
+.mono{font-family:var(--mono);}
+.flow{display:flex;flex-wrap:wrap;gap:.5em;align-items:center;margin-top:.8em;font-size:.88em;}
+.flow .step{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.4em .8em;}
+.flow .arr{color:var(--faint);font-family:var(--mono);}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:1.6em;align-items:start;}
+.foot{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;
+  padding:.5em 1.2em;font-family:var(--mono);font-size:11.5px;color:var(--faint);z-index:5;
+  border-top:1px solid var(--line-soft);background:rgba(251,250,243,.82);backdrop-filter:blur(3px);}
+.foot .btn{cursor:pointer;border:1px solid var(--line);background:var(--paper);border-radius:6px;
+  padding:2px 10px;color:var(--slate);font-family:var(--mono);font-size:11.5px;margin-left:6px;}
+.foot .btn:hover{border-color:var(--teal);color:var(--teal-deep);}
+.kbd{border:1px solid var(--line);border-radius:4px;background:var(--soft);padding:0 .35em;font-family:var(--mono);font-size:.85em;}
+@media print{
+  .slide{display:flex !important;min-height:auto;page-break-after:always;padding:24px 36px;}
+  .foot{display:none;} body::before{display:none;}
+}
+@media (max-width:880px){ .cols,.g3,.g4{grid-template-columns:1fr 1fr;} .g2{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<!-- 1 封面 -->
+<section class="slide">
+  <p class="mono" style="color:var(--seal);letter-spacing:.2em">PROMPT EVOLUTION · 2026-06-12</p>
+  <h1>别让 AI 自己改作业</h1>
+  <p class="big" style="font-size:1.5em">Prompt 优化与自进化的证据级调研<br><span class="sub" style="font-size:.75em">5 天 · 5 个渠道 · 37 篇论文深读 · 14 条工程纪律 · 1 个能聊天的知识库</span></p>
+  <p class="sub" style="margin-top:2em">仓库：github.com/Skyseezhang321/prompt_evolution（公开共建）<br>导航：<span class="kbd">→</span>/<span class="kbd">空格</span> 下一页 · <span class="kbd">←</span> 上一页 · <span class="kbd">Home</span> 回封面</p>
+</section>
+
+<!-- 2 hook -->
+<section class="slide">
+  <p class="big">「你怎么知道它改完，<br>是<em>真变好了</em>，<br>还是<em>看起来变好了</em>？」</p>
+  <p class="sub" style="margin-top:1.6em">—— 接下来一小时，只回答这一个问题。</p>
+</section>
+
+<!-- 3 49% -->
+<section class="slide">
+  <h2><span class="no">01 · 为什么这个问题值得一小时</span>自动优化 prompt，接近抛硬币</h2>
+  <div class="cols">
+    <div>
+      <div class="huge">49%</div>
+      <p>72 次自动优化运行里，<b>将近一半比什么都不做（zero-shot）还差</b>。<span class="sub">（Coin Flip，Claude Haiku 4.5 设置下）</span></p>
+      <ul>
+        <li>换到 Amazon Nova Lite：24 个方法×任务均值里 <b>14 个低于 zero-shot</b></li>
+        <li>唯一让 6 种方法<b>全部正收益</b>的：结构化 JSON 输出任务</li>
+      </ul>
+    </div>
+    <div class="callout red" style="align-self:center">
+      <b>所以这场分享不卖工具。</b><br>卖的是一套纪律：先判断值不值得 → 选对方法与部件 → 把失败变成证据 → 多候选 + 验证集 → 带版本与回滚地运营。
+    </div>
+  </div>
+</section>
+
+<!-- 4 项目数字 -->
+<section class="slide">
+  <h2><span class="no">02 · 我们做了什么</span>不是又一个优化器，是一份可追溯的证据地图</h2>
+  <div class="grid g4">
+    <div class="card"><b class="n">5</b><small>证据渠道：arXiv / GitHub / 平台与工具 / Twitter·X / 知乎</small></div>
+    <div class="card"><b class="n">37</b><small>论文深读笔记（含本地 PDF + SHA256，可逐条回溯）</small></div>
+    <div class="card"><b class="n">4 + 5</b><small>仓库源码审计（固定 commit）+ 5 个正典 optimizer 待审</small></div>
+    <div class="card"><b class="n">14</b><small>工作流洞见（每条带数字、边界、跨渠道互证）</small></div>
+    <div class="card"><b class="n">4 + 1</b><small>可复用方法 HM-01..04 + 1 个升格候选</small></div>
+    <div class="card"><b class="n">9 / 12</b><small>反模式 / 社区误区澄清</small></div>
+    <div class="card"><b class="n">v1→v4</b><small>主报告自身迭代了 4 版（这是个彩蛋，后面讲）</small></div>
+    <div class="card"><b class="n">5 天</b><small>06-08 启动；3 个阅读 skill 组成的 agent 研究流水线</small></div>
+  </div>
+  <p class="callout">产出分四个口味：<b>v4 报告</b>（较真版）· <b>洞见手册</b>（速读版）· <b>小说体科普</b>（地铁版）· <b>对话助手</b>（直接问版，待会现场演示）。</p>
+</section>
+
+<!-- 5 金字塔 -->
+<section class="slide">
+  <h2><span class="no">03 · 证据怎么分级</span>五个渠道不是平行信源，是不同强度的证据层</h2>
+  <table>
+    <thead><tr><th>渠道</th><th>等级</th><th>能证明什么</th><th>不能证明什么</th></tr></thead>
+    <tbody>
+      <tr><td><b>arXiv</b></td><td><span class="tag a">A</span></td><td>方法机制、消融、该论文设置下的数字</td><td>论文数字 ≠ 你的任务上成立</td></tr>
+      <tr><td><b>GitHub 源码</b></td><td><span class="tag b">B</span></td><td>工程结构怎么长：frozen evaluator、账本、记忆生命周期</td><td>某 optimizer 稳定提分</td></tr>
+      <tr><td><b>平台 / 工具</b></td><td><span class="tag b">B</span></td><td>生产闭环怎么搭：版本→评估→回滚→可观测</td><td>vendor 的提升百分比</td></tr>
+      <tr><td><b>Twitter/X</b></td><td><span class="tag b">B*</span></td><td>业界在用什么（采纳信号）、误读在哪</td><td>热度 ≠ 有效</td></tr>
+      <tr><td><b>知乎</b></td><td><span class="tag pre">D</span></td><td>中文社区怎么理解、误区集中点</td><td>只发现，不证明</td></tr>
+    </tbody>
+  </table>
+  <p class="callout"><b>采信规则：</b>一条洞见要被当作强候选，必须同时被 arXiv（A）+ 至少一个工程渠道（B）独立支撑。只在社媒层出现的，一律标「线索」。</p>
+</section>
+
+<!-- 6 七法谱系 -->
+<section class="slide">
+  <h2><span class="no">04 · 方法地图</span>七法演进：驱动力是「反馈信号越来越浓」</h2>
+  <table>
+    <thead><tr><th>方法</th><th>年份</th><th>反馈信号</th><th>优化对象</th><th>信号家族</th></tr></thead>
+    <tbody>
+      <tr><td><b>APE</b></td><td>2022</td><td>小训练集标量分</td><td>单条 instruction</td><td>标量</td></tr>
+      <tr><td><b>ProTeGi</b></td><td>2023</td><td>失败样本的文字批评</td><td>单条 prompt</td><td>critique</td></tr>
+      <tr><td><b>OPRO</b></td><td>2023</td><td>(prompt, 分数) 历史轨迹</td><td>单条 instruction</td><td>标量</td></tr>
+      <tr><td><b>DSPy</b></td><td>2023</td><td>metric pass/fail</td><td>程序，<b>主要是 demonstration</b></td><td>标量</td></tr>
+      <tr><td><b>TextGrad</b></td><td>2024</td><td>逐节点反传的文字批评</td><td>任意文本变量</td><td>critique</td></tr>
+      <tr><td><b>MIPROv2</b></td><td>2024</td><td>metric + 贝叶斯代理</td><td>instruction × demo 联合</td><td>标量</td></tr>
+      <tr><td><b>GEPA</b></td><td>2025</td><td><b>完整执行轨迹的反思</b></td><td>多模块 prompt 池（Pareto）</td><td>trace</td></tr>
+    </tbody>
+  </table>
+  <p class="callout">两条暗线：① <b>反馈信息密度决定样本效率</b>——GEPA 用 ~3,936 rollouts 超过用 24,000 的 GRPO（RL），省 35 倍；② <b>优化对象升维靠程序抽象</b>——从单指令到指令+示例到多模块系统。</p>
+</section>
+
+<!-- 7 同框对比 -->
+<section class="slide">
+  <h2><span class="no">05 · 方法地图</span>同框对比的三个残酷事实</h2>
+  <table>
+    <thead><tr><th>Haiku 4.5 / HelpSteer2</th><th>Zero-Shot</th><th>APE</th><th>OPRO</th><th>EvoPrompt</th><th>PromptBreeder</th><th>DSPy 式</th><th>PROSE</th></tr></thead>
+    <tbody><tr><td>LLM-judge 分</td><td>68.0</td><td>69.3</td><td>73.8</td><td class="hi">74.8</td><td>74.6</td><td>69.8</td><td>74.4</td></tr></tbody>
+  </table>
+  <ol style="margin-top:1em">
+    <li><b>只有这一个任务（结构化 JSON）人人全胜</b>——其余三个任务平均增益为负或近零，方法间差异统计上不显著。</li>
+    <li><b>跨模型极脆弱</b>：同一套配置换到 Nova Lite，6/6 全胜崩到 1/6。「在模型 X 上有效」不可默认迁移。</li>
+    <li><b>PROSE 是负结果</b>：在选择函数里加风险项救不了——不稳定来自上游（headroom 与任务），不是选择不够聪明。</li>
+  </ol>
+  <p class="callout red"><b>纪律：</b>任何复杂方法，对照组至少放 APE 和 OPRO 两个下限基线，打不过就别上。跨论文的原始分数永远不可横比。</p>
+</section>
+
+<!-- 8 选型六问 -->
+<section class="slide">
+  <h2><span class="no">06 · 方法地图</span>选型六问：问完再掏钱</h2>
+  <ol style="font-size:1.05em">
+    <li><b>有留出集和评分器吗？</b>没有 → 先别选方法，去凑五件套。</li>
+    <li><b>headroom 体检过了吗？</b>提升空间没超过噪声地板 → 停。</li>
+    <li><b>有 dev set？</b>先跑示例优化基线——多数任务它比改指令更有效。</li>
+    <li><b>任务有「少量样例表达不了的隐藏规则」？</b>有 → 才值得优化 instruction。</li>
+    <li><b>系统能产出可解释 trace？</b>能 → 反思式方法（GEPA 类）才有信息优势；只有标量分 → 用 APE/OPRO 风格。</li>
+    <li><b>打得过下限基线吗？</b>打不过 APE/OPRO 的复杂方法不值得引入。</li>
+  </ol>
+</section>
+
+<!-- 9 洞见01 -->
+<section class="slide">
+  <h2><span class="no">07 · 精选洞见 1/5</span>洞见 01 · 动手之前先体检 <span class="tag a">A</span></h2>
+  <div class="cols">
+    <div>
+      <p><b>量两个数，再决定要不要花钱：</b></p>
+      <ul>
+        <li><b>headroom</b>：最好的候选比 zero-shot 高多少？</li>
+        <li><b>noise floor</b>：候选之间本来就抖多少？</li>
+        <li>headroom 没超过 noise floor → <b>停，别优化</b>。</li>
+      </ul>
+      <p class="sub" style="margin-top:.8em">典型翻车：30 条小样本上 dev 82→87「涨了」，100 条新数据 79——那 5 个点是噪声里捡的。</p>
+    </div>
+    <div class="grid">
+      <div class="card warn"><b class="n">49%</b><small>Coin Flip：72 次优化低于 zero-shot 的比例</small></div>
+      <div class="card"><b class="n">~3 步</b><small>ProTeGi：约 3 步达峰，之后在训练集上过拟合</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 洞见07 -->
+<section class="slide">
+  <h2><span class="no">08 · 精选洞见 2/5</span>洞见 07 · 先改示例，不是改指令 <span class="tag a">A</span></h2>
+  <div class="cols">
+    <div>
+      <p>大家的本能是打磨 instruction 措辞。<b>但有 dev set 时，换「给模型看哪几个例子」常常更有效</b>——专挑覆盖易错边界的 3 个。</p>
+      <p class="callout" style="margin-top:.9em"><b>分诊规则（MIPROv2）：</b>多数任务 demo 优化 &gt; instruction 优化；只有当任务含「隐藏条件规则、少量样例表达不了」时，改指令才是决定性的。</p>
+    </div>
+    <div class="grid">
+      <div class="card accent"><b class="n">+12.63</b><small>Teach Better：instruction 一字不改，只优化示例（PaLM 2 / BBH）</small></div>
+      <div class="card accent"><b class="n">75.77 &gt; 65.91</b><small>优化示例 &gt; 只优化指令；精选 3 个 &gt; 全部示例</small></div>
+      <div class="card"><b class="n">5/7</b><small>MIPROv2：联合优化在 7 任务中 5 个最优</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 洞见13 -->
+<section class="slide">
+  <h2><span class="no">09 · 精选洞见 3/5</span>洞见 13 · 今晚就能试：把 prompt 原样重复一遍 <span class="tag a">A</span><span class="tag pre">recent</span></h2>
+  <div class="cols">
+    <div>
+      <p class="mono" style="font-size:1.1em">QUERY → QUERY + QUERY</p>
+      <p><b>机制：</b>causal attention 是单向的——prompt 前段的 token「看不见」后段。原样重复后，第二遍的每个 token 都能回头看见完整第一遍。</p>
+      <ul>
+        <li>不改语义、不增加输出长度和时延（重复发生在可并行的 prefill）</li>
+        <li>Padding 对照<b>无效</b>→ 收益来自重复本身，不是变长</li>
+        <li>边界：推理模式下基本无效（28 组仅 5 胜）；输入 token 计费 ×2</li>
+      </ul>
+    </div>
+    <div class="grid">
+      <div class="card accent"><b class="n">47/70 胜 0 负</b><small>非推理模式，7 个主流模型 × 10 配置（McNemar p&lt;0.1）</small></div>
+      <div class="card accent"><b class="n">21.33% → 97.33%</b><small>NameIndex 长上下文索引任务（Gemini 2.0 Flash-Lite）</small></div>
+    </div>
+  </div>
+  <p class="callout"><b>用法：</b>把它设成所有优化实验的<b>及格线</b>——任何花钱搜出来的提升，先回答「打得过这个零智能变换吗」。</p>
+</section>
+
+<!-- 12 洞见06 -->
+<section class="slide">
+  <h2><span class="no">10 · 精选洞见 4/5</span>洞见 06 · 越改越长，是病不是进步 <span class="tag a">A</span></h2>
+  <div class="cols">
+    <div>
+      <p>优化后更长、规则更多、看起来更「专业」——多半是在给训练样本打补丁：</p>
+      <p class="mono" style="font-size:.8em;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.7em 1em">
+      - 提到「发票」且含数字 → intent=退款 ← 单条样本的补丁<br>
+      - 出现「经理/投诉」→ urgency=high ← 特例当全局规则<br>
+      - 感叹号 &gt;2 → 倾向 high ← 在拟合标注员习惯</p>
+      <p><b>卫生（hygiene）要进选择函数</b>：长度比、规则范围、dev-test gap、压力集回退，和分数一起做 Pareto。</p>
+    </div>
+    <div class="grid">
+      <div class="card warn"><b class="n">14.7× / 86%</b><small>PrefPO：放任时 TextGrad 撑到 14.7 倍长、86% 在偷改任务定义</small></div>
+      <div class="card accent"><b class="n">+10.0</b><small>TextReg：加长度+范围正则化，反而比放任更高</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 部件思维 -->
+<section class="slide">
+  <h2><span class="no">11 · 精选洞见 5/5</span>部件思维：你拧的是哪个螺丝？（洞见 08 / 09 / 14）</h2>
+  <div class="cols">
+    <div>
+      <p class="mono" style="font-size:.8em;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.7em 1em">
+      task_prompt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v3&nbsp;&nbsp;[可改]<br>
+      examples&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v2&nbsp;&nbsp;[可改]<br>
+      prompting_pattern&nbsp;ZS&nbsp;&nbsp;[可改] ← bug 常在这<br>
+      tool_schema&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v1&nbsp;&nbsp;[可改]<br>
+      <b>optimizer_prompt&nbsp;&nbsp;v?&nbsp;&nbsp;← 最容易忘编号的零件</b><br>
+      evaluator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v1&nbsp;&nbsp;<b style="color:var(--seal)">[冻结]</b> 防作弊底线<br>
+      safety_rules&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v1&nbsp;&nbsp;<b style="color:var(--seal)">[冻结]</b></p>
+      <p class="sub">给作业编了号，别忘了给「改作业的红笔」和「打分的老师」编号——否则三个月后同配置复现不出来。</p>
+    </div>
+    <div class="grid">
+      <div class="card accent"><b class="n">6.5% → 74.0%</b><small>AutoPDL：只把推理模式换对（没改一个字措辞）</small></div>
+      <div class="card accent"><b class="n">51.27% → 64.46%</b><small>JTPRO：工具调错，改 tool schema + 指令联合优化</small></div>
+      <div class="card"><b class="n">71.89 → 76.38</b><small>SePO：optimizer 自己的 system prompt 也能优化、也该版本化</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 工程落地 -->
+<section class="slide">
+  <h2><span class="no">12 · 工程落地</span>没有五件套，就没有优化闭环</h2>
+  <p class="big" style="font-size:1.25em;font-family:var(--mono)">prompt + dataset + metric + trace + constraints</p>
+  <table>
+    <thead><tr><th>阶段</th><th>状态</th><th>用什么</th><th>解决什么</th></tr></thead>
+    <tbody>
+      <tr><td><b>起步</b></td><td>还没稳定 eval</td><td>Promptfoo（CLI eval gate）</td><td>每次改动「过不过线」；配置进 Git</td></tr>
+      <tr><td><b>迭代</b></td><td>多版本多人改</td><td>Langfuse / LangSmith + Promptim</td><td>版本、diff、owner、回滚——回归能追到改动</td></tr>
+      <tr><td><b>运营</b></td><td>优化常态化</td><td>OPIK / Arize Phoenix</td><td>optimizer + judge 版本化 + 可观测闭环</td></tr>
+    </tbody>
+  </table>
+  <div class="flow">
+    <span class="step">candidate</span><span class="arr">→</span><span class="step">offline eval（冻结测试集）</span><span class="arr">→</span><span class="step">risk checklist</span><span class="arr">→</span><span class="step">approval</span><span class="arr">→</span><span class="step">staging</span><span class="arr">→</span><span class="step">production</span><span class="arr">→</span><span class="step" style="border-color:var(--seal);color:var(--seal)">rollback_target</span>
+  </div>
+  <p class="callout">论文给算法，基础设施给闭环——优化收益没有版本/trace/验证集隔离托底，会被消耗在不可审计和难回滚上。</p>
+</section>
+
+<!-- 15 反模式与误区 -->
+<section class="slide">
+  <h2><span class="no">13 · 防身清单</span>六个反模式 + 三个最常见误读</h2>
+  <div class="cols">
+    <div>
+      <p><b>反模式（摘 6/9）：</b></p>
+      <ul style="font-size:.92em">
+        <li>没有 eval 就让模型「优化一下 prompt」→ 风格化改写</li>
+        <li>只看平均分 → 掩盖 schema 漂移 / 少数类回退 / 安全退化</li>
+        <li>允许 optimizer 碰 evaluator / 测试集 → reward hacking</li>
+        <li>记忆无界追加 → 跨任务污染，还更贵</li>
+        <li>社媒热度 / vendor 百分比当证据</li>
+        <li>「仓库有测试」=「方法有效」→ 可审计 ≠ 有效</li>
+      </ul>
+    </div>
+    <div>
+      <p><b>误读 top 3（社区实测高频）：</b></p>
+      <ul style="font-size:.92em">
+        <li>「GEPA 全面替代 RL」→ 它是反思式 prompt 进化，AIME-2025 上仍输 GRPO</li>
+        <li>「DSPy 是自动改提示词工具」→ 是编程框架；2023 版优化的是 demo，指令要到 MIPROv2</li>
+        <li>「文字梯度 = 梯度下降」→ 是比喻：不可加、不可组合，提升常来自格式甚至 hacking</li>
+      </ul>
+      <p class="callout" style="font-size:.85em"><b>线索分流六字段：</b>dataset / metric / baseline / model / cost / failure_cases——缺一个就降级为线索，追到一手来源再采信。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 16 meta -->
+<section class="slide">
+  <h2><span class="no">14 · 彩蛋</span>这份报告自己，也在按同一套纪律进化</h2>
+  <div class="flow" style="font-size:1em">
+    <span class="step"><b>v1</b> 按渠道组织<br><small class="sub">06-08</small></span><span class="arr">→</span>
+    <span class="step"><b>v2</b> 按 12 洞见组织<br><small class="sub">06-09</small></span><span class="arr">→</span>
+    <span class="step"><b>v3</b> +脑图+证据金字塔<br><small class="sub">06-10</small></span><span class="arr">→</span>
+    <span class="step" style="border-color:var(--teal)"><b>v4</b> 四层知识体系 · 14 洞见<br><small class="sub">06-11</small></span>
+  </div>
+  <ul style="margin-top:1.2em">
+    <li><b>洞见编号是跨文档 API</b>：报告 / 手册 / 小说 / 助手知识库共用 01–14，升级只追加、不重排。</li>
+    <li><b>旧版本不删除</b>：v1/v2/v3 冻结保留——对照与回滚点，CHANGELOG 记录每次演进的理由。</li>
+    <li><b>结构也有生成器</b>：全景脑图由入库脚本生成，结构变更一键再生——图永远不和正文脱节。</li>
+  </ul>
+  <p class="callout">研究 prompt 自进化的项目，自己的知识组织也得自进化——而且要遵守同一套「可追溯、可回滚」的纪律。</p>
+</section>
+
+<!-- 17 流水线 -->
+<section class="slide">
+  <h2><span class="no">15 · 怎么做出来的</span>一条 agent 研究流水线（5 天，24 个提交）</h2>
+  <div class="flow">
+    <span class="step">渠道采集<br><small class="sub">搜索/快筛/登记</small></span><span class="arr">→</span>
+    <span class="step">三个阅读 skill<br><small class="sub">read-paper · repo-audit · article-deep-read</small></span><span class="arr">→</span>
+    <span class="step">证据分级门<br><small class="sub">A/B/C/D + SHA256 快照</small></span><span class="arr">→</span>
+    <span class="step">洞见卡 / 统一目录<br><small class="sub">I-xx / HM-xx / 反模式</small></span><span class="arr">→</span>
+    <span class="step">四个口味的产出<br><small class="sub">报告 · 手册 · 小说 · 助手</small></span>
+  </div>
+  <ul style="margin-top:1.2em">
+    <li>每篇论文笔记含本地 PDF + SHA256、主结果、消融、失败案例、最小验证计划——<b>结论可逐条回溯</b>。</li>
+    <li>仓库审计先固定 commit 再下结论；社媒来源必须过六字段门才能升级。</li>
+    <li>多个 Claude session 并行作业：pathspec 限定提交、CHANGELOG 只追加——<b>人管纪律，agent 干活</b>。</li>
+  </ul>
+</section>
+
+<!-- 18 demo -->
+<section class="slide">
+  <h2><span class="no">16 · 现场演示</span>对话助手：能聊天的知识库</h2>
+  <div class="cols">
+    <div>
+      <p><b>架构一句话：</b>确定性内核（引导问答 + 触发规则，零幻觉）⊕ 扎根 LLM 模式（向量召回 57 条 → 受约束生成 → <b>强制引用洞见编号与证据等级</b>）。</p>
+      <ul style="font-size:.92em">
+        <li>LLM 挂了自动回退关键词匹配；没后端就走纯静态——<b>demo 不会死</b></li>
+        <li>每条回答底部附「可追溯来源」，可点开洞见全文卡</li>
+        <li>知识库未覆盖时如实说，并指引对应阅读 skill 入库</li>
+      </ul>
+    </div>
+    <div>
+      <p><b>现场试这三问：</b></p>
+      <ol style="font-size:.95em">
+        <li>「我的工具调用总是填错参数，该怎么优化？」</li>
+        <li>「prompt 优化后变得又长又专业，是好事吗？」</li>
+        <li>「我还没有评测集，能直接让模型优化 prompt 吗？」</li>
+      </ol>
+      <p class="sub" style="margin-top:.8em">localhost:8000（uvicorn server:app --app-dir advisor）</p>
+    </div>
+  </div>
+</section>
+
+<!-- 19 诚实边界 -->
+<section class="slide">
+  <h2><span class="no">17 · 诚实边界</span>我们还没做到的（和为什么敢说）</h2>
+  <ul style="font-size:1.02em">
+    <li><b>14 条洞见均未在本项目复现</b>——全部为文献/源码级证据；第一条自有验证（零成本三臂 A/B）已列 P0。</li>
+    <li>Twitter 渠道 21 张洞见卡<b>追溯链 pending</b>；正典 optimizer 5 个仓库（gepa / PromptWizard / promptomatix…）<b>已登记未审计</b>。</li>
+    <li>2026 新稿统一标 recent-preprint，<b>需独立复现后才采信</b>；真实生产事故复盘的覆盖低于自定阈值。</li>
+    <li>已知 frontier 缺口：bi-level / 推理模型时代的 prompt 优化（下一次定向检索的最高优先级）。</li>
+  </ul>
+  <p class="callout">每个「没做到」都有编号、有位置、有计划——<b>知道自己不知道什么，是这套方法论的一部分。</b></p>
+</section>
+
+<!-- 20 收尾 -->
+<section class="slide">
+  <h2><span class="no">18 · 带走三句话</span>老郭白板上最后留下的</h2>
+  <ol class="big" style="font-size:1.25em;line-height:1.7">
+    <li>动手之前先问<em>「值不值得」</em>——headroom 没超过噪声地板就别花钱，先拿零成本的笨办法垫底。</li>
+    <li>改 prompt 的本质是<em>「证据 → 假设 → 多候选 → 验证集 → 可回滚」</em>，不是让模型润色一遍。</li>
+    <li>更长、更多、更复杂，<em>都不是默认的好</em>——先证明它没带来过拟合、污染或归因困难。</li>
+  </ol>
+  <p style="margin-top:1.6em"><b>入口：</b>主报告 v4 · 读者手册 · 小说《别让 AI 自己改作业》· 对话助手 —— 仓库 README 一站导航，<b>公开共建</b>（Research Signal issue 提线索即可参与）。</p>
+  <p class="sub">谢谢。Q&amp;A ——欢迎用六字段拷问本分享的任何一个数字。</p>
+</section>
+
+<div class="foot">
+  <span>别让 AI 自己改作业 · prompt_evolution · 2026-06-12</span>
+  <span><span id="pageno">1 / 20</span>
+    <button class="btn" onclick="nav(-1)">←</button>
+    <button class="btn" onclick="nav(1)">→</button>
+  </span>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  document.getElementById('pageno').textContent=(cur+1)+' / '+slides.length;
+  history.replaceState(null,'','#'+(cur+1));
+  window.scrollTo(0,0);
+}
+function nav(d){show(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();nav(1);}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();nav(-1);}
+  else if(e.key==='Home'){show(0);}
+  else if(e.key==='End'){show(slides.length-1);}
+});
+window.addEventListener('hashchange',()=>{
+  const n=(parseInt(location.hash.slice(1))||1)-1;
+  if(n!==cur) show(n);
+});
+show((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>

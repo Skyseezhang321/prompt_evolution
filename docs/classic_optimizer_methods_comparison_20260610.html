@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>经典 optimizer 方法横向对比 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4d5246">中间层</span><span class="doctitle">经典 optimizer 方法横向对比</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="prompt-optimizer-ape-opro-evoprompt-promptbreeder-dspy-style-prose">经典 Prompt Optimizer 六法横向对比（APE / OPRO / EvoPrompt / PromptBreeder / DSPy-style / PROSE）</h1>
+<p>生成日期：2026-06-10</p>
+<p>reviewed_by：Claude</p>
+<p>适用范围：本表对比 <em>Prompt Optimization Is a Coin Flip</em>（[[paper-coin-flip-2026]]）横向比较的 6 个 optimizer。前 5 个是可独立引用的外部方法，各有深读笔记；第 6 个 PROSE 是该论文自建的内部基线（见 [[paper-prose-2026]]，唯一来源为 coin-flip Appendix C）。</p>
+<p>证据等级：每个方法的机制与数字直接来自对应深读笔记（多为 <code>method-and-results-read</code>，读了本地 PDF）。跨方法的"同口径对比"数字来自 coin-flip 同一实验框架（Haiku/Nova Lite × 4 任务、等算力预算）。</p>
+<blockquote>
+<p>注意：各论文<strong>原始论文里的分数不可直接横比</strong>（任务、模型、年代都不同）。唯一可公平横比的是 coin-flip 把 6 法放进同一框架后的分数（见文末"同框架对比"）。本表的"原论文主结果"列仅作各自能力的定性锚点。</p>
+</blockquote>
+<h2 id="_1">一句话定位</h2>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>年份</th>
+<th>一句话定位</th>
+<th>独立笔记</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APE</strong></td>
+<td>2022</td>
+<td>最简奠基锚点：LLM 提案一批 instruction + 在小训练集上按分选最优（propose-then-select），无梯度无迭代</td>
+<td><a href="paper_notes/paper-ape-2022.md">paper-ape-2022.md</a></td>
+</tr>
+<tr>
+<td><strong>OPRO</strong></td>
+<td>2023</td>
+<td>LLM-as-optimizer 基线：把"历史 prompt+分数"升序塞进 meta-prompt，让 LLM 看分数模式生成全新候选（纯标量轨迹）</td>
+<td><a href="paper_notes/paper-opro-2023.md">paper-opro-2023.md</a></td>
+</tr>
+<tr>
+<td><strong>EvoPrompt</strong></td>
+<td>2023/24</td>
+<td>把经典 GA/DE 翻译成 LLM 能执行的语义算子：EA 管 selection/update，LLM 管 crossover/mutation</td>
+<td><a href="paper_notes/paper-evoprompt-2024.md">paper-evoprompt-2024.md</a></td>
+</tr>
+<tr>
+<td><strong>PromptBreeder</strong></td>
+<td>2023</td>
+<td>自指进化：连 mutation prompt 一起进化（hyper-mutation），同时学"任务 prompt"和"怎么改 prompt"</td>
+<td><a href="paper_notes/paper-promptbreeder-2023.md">paper-promptbreeder-2023.md</a></td>
+</tr>
+<tr>
+<td><strong>DSPy-style</strong></td>
+<td>2023</td>
+<td>prompt-as-program：signature 声明 + module 组合 + teleprompter 编译；本版主要<strong>自举 demonstration</strong> 而非 instruction</td>
+<td><a href="paper_notes/paper-dspy-2023.md">paper-dspy-2023.md</a>（+ <a href="paper_notes/paper-miprov2-2024.md">miprov2</a> 补 instruction 层）</td>
+</tr>
+<tr>
+<td><strong>PROSE</strong></td>
+<td>2026</td>
+<td>coin-flip 自建受控反例：结构化分解 + 多算子进化 + <strong>风险感知选择</strong>（mean+Sharpe+DRO）；用来证伪"risk-aware 选择有用"，结论是无优势</td>
+<td><a href="paper_notes/paper-prose-2026.md">paper-prose-2026.md</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">五维结构化对比</h2>
+<h3 id="1">1. 优化对象（改的是什么）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>优化对象</th>
+<th>结构粒度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>单段 instruction</td>
+<td>整条文本</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>单段 instruction（可选插入位置 Q_begin/Q_end/A_begin）</td>
+<td>整条文本</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>单段 task instruction</td>
+<td>整段（DE 版只改"差异部分"，保护共识片段）</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>task prompt + mutation prompt + few-shot contexts + 部分超参</td>
+<td>多对象（含 optimizer 自身）</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>每个 module 的参数，<strong>主要是 demonstration</strong>，也可含 instruction/field description；以及控制流</td>
+<td>程序级（signature/module/控制流）</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>单段 prompt，但拆成 role/task/constraints/examples/format 五块定向编辑</td>
+<td>五段组件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-optimizer">2. 反馈信号（optimizer 看到什么）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>信号类型</th>
+<th>有无 critique</th>
+<th>有无 trace</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>标量（execution accuracy 或 log prob）</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>纯标量训练分（升序轨迹）</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>标量 dev 分（fitness）</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>标量 batch fitness</td>
+<td>无</td>
+<td>无（Lamarckian 用正确 working-out 反推）</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>metric pass/fail（可程序化）</td>
+<td>无</td>
+<td><strong>有</strong>（透明追踪多阶段 trace 做 rejection sampling）</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>标量 LLM-judge 分</td>
+<td>无</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>全组都是<strong>标量信号家族</strong>（无自然语言 critique）。这正是 ProTeGi→TextGrad→GEPA 这条 critique/trace 线要补的洞——本 6 法都不在那条线上。DSPy 的 trace 用途是"筛好 demo"，不是"诊断错误根因"。</p>
+</blockquote>
+<h3 id="3">3. 搜索机制（怎么生成+选候选）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>候选生成</th>
+<th>选择机制</th>
+<th>archive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>LLM 反推 instruction（forward/reverse/resample），默认 ~50 候选</td>
+<td>训练集按分选最高；可选迭代 Monte Carlo</td>
+<td>无（迭代版上轮池算弱 archive）</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>每步采 8 条全新 instruction</td>
+<td>取训练分最高；轨迹截断 top-20 当 archive</td>
+<td>弱（top-20 轨迹）</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>GA: roulette 选父 → LLM crossover+mutation；DE: 只改差异部分融入 best</td>
+<td>population + dev 分，保留 top-N</td>
+<td>population</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>9 类 mutation operator（含 hyper-mutation/Lamarckian/crossover）</td>
+<td>binary tournament GA；BERT 相似度去重 + fitness sharing</td>
+<td>population（含 lineage）</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>BootstrapFewShot 自举 trace（rejection sampling）</td>
+<td>RandomSearch / Optuna(TPE) 在 dev 上交叉验证；可 ensemble top-k</td>
+<td>候选 demo 池 + ensemble</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>20 种子→top10 population；6 自适应权重算子（targeted/crossover/random/exploration/simplification/random-gen）</td>
+<td><strong>风险调整 fitness</strong>：0.70·均分+0.15·Sharpe+0.15·DRO；elite 5，4 代无改进早停</td>
+<td>population(20) + 精英</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-optimizer">4. 是否自指 / 优化 optimizer 自身</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>自指</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>否</td>
+<td>固定提案模板</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>否</td>
+<td>固定 meta-prompt 结构</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>否</td>
+<td>固定 GA/DE operator prompt</td>
+</tr>
+<tr>
+<td><strong>PromptBreeder</strong></td>
+<td><strong>是</strong></td>
+<td>hyper-mutation 把 mutation prompt 也进化（<code>M' = LLM(H+M)</code>）——6 法中唯一显式自指</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>否（可组合）</td>
+<td>teleprompter 策略固定，但 teacher 程序可监督 student</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>否</td>
+<td>算子权重自适应，但 fitness 公式/模板固定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5">5. 原论文主结果与关键局限（定性锚点，不可横比）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>原论文代表结果</th>
+<th>关键局限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>24/24 instruction-induction 任务达到/超过人类（IQM 0.810 vs 0.749）；产出 zero-shot CoT prompt</td>
+<td>只优化单 instruction；选择口径≠部署场景会过拟合；迭代搜索收益弱</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>GSM8K 最高 +8% vs 人写 zero-shot（"Take a deep breath…" 80.2 vs 71.8）</td>
+<td>纯标量无法定位根因；强 model/task 依赖；"可不留验证集"被后续挑战</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>BBH 平均 DE +3.5%/GA +2.5%，最高 +25%；超 APE/MI/NI</td>
+<td>GPT-3.5 多为单 seed；DE 倾向更长高方差 prompt；只测 canonical GA/DE</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>GSM8K 83.5、ETHOS 89% vs 手写 80%；zero-order hyper-mutation 改善率最高 42%</td>
+<td>成本高（pop 50、1–2k 评估）；few-shot context 可能盖过 prompt，task prompt 漂成 nonsense</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>编译把 GSM8K 从 ~33%→88%；Llama2-13b 经编译追平 GPT-3.5；T5-770M 仅 200 标注追平</td>
+<td>本版优化 demo 非 instruction；依赖可判定 metric；bootstrap×2+ensemble 成本放大</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>见下方同框架表</td>
+<td><strong>负结果</strong>：风险感知选择无可测稳健性优势</td>
+</tr>
+</tbody>
+</table>
+<h2 id="coin-flip">同框架对比（唯一可公平横比的数字，来自 coin-flip）</h2>
+<p>LLM-judge 0–100，3 repeats 均值，held-out 100 test questions，等算力预算（每法 ~100 候选）。<strong>粗体 = 该任务最高</strong>。</p>
+<h3 id="claude-haiku-45coin-flip-table-2">Claude Haiku 4.5（coin-flip Table 2）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>Feedback-Bench</th>
+<th>HelpSteer2</th>
+<th>WildBench</th>
+<th>XSum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zero-Shot</td>
+<td>82.4</td>
+<td>68.0</td>
+<td>68.9</td>
+<td>76.0</td>
+</tr>
+<tr>
+<td>APE</td>
+<td>82.3</td>
+<td>69.3</td>
+<td>68.0</td>
+<td><strong>76.6</strong></td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>81.4</td>
+<td>73.8</td>
+<td>69.0</td>
+<td>74.7</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>82.0</td>
+<td><strong>74.8</strong></td>
+<td>68.3</td>
+<td>75.6</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td><strong>83.5</strong></td>
+<td>74.6</td>
+<td>68.5</td>
+<td>76.0</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>81.9</td>
+<td>69.8</td>
+<td>65.1</td>
+<td>76.2</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>82.1</td>
+<td>74.4</td>
+<td><strong>69.6</strong></td>
+<td>75.9</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>全表只有 HelpSteer2 上每个 optimizer 都超过 zero-shot；其余三任务平均增益为负或近零。6 法彼此差异在统计上不显著。</p>
+</blockquote>
+<h3 id="amazon-nova-litecoin-flip-table-4">Amazon Nova Lite（coin-flip Table 4，更差）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>Feedback-Bench</th>
+<th>HelpSteer2</th>
+<th>WildBench</th>
+<th>XSum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zero-Shot</td>
+<td>80.4</td>
+<td>70.7</td>
+<td>64.6</td>
+<td>73.5</td>
+</tr>
+<tr>
+<td>APE</td>
+<td>81.1</td>
+<td>69.4</td>
+<td>64.4</td>
+<td>73.9</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>81.9</td>
+<td>70.0</td>
+<td>64.2</td>
+<td>73.5</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>81.0</td>
+<td>69.7</td>
+<td>62.9</td>
+<td>71.8</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>80.2</td>
+<td>72.8</td>
+<td>65.6</td>
+<td>72.9</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>81.0</td>
+<td>69.1</td>
+<td>60.2</td>
+<td>73.3</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>80.4</td>
+<td>70.0</td>
+<td>64.6</td>
+<td>72.8</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>24 个 method×task 均值中 14 个低于 zero-shot；Haiku 上 HelpSteer2 的 6/6 全胜在 Nova Lite 上崩到 1/6。</p>
+</blockquote>
+<h2 id="_3">对本项目的可执行结论</h2>
+<ol>
+<li><strong>下限基线分层</strong>：做任何 optimizer 实验，下限对照应至少含 APE（propose-then-select）与 OPRO（标量轨迹）。打不过这两个的复杂方法不值得上。</li>
+<li><strong>信号结构才是真正的分类轴</strong>：这 6 法都是"标量信号"家族；真正的能力跃迁在 critique/trace 线（ProTeGi→TextGrad→GEPA），评估时不要把"改 prompt"的方法混为一谈，要按"标量 / critique / trace"分层（见 [[paper-opro-2023]] 洞见卡）。</li>
+<li><strong>DSPy 优化的是 demo 不是 instruction</strong>：引用"DSPy-style"时必须说清优化层；instruction 自动优化要到 MIPROv2/COPRO。</li>
+<li><strong>自指只有 PromptBreeder</strong>：要研究"优化器自进化"，6 法里只有 PromptBreeder 是入口；但它多算子同开、因果难归因，复现要逐项消融。</li>
+<li><strong>PROSE 是负结果，别当强方法复现</strong>：先做 coin-flip 的耦合/headroom gate，再谈选择信号工程；"在 fitness 里加风险项"已被证伪无增益。</li>
+<li><strong>唯一可信的横比是同框架</strong>：跨论文原始分数不可比。任何"X 比 Y 强"的断言都必须绑定同一模型+任务+预算，否则只是各自 benchmark 的幻觉。</li>
+</ol>
+<h2 id="_4">关联文档</h2>
+<ul>
+<li>基线主干七法（APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA）逐方法详解：<a href="apo_seven_methods_primer_20260611.html">apo_seven_methods_primer_20260611.md</a></li>
+<li>横比来源与诊断框架：[[paper-coin-flip-2026]]（"要不要优化"的刹车）</li>
+<li>critique/trace 线对照：ProTeGi [[paper-protegi-2023]]、TextGrad [[paper-textgrad-2024]]、GEPA [[paper-gepa-2026]]</li>
+<li>instruction+demo 联合优化：[[paper-miprov2-2024]]</li>
+<li>结构化/模块化 prompt：[[paper-modular-prompt-optimization-2026]]</li>
+<li>字段与证据口径：<code>docs/insight_field_standard.md</code></li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/classic_optimizer_methods_comparison_20260610.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话定位</a>
+<a class="lv2" href="#_2">五维结构化对比</a>
+<a class="lv3" href="#1">1. 优化对象（改的是什么）</a>
+<a class="lv3" href="#2-optimizer">2. 反馈信号（optimizer 看到什么）</a>
+<a class="lv3" href="#3">3. 搜索机制（怎么生成+选候选）</a>
+<a class="lv3" href="#4-optimizer">4. 是否自指 / 优化 optimizer 自身</a>
+<a class="lv3" href="#5">5. 原论文主结果与关键局限（定性锚点，不可横比）</a>
+<a class="lv2" href="#coin-flip">同框架对比（唯一可公平横比的数字，来自 coin-flip）</a>
+<a class="lv3" href="#claude-haiku-45coin-flip-table-2">Claude Haiku 4.5（coin-flip Table 2）</a>
+<a class="lv3" href="#amazon-nova-litecoin-flip-table-4">Amazon Nova Lite（coin-flip Table 4，更差）</a>
+<a class="lv2" href="#_3">对本项目的可执行结论</a>
+<a class="lv2" href="#_4">关联文档</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+{
+  "docs": [
+    {
+      "id": "paper-ape-2022",
+      "type": "paper",
+      "level": "A",
+      "title": "APE / Large Language Models Are Human-Level Prompt Engineers",
+      "summary": "APE 把\"prompt engineering\"形式化为最简的**两阶段黑盒搜索：propose（用一个 LLM 当 inference model 生成一批候选 instruction）+ select（用 score function 在小训练集上选最高分的那条）**。它的奠基意义有三：(1) 确立\"instruction 即 program、LLM 既是提案器又是打分器\"的范式；(2) 给出第一个\"自动生成的 instruction 在 24/24 instruction induction 任务上达到或超过人类\"的强证据（IQM 0.810 vs 人类 0.749）；(3) 顺手产出了那条被 OPRO/TextGrad 等后续工作当作强基线的 zero-shot CoT prompt——\"Let's work this out in a step by step way to be sure we have the right answer.\"。它是几乎所有 APO 论文的\"最简对照锚点\"。",
+      "path": "docs/paper_notes/paper-ape-2022.md"
+    },
+    {
+      "id": "paper-ape-survey-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "A Survey of Automatic Prompt Engineering: An Optimization Perspective",
+      "summary": "这份综述用**优化理论的统一框架**组织自动 prompt engineering：把问题写成在\"离散/连续/混合 prompt 空间\"上最大化期望指标，再按 **优化变量 × 目标函数（含约束）× 优化方法** 三个轴归类。对本项目最有价值的是它的 §7：明确点名 7 个 underexplored frontier，其中 **constrained optimization、multi-task、online（task-agnostic）、multi-objective、bi-level/thought-driven（o1/R1）、multi-agent** 几个直接指出我们 taxonomy 里偏弱或缺席的格子。",
+      "path": "docs/paper_notes/paper-ape-survey-2025.md"
+    },
+    {
+      "id": "paper-apo-kg-construction-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "APO for Knowledge Graph Construction",
+      "summary": "这篇论文最有用的经验是：prompt optimization 在简单抽取上可能只是小幅增益，但当 schema 复杂、输入更长、关系类型更多时收益更明显；也就是说 APO 更像是“复杂度放大器下的稳健性工具”，不是所有 KG 抽取场景都必须上。",
+      "path": "docs/paper_notes/paper-apo-kg-construction-2025.md"
+    },
+    {
+      "id": "paper-apo-survey-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "A Systematic Survey of Automatic Prompt Optimization Techniques",
+      "summary": "这是按**优化流程 anatomy** 组织的 black-box APO 综述：把任意 APO 系统拆成 5 个可替换阶段（seed → 评估反馈 → 候选生成 → 筛选保留 → 迭代深度），每阶段再细分。它对本项目最大的用处不是结论，而是一个**外部参照系**——用它的细粒度子类去比对 `arxiv_top80_taxonomy.md`，能查出我们按\"方法簇\"组织时容易漏掉的几类（学习型 reward model、entropy/NLL 评分、token 级编辑、bandit/UCB 筛选、mixture-of-experts 路由）。",
+      "path": "docs/paper_notes/paper-apo-survey-2025.md"
+    },
+    {
+      "id": "paper-autopdl-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "AutoPDL / Automatic Prompt Optimization for LLM Agents",
+      "summary": "AutoPDL 说明 agent prompt 优化不应只改 instruction 文本，还要把 Zero-Shot、CoT、ReAct、ReWOO 等高层 prompting pattern 当作搜索变量；不同任务和模型的最佳 pattern 差异很大，不存在通用最优套路。",
+      "path": "docs/paper_notes/paper-autopdl-2025.md"
+    },
+    {
+      "id": "paper-causal-edit-level-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "Edit-Level Analysis / Why Prompt Optimization Works and Sometimes Doesn't",
+      "summary": "这篇论文把一个常见误区讲清楚：prompt optimizer 的编辑不是“越清楚、越复杂、越多 meta instruction 越好”；不同任务类型对 edit family 的反应相反，数学和多跳任务尤其可能被复杂化和 meta-instruction 伤害。",
+      "path": "docs/paper_notes/paper-causal-edit-level-2026.md"
+    },
+    {
+      "id": "paper-coin-flip-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "Prompt Optimization Is a Coin Flip",
+      "summary": "这篇论文给 prompt optimization 一个必要的刹车：先用低成本诊断确认 agent coupling 和优化 headroom，再决定要不要上复杂 optimizer；否则在很多 compound AI 任务上，优化结果和抛硬币差不多，甚至低于 zero-shot。",
+      "path": "docs/paper_notes/paper-coin-flip-2026.md"
+    },
+    {
+      "id": "paper-context-engineering-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "A Survey of Context Engineering for Large Language Models",
+      "summary": "这份综述把 **context engineering 当作 prompt engineering 的超集**：prompt/instruction 只是\"Context Retrieval & Generation\"下的一个基础组件（§4.1.1），外面还套着检索、动态上下文组装、长上下文处理、记忆层级、上下文压缩，以及 RAG / 工具调用 / 多 agent 等系统实现。对本项目的价值是**确认范围边界**——我们做的是\"离散自然语言 prompt 优化\"，而非整个 context engineering；同时它点出两个**真正相邻、值得登记为边界的优化目标**：上下文压缩（=约束式 prompt 优化）和智能上下文组装/选择（\"放什么进上下文\"本身是优化问题）。",
+      "path": "docs/paper_notes/paper-context-engineering-2025.md"
+    },
+    {
+      "id": "paper-crispo-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "CriSPO / Multi-Aspect Critique-Suggestion Prompt Optimization",
+      "summary": "CriSPO 的关键经验是：生成任务不要只给一个总分反馈，应把输出与参考答案的差异拆成多个可编辑 aspect，再把 critique 和 suggestion 一起喂给 optimizer；但这种方法仍依赖自动指标，适合做“多维错误诊断”而不是证明 prompt 已经真实泛化。",
+      "path": "docs/paper_notes/paper-crispo-2024.md"
+    },
+    {
+      "id": "paper-distillprompt-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "DistillPrompt / Automatic Prompt Optimization with Prompt Distillation",
+      "summary": "DistillPrompt 提供了一个简单但实用的经验：先让多个候选从样例中抽取任务原则，再压缩、聚合成 distilled prompt，可以把 few-shot 的信息转成更泛化的 instruction，减少直接塞样例导致的过拟合。",
+      "path": "docs/paper_notes/paper-distillprompt-2025.md"
+    },
+    {
+      "id": "paper-dspy-2023",
+      "type": "paper",
+      "level": "A",
+      "title": "DSPy / Compiling Declarative LM Calls into Self-Improving Pipelines",
+      "summary": "DSPy 把\"写 prompt\"重构成\"写程序再编译\"：用 natural-language **signature**（如 `question -> answer`）声明每个 LM 调用的输入输出，用 **module**（Predict / ChainOfThought / ReAct…）把 signature 实例化成可组合的 define-by-run 计算图，再用 **teleprompter**（编译器内的优化器）自动为每个 module 生成高质量 demonstration / instruction。它的范式贡献不是某个算法，而是把 prompt 从\"手搓字符串\"升级为**可版本化、可编译、可迁移、可复现**的程序组件——并附带一个对本项目极重要的方法论转向：评估对象应从\"模型 X 在 GSM8K\"变成\"模型 X + 程序 P + 编译策略 S 在 GSM8K\"。",
+      "path": "docs/paper_notes/paper-dspy-2023.md"
+    },
+    {
+      "id": "paper-erm-memory-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "ERM / Exemplar-Guided Reflection with Memory",
+      "summary": "ERM 的实践结论很直接：不要丢掉历史 feedback 和未选中的错误样例；把它们过滤、检索、选择性遗忘后再用于反思，能同时提高性能并减少达到峰值的优化步数。",
+      "path": "docs/paper_notes/paper-erm-memory-2024.md"
+    },
+    {
+      "id": "paper-evoprompt-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "EvoPrompt",
+      "summary": "EvoPrompt 的核心贡献是把 GA/DE 这类经典 evolutionary algorithms 翻译成 LLM 能执行的自然语言操作。它说明 prompt evolution 不必完全重造搜索算法，传统优化算法里的 selection、crossover、mutation、population update 仍然有用，但必须用 LLM 保持 prompt 的语义连贯性。",
+      "path": "docs/paper_notes/paper-evoprompt-2024.md"
+    },
+    {
+      "id": "paper-gepa-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "GEPA / Reflective Prompt Evolution",
+      "summary": "GEPA 的关键结论是：当系统执行轨迹、工具反馈、编译错误、rubric 失败原因等信息能被序列化成自然语言时，prompt 优化不必只依赖稀疏标量 reward；把这些诊断信号转成反思式 prompt mutation，并用 Pareto frontier 保留“对某些样本特别有效”的候选，可以在远少于 RL rollout 的预算下获得更强结果。",
+      "path": "docs/paper_notes/paper-gepa-2026.md"
+    },
+    {
+      "id": "paper-jtpro-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "JTPRO / Joint Tool-Prompt Reflective Optimization",
+      "summary": "JTPRO 的核心工程洞见是：工具 agent 的失败不只在 global instruction，也常在 per-tool schema 和 slot 描述；真正的优化对象应是“全局策略 + 工具局部描述 + 共享 slot 语义”的联合 context。",
+      "path": "docs/paper_notes/paper-jtpro-2026.md"
+    },
+    {
+      "id": "paper-llm-prompt-optimizers-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "Are LLMs Good Prompt Optimizers?",
+      "summary": "这篇论文的重要反例是：LLM 可以生成看起来合理的反思，但未必知道 target model 为什么错；更有效的路径可能是直接优化 target model 可执行的行为步骤，并用 instruction-following demonstration 约束它真的照做。",
+      "path": "docs/paper_notes/paper-llm-prompt-optimizers-2024.md"
+    },
+    {
+      "id": "paper-mapro-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "MAPRO / Multi-Agent Prompt Optimization as MAP Inference",
+      "summary": "MAPRO 把多 agent prompt 优化从“给每个 agent 反思改写”提升为“在固定拓扑上做联合后验推断”：通过语言引导的 max-product belief propagation 和 topology-aware refinement，把 credit 沿 agent/edge 传播，而不是只看单点 prompt 分数。",
+      "path": "docs/paper_notes/paper-mapro-2025.md"
+    },
+    {
+      "id": "paper-maspo-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "MASPO / Joint Prompt Optimization for LLM-based Multi-Agent Systems",
+      "summary": "MASPO 的核心价值是把多 agent prompt 优化里的“局部看起来对、全局反而错”显式建模，用 local validity、lookahead potential、global alignment 和 misalignment cases 来避免只优化单个 agent 的局部指标。",
+      "path": "docs/paper_notes/paper-maspo-2026.md"
+    },
+    {
+      "id": "paper-memapo-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "MemAPO / Generalizable Self-Evolving Memory for Automatic Prompt Optimization",
+      "summary": "MemAPO 的核心洞见是：prompt 优化不要每个任务从零开始反思，应该把“有效策略模板”和“错误模式”分开记忆并检索复用；它把 memory 从样例缓存提升为优化器的经验资产。",
+      "path": "docs/paper_notes/paper-memapo-2026.md"
+    },
+    {
+      "id": "paper-miprov2-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "MIPRO / Optimizing Instructions and Demonstrations for Multi-Stage LM Programs",
+      "summary": "MIPRO 把 [[paper-dspy-2023]] 没解决的\"多阶段 LM program 里 **instruction** 怎么自动优化\"补上，并把问题干净地形式化为两个挑战：(1) **proposal**——prompt 空间太大，怎么采到少量高质量候选；(2) **credit assignment**——只有 program 级 metric、没有 module 级标签，怎么把功劳/过错分到各 module。它的答案是\"bootstrap demonstration + grounded instruction proposal + 贝叶斯(TPE) 在 mini-batch 上联合搜索\"。最重要的实证结论对本项目是一记定调：**在多数任务上，优化 bootstrapped demonstration 比优化 instruction 更管用；instruction 优化只在'有不显然、又无法靠少量样例表达的条件规则'的任务上才是决定性的**——而联合优化(MIPRO)在 7 个任务里 5 个最好。",
+      "path": "docs/paper_notes/paper-miprov2-2024.md"
+    },
+    {
+      "id": "paper-modular-prompt-optimization-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "Modular Prompt Optimization",
+      "summary": "MPO 把 prompt 结构本身当成优化约束：固定 role/context/task/constraints/output_format 等 schema，只对每个 section 生成局部 textual feedback 并去重合并；这为本项目提供了最直接的“可回滚 prompt 优化”实验方案。",
+      "path": "docs/paper_notes/paper-modular-prompt-optimization-2026.md"
+    },
+    {
+      "id": "paper-opro-2023",
+      "type": "paper",
+      "level": "A",
+      "title": "OPRO / Large Language Models as Optimizers",
+      "summary": "OPRO 把\"prompt 优化\"定义为一个**纯轨迹驱动的黑盒搜索**：每步把\"历史 prompt + 其训练分数\"按升序塞进一个 meta-prompt，让 optimizer LLM 直接生成 8 条全新指令（不是编辑、也不要求语义保持），评分后回填轨迹。它最有名的产物是\"Take a deep breath and work on this problem step-by-step.\"（GSM8K 80.2，对照\"Let's think step by step.\" 71.8）。它的真正价值不在算法新颖，而在确立了一个**最小、可复现、API-only 的 LLM-as-optimizer 基线**，以及一个后续被反复挑战的论断：prompt 是高度 model-specific / task-specific 的。",
+      "path": "docs/paper_notes/paper-opro-2023.md"
+    },
+    {
+      "id": "paper-prefpo-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "PrefPO",
+      "summary": "PrefPO 的关键洞见是：很多 prompt 优化不需要先构造绝对分数或完整标签，pairwise preference 可能更接近真实开发流程。更重要的是，它把 prompt hygiene 和 prompt hacking 纳入评估，说明“性能高但又长又重复又钻指标空子”的 prompt 不应算真正优化成功。",
+      "path": "docs/paper_notes/paper-prefpo-2026.md"
+    },
+    {
+      "id": "paper-prompt-codebooks-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "Prompt Codebooks / Discrete Compositional Prompt Optimization",
+      "summary": "Prompt Codebooks 的核心经验是：不要总是把 prompt 当成一整段 monolithic text 优化，可以把它拆成可复用的“instinct”离散代码本，并按输入路由组合；这同时降低 prompt 长度和把失败归因到具体 instruction unit。",
+      "path": "docs/paper_notes/paper-prompt-codebooks-2026.md"
+    },
+    {
+      "id": "paper-prompt-repetition-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "Prompt Repetition Improves Non-Reasoning LLMs",
+      "summary": "把整个 prompt 原样重复一遍（`<QUERY>` → `<QUERY><QUERY>`），在**关闭推理**时对 7 个主流模型 × 10 个 benchmark 配置取得 47/70 显著提升、0 显著下降（McNemar p<0.1），且**不增加输出长度和端到端时延**（重复只发生在可并行的 prefill 阶段）；机制解释是 causal LM 中靠前的 token 看不到靠后的 token，重复让每个 prompt token 都能注意到完整上下文。代价是输入 token 翻倍（论文未讨论计费成本——our-inference：按 token 计费的输入成本约 ×2）。**开启 step-by-step 推理后收益基本消失**（28 组里 5 胜 1 负 22 平），因为推理模型本来就常自发复述题目。",
+      "path": "docs/paper_notes/paper-prompt-repetition-2025.md"
+    },
+    {
+      "id": "paper-promptbreeder-2023",
+      "type": "paper",
+      "level": "A",
+      "title": "PromptBreeder",
+      "summary": "PromptBreeder 的真正洞见不是“用遗传算法搜索 prompt”，而是把 mutation prompt 也放进演化对象中，让系统同时学习“任务 prompt”和“如何改任务 prompt”；但它也暴露了早期 prompt evolution 的典型风险：搜索空间大、成本高，few-shot context 可能支配结果，task prompt 甚至会漂成无意义文本。",
+      "path": "docs/paper_notes/paper-promptbreeder-2023.md"
+    },
+    {
+      "id": "paper-prose-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "PROSE / PRompt Optimization via Structured Evolution",
+      "summary": "PROSE 是 coin-flip 作者自建的一个\"加料版\"进化式 prompt optimizer：在结构化分解（把 prompt 拆成 role/task/constraints/examples/format 五块）+ 多算子进化搜索之上，叠了一个**显式 risk-aware 选择**——用 `0.70·均分 + 0.15·Sharpe 比率 + 0.15·DRO(最差情况惩罚)` 的风险调整 fitness 选候选。它存在的唯一目的不是刷分，而是当一个**受控反例**：如果\"显式针对稳健性/最差情况做选择\"真能让优化更可靠，PROSE 应该比 EvoPrompt/PromptBreeder 这些朴素进化方法更稳。结果是它没有任何可测的稳健性优势（Haiku 上和其余方法挤在同一带内，Nova Lite 上同样无优势），从而正向支持 coin-flip 的主结论：**优化收益本身是脆弱且 model-specific 的，靠在选择项里加风险惩罚补不回来**。",
+      "path": "docs/paper_notes/paper-prose-2026.md"
+    },
+    {
+      "id": "paper-protegi-2023",
+      "type": "paper",
+      "level": "A",
+      "title": "ProTeGi / Automatic Prompt Optimization with \"Gradient Descent\" and Beam Search",
+      "summary": "ProTeGi 的核心洞见不是“文本真的有可微梯度”，而是把失败样本压缩成可编辑的自然语言批评，再用多候选搜索和数据选择筛掉坏改写；它是后续 textual critique / prompt evolution 实验必须对照的经典 baseline。",
+      "path": "docs/paper_notes/paper-protegi-2023.md"
+    },
+    {
+      "id": "paper-scaling-textual-gradients-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "Scaling Textual Gradients via Sampling-Based Momentum",
+      "summary": "这篇论文的核心结论是：textual-gradient 方法不能简单靠“塞更多训练样本进上下文”扩展。full-batch TGD 会撞上显式 context limit 和隐式 context wall；minibatch TSGD 能扩展数据量但方差大。作者提出的 TSGD-M 把历史高分 prompts 当作 momentum 分布来采样，在不把历史 prompt 串进上下文的情况下稳定搜索。",
+      "path": "docs/paper_notes/paper-scaling-textual-gradients-2025.md"
+    },
+    {
+      "id": "paper-sepo-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "SePO / Self-Evolving Prompt Agent",
+      "summary": "SePO 的核心洞见是：prompt 优化系统里最该被质疑的固定 prompt，往往是“负责改 prompt 的 prompt agent 自己的系统 prompt”；把 optimizer prompt 也纳入同一套演化流程，并用多任务预训练摊销成本，能把 prompt optimization 从一次性工具变成可迁移的优化技能。",
+      "path": "docs/paper_notes/paper-sepo-2026.md"
+    },
+    {
+      "id": "paper-spear-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "SPEAR / Code-Augmented Agentic Prompt Optimization",
+      "summary": "SPEAR 的核心洞见是：很多 prompt 失败不是“模型没有读懂批评”，而是错误模式隐藏在 eval DataFrame 的结构里；让 optimizer 自己写 Python 做 confusion matrix、groupby、per-class metrics，再用 auto-rollback 护住下限，会比把原始数据塞进长上下文更有效。",
+      "path": "docs/paper_notes/paper-spear-2026.md"
+    },
+    {
+      "id": "paper-teach-better-show-smarter-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "Teach Better or Show Smarter?",
+      "summary": "这篇论文给出一个很实用的结论：既然大多数 instruction optimization 已经需要 labeled dev set，那就不该只拿它打分，还应系统优化 exemplars；很多情况下，怎么选例子比怎么改 instruction 更重要。",
+      "path": "docs/paper_notes/paper-teach-better-show-smarter-2024.md"
+    },
+    {
+      "id": "paper-temporal-structural-credit-mas-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "Temporal and Structural Credit Assignment in LLM-based MAS",
+      "summary": "这篇论文把多 agent prompt 优化里的“该改谁、该改哪一轮”说得很清楚：用 aggregation state 作为时间 bottleneck，用共享 role prompt 作为结构 bottleneck，然后只更新低 credit 的 role 或 round，而不是每轮粗暴改全系统。",
+      "path": "docs/paper_notes/paper-temporal-structural-credit-mas-2026.md"
+    },
+    {
+      "id": "paper-textgrad-2024",
+      "type": "paper",
+      "level": "A",
+      "title": "TextGrad / Automatic \"Differentiation\" via Text",
+      "summary": "TextGrad 把\"LLM 给的自然语言反馈\"正式抽象成**可经由计算图反向传播的 textual gradient**，并用 PyTorch 同构 API（`Variable` / `TextLoss` / `TGD.step` / `loss.backward()`）封装，使得\"优化一个 compound AI 系统的任意变量\"（prompt、代码、分子、治疗方案）变成 turn-key 操作。对本项目的核心价值有两层：(1) 它确立了\"textual gradient\"这个被后续反复使用又反复质疑的术语和工程范式；(2) 它给出一个干净的实证——**instruction-only 的 textual-gradient prompt 优化可以追平甚至超过 DSPy 的 8-shot demo 方案**，且 instruction 与 demo 是互补的。",
+      "path": "docs/paper_notes/paper-textgrad-2024.md"
+    },
+    {
+      "id": "paper-textreg-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "TextReg",
+      "summary": "TextReg 把 prompt overfitting 解释成 representation control 问题：优化器不断追加长规则和窄规则，训练分数可能提升，但 OOD 泛化下降。它给出一个可操作方向：prompt 优化不只要生成 task gradient，还要生成 regularization gradient，控制 prompt 长度增长和规则适用范围收窄。",
+      "path": "docs/paper_notes/paper-textreg-2026.md"
+    },
+    {
+      "id": "paper-textual-gradients-flawed-metaphor-2025",
+      "type": "paper",
+      "level": "A",
+      "title": "Textual Gradients are a Flawed Metaphor",
+      "summary": "这篇论文的关键价值是给 textual-gradient 叙事降温：LLM feedback 可以有用，但它通常不像数学梯度那样工作。很多提升来自任务格式、meta-instruction、候选发现，甚至 prevalence hacking，而不是从具体样本标签中学习可微式方向。",
+      "path": "docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md"
+    },
+    {
+      "id": "paper-vista-reflection-dark-2026",
+      "type": "paper",
+      "level": "A",
+      "title": "VISTA / Reflection in the Dark",
+      "summary": "VISTA 给 reflective APO 一个很强的反例：如果真正根因不在 optimizer 会想到的 hypothesis space 里，反思越多也可能越坏；改法不是让同一个反思器再想一遍，而是把“生成根因假设”和“按假设改写 prompt”解耦，并行验证多个假设。",
+      "path": "docs/paper_notes/paper-vista-reflection-dark-2026.md"
+    },
+    {
+      "id": "practice-github-karpathy-guidelines-2026",
+      "type": "industry",
+      "level": "C",
+      "title": "Karpathy-Inspired Claude Code Guidelines 仓库分析",
+      "summary": "这是一个极小但传播很强的 agent 行为规则包：它把 Andrej Karpathy 关于 LLM coding agent 常见失败的观察，压缩成四条可执行约束：先澄清、保持简单、精准修改、用可验证目标闭环。",
+      "path": "docs/industry_notes/practice-github-karpathy-guidelines-2026.md"
+    },
+    {
+      "id": "practice-zhihu-hermes-agent-2026",
+      "type": "industry",
+      "level": "D",
+      "title": "Hermes Agent 自我进化机制行业观察",
+      "summary": "文章把 Hermes Agent 的差异化总结为“从历史日志中学习有效做法”的自进化闭环，重点在程序性记忆、技能自动生成、技能局部 patch 优化、分层记忆和运行轨迹反哺模型训练。",
+      "path": "docs/industry_notes/practice-zhihu-hermes-agent-2026.md"
+    },
+    {
+      "id": "repo-affaan-m-ecc",
+      "type": "github",
+      "level": "B",
+      "title": "affaan-m/ECC",
+      "summary": "GitHub 源码审计草稿。仓库 https://github.com/affaan-m/ECC。内容信号 {\"evaluation\": 20, \"iteration_loop\": 58, \"memory_context\": 34, \"agent_workflow\": 54, \"risk_failure\": 59}",
+      "path": "docs/github_repo_audit_notes/repo-affaan-m-ecc.md"
+    },
+    {
+      "id": "repo-humanlayer-12-factor-agents",
+      "type": "github",
+      "level": "B",
+      "title": "humanlayer/12-factor-agents",
+      "summary": "GitHub 源码审计草稿。仓库 https://github.com/humanlayer/12-factor-agents。内容信号 {\"evaluation\": 2, \"iteration_loop\": 29, \"memory_context\": 11, \"agent_workflow\": 37, \"risk_failure\": 2}",
+      "path": "docs/github_repo_audit_notes/repo-humanlayer-12-factor-agents.md"
+    },
+    {
+      "id": "repo-karpathy-autoresearch",
+      "type": "github",
+      "level": "B",
+      "title": "karpathy/autoresearch",
+      "summary": "GitHub 源码审计草稿。仓库 https://github.com/karpathy/autoresearch。内容信号 {\"evaluation\": 4, \"iteration_loop\": 3, \"memory_context\": 3, \"agent_workflow\": 1, \"risk_failure\": 1}",
+      "path": "docs/github_repo_audit_notes/repo-karpathy-autoresearch.md"
+    },
+    {
+      "id": "repo-linshenkx-prompt-optimizer",
+      "type": "github",
+      "level": "B",
+      "title": "linshenkx/prompt-optimizer",
+      "summary": "GitHub 源码审计草稿。仓库 https://github.com/linshenkx/prompt-optimizer。内容信号 {\"prompt_optimization\": 8, \"evaluation\": 39, \"iteration_loop\": 27, \"memory_context\": 11, \"agent_workflow\": 9, \"risk_failure\": 11}",
+      "path": "docs/github_repo_audit_notes/repo-linshenkx-prompt-optimizer.md"
+    }
+  ]
+}

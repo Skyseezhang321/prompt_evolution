@@ -81,6 +81,8 @@
       background: #fff; color: var(--ink); font-size: 14px; text-decoration: none;
     }
     nav a:hover { border-color: var(--teal); color: var(--teal); }
+    nav a.to-advisor { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 650; }
+    nav a.to-advisor:hover { background: #1c655c; border-color: #1c655c; color: #fff; }
 
     section { margin-top: 22px; padding: 30px; }
     .section-intro { max-width: 940px; color: var(--muted); }
@@ -231,11 +233,17 @@
           </div>
           <div class="meta">
             <strong>本项目验证状态</strong>
-            <span>截至 2026-06-10，12 条洞见均「尚未在本项目复现验证」；非 arXiv 渠道的部分候选仍在追溯（pending）；2026 新稿（recent-preprint）需独立复现后才能采信。</span>
+            <span>截至 2026-06-11，12 条洞见均「尚未在本项目复现验证」；非 arXiv 渠道的部分候选仍在追溯（pending）；2026 新稿（recent-preprint）需独立复现后才能采信。</span>
+          </div>
+          <div class="meta">
+            <strong>想直接拿建议？</strong>
+            <span>这 12 条洞见已做成<a href="../advisor/advisor.html">对话式建议助手</a>：描述你的场景，系统挑出适用洞见给分层建议，回答可追溯到出处（导航栏「💬 对话助手主页」同此入口）。</span>
           </div>
         </div>
       </div>
       <nav aria-label="页面导航">
+        <a class="to-advisor" href="../advisor/advisor.html">💬 对话助手主页</a>
+        <a href="#summary">⓪ 执行摘要</a>
         <a href="#map">① 全景脑图</a>
         <a href="#pyramid">② 证据金字塔</a>
         <a href="#partA">A 值不值得</a>
@@ -254,8 +262,41 @@
     </header>
 
     <section>
+      <div class="callout" style="border-left-color:#b44a5c;background:#fbe8ed">
+        <strong>本版本已冻结（2026-06-10）：</strong> 最新主报告见 <a href="./analysis_report_v4_20260611.html"><b>v4（2026-06-11）</b></a>——在本版 12 洞见基础上升级为「方法地图 → 工作流洞见（14 条）→ 工程落地 → 误区与边界」四层结构，并吸收了 5 篇晚于本版的论文笔记。本页保留作对照与回滚，不再更新。
+      </div>
+    </section>
+
+    <section>
       <div class="callout">
         <strong>这版相对 v2 改了什么：</strong> v2 按 12 条洞见组织、读者向、但以 arXiv 数字为主，其它四个渠道只在「听来的方法」和证据索引里露了一面。v3 在保留 12 洞见主干的基础上，新增三块：<b>① 全景脑图</b>（一张图看清渠道→洞见→方法→风险→验证）；<b>② 跨渠道证据金字塔</b>（5 渠道各能证明/不能证明什么，怎么互证）；<b>③ 分渠道速览 + 覆盖诚实清点</b>（把每个渠道刚收敛的结论、方法、反模式、覆盖偏差和追溯链显式呈现）。每条洞见还新增一行<b>跨渠道互证</b>。<a href="./analysis_report_v2_20260609.html">v2</a> 与 <a href="./analysis_report_v1_20260608.html">v1</a> 保留作对照与回滚。
+      </div>
+    </section>
+
+    <!-- ⓪ EXECUTIVE SUMMARY -->
+    <section id="summary">
+      <h2>⓪ 执行摘要：只有 30 秒就读这里</h2>
+      <div class="callout">
+        <strong>三条总结：</strong>① 优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱——体检基线里还要放进零智能变换（如 prompt 原样重复一遍）；② 改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色；③ 更长、更多、更复杂都不是默认的好，先证明它没带来过拟合、污染或归因困难。
+      </div>
+      <div class="grid two">
+        <div>
+          <h4>最高价值洞见（跨渠道支撑最强）</h4>
+          <ul class="howto">
+            <li><a href="#partA">洞见 01</a>：先体检再优化——某些设置下自动优化有近半概率比 zero-shot 还差（Coin Flip 49%）。</li>
+            <li><a href="#partB">洞见 03</a>：把失败样本变成可编辑证据，不只是一个分数（ProTeGi +15.3%）。</li>
+            <li><a href="#partC">洞见 05 / 06</a>：多候选 + 验证集筛选；prompt 变长视为过拟合信号而非进步。</li>
+            <li><a href="#partD">洞见 08</a>：先标清改的是哪个部件，评委与安全规则必须 frozen——本报告跨五渠道互证最厚的一条。</li>
+          </ul>
+        </div>
+        <div>
+          <h4>推荐方法与最大风险</h4>
+          <ul class="howto">
+            <li>四个可复用方法：<a href="#methods">HM-01 优化前体检 · HM-02 证据→假设改写 · HM-03 示例优化基线 · HM-04 artifact 台账</a>。</li>
+            <li>三大反模式：让模型直接「优化一下 prompt」、只看平均分上升、允许 optimizer 改 evaluator/test（<a href="#risks">全表</a>）。</li>
+            <li>口径底线：论文数字 = 该论文设置下成立；12 洞见均尚未在本项目复现（<a href="#coverage">诚实边界</a>）。</li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -339,7 +380,7 @@
 <text x="387" y="1388.5" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">首批最小验证（P0–P2）</text>
 <rect x="542" y="139.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
 <rect x="542" y="139.0" width="4" height="30" rx="2" fill="#2d67ad"/>
-<text x="556" y="158.5" font-size="12.5" fill="#2a2f36">arXiv · A级：机制 + 效应数字（31+ 篇深读）</text>
+<text x="556" y="158.5" font-size="12.5" fill="#2a2f36">arXiv · A级：机制 + 效应数字（37 篇深读）</text>
 <rect x="542" y="180.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
 <rect x="542" y="180.0" width="4" height="30" rx="2" fill="#2d67ad"/>
 <text x="556" y="199.5" font-size="12.5" fill="#2a2f36">GitHub · B级：工程结构 / 治理（core4 审计）</text>
@@ -457,7 +498,7 @@
             <td><b>arXiv 论文</b></td><td><span class="tag a">A</span></td>
             <td>方法机制、消融、各论文设置下的效应数字（Coin Flip / VISTA / AutoPDL / JTPRO …）。</td>
             <td>论文数字不等于在你的任务上成立；2026 新稿需独立复现。</td>
-            <td>31+ 篇深读，基线主干 APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA 已闭合；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺。</td>
+            <td>37 篇深读，基线主干 APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA 已闭合（叙事见<a href="./apo_seven_methods_primer_20260611.html">七法详解</a>）；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺。</td>
             <td><a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.html">taxonomy</a></td>
           </tr>
           <tr>
@@ -465,33 +506,33 @@
             <td>工程结构与治理：frozen evaluator/data 隔离、artifact ledger、compare-first rewrite、有界 memory 生命周期。</td>
             <td>不能单独证明某 optimizer 稳定提分（受限召回 + core4-only 审计带来的选择偏差）。</td>
             <td>8 查询冒烟召回（240→85→6）；正典 optimizer（gepa / PromptWizard / promptomatix / AutoPrompt / dspyground）尚未审计；未挖 issues/PR 的真实漂移与回滚。</td>
-            <td><a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.md">insight_cards</a></td>
+            <td><a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.html">insight_cards</a></td>
           </tr>
           <tr>
             <td><b>其它平台 / web_search</b></td><td><span class="tag b">B</span></td>
             <td>生产工程闭环地图（Arize / Promptfoo / Langfuse / OPIK / LangSmith）：优化必须绑定数据集→版本→回滚→可观测；治理是前提而非事后。</td>
             <td>vendor 提升百分比不可直接迁移，只迁移流程字段；二手转贴只算 pointer。</td>
             <td>web_search 465 / HN ~24 / SE 1 / RSS 1 / reddit·dev.to 0 / x_api 未跑；真实事故复盘与失败案例覆盖不足（低于覆盖矩阵要求）。</td>
-            <td><a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a></td>
+            <td><a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a></td>
           </tr>
           <tr>
             <td><b>Twitter/X</b></td><td><span class="tag b">B*</span> <span class="tag pre">待验证</span></td>
             <td>采纳信号与「研究方法→工具集成」的落地映射（GEPA/DSPy/MIPRO → Pydantic / LangChain / Salesforce / Google / Microsoft）；最常见误读边界。</td>
             <td>社媒热度≠有效；候选 main_sources 仍指向外部 URL、论文笔记未写，全部 pending。</td>
             <td>120 候选闭账：21 张 source cards / ~34 排除降级 / ~60 去重转贴簇；待回填仓库内追溯路径。</td>
-            <td><a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a></td>
+            <td><a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a></td>
           </tr>
           <tr>
             <td><b>知乎</b></td><td><span class="tag d">D</span> <span class="tag">线索</span></td>
             <td>中文社区对 GEPA / DSPy / context engineering / agent 自进化的理解与传播，误区集中点（如「GEPA 全面超过 RL」），把研究问题重新框定为工程关切。</td>
             <td>不做效应证明、不替代 baseline；ZH-L1→D 表示「发现，非证明」。</td>
             <td>99 候选；多数仍待溯源到一手论文/框架；少数经 GEPA / MemAPO / SePO 仓库笔记升为 B。</td>
-            <td><a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a></td>
+            <td><a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a></td>
           </tr>
         </tbody>
       </table>
       <div class="callout">
-        <strong>读金字塔的方法：</strong> 把 arXiv 当「机制与数字」、GitHub 当「在代码里长什么样」、其它平台当「在生产里怎么落地治理」、Twitter 当「业界在用什么、误读在哪」、知乎当「中文社区怎么理解」。当一条洞见同时被 arXiv（A）+ 至少一个工程渠道（B）独立支撑时，它在本报告里才被当作较强候选；只在上两层出现的，一律标为线索。
+        <strong>读金字塔的方法：</strong> 把 arXiv 当「机制与数字」、GitHub 当「在代码里长什么样」、其它平台当「在生产里怎么落地治理」、Twitter 当「业界在用什么、误读在哪」、知乎当「中文社区怎么理解」。当一条洞见同时被 arXiv（A）+ 至少一个工程渠道（B）独立支撑时，它在本报告里才被当作较强候选；只在上两层出现的，一律标为线索。另一条硬纪律：<b>跨论文的原始分数不可直接横比</b>（任务、模型、年代不同），唯一可公平横比的是把多法放进同一框架的结果，见 <a href="./classic_optimizer_methods_comparison_20260610.html">经典 optimizer 横向对比</a>；APE→GEPA 七法主线的整体叙事见 <a href="./apo_seven_methods_primer_20260611.html">七法主线详解</a>。
       </div>
     </section>
 
@@ -523,20 +564,22 @@ dev：87% ↑（看起来涨了）
             <div class="stat">
               <div class="num"><b>49%</b><small>Coin Flip：72 次优化里 49% 低于 zero-shot（Haiku 4.5）</small></div>
               <div class="num"><b>~3 步</b><small>ProTeGi：约 3 步达峰，之后多在训练集过拟合</small></div>
+              <div class="num"><b>47/70</b><small>Prompt Repetition：非推理模式下把 query 原样重复一遍，7 模型×10 基准 47/70 显著胜、0 显著负，时延不增——零智能变换也能涨分</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>（recent-preprint）、<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>（recent-preprint）、<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-prompt-repetition-2025.md">prompt-repetition-2025</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
             <ol class="howto">
               <li>跑 zero-shot + 手写 baseline，各记一分。</li>
+              <li>基线池里加一个零智能变换（如把 query 原样重复一遍）：优化器若连它都赢不了，说明还没产生真实价值。</li>
               <li>生成 10–20 个候选，用同一批 20 条留出样本打分。</li>
               <li>看 headroom（最高候选 − zero-shot）和 noise floor（候选间抖动）。</li>
               <li>headroom 没超过 noise floor → 停，别优化。</li>
             </ol>
           </div>
           <div class="corro"><b>跨渠道互证：</b>web_search 的 WHM-01「Optimizer Intake Checklist」与 Ask HN「AI evals 半成品」痛点信号、Twitter tw-insight-01「先有测试集和评分器」、知乎 ZHI-01「从技巧转向 eval 驱动」均独立指向同一前置纪律。</div>
-          <div class="limit">边界：靠多轮搜索才能发现组合结构的任务会被这个体检低估；阈值要按样本量和评分器重校准。</div>
+          <div class="limit">边界：靠多轮搜索才能发现组合结构的任务会被这个体检低估；阈值要按样本量和评分器重校准；重复变换只在非推理模式有效（开启 step-by-step 后 28 组里 22 平），且输入成本约 ×2。</div>
         </div>
 
         <div class="insight blue">
@@ -927,7 +970,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
               <li>缺任一字段就降级为「线索」，进结论前必须追溯论文/官方文档/代码/本项目实验。</li>
             </ul>
           </div>
-          <p class="src">来源：<a href="./source_batches/twitter_web_analysis_20260608.md">twitter_web_analysis_20260608</a>、<a href="./source_batches/web_search_platform_analysis_20260608.md">web_search_platform_analysis_20260608</a></p>
+          <p class="src">来源：<a href="./source_batches/twitter_web_analysis_20260608.html">twitter_web_analysis_20260608</a>、<a href="./source_batches/web_search_platform_analysis_20260608.html">web_search_platform_analysis_20260608</a></p>
           <div class="corro"><b>跨渠道互证（本条由社媒/二手渠道共同提出）：</b>Twitter 把它做成 method-05 social_signal_triage（六类标签）与 method-06 vendor_optimizer_evidence_filter；web_search 做成 WHM-04 source triage；知乎做成净新增 HM-ZH-03「一手来源升格门」。三个渠道独立收敛出同一道闸。</div>
           <div class="limit">边界：自带代码、数据、可复现实验的高质量工程博客可升级为更强证据——看细节，不看平台。</div>
         </div>
@@ -945,14 +988,14 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <p class="role">角色定位：提供方法机制、消融与各论文设置下的效应数字，是 12 洞见的一手证据底座。</p>
           <div class="field"><h4>结论</h4>
             <ul>
-              <li>基线主干已闭合：APE → ProTeGi → OPRO → PromptBreeder/EvoPrompt → DSPy → TextGrad → MIPROv2 → GEPA（均有结构化深读笔记，A 级）。</li>
+              <li>基线主干已闭合：APE → ProTeGi → OPRO → PromptBreeder/EvoPrompt → DSPy → TextGrad → MIPROv2 → GEPA（均有结构化深读笔记，A 级）；整体叙事与两条暗线见 <a href="./apo_seven_methods_primer_20260611.html">APO 七法主线详解</a>，同框架横比与受控反例 PROSE 见 <a href="./classic_optimizer_methods_comparison_20260610.html">经典方法横向对比</a>。</li>
               <li>文字"梯度"是比喻而非真实梯度（C-02）；one-shot rewrite 是弱 baseline（C-03）。</li>
               <li>prompt bloat / dev overfitting / judge hacking / memory pollution 是自进化主要风险（C-05）。</li>
             </ul>
           </div>
           <div class="field"><h4>方法</h4><ul><li>支撑全部 4 个统一方法（HM-01..04）与 I-01..I-11 的机制部分。</li></ul></div>
-          <div class="field"><h4>覆盖与缺口</h4><ul><li>31+ 篇深读；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺；2026 新稿统一标 recent-preprint。</li></ul></div>
-          <div class="field"><h4>追溯链</h4><ul><li>每篇笔记含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。核心入口 <a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a>、<a href="./arxiv_top80_taxonomy.html">taxonomy</a>、<a href="./paper_notes/">paper_notes/</a>。</li></ul></div>
+          <div class="field"><h4>覆盖与缺口</h4><ul><li>37 篇深读；更早锚点 AutoPrompt / RLPrompt / GrIPS 仍缺；2026 新稿统一标 recent-preprint。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>每篇笔记含本地 PDF/文本 SHA256、主结果数字、消融、失败案例与最小验证计划。核心入口 <a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a>、<a href="./arxiv_top80_taxonomy.html">taxonomy</a>、<a href="./literature_map.html">文献地图（37 篇总览与优先阅读顺序）</a>。</li></ul></div>
         </div>
 
         <div class="chan gh">
@@ -969,7 +1012,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <div class="field"><h4>方法</h4><ul><li>把 compare-first rewrite 归一到 HM-02、artifact/frozen-evaluator 结构归一到 HM-04；有界 memory 类方法待 catalog 补 HM 后定名。</li></ul></div>
           <div class="field"><h4>反模式</h4><ul><li>stars/转发当证据强度；同时改 prompt+数据+评分器（reward hacking）；"有测试 = 方法有效"（测试可能只覆盖安装/格式/配置）。</li></ul></div>
           <div class="field"><h4>覆盖与已知偏差</h4><ul><li>discovery 仅 8 查询冒烟（240→85→6，无 GITHUB_TOKEN）；正典 optimizer <code>gepa-ai/gepa</code>、<code>microsoft/PromptWizard</code>、<code>SalesforceAIResearch/promptomatix</code>、<code>Eladlev/AutoPrompt</code>、<code>Scale3-Labs/dspyground</code> 已登记但<strong>尚未克隆审计</strong>（第二轮 backlog）；未挖 issues/PR/release 的真实漂移与回滚。</li></ul></div>
-          <div class="field"><h4>追溯链（repo ↔ paper）</h4><ul><li>建立 repo↔paper 对照表：gepa↔GEPA(A)、promptomatix↔Promptomatix、PromptWizard↔PromptWizard、AutoPrompt↔Intent-based Prompt Calibration；补审后可升级为跨源互证。核心入口 <a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a>、<a href="./github_repo_source_audit_workflow_20260608.md">audit_workflow</a>。</li></ul></div>
+          <div class="field"><h4>追溯链（repo ↔ paper）</h4><ul><li>建立 repo↔paper 对照表：gepa↔GEPA(A)、promptomatix↔Promptomatix、PromptWizard↔PromptWizard、AutoPrompt↔Intent-based Prompt Calibration；补审后可升级为跨源互证。核心入口 <a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a>、<a href="./github_repo_source_audit_workflow_20260608.html">audit_workflow</a>。</li></ul></div>
         </div>
 
         <div class="chan web">
@@ -989,7 +1032,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           </div>
           <div class="field"><h4>工具地图</h4><ul><li>Hugging Face（方法发现）、Arize Phoenix（可观测+治理）、Promptfoo（轻量 eval gate）、Langfuse（生产 tracing）、Humanloop（配置即治理）、LangSmith/Promptim（prompt commit+库）、OPIK（agent optimizer SDK）、Weaviate（context engineering）。</li></ul></div>
           <div class="field"><h4>覆盖与缺口</h4><ul><li>web_search 465 / HN ~24 / SE 1 / RSS 1 / reddit·dev.to 0 / x_api 未跑；社区批次约半数是 GEPA 转贴 + Show HN 产品发布，净新增有限；<strong>真实失败案例 / 事故复盘覆盖不足</strong>（低于覆盖矩阵「≥5 个失败/反模式来源」要求）。</li></ul></div>
-          <div class="field"><h4>净新增（3）与追溯链</h4><ul><li>AWS Bedrock 高级 prompt 优化/迁移工具、Vertex AI placeholder_to_content 锁段、Ask HN「AI evals 半成品」痛点；L1–L4 → A/B/C/D 已给换算表。核心入口 <a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a>。</li></ul></div>
+          <div class="field"><h4>净新增（3）与追溯链</h4><ul><li>AWS Bedrock 高级 prompt 优化/迁移工具、Vertex AI placeholder_to_content 锁段、Ask HN「AI evals 半成品」痛点；L1–L4 → A/B/C/D 已给换算表。核心入口 <a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a>。</li></ul></div>
         </div>
 
         <div class="chan tw">
@@ -1005,7 +1048,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <div class="field"><h4>方法</h4><ul><li>method-01 metric+trace 约束候选迭代；method-04 prompt_as_program_spec；method-05 social_signal_triage（六类标签）；method-06 vendor_optimizer_evidence_filter。</li></ul></div>
           <div class="field"><h4>反模式（含 trigger_condition）</h4><ul><li>把热门 thread 写成研究结论；把 GEPA 写成「RL 替代品」；同时改 prompt/context/model/evaluator；只优化平均分不看 critical failures。</li></ul></div>
           <div class="field"><h4>覆盖与状态</h4><ul><li>120 候选闭账：21 张 source cards / ~34 排除降级 / ~60 去重转贴簇；<strong>全部 pending</strong>——论文笔记未写，main_sources 仍为外部 URL，须回填仓库内路径后才能进最终报告。</li></ul></div>
-          <div class="field"><h4>追溯链</h4><ul><li>已回填稳定来源到来源清单：Pydantic GEPA、LangChain Promptim、Microsoft PromptWizard、Scale3 DSPyground、Salesforce Promptomatix。核心入口 <a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a>。</li></ul></div>
+          <div class="field"><h4>追溯链</h4><ul><li>已回填稳定来源到来源清单：Pydantic GEPA、LangChain Promptim、Microsoft PromptWizard、Scale3 DSPyground、Salesforce Promptomatix。核心入口 <a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a>。</li></ul></div>
         </div>
 
         <div class="chan zh">
@@ -1019,7 +1062,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           </div>
           <div class="field"><h4>方法</h4><ul><li>HM-ZH-01 eval-first intake、HM-ZH-02 trace-first agent 诊断、<b>HM-ZH-03 一手来源升格门（净新增）</b>——按 dataset/metric/baseline/cost/failure 字段是否齐全给二手帖升/降级。</li></ul></div>
           <div class="field"><h4>误区 / 反模式</h4><ul><li>「知乎文章多 → 结论就强」「GEPA 全面超过 RL」「工具展示优化后 prompt → 工具有效」「context engineering = 更长 prompt」「自进化 = 什么都记下来」。</li></ul></div>
-          <div class="field"><h4>证据收敛与追溯链</h4><ul><li>把 ZH-L1..L4 收敛为 A/B/C/D：ZH-L1→D（发现非证明），仅经 GEPA / MemAPO / SePO 仓库笔记交叉的才升 B；每张卡 main_sources 指向仓库内论文笔记与 inventory ID。核心入口 <a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a>。</li></ul></div>
+          <div class="field"><h4>证据收敛与追溯链</h4><ul><li>把 ZH-L1..L4 收敛为 A/B/C/D：ZH-L1→D（发现非证明），仅经 GEPA / MemAPO / SePO 仓库笔记交叉的才升 B；每张卡 main_sources 指向仓库内论文笔记与 inventory ID。核心入口 <a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a>、<a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a>。</li></ul></div>
         </div>
 
       </div>
@@ -1035,8 +1078,8 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <tr>
             <td><b>HM-01</b><br>Pre-Optimization Gate</td>
             <td>避免在没有 headroom 的任务上浪费 optimizer 成本。</td>
-            <td>跑 zero-shot + 手写 baseline → 生成 10–20 候选 → 同一评分器评估 → 算 best_gain / score_spread / format_error / cost → 不超噪声阈值就止损。</td>
-            <td>web WHM-01；Twitter tw-insight-01；知乎 HM-ZH-01；arXiv coin-flip。</td>
+            <td>跑 zero-shot + 手写 baseline + 零智能变换（prompt repetition）→ 生成 10–20 候选 → 同一评分器评估 → 算 best_gain / score_spread / format_error / cost → 不超噪声阈值就止损。</td>
+            <td>web WHM-01；Twitter tw-insight-01；知乎 HM-ZH-01；arXiv coin-flip / prompt-repetition。</td>
           </tr>
           <tr>
             <td><b>HM-02</b><br>Trace-First Critique Rewrite</td>
@@ -1140,9 +1183,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
           <tr><td>P2</td><td>过滤记忆 vs 原始记忆</td><td>10</td><td>两个相近 + 一个异质任务</td><td>判断记忆是否降本或带来负迁移</td></tr>
         </tbody>
       </table>
-      <div class="callout">
-        <strong>给读者的三条总结：</strong>① 优化前先问「值不值得」，headroom 没超过 noise floor 就别花钱；② 改 prompt 的本质是「证据 → 假设 → 多候选 → 验证集筛选 → 可回滚」，不是让模型润色；③ 更长、更多、更复杂都不是默认的好，先证明它没带来过拟合、污染或归因困难。
-      </div>
+      <div class="callout"><strong>三条总结</strong>见顶部 <a href="#summary">⓪ 执行摘要</a>；验证开跑后，结果与失败案例将以 C 级证据回填到对应洞见。</div>
     </section>
 
     <!-- ⑧ SOURCES -->
@@ -1153,6 +1194,9 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
       <ul class="source-list">
         <li><a href="./insight_handbook_20260609.html">读者向洞见手册（12 洞见完整版）</a></li>
         <li><a href="./insight_method_catalog_20260609.html">Insight / Conclusion / Method 候选清单（结构化）</a></li>
+        <li><a href="./apo_seven_methods_primer_20260611.html">APO 七法主线详解（APE→GEPA 整体叙事）</a></li>
+        <li><a href="./classic_optimizer_methods_comparison_20260610.html">经典 optimizer 方法横向对比（含受控反例 PROSE 与同框架横比）</a></li>
+        <li><a href="./literature_map.html">文献地图（37 篇深读总览与优先阅读顺序）</a></li>
         <li><a href="./insight_field_standard.html">字段定义规范（A/B/C/D 等级与各类型 schema）</a></li>
         <li><a href="./final_report_outline.html">最终报告结构</a></li>
         <li><a href="./experiment_plan.html">实验计划（P0–P2）</a></li>
@@ -1161,10 +1205,10 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
       <h4 style="margin-top:12px">分渠道整理</h4>
       <ul class="source-list">
         <li>arXiv：<a href="./arxiv_deep_reading_batch3_synthesis.html">deep_reading_batch3</a> · <a href="./arxiv_top80_taxonomy.html">taxonomy</a> · <a href="./paper_notes/">paper_notes/</a></li>
-        <li>GitHub：<a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.md">insight_cards</a> · <a href="./github_repo_source_audit_workflow_20260608.md">audit_workflow</a></li>
-        <li>其它平台：<a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.md">analysis</a></li>
-        <li>Twitter/X：<a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.md">analysis</a></li>
-        <li>知乎：<a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.md">three_layer</a></li>
+        <li>GitHub：<a href="./github_repo_channel_synthesis_20260609.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.html">insight_cards</a> · <a href="./github_repo_source_audit_workflow_20260608.html">audit_workflow</a></li>
+        <li>其它平台：<a href="./source_batches/web_search_platform_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.html">analysis</a></li>
+        <li>Twitter/X：<a href="./source_batches/twitter_web_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.html">analysis</a></li>
+        <li>知乎：<a href="./source_batches/zhihu_insight_cards_20260609.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.html">three_layer</a></li>
         <li>来源总账：<a href="./source_inventory.md">source_inventory</a> · <a href="./industry_practices.md">industry_practices</a></li>
       </ul>
       <h4 style="margin-top:12px">历史版本（对照 / 回滚）</h4>
@@ -1175,7 +1219,7 @@ GEPA 是反思式 prompt 进化（执行轨迹 + Pareto 选择），
     </section>
 
     <footer>
-      <p>报告 v3 当前定位：在 v2 的 12 洞见主干上，叠加全景脑图、跨渠道证据金字塔、分渠道速览和覆盖诚实清点的综合论述版。所有标「示意」的 prompt/对话为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；recent-preprint 结论与非 arXiv 渠道的 pending 候选需独立复现/回填追溯后才能采信。实验用于验证、演示和校准这些经验，不作为项目主线本身。更新时间：2026-06-10。</p>
+      <p>报告 v3 当前定位：在 v2 的 12 洞见主干上，叠加全景脑图、跨渠道证据金字塔、分渠道速览和覆盖诚实清点的综合论述版。所有标「示意」的 prompt/对话为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；recent-preprint 结论与非 arXiv 渠道的 pending 候选需独立复现/回填追溯后才能采信。实验用于验证、演示和校准这些经验，不作为项目主线本身。更新时间：2026-06-11（增执行摘要、Prompt Repetition 体检基线、七法详解/横向对比/文献地图链接与链接修复）。</p>
     </footer>
   </div>
 </body>

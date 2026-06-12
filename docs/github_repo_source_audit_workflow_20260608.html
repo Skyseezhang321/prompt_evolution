@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub 仓库审计工作流 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4a742f">GitHub 渠道</span><span class="doctitle">GitHub 仓库审计工作流</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="github-2026-06-08">GitHub 仓库源码审计流程：2026-06-08</h1>
+<p>本流程用于回应 GitHub 渠道分析中的一个核心风险：不能只根据仓库名、stars、README 或二手摘要直接提炼 insight。GitHub 渠道后续结论必须先固定源码版本，再经过机器扫描、人工审计和必要运行核验。</p>
+<h2 id="_1">当前目标</h2>
+<ul>
+<li>固定重点仓库的 commit、README SHA256、license 和本地路径。</li>
+<li>先记录“源码中实际存在什么”，再归纳“它对 prompt 优化 / prompt 自进化有什么启发”。</li>
+<li>明确区分三类表述：源码观察、结构迁移推断、可采信结论。</li>
+</ul>
+<h2 id="_2">执行命令</h2>
+<p>第一轮只克隆 4 个核心仓库，避免一次把 8-10 个仓库全部纳入深读导致证据质量下降。</p>
+<pre><code class="language-powershell">python scripts/github_repo_clone.py --preset core4 --output-root local_sources\raw\github_repo_clones --manifest-prefix github_repo_clone_core4
+</code></pre>
+<p>随后对本地 clone 做机器扫描，生成 ignored JSON 审计结果和可提交的审计草稿笔记。</p>
+<pre><code class="language-powershell">python scripts/github_repo_audit.py --clone-root local_sources\raw\github_repo_clones --audit-root local_sources\raw\github_repo_audits --notes-dir docs\github_repo_audit_notes --force-notes
+</code></pre>
+<p>原始 clone 和 JSON audit 保存在 <code>local_sources/raw/</code>，不提交到仓库；可提交的人工审计入口保存在 <code>docs/github_repo_audit_notes/</code>。</p>
+<h2 id="_3">第一轮固定仓库</h2>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>repository</th>
+<th>commit</th>
+<th>branch</th>
+<th>第一轮审计入口</th>
+<th>当前判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>repo-linshenkx-prompt-optimizer</code></td>
+<td><code>linshenkx/prompt-optimizer</code></td>
+<td><code>d7cde6c2fc5c</code></td>
+<td><code>develop</code></td>
+<td><a href="github_repo_audit_notes/repo-linshenkx-prompt-optimizer.md">audit note</a></td>
+<td>有源码证据显示 compare evaluation、structured judge、rewrite-from-evaluation、calibration 和 E2E 测试链路存在；尚不能推出“优化后任务效果提升”。</td>
+</tr>
+<tr>
+<td><code>repo-karpathy-autoresearch</code></td>
+<td><code>karpathy/autoresearch</code></td>
+<td><code>228791fb499a</code></td>
+<td><code>master</code></td>
+<td><a href="github_repo_audit_notes/repo-karpathy-autoresearch.md">audit note</a></td>
+<td>有源码证据显示 autonomous experiment loop、固定 evaluator、结果日志和回滚规则；但优化对象是训练代码，不是 prompt，迁移到 prompt self-evolution 时必须标注为结构参考。</td>
+</tr>
+<tr>
+<td><code>repo-humanlayer-12-factor-agents</code></td>
+<td><code>humanlayer/12-factor-agents</code></td>
+<td><code>d20c728368bf</code></td>
+<td><code>main</code></td>
+<td><a href="github_repo_audit_notes/repo-humanlayer-12-factor-agents.md">audit note</a></td>
+<td>有文档与模板证据支持 prompt/context 应作为一等工程对象治理；这是 agent prompt/context 设计原则来源，不是方法效果证据。</td>
+</tr>
+<tr>
+<td><code>repo-affaan-m-ecc</code></td>
+<td><code>affaan-m/ECC</code></td>
+<td><code>90dfd9505dc8</code></td>
+<td><code>main</code></td>
+<td><a href="github_repo_audit_notes/repo-affaan-m-ecc.md">audit note</a></td>
+<td>有实现、测试和示例痕迹支持 memory、verification loop、harness governance 等方向；README 主张较强，仍需继续核验运行入口和真实方法有效性。</td>
+</tr>
+</tbody>
+</table>
+<p>第一轮 clone manifest：<code>local_sources/raw/github_repo_clones/_manifests/github_repo_clone_core4_20260608T140910Z.md</code>。</p>
+<p>第一轮 audit manifest：<code>local_sources/raw/github_repo_audits/github_repo_audit_manifest_20260608T141030Z.md</code>。</p>
+<h2 id="prompt-optimizer-cloneaudit">第二轮待审仓库（正典 prompt optimizer，未 clone/audit）</h2>
+<p>下列仓库已在 <code>docs/source_inventory.md</code> 登记（多数经 Twitter/X 渠道回填），但尚未进入 clone/audit。它们比 strict8 剩余的资料 / 资产型仓库更直接决定"GitHub 渠道是否真有效果证据"，应作为下一轮 clone/audit 的优先对象。审计时同样先固定 commit、README SHA256、license，再做机器扫描和人工审计。</p>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>repository</th>
+<th>关联论文 / arXiv</th>
+<th>优先级</th>
+<th>审计重点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>repo-gepa-ai-gepa</code></td>
+<td><code>gepa-ai/gepa</code></td>
+<td>GEPA（2507.19457，已深读 <code>paper-gepa-2026</code>）</td>
+<td>高</td>
+<td>论文 ↔ 源码互证：reflective evolution、Pareto / validation 选择、rollout 与 cost 是否与论文一致（L4 候选）。</td>
+</tr>
+<tr>
+<td><code>repo-microsoft-promptwizard</code></td>
+<td><code>microsoft/PromptWizard</code></td>
+<td>PromptWizard（2405.18369，未登记笔记）</td>
+<td>高</td>
+<td>instruction / example 联合优化、self-evolving refinement、API 依赖；先补论文笔记。</td>
+</tr>
+<tr>
+<td><code>repo-salesforce-promptomatix</code></td>
+<td><code>SalesforceAIResearch/promptomatix</code></td>
+<td>Promptomatix（2507.14241，skimmed）</td>
+<td>高</td>
+<td>DSPy 依赖、synthetic data、feedback、CLI/API；先深读论文。</td>
+</tr>
+<tr>
+<td><code>repo-eladlev-autoprompt</code></td>
+<td><code>Eladlev/AutoPrompt</code></td>
+<td>Intent-based Prompt Calibration（2402.03099，candidate）</td>
+<td>中</td>
+<td>是否有可复现 eval；与 LangChain Promptim 区分名称，避免混淆。</td>
+</tr>
+<tr>
+<td><code>repo-scale3-dspyground</code></td>
+<td><code>Scale3-Labs/dspyground</code></td>
+<td>无独立论文（GEPA harness）</td>
+<td>中</td>
+<td>samples / metrics / runs history、AI SDK agent porting，作为 agent prompt optimizer 工程案例。</td>
+</tr>
+</tbody>
+</table>
+<p>这些 source_id 与 <code>docs/source_inventory.md</code> 一致；审计完成后回填审计草稿到 <code>docs/github_repo_audit_notes/</code> 并按下表证据等级升级。</p>
+<h2 id="_4">证据等级</h2>
+<p>后续 GitHub 渠道 insight 按以下门槛处理：</p>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>含义</th>
+<th>能写成什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L0</td>
+<td>搜索结果、stars、repo metadata 或仓库名相关</td>
+<td>只能作为候选线索。</td>
+</tr>
+<tr>
+<td>L1</td>
+<td>固定 commit 后读过 README / docs</td>
+<td>可以写“仓库主张 / 文档声称”。</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>固定 commit 后定位到源码、配置、测试或示例路径</td>
+<td>可以写“源码观察支持某机制存在”。</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>能在本地运行测试、示例或最小复现实验</td>
+<td>可以写“在某环境和设置下可复现某行为”。</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>跨仓库、论文或本项目实验互相印证</td>
+<td>可以进入最终报告的强结论候选。</td>
+</tr>
+</tbody>
+</table>
+<p>当前 4 个仓库多数只达到 L2；<code>karpathy/autoresearch</code> 的结构闭环最清楚，但仍需要本项目自己的 prompt/context 版本复现实验才能升级为 L3/L4。</p>
+<h2 id="_5">洞见提炼规则</h2>
+<ol>
+<li>每条 insight 必须带 source_id、commit、文件路径和观察类型。</li>
+<li>如果 insight 是从非 prompt 任务迁移而来，必须写明迁移边界。</li>
+<li>不把 README 性能主张、star 数、项目热度或工具宣传语当作结论。</li>
+<li>不把“存在 eval/test 代码”直接等同于“方法有效”；只能说明该仓库具备可审计结构。</li>
+<li>能转成实验的问题优先进入 <code>docs/experiment_plan.md</code>，再实现脚本或运行实验。</li>
+</ol>
+<h2 id="_6">第一轮粗结论</h2>
+<ul>
+<li>GitHub 渠道更适合提供工程结构、治理流程和真实代码组织方式；直接证明 prompt optimizer 有效的证据很少。</li>
+<li>当前最有价值的组合不是照搬单个仓库，而是抽取三类机制：<code>prompt-optimizer</code> 的 compare/evaluation/rewrite 链路、<code>autoresearch</code> 的优化对象与 evaluator 隔离、<code>12-factor-agents</code> 的 prompt/context 治理边界。</li>
+<li>ECC 类 agent harness 可以作为 memory、verification loop 和 subagent orchestration 的线索，但要晚于前三类机制进入结论层。</li>
+</ul>
+<h2 id="_7">下一步</h2>
+<p>已完成：从 4 份 audit note 中提取 12 条候选 insight，并在 <a href="github_repo_insight_cards_20260608.html">GitHub 仓库候选 insight 证据卡</a> 中标注证据等级、适用边界和可转实验。</p>
+<p>后续继续（2026-06-10 重排优先级）：</p>
+<ol>
+<li>（高）优先 clone/audit 正典 prompt optimizer 仓库：<code>gepa-ai/gepa</code>、<code>microsoft/PromptWizard</code>、<code>SalesforceAIResearch/promptomatix</code>、<code>Eladlev/AutoPrompt</code>（均已在 <code>docs/source_inventory.md</code> 登记但未审计）。它们比 strict8 剩余资料型仓库更直接决定”GitHub 渠道是否真有效果证据”；其中 <code>gepa-ai/gepa</code> 同时是已深读论文 GEPA 的官方实现，可做论文 ↔ 源码互证（L4 候选）。</li>
+<li>（高）配 <code>GITHUB_TOKEN</code> 重跑完整 discovery，并按本流程关联快筛文档的”核心 / 周边双线”建议修正脚本召回，验证”optimizer 仓库不多”是否为低召回产物。</li>
+<li>（低，有意延后）strict8 剩余 4 个资料 / 资产型仓库（<code>dair-ai/Prompt-Engineering-Guide</code>、<code>shanraisshan/claude-code-best-practice</code>、<code>f/prompts.chat</code>、<code>pathwaycom/llm-app</code>）按需再审，不阻塞结论。</li>
+<li>从 12 条候选 insight 中选择 2-4 条进入 <code>docs/experiment_plan.md</code>，优先冻结 evaluator / data / ledger schema。</li>
+<li>选择 1 个最小实验，把 <code>autoresearch</code> 的”只允许修改目标对象、不允许修改 evaluator/data”迁移为 prompt/context 优化闭环。</li>
+</ol>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/github_repo_source_audit_workflow_20260608.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">当前目标</a>
+<a class="lv2" href="#_2">执行命令</a>
+<a class="lv2" href="#_3">第一轮固定仓库</a>
+<a class="lv2" href="#prompt-optimizer-cloneaudit">第二轮待审仓库（正典 prompt optimizer，未 clone/audit）</a>
+<a class="lv2" href="#_4">证据等级</a>
+<a class="lv2" href="#_5">洞见提炼规则</a>
+<a class="lv2" href="#_6">第一轮粗结论</a>
+<a class="lv2" href="#_7">下一步</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>
