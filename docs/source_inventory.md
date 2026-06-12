@@ -56,6 +56,7 @@
 | paper-promptolution-2026 | candidate | medium | promptolution | 2026 | https://aclanthology.org/2026.eacl-demo.21/ | prompt optimization tool |  | 需核验 |
 | paper-sepo-2026 | skimmed | high | SePO: Self-Evolving Prompt Agent for System Prompt Optimization | 2026 | https://arxiv.org/abs/2606.04465 | self-evolving prompt optimization |  | 需深读 |
 | paper-prompt-repetition-2025 | noted | high | Prompt Repetition Improves Non-Reasoning LLMs | 2025-12-17 | https://arxiv.org/abs/2512.14982 | prompt repetition / non-reasoning prompt technique | user_provided_example；深读笔记 `docs/paper_notes/paper-prompt-repetition-2025.md`；2026-06-11 方法+结果级（Figure 逐格数字未转录） | 已深读；非推理模式 47/70 显著胜 0 负、零输出成本的结构变换，定位为本项目 APO baseline 变换 + 最小三臂 A/B 候选（baseline/×2/padding）；推理模式收益消失（5/28），长 prompt 与输入计费翻倍是边界 |
+| paper-ace-2026 | noted | high | ACE: Agentic Context Engineering — Evolving Contexts for Self-Improving Language Models | 2025/2026 | https://arxiv.org/abs/2510.04618 | incremental context evolution / agentic playbook | user_request（2025/2026 年度代表作选题）；深读笔记 `docs/paper_notes/paper-ace-2026.md`；2026-06-12 全文证据级（正文+附录消融全读） | 已深读；累积式 playbook 与候选竞争范式正面分野——delta+确定性合并防上下文坍缩（去掉该设计 test-normal 平均 70.3→56.9），AppWorld 比 GEPA 高约 13 点、adaptation 延迟 -82.3%；边界：FiNER online 无标签 -3.4 跌破 base，反馈质量是自进化硬约束 |
 
 ## 行业实践与工具
 
