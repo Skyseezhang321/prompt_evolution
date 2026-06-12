@@ -22,6 +22,7 @@ import os
 import sys
 from dataclasses import replace
 from pathlib import Path
+from typing import Dict, List
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
@@ -214,8 +215,10 @@ app = FastAPI(title="Prompt 优化建议助手", docs_url=None, redoc_url=None)
 
 
 class ChatIn(BaseModel):
+    # pydantic 会在运行时求值字段注解，内置泛型 list[dict] 在 Python 3.8 上会抛
+    # "'type' object is not subscriptable"，故这里必须用 typing.List/Dict。
     message: str
-    history: list[dict] = []
+    history: List[Dict] = []
     context: str = ""
 
 
