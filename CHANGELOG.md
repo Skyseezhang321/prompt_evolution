@@ -24,6 +24,10 @@
 
 <!-- 将下一批重要变更写在这里。 -->
 
+### Changed
+
+- `advisor/README.md` 新增「**远程服务器部署**」小节（随 Python 3.8 兼容修复同批，源自 sg-spark1 实际部署）：拉代码即可启动（三个生成产物已入库、服务器无需跑 build 脚本）、`--host 0.0.0.0` 对外监听示例、`/api/health` 部署后验证口径（insights=14 / corpus=43 / llm_available）、Python 版本要求（≥3.8，含 pydantic 注解写法约定）、常驻托管与公网暴露访问控制提醒。影响范围：仅 advisor/README.md；根 README 的一行指针无需变。
+
 ### Fixed
 
 - 修复 advisor 后端在 **Python 3.8 上启动崩溃**的问题（远程服务器部署实测踩中）：`advisor/server.py` 的 pydantic 模型 `ChatIn` 字段注解用了内置泛型 `list[dict]`——文件虽有 `from __future__ import annotations`（普通函数注解惰性、不受影响），但 pydantic 建模型时会对字段注解做运行时求值，PEP 585 内置泛型在 3.9 之前抛 `TypeError: 'type' object is not subscriptable`。修复：该字段改用 `typing.List[Dict]` 并加注释说明原因；排查确认运行路径（server.py + scripts/llm_clients.py）无其他 3.9+ 专属运行时语法（removeprefix / dict 合并符 / functools.cache 均无）。验证：`python -m pytest advisor/ -q` 28 项全过。影响范围：`advisor/server.py` 一个模型字段 + import 一行；前端、知识库、其余端点未动。回滚点：还原该两行即可（仅在 3.9+ 部署时可回滚）。：`advisor/build_advisor.py` 模板把 `renderAnswer` 原来的「换行转 br + 引用加粗」升级为内联**轻量 markdown 渲染器**（零依赖、file:// 离线可用），支持模型常用子集——标题（#/## → h3、###/#### → h4 衬线小标题）、粗体、行内代码、围栏代码块、有序/无序列表（一层嵌套）、GFM 表格（复用 at-table 样式）、引用块、分隔线、http(s) 链接；引用芯片从仅 `[I0x·…]` 扩展到 `[paper-/repo-/practice-…·等级]` 笔记引用。安全：先 `esc()` 转义全部 HTML 再做结构转换，不引入注入面；流式下每个 delta 全量重渲染、中间态自校正（未闭合代码块吞到当前末尾）。`.llm-ans` 补齐对应块级样式（衬线小标题 / 代码块茶青左边 / 引用块朱砂左边）。验证：`python -m pytest advisor/ -q` 28 项全过；Playwright 实页灌入含标题/嵌套列表/表格/引用/代码块/双类引用芯片的样例回答截图核验；8 种流式中间态（未闭合代码块、残缺表格行、半个引用标记等）逐一确认渲染不抛异常。影响范围：模板 1 个渲染函数 + 1 段 CSS、`advisor.html` 重新生成；后端、知识库、检索逻辑未动。

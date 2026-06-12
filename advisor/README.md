@@ -68,6 +68,26 @@ python -m uvicorn server:app --app-dir advisor --port 8000
 #    然后浏览器打开 http://localhost:8000/
 ```
 
+### 远程服务器部署
+
+`advisor.html` / `corpus_index.json` / `vector_index.json` 都是已入库的生成产物，**服务器上不需要跑任何 build 脚本**，拉代码即可启动：
+
+```bash
+git clone https://github.com/Skyseezhang321/prompt_evolution.git && cd prompt_evolution
+pip install -r advisor/requirements.txt
+# 仓库根手工创建 .env（OPENROUTER_API_KEY=...、OPENROUTER_MODEL=...；key 绝不入库）
+python -m uvicorn server:app --app-dir advisor --host 0.0.0.0 --port 8784   # 端口自定
+
+# 部署后验证
+curl http://localhost:8784/api/health
+#    预期 insights=14、corpus=43、retrieval=vector、llm_available=true
+#    llm_available=false → 仓库根缺 .env，服务可跑但前端回退确定性模式
+```
+
+- **Python 版本**：≥3.8（3.8 兼容问题已于 2026-06-12 修复——pydantic 模型注解不能用内置泛型 `list[dict]`，新增模型字段请沿用 `typing.List/Dict` 写法）；3.8 已 EOL，长期建议 3.9+。
+- **常驻运行**：生产环境建议 systemd / nohup 托管（崩溃自动拉起），不要裸前台进程。
+- **公网暴露**：`/api/chat` 会消耗 OpenRouter 余额，公开部署务必加访问控制（nginx 反代 + 鉴权），避免 key 被刷。
+
 LLM 形态调参（可选，不改 `.env` 全局值）：`ADVISOR_MAX_TOKENS`（默认 1600，推理模型需要较大输出预算）。模型由 `.env` 的 `OPENROUTER_MODEL` 决定。
 
 > **运维注意**：后端在**启动期**加载知识库 / 语料 / 向量索引——改了 KB、后端代码或重建索引后必须**重启后端**，否则旧进程会一直用旧知识库继续服务（曾出现残留进程带着 12 条洞见的旧 KB 跑了一天）。核对方法：`GET /api/health` 的 `insights`（当前应为 14）与 `corpus`（43）。另外 LLM 模式只在**经后端访问**（如 `http://localhost:8000/`）时激活；双击打开 `advisor.html`（file://）永远是确定性模式。
