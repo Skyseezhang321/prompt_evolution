@@ -26,6 +26,8 @@ REPORT = "analysis_report_v3_20260610.html"  # back-link target (lives in docs/)
 # (path relative to docs/, channel/layer label, human title)
 PAGES = [
     ("apo_seven_methods_primer_20260611.md", "中间层", "APO 七法主线详解"),
+    ("classic_optimizer_methods_comparison_20260610.md", "中间层", "经典 optimizer 方法横向对比"),
+    ("literature_map.md", "中间层", "文献地图"),
     ("insight_handbook_20260609.md", "中间层", "读者向洞见手册"),
     ("insight_method_catalog_20260609.md", "中间层", "Insight / Conclusion / Method 候选清单"),
     ("insight_field_standard.md", "中间层", "字段定义规范"),
@@ -33,12 +35,19 @@ PAGES = [
     ("experiment_plan.md", "中间层", "实验计划"),
     ("prompt_evolution_mindmap_20260610.md", "中间层", "全景脑图（Mermaid 源）"),
     ("popsci_prompt_evolution_story_20260610.md", "中间层", "小说体科普《别让 AI 自己改作业》"),
+    ("platform_insights_supplement_20260612.md", "中间层", "其他平台内容补充辑（知乎 / Twitter / web_search）"),
     ("arxiv_deep_reading_batch3_synthesis.md", "arXiv 渠道", "arXiv 深读 Batch 3 综合"),
+    ("arxiv_2025_2026_frontier_synthesis_20260612.md", "arXiv 渠道", "arXiv 2025/2026 前沿深读综合"),
     ("arxiv_top80_taxonomy.md", "arXiv 渠道", "arXiv top80 分类 taxonomy"),
     ("github_repo_channel_synthesis_20260609.md", "GitHub 渠道", "GitHub 渠道洞见综合"),
+    ("github_repo_insight_cards_20260608.md", "GitHub 渠道", "GitHub 渠道 insight cards"),
+    ("github_repo_source_audit_workflow_20260608.md", "GitHub 渠道", "GitHub 仓库审计工作流"),
     ("source_batches/web_search_platform_insight_cards_20260609.md", "其它平台渠道", "其它平台 insight / method cards"),
+    ("source_batches/web_search_platform_analysis_20260608.md", "其它平台渠道", "其它平台渠道分析"),
     ("source_batches/twitter_web_insight_cards_20260609.md", "Twitter/X 渠道", "Twitter/X 社媒线索洞见卡"),
+    ("source_batches/twitter_web_analysis_20260608.md", "Twitter/X 渠道", "Twitter/X 渠道分析"),
     ("source_batches/zhihu_insight_cards_20260609.md", "知乎渠道", "知乎洞见与方法卡片"),
+    ("source_batches/zhihu_three_layer_analysis_20260608.md", "知乎渠道", "知乎三层分析"),
 ]
 
 CONVERTED = {p[0] for p in PAGES}

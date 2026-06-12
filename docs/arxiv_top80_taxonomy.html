@@ -374,14 +374,14 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </ul>
 <h2 id="_4">当前缺口</h2>
 <ul>
-<li>~~需要补读不一定在 top80 中的经典锚点：APE、OPRO、DSPy、MIPROv2、TextGrad 原始论文。~~（2026-06-10 已闭合：5 篇均完成全文证据级深读，笔记见 <code>docs/paper_notes/paper-ape-2022.md</code>、<code>paper-opro-2023.md</code>、<code>paper-dspy-2023.md</code>、<code>paper-miprov2-2024.md</code>、<code>paper-textgrad-2024.md</code>；连同已有的 ProTeGi/EvoPrompt/PromptBreeder 形成 APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA 的基线主干。仍待补的更早锚点：AutoPrompt、RLPrompt、GrIPS。）</li>
+<li>~~需要补读不一定在 top80 中的经典锚点：APE、OPRO、DSPy、MIPROv2、TextGrad 原始论文。~~（2026-06-10 已闭合：5 篇均完成全文证据级深读，笔记见 <code>docs/paper_notes/paper-ape-2022.md</code>、<code>paper-opro-2023.md</code>、<code>paper-dspy-2023.md</code>、<code>paper-miprov2-2024.md</code>、<code>paper-textgrad-2024.md</code>；连同已有的 ProTeGi/EvoPrompt/PromptBreeder 形成 APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA 的基线主干。仍待补的更早锚点：AutoPrompt、RLPrompt；GrIPS 已于 2026-06-12 补读（<code>docs/paper_notes/paper-grips-2022.md</code>，前史定位：免梯度编辑搜索早于 APE、无 LLM 生成器），同日补读 PromptAgent（<code>docs/paper_notes/paper-promptagent-2023.md</code>，MCTS 规划搜索缺环）。）</li>
 <li>2026-06-10 完成对照 3 篇综述（APO survey 2502.16923、APE survey 2502.11560、Context Engineering survey 2507.13334）的<strong>外部完整性校验</strong>，结论见 <code>docs/arxiv_taxonomy_completeness_check_20260610.md</code>：本 7 簇在"离散自然语言 prompt 优化"范围内无整块遗漏；查出的是簇内偏轻子机制（学习型评分/token 级编辑/bandit 筛选/MoE 路由）、需登记的 frontier（task-agnostic/online、constrained optimization、bi-level/thought-driven 推理模型、multi-task）、以及需显式声明的刻意边界（soft prompt、multimodal、完整 context-engineering 系统）。最高优先级单项补读：bi-level/thought-driven（o1/R1 推理模型）prompt 优化。</li>
 <li>当前矩阵尚未核验每篇论文的 train/dev/test 切分、成本和代码可用性。</li>
 <li>需要将 P0 论文逐篇转成 <code>docs/paper_notes/</code> 模板笔记，再决定最小实验候选。</li>
 <li>如果要从论文分类进入洞见和经验总结，先读 <code>docs/arxiv_top80_insights.md</code>，其中把主要论文条目提炼成了可验证的 insight cards。</li>
 <li>如果要从 taxonomy 进入可执行工作流，先读 <code>docs/arxiv_top80_action_playbook.md</code>，其中把主要问题拆成了具体症状、解决方案和最小实验。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_top80_taxonomy.md</code> 自动生成（2026-06-11 18:22 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_top80_taxonomy.md</code> 自动生成（2026-06-12 01:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">分析框架</a>
 <a class="lv2" href="#1-apo">方法簇 1：经典 APO 与基线锚点</a>

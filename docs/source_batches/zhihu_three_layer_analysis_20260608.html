@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知乎三层分析 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#a84055">知乎渠道</span><span class="doctitle">知乎三层分析</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="_1">知乎候选材料三层分析</h1>
+<p>更新时间：2026-06-09</p>
+<p>2026-06-09 内容整理补充：根据最新 insight-first 原则，面向最终报告的知乎洞见、helpful methods、anti-patterns 和最小验证候选已整理到 <a href="zhihu_insight_cards_20260609.html">知乎候选材料洞见与方法卡片</a>。本文件继续作为三层来源分析和追溯底稿。</p>
+<p>2026-06-10 补充两点：(1) 本文件各主题表中的"证据等级"（weak/medium/unknown）是快筛期粗判，仅供排序；权威 evidence_strength 以 <a href="zhihu_insight_cards_20260609.html">洞见与方法卡片</a> 收敛后的规范 A/B/C/D 为准。(2) 渠道级覆盖缺口：本批 Safety / Eval / Observability 仅约 2 条候选，明显低于覆盖矩阵对 eval/治理 的门槛（8 条）；知乎渠道在该方向应判定为弱覆盖，相关证据须从官方工具文档与其它渠道补齐，不在本渠道强行凑数。</p>
+<h2 id="_2">分析范围</h2>
+<p>本分析基于知乎批次候选的标题和 Brave Search 返回摘要，不基于全文深读。直接访问部分知乎链接时遇到 403，因此本文属于资料搜集阶段的快筛分析，不作为最终研究结论。</p>
+<ul>
+<li>原始候选：<code>artifacts/source_search/source_candidates_20260608_132914.jsonl</code></li>
+<li>Markdown 预览：<code>artifacts/source_search/source_candidates_20260608_132914.md</code></li>
+<li>候选数量：99 条</li>
+<li>相关性粗分：high 9，medium 65，low 25</li>
+<li>处理目标：从 99 条压缩出主题地图、优先深读来源和重点论文/框架追溯路径</li>
+</ul>
+<p>证据边界：</p>
+<ul>
+<li>知乎文章优先作为中文社区传播、工具生态和工程理解线索。</li>
+<li>涉及方法有效性、性能提升、成本下降、超越 RL 等主张，必须追溯原论文、官方文档、代码仓库或可复现实验。</li>
+<li>泛 prompt 技巧和工具营销类文章只保留少数代表，不进入核心证据链。</li>
+</ul>
+<h2 id="0">第 0 步：快筛结果</h2>
+<p>主题粗分存在重叠，一篇文章可能同时属于多个主题。根据标题和搜索摘要，当前批次的主要分布为：</p>
+<table>
+<thead>
+<tr>
+<th>主题</th>
+<th style="text-align: right;">粗略数量</th>
+<th>判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent / 自进化 / Hermes / Manus / Skill</td>
+<td style="text-align: right;">26</td>
+<td>数量最高，但证据噪声较大；需要回到项目、代码和原始文章核验</td>
+</tr>
+<tr>
+<td>APO / APE / OPRO / EvoPrompt / PRewrite</td>
+<td style="text-align: right;">19</td>
+<td>适合作为方法索引；多数是论文转述</td>
+</tr>
+<tr>
+<td>上下文工程 / Context Engineering</td>
+<td style="text-align: right;">17</td>
+<td>中文社区讨论很集中，是 prompt 到 context/workflow 转向的主要线索</td>
+</tr>
+<tr>
+<td>DSPy / MIPRO / prompt-as-program</td>
+<td style="text-align: right;">16</td>
+<td>与实验框架选择直接相关；优先找带代码和 metric 的文章</td>
+</tr>
+<tr>
+<td>GEPA / reflective prompt evolution</td>
+<td style="text-align: right;">15</td>
+<td>与自进化主线高度相关；但标题常有夸张表达</td>
+</tr>
+<tr>
+<td>工具实践 / Prompt Optimizer / OPIK / Coze</td>
+<td style="text-align: right;">12</td>
+<td>可补产品化和本土工具生态；只保留有 eval 或配置细节的文章</td>
+</tr>
+<tr>
+<td>泛 prompt 技巧</td>
+<td style="text-align: right;">8</td>
+<td>对本项目贡献较弱，多数降权</td>
+</tr>
+<tr>
+<td>Safety / Eval / Observability</td>
+<td style="text-align: right;">2</td>
+<td>数量少但与治理相关，后续应从官方工具文档补齐</td>
+</tr>
+</tbody>
+</table>
+<p>快筛结论：</p>
+<ol>
+<li>知乎材料最有价值的不是提供新方法，而是呈现中文社区如何把 APO、GEPA、DSPy 和上下文工程连接到 agent、自进化和工具实践。</li>
+<li>高相关材料明显集中在 2025-2026 年的 GEPA、DSPy/MIPROv2、上下文工程和 Hermes Agent 方向。</li>
+<li>工具类文章很多，但多数像体验介绍或推广文，需要用“是否有数据集、评分器、对比、失败案例、版本回滚”过滤。</li>
+</ol>
+<h2 id="_3">面向普通用户的洞见转写层</h2>
+<p>知乎批次的强项是“用户怎么理解、误解和使用这些方法”，不是证明方法有效。进入最终报告时，应优先把它转写成问题意识和通俗例子，再由论文、官方文档、代码或本项目实验补证据。</p>
+<table>
+<thead>
+<tr>
+<th>中文社区暴露的问题</th>
+<th>可转写成的具体洞见</th>
+<th>普通用户可以怎么做</th>
+<th>证据边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>很多文章还在寻找“万能提示词”。</td>
+<td>好 prompt 不是万能模板，而是和任务、样本、评分器绑定。</td>
+<td>先写 10-20 条自己的测试样本，再判断模板是否有用。</td>
+<td>泛技巧文章多数降权，只作用户痛点。</td>
+</tr>
+<tr>
+<td>GEPA 常被传播成“比 RL 更强”。</td>
+<td>更准确的洞见是：自然语言轨迹反思在某些任务上比只看标量 reward 信息更密。</td>
+<td>对有 trace 的任务，比较 <code>score-only</code> 和 <code>trace+critique</code> 两种改写。</td>
+<td>提升比例必须回到 GEPA 论文和本项目复现。</td>
+</tr>
+<tr>
+<td>DSPy/MIPRO 被简化成“自动写提示词”。</td>
+<td>更准确的洞见是：把 prompt、示例和 metric 写成程序组件，再由 optimizer 编译。</td>
+<td>把任务拆成 signature、examples、metric，而不是只维护聊天模板。</td>
+<td>中文文章可帮助理解术语，证据回到 DSPy/MIPRO。</td>
+</tr>
+<tr>
+<td>上下文工程文章很多。</td>
+<td>失败不一定来自 prompt，可能来自模型看到的上下文。</td>
+<td>单独检查 RAG 命中、memory、tool output、history compression、output schema。</td>
+<td>这是边界线索，不是自动 prompt optimizer 效果证据。</td>
+</tr>
+<tr>
+<td>Hermes / agent 自进化很吸引人。</td>
+<td>自进化不是“越记越多”，而是把有证据的失败模式、技能和回滚点沉淀下来。</td>
+<td>每条 memory/skill 都记录来源、适用范围、验证结果和禁用开关。</td>
+<td>目前多为 weak，需回到原项目、issue、代码和运行记录。</td>
+</tr>
+<tr>
+<td>工具体验文章常缺 eval。</td>
+<td>工具是否有用，看它是否让测试、版本、失败样例和回滚更容易。</td>
+<td>读工具文章时只抽取 dataset、metric、diff、cost、failure、rollback。</td>
+<td>没有这些字段的文章不进入核心证据链。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1">第 1 层：简要概述</h2>
+<p>知乎这批候选显示，中文社区已经从“提示词技巧”转向三类更工程化的问题。</p>
+<p>第一类是自动 prompt 优化。文章反复提到 APE、APO、OPRO、EvoPrompt、PRewrite、PromptBreeder、GEPA、DSPy/MIPROv2 等方法，说明中文材料足以帮助建立方法索引和中文术语表。但这些文章大多是论文或英文材料的二手解读，不能直接支撑性能结论。</p>
+<p>第二类是上下文工程。高相关候选中有多篇围绕 Context Engineering、agent context、memory、tool context、RAG context 和 Manus 经验展开。它们共同表达一个趋势：中文实践者已经不再把优化对象限定为单条 prompt，而是转向“模型在每一步看到什么上下文、工具和记忆”。这与本项目将优化对象扩展到 <code>prompt + examples + context + tools + evaluator</code> 的研究假设一致。</p>
+<p>第三类是工具和 agent 自进化实践。OPIK、Prompt Optimizer、PromptPilot、Coze、Hermes Agent 等候选说明中文生态中有不少工具化和产品化线索。它们的价值在于发现实际工作流、用户痛点和本土工具，而不是证明自动优化有效。</p>
+<p>本批次最值得继续追踪的方向是 GEPA/DSPy、上下文工程、Hermes Agent 自进化和带 eval 的工具实践。最需要降权的是泛 prompt 技巧、纯标题党工具推广和没有一手来源的论文速览。</p>
+<h2 id="2">第 2 层：主题详细分析</h2>
+<h3 id="21-apo-ape-opro-evoprompt-prewrite">2.1 APO / APE / OPRO / EvoPrompt / PRewrite</h3>
+<p>代表候选：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>URL</th>
+<th>价值</th>
+<th>证据等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自动生成prompt：Automatic prompt engineering</td>
+<td>https://zhuanlan.zhihu.com/p/672206721</td>
+<td>提到迭代生成、评估、选择 prompt，并指向 ProTeGi/APO</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>自动提示工程：APE，APO，EvoPrompt，OPRO，PE2</td>
+<td>https://zhuanlan.zhihu.com/p/16918997361</td>
+<td>适合做早期方法索引</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>LLM agent 专题（4）提示词自动优化：从 APE 的“找”、OPRO 的“悟”到 PRewrite 的“练”</td>
+<td>https://zhuanlan.zhihu.com/p/1993711012239664512</td>
+<td>覆盖 APE、OPRO、PRewrite，可作为追溯清单</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>通过 LLM 自我优化找到最优提示词的方法: OPRO</td>
+<td>https://zhuanlan.zhihu.com/p/661890697</td>
+<td>OPRO 中文解读</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>Auto Prompt 2025最新综述from Amazon</td>
+<td>https://zhuanlan.zhihu.com/p/1943346001843815123</td>
+<td>指向 Amazon/APO 综述框架，需追溯原文</td>
+<td>medium</td>
+</tr>
+</tbody>
+</table>
+<p>分析：</p>
+<p>这些文章的共同价值是把自动 prompt 优化从“手工调提示词”提升为“生成候选、评估、选择、迭代”的优化问题。它们可以帮助整理方法谱系，但当前搜索摘要里看不到足够实验细节。进入最终报告前，应回到 APE、ProTeGi/APO、OPRO、EvoPrompt、PRewrite 等论文。</p>
+<p>对本项目的用途：</p>
+<ul>
+<li>补充方法 taxonomy 的中文说明。</li>
+<li>帮助定义 baseline：manual prompt、APE-style、OPRO-style、ProTeGi-style。</li>
+<li>标记常见风险：样本过拟合、初始化敏感、评估器偏差。</li>
+</ul>
+<h3 id="22-gepa-prompt-evolution">2.2 GEPA / 反思式 prompt evolution</h3>
+<p>代表候选：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>URL</th>
+<th>价值</th>
+<th>证据等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>当提示词优化器学会进化，竟能胜过强化学习</td>
+<td>https://zhuanlan.zhihu.com/p/1934299196959199541</td>
+<td>GEPA 中文传播核心线索</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>DSPy GEPA: 将演化算法引入prompt优化</td>
+<td>https://zhuanlan.zhihu.com/p/1933283590302601451</td>
+<td>连接 GEPA 与 DSPy</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>GEPA：自然语言反思优化Prompt，比 RL 更高效的优化方法</td>
+<td>https://zhuanlan.zhihu.com/p/2026228834559697783</td>
+<td>强调自然语言反思信号</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>GEPA：反思性提示进化如何超越强化学习（GRPO等）</td>
+<td>候选 artifact 中第 55 条</td>
+<td>可能是论文复述</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>GEPA：反思性提示词进化可超越强化学习</td>
+<td>候选 artifact 中第 63 条</td>
+<td>可能是论文复述</td>
+<td>weak</td>
+</tr>
+</tbody>
+</table>
+<p>分析：</p>
+<p>知乎中的 GEPA 文章集中强调三个点：自然语言轨迹反思比标量 reward 信息密度更高，进化/Pareto 搜索能更高效选择候选，prompt 优化在某些设置下比 RL 更省样本。这些点与 GEPA 论文主张方向一致，但标题常出现“超越强化学习”等强表述，必须回到论文实验设置核验。</p>
+<p>对本项目的用途：</p>
+<ul>
+<li>作为“轨迹反思为什么可能比最终分数更有用”的中文传播线索。</li>
+<li>支撑后续最小实验候选：比较只看 score 的候选生成和看 failure trace 的候选生成。</li>
+<li>提醒最终报告必须明确 GEPA 的适用任务、baseline、rollout 成本、Pareto 选择和局限。</li>
+</ul>
+<p>不可直接采信：</p>
+<ul>
+<li>“效率提升 35 倍”“性能高 20%”等数字，必须追溯论文表格和任务设置。</li>
+<li>“不需要 RL”或“替代 RL”的泛化结论，应改写为特定实验条件下的观察。</li>
+</ul>
+<h3 id="23-dspy-mipro-prompt-as-program">2.3 DSPy / MIPRO / prompt-as-program</h3>
+<p>代表候选：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>URL</th>
+<th>价值</th>
+<th>证据等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自动写提示词：DSPy.MIPROv2的介绍与实践（附代码）</td>
+<td>https://zhuanlan.zhihu.com/p/18156572393</td>
+<td>若确有代码，优先深读</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>DSPy 的前世今生</td>
+<td>https://zhuanlan.zhihu.com/p/707184607</td>
+<td>解释 DSPy 技术演进</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>DSPy 使用从 0 到 1 快速上手</td>
+<td>https://zhuanlan.zhihu.com/p/707925423</td>
+<td>工程入门线索</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>DSPy Visualizer：可视化 Prompt 优化过程</td>
+<td>https://zhuanlan.zhihu.com/p/714277212</td>
+<td>可视化和 tracing 线索</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>DsPy优化提示词调研</td>
+<td>https://zhuanlan.zhihu.com/p/1955642727363478849</td>
+<td>调研线索，需核验内容深度</td>
+<td>unknown</td>
+</tr>
+</tbody>
+</table>
+<p>分析：</p>
+<p>DSPy 文章的价值在于把 prompt 优化放到“程序编译”语境中，强调 instruction、few-shot examples、metric 和 optimizer 的组合。MIPROv2 被描述为同时优化 instruction 和 few-shot examples，这与本项目关注“prompt 不是孤立字符串”高度一致。</p>
+<p>对本项目的用途：</p>
+<ul>
+<li>DSPy/MIPRO 可作为首个实验 harness 或 baseline 候选。</li>
+<li>这些文章可能补充中文开发者如何理解 module、signature、metric、teleprompter/optimizer。</li>
+<li>Visualizer 类文章可以帮助设计后续 run artifact 和 prompt diff 展示。</li>
+</ul>
+<p>需要追溯：</p>
+<ul>
+<li>DSPy 原论文和文档。</li>
+<li>MIPROv2 论文。</li>
+<li>GEPA in DSPy 的官方实现和 cookbook。</li>
+</ul>
+<h3 id="24-context-engineering">2.4 上下文工程 / Context Engineering</h3>
+<p>代表候选：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>URL</th>
+<th>价值</th>
+<th>证据等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一文搞懂：大语言模型的上下文工程</td>
+<td>https://zhuanlan.zhihu.com/p/1956359769540526470</td>
+<td>概述 RAG、memory、tool-use、多 agent</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>聊下 AI Agent 的上下文工程</td>
+<td>https://zhuanlan.zhihu.com/p/1932720788206778299</td>
+<td>连接实践者定义</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>LangChain 官方分享 LLM 的上下文工程技巧</td>
+<td>https://zhuanlan.zhihu.com/p/1920981931920693117</td>
+<td>可追溯 LangChain 官方来源</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Context Engineering，一篇就够了</td>
+<td>https://zhuanlan.zhihu.com/p/1938967453951571269</td>
+<td>传播定义和关键引用</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>从 Prompt 到 Context：基于 1400+ 论文的 Context Engineering 系统综述</td>
+<td>https://zhuanlan.zhihu.com/p/1951318616042631326</td>
+<td>指向系统综述和 Manus 经验</td>
+<td>medium</td>
+</tr>
+</tbody>
+</table>
+<p>分析：</p>
+<p>上下文工程是知乎批次中最密集的非 APO 主题。候选摘要反复提到动态系统、正确的信息和工具、RAG、记忆、工具增强推理、多智能体、KV cache 等概念。这说明中文社区已经将 prompt 优化的对象扩展到上下文窗口的组织和管理。</p>
+<p>对本项目的用途：</p>
+<ul>
+<li>支撑研究假设 H2：优化对象往往是 <code>prompt + examples + context + tools + evaluator</code>。</li>
+<li>为 agent/tool-use 最小实验提供任务设计方向。</li>
+<li>帮助定义不可自动改写层和可变层：业务目标/安全边界不可改，context selection、example selection、tool hint 可改。</li>
+</ul>
+<p>需要注意：</p>
+<ul>
+<li>很多上下文工程文章可能是概念传播，没有实验证据。</li>
+<li>应优先追溯 Anthropic、LangChain、Manus、context engineering survey 等原始来源。</li>
+</ul>
+<h3 id="25-prompt-optimizer-opik-coze">2.5 工具实践 / Prompt Optimizer / OPIK / Coze</h3>
+<p>代表候选：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>URL</th>
+<th>价值</th>
+<th>证据等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPIK：一个开源的自动提示词优化框架</td>
+<td>https://zhuanlan.zhihu.com/p/1998120566998204578</td>
+<td>工具实践线索，摘要提到评分函数和迭代优化</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>AI 提示词不会写？试试 Prompt Optimizer</td>
+<td>https://zhuanlan.zhihu.com/p/28302950149</td>
+<td>工具体验，需降权</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>Prompt-Optimizer: AI 提示词优化神器全攻略</td>
+<td>https://zhuanlan.zhihu.com/p/1892351710292332883</td>
+<td>开源工具线索，需查 GitHub</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>PromptPilot：提示词优化工程终结者？</td>
+<td>https://zhuanlan.zhihu.com/p/1916783655751250271</td>
+<td>产品体验线索</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>结构化提示词（三）：字节跳动 Coze 提示词优化器</td>
+<td>https://zhuanlan.zhihu.com/p/701894071</td>
+<td>本土平台线索</td>
+<td>weak</td>
+</tr>
+</tbody>
+</table>
+<p>分析：</p>
+<p>工具类文章可以补充“真实用户如何使用 prompt optimizer”的视角，但它们最容易混入营销和体验文。只有包含数据集、评分器、对比结果、成本、失败案例或版本管理的文章，才值得进入行业笔记。</p>
+<p>筛选标准：</p>
+<ul>
+<li>是否说明输入样本来源。</li>
+<li>是否说明 evaluator 或评分函数。</li>
+<li>是否记录优化前后指标，而不是只展示主观输出。</li>
+<li>是否有版本管理、回滚或人工审核。</li>
+<li>是否提到安全边界和不可改写约束。</li>
+</ul>
+<h3 id="26-agent-hermes-skill-manus">2.6 Agent 自进化 / Hermes / Skill / Manus</h3>
+<p>代表候选：</p>
+<table>
+<thead>
+<tr>
+<th>候选</th>
+<th>URL</th>
+<th>价值</th>
+<th>证据等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>当 AI 开始自我进化：Hermes Agent 到底改变了什么？</td>
+<td>https://zhuanlan.zhihu.com/p/2032842861587252215</td>
+<td>连接 self-evolution 与 GEPA/DSPy</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Hermes Agent：「会自我进化」的开源 AI Agent</td>
+<td>https://zhuanlan.zhihu.com/p/2026106192003437649</td>
+<td>已有行业笔记线索，需继续核验</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>开源 AI 智能体 HermesAgent 与 Openclaw 各具设计哲学</td>
+<td>https://www.zhihu.com/question/2025650365819810327</td>
+<td>对比型线索，需核验原项目</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>使用 Hermes Agent 是什么样的体验？</td>
+<td>https://www.zhihu.com/question/2027666092630319823</td>
+<td>用户体验线索</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>YC 揭秘顶尖 AI 智能体 Prompt 工程</td>
+<td>https://zhuanlan.zhihu.com/p/1912633580997309973</td>
+<td>meta-prompting / agent workflow 线索</td>
+<td>weak</td>
+</tr>
+</tbody>
+</table>
+<p>分析：</p>
+<p>Agent 自进化类材料与本项目长期目标直接相关，但证据链最容易断。摘要中出现“自动优化 skill、system prompt、工具描述、工具实现代码”等强主张，必须回到 Hermes/OpenClaw 项目、issue、代码和官方说明验证。</p>
+<p>对本项目的用途：</p>
+<ul>
+<li>提供“prompt 自进化不只改 prompt 文本”的实际案例线索。</li>
+<li>帮助设计后续 memory/self-evolution 方案中的可变层：skill、tool description、reflection policy、prompt generator。</li>
+<li>提醒自进化系统必须有版本、回滚、审批和安全边界。</li>
+</ul>
+<h2 id="3">第 3 层：重点内容追溯</h2>
+<h3 id="31-gepa-prompt">3.1 GEPA：反思式 prompt 进化</h3>
+<p>知乎中的理解：</p>
+<ul>
+<li>把 GEPA 概括为使用自然语言反思和进化搜索优化 prompt。</li>
+<li>强调相较 RL / GRPO 的样本效率。</li>
+<li>将其与 DSPy、agent prompt optimization、自进化系统连接。</li>
+</ul>
+<p>一手追溯目标：</p>
+<ul>
+<li>GEPA 论文：任务设置、baseline、rollout 数、Pareto selection、失败案例。</li>
+<li>GEPA / DSPy 官方实现：optimizer API、artifact、metric 要求。</li>
+<li>Hugging Face cookbook / Arize 等工程实践：是否复现或只演示。</li>
+</ul>
+<p>本项目转化：</p>
+<ul>
+<li>最小实验候选：score-only APO vs trace-reflection APO。</li>
+<li>记录字段：原 prompt、失败轨迹、reflection、candidate prompt、dev/validation 分数、成本、回滚点。</li>
+</ul>
+<h3 id="32-dspy-miprov2prompt-as-program-baseline">3.2 DSPy / MIPROv2：prompt-as-program baseline</h3>
+<p>知乎中的理解：</p>
+<ul>
+<li>把 instruction 和 few-shot examples 视为可优化参数。</li>
+<li>把 prompt 开发比作从手写提示词转向 compile。</li>
+<li>强调 metric 和 optimizer 的角色。</li>
+</ul>
+<p>一手追溯目标：</p>
+<ul>
+<li>DSPy 文档和论文。</li>
+<li>MIPROv2 论文。</li>
+<li>DSPy GEPA cookbook。</li>
+</ul>
+<p>本项目转化：</p>
+<ul>
+<li>作为首个可复现实验 harness 的强候选。</li>
+<li>用 typed signature / module / metric 固化任务边界，避免纯文本 prompt 漂移。</li>
+</ul>
+<h3 id="33-ape-opro-evoprompt-prewrite-apo">3.3 APE / OPRO / EvoPrompt / PRewrite：早期 APO 方法谱系</h3>
+<p>知乎中的理解：</p>
+<ul>
+<li>APE：LLM 生成候选 instruction，按任务分数选择。</li>
+<li>APO / ProTeGi：利用失败样本生成自然语言 critique，再改写 prompt。</li>
+<li>OPRO：用 LLM 基于历史候选和分数继续提出更好解。</li>
+<li>PRewrite：通过 RL 训练 prompt rewriter。</li>
+</ul>
+<p>一手追溯目标：</p>
+<ul>
+<li>APE、ProTeGi、OPRO、EvoPrompt、PRewrite 原论文。</li>
+<li>各方法的训练/开发/测试数据切分和过拟合控制。</li>
+</ul>
+<p>本项目转化：</p>
+<ul>
+<li>形成 baseline 顺序：manual -&gt; few-shot -&gt; APE-style -&gt; ProTeGi-style -&gt; GEPA-style。</li>
+<li>用这些方法拆解候选生成、反馈信号、候选选择和优化对象。</li>
+</ul>
+<h3 id="34-context-engineering-prompt">3.4 Context Engineering：从 prompt 到系统上下文</h3>
+<p>知乎中的理解：</p>
+<ul>
+<li>上下文工程是给 LLM 提供完成任务所需信息、工具和格式的动态系统。</li>
+<li>典型实现包括 RAG、memory、tool-use、多 agent、context compression 和 KV cache 设计。</li>
+<li>对 agent 系统而言，prompt 只是上下文管理的一部分。</li>
+</ul>
+<p>一手追溯目标：</p>
+<ul>
+<li>Context Engineering survey。</li>
+<li>Anthropic / LangChain / Manus 相关工程文。</li>
+<li>RAG/tool-use/agent workflow 中 context selection 和 memory 的失败案例。</li>
+</ul>
+<p>本项目转化：</p>
+<ul>
+<li>扩展优化对象，不只优化 instruction。</li>
+<li>建立可变层/不可变层：context selection、examples、tool hint 可变；安全边界、权限和业务目标不可变。</li>
+</ul>
+<h3 id="35-eval-driven-workflow">3.5 工具实践：从“优化提示词”到 eval-driven workflow</h3>
+<p>知乎中的理解：</p>
+<ul>
+<li>OPIK、Prompt Optimizer、PromptPilot、Coze 等工具提供自动生成、优化、测试、对比、管理 prompt 的体验。</li>
+<li>有些工具只是重写提示词，有些可能包含 dataset、evaluator 和迭代优化。</li>
+</ul>
+<p>一手追溯目标：</p>
+<ul>
+<li>OPIK / Prompt Optimizer / Coze / PromptPilot 官方文档和代码。</li>
+<li>是否有 prompt versioning、eval、成本记录、rollback 和人工审批。</li>
+</ul>
+<p>本项目转化：</p>
+<ul>
+<li>不是复刻工具 UI，而是抽取治理流程：dataset -&gt; candidate -&gt; eval -&gt; diff -&gt; approval -&gt; rollback。</li>
+<li>建立工具实践评价清单，用于行业经验整理。</li>
+</ul>
+<h2 id="_4">建议保留 / 深读 / 排除清单</h2>
+<h3 id="_5">优先保留并深读</h3>
+<table>
+<thead>
+<tr>
+<th>主题</th>
+<th>候选</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA</td>
+<td><code>当提示词优化器学会进化，竟能胜过强化学习</code>、<code>DSPy GEPA: 将演化算法引入prompt优化</code>、<code>GEPA：自然语言反思优化Prompt，比 RL 更高效的优化方法</code></td>
+</tr>
+<tr>
+<td>DSPy/MIPRO</td>
+<td><code>自动写提示词：DSPy.MIPROv2的介绍与实践（附代码）</code>、<code>DSPy 的前世今生</code>、<code>DSPy Visualizer</code></td>
+</tr>
+<tr>
+<td>APO 谱系</td>
+<td><code>LLM agent 专题（4）提示词自动优化</code>、<code>自动提示工程：APE，APO，EvoPrompt，OPRO，PE2</code>、<code>通过 LLM 自我优化找到最优提示词的方法: OPRO</code></td>
+</tr>
+<tr>
+<td>Context Engineering</td>
+<td><code>LangChain官方分享LLM的上下文工程技巧</code>、<code>从 Prompt 到 Context</code>、<code>Context Engineering，一篇就够了</code></td>
+</tr>
+<tr>
+<td>Agent 自进化</td>
+<td><code>Hermes Agent：「会自我进化」的开源 AI Agent</code>、<code>当 AI 开始自我进化：Hermes Agent 到底改变了什么？</code></td>
+</tr>
+<tr>
+<td>工具实践</td>
+<td><code>OPIK：一个开源的自动提示词优化框架</code>、<code>Prompt-Optimizer: AI 提示词优化神器全攻略</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">仅作线索</h3>
+<ul>
+<li>论文速览、论文日报、热点解码类文章。</li>
+<li>工具介绍但没有 eval、数据集、代码或失败案例的文章。</li>
+<li>纯传播 GEPA 结论、没有额外信息的文章。</li>
+</ul>
+<h3 id="_7">倾向排除</h3>
+<ul>
+<li>泛 prompt 技巧、黄金法则、万能提示词。</li>
+<li>标题相关但摘要只涉及普通 prompt engineering。</li>
+<li>与 prompt optimization 主线弱相关的多模态或安全论文汇总，除非后续专门做 safety/eval 扩展。</li>
+</ul>
+<h2 id="_8">下一步</h2>
+<ol>
+<li>选择 15-20 篇 P1/P2 候选做全文核验；如需留存全文，放入 <code>local_sources/raw/</code> 并记录 SHA256。</li>
+<li>对进入深读的单篇来源，使用 <code>docs/industry_notes/template.md</code>。</li>
+<li>建立 <code>知乎来源 -&gt; 一手论文/官方文档/代码</code> 的追溯表。</li>
+<li>将最终保留来源登记到 <code>docs/source_inventory.md</code>，不要批量导入 99 条。</li>
+<li>从 GEPA、DSPy/MIPRO、Context Engineering 三条线各抽一个最小实验或工程方案候选。</li>
+</ol>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/source_batches/zhihu_three_layer_analysis_20260608.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="../analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_2">分析范围</a>
+<a class="lv2" href="#0">第 0 步：快筛结果</a>
+<a class="lv2" href="#_3">面向普通用户的洞见转写层</a>
+<a class="lv2" href="#1">第 1 层：简要概述</a>
+<a class="lv2" href="#2">第 2 层：主题详细分析</a>
+<a class="lv3" href="#21-apo-ape-opro-evoprompt-prewrite">2.1 APO / APE / OPRO / EvoPrompt / PRewrite</a>
+<a class="lv3" href="#22-gepa-prompt-evolution">2.2 GEPA / 反思式 prompt evolution</a>
+<a class="lv3" href="#23-dspy-mipro-prompt-as-program">2.3 DSPy / MIPRO / prompt-as-program</a>
+<a class="lv3" href="#24-context-engineering">2.4 上下文工程 / Context Engineering</a>
+<a class="lv3" href="#25-prompt-optimizer-opik-coze">2.5 工具实践 / Prompt Optimizer / OPIK / Coze</a>
+<a class="lv3" href="#26-agent-hermes-skill-manus">2.6 Agent 自进化 / Hermes / Skill / Manus</a>
+<a class="lv2" href="#3">第 3 层：重点内容追溯</a>
+<a class="lv3" href="#31-gepa-prompt">3.1 GEPA：反思式 prompt 进化</a>
+<a class="lv3" href="#32-dspy-miprov2prompt-as-program-baseline">3.2 DSPy / MIPROv2：prompt-as-program baseline</a>
+<a class="lv3" href="#33-ape-opro-evoprompt-prewrite-apo">3.3 APE / OPRO / EvoPrompt / PRewrite：早期 APO 方法谱系</a>
+<a class="lv3" href="#34-context-engineering-prompt">3.4 Context Engineering：从 prompt 到系统上下文</a>
+<a class="lv3" href="#35-eval-driven-workflow">3.5 工具实践：从“优化提示词”到 eval-driven workflow</a>
+<a class="lv2" href="#_4">建议保留 / 深读 / 排除清单</a>
+<a class="lv3" href="#_5">优先保留并深读</a>
+<a class="lv3" href="#_6">仅作线索</a>
+<a class="lv3" href="#_7">倾向排除</a>
+<a class="lv2" href="#_8">下一步</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitter/X 渠道分析 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#2d5fa8">Twitter/X 渠道</span><span class="doctitle">Twitter/X 渠道分析</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="twitterx-posts-2026-06-08">Twitter/X 候选 posts 分析：2026-06-08</h1>
+<p>2026-06-09 补充：按最新 insight-first 内容整理原则，新增详细的 <a href="twitter_web_insight_cards_20260609.html">Twitter/X 社媒线索洞见卡</a>。本页保留 source cards、追溯表和排除清单；新增文档负责把社媒线索转成 insight、helpful method、反模式和验证候选。</p>
+<p>本页承接 <a href="twitter_web_parallel_brief_20260608.md">Twitter/X 候选 posts 并发分析包</a>，用于把 <code>artifacts/source_search/source_candidates_20260608_133117.jsonl</code> 中的 120 条 X/Twitter 搜索候选沉淀成可追溯线索。</p>
+<p>分析口径：</p>
+<ul>
+<li>使用 Brave Search 返回的 X/Twitter 标题和摘要片段做快筛，没有通过 X API 拉取完整 thread、互动指标或转发关系。</li>
+<li>X post 只作为社媒观察、作者解释、发布公告或一手来源索引；方法有效性必须回到论文、官方文档、代码、blog、demo 或可复现实验。</li>
+<li>本页的 <code>evidence_level</code> 表示“该 X 线索和已追溯来源合在一起”的证据强度，不表示社媒热度。</li>
+</ul>
+<h2 id="1">1. 概述</h2>
+<p>Twitter/X 批次的中心是 GEPA、DSPy 和 MIPRO。高相关候选中，Omar Khattab、Lakshya A Agrawal、Michael Ryan、Krista Opsahl-Ong、DSPy 官方账号等原作者或维护者反复把 GEPA/MIPRO 放在 DSPy 的 optimizer 生态中解释，而不是把它们当成孤立 prompt 技巧。关键区分是：</p>
+<ul>
+<li>GEPA：基于执行轨迹、自然语言反思、文本组件变异和 Pareto 选择的 reflective prompt evolution。</li>
+<li>MIPRO/MIPROv2：联合优化 instruction 和 few-shot demonstrations 的 DSPy optimizer。</li>
+<li>DSPy：不是单纯 prompt optimizer，而是用 signatures、modules、metrics 和 optimizers 描述并编译 LM program 的编程模型。</li>
+</ul>
+<p>社媒材料的新增价值主要是“落地线索”，不是新结论。X 批次把论文方法连接到了 Pydantic AI/Evals、Salesforce Promptomatix、LangChain Promptim/AutoPrompt、Microsoft PromptWizard、Google Vertex AI Prompt Optimizer、Sentient ROMA、DSPyground、LangSmith prompt versioning、AI safety/control 等工程场景。这些来源值得进一步深读，因为它们更可能包含 dataset、metric、evaluator、prompt diff、cost、rollback 和失败模式。</p>
+<p>同时，X 批次暴露出明显噪声：媒体转发和论文摘要帖重复传播 GEPA 结论；“Lyra/4-D methodology”等万能 prompt 模板与本项目的 eval-driven optimizer 主线关系弱；<code>GEPA</code> 同名机构账号和 JavaScript-disabled 页面会产生误召回；一些工具推广帖没有代码、文档或 eval，只能排除或保留为传播信号。</p>
+<p>初步结论：</p>
+<ol>
+<li>GEPA 已成为 2025-2026 社区讨论 prompt self-evolution 的核心入口，但必须把“反思式 prompt evolution”与“RL 替代品”这种过度简化分开。</li>
+<li>DSPy 在社媒中的传播常被简化为自动 prompt optimization；原作者线索提示更准确的定位是 prompt-as-program / LM program framework。</li>
+<li>工程侧最有价值的不是“自动改 prompt”口号，而是围绕训练/验证 split、metrics、traces、versioning、rollback 和人工发布门槛建立闭环。</li>
+</ol>
+<h2 id="11">1.1 可转写成具体洞见的社媒线索</h2>
+<p>这一层用于服务最终报告：X/Twitter 不提供最终证据，但它能发现“读者一眼能懂”的方法入口。每条进入报告前都必须追溯到论文、官方文档、代码或可复现实验。详细字段、方法候选、反模式和验证候选见 <a href="twitter_web_insight_cards_20260609.html">Twitter/X 社媒线索洞见卡</a>。</p>
+<table>
+<thead>
+<tr>
+<th>社媒线索可转写成的具体洞见</th>
+<th>普通用户怎么理解</th>
+<th>需要追溯的一手证据</th>
+<th>当前处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“让模型写 prompt”不是让模型自由发挥，而是让它在 metric 和 trace 约束下改 prompt。</td>
+<td>先定义测试集和评分器，再让模型提出候选；没有 eval 的自动优化只是高级改写。</td>
+<td>DSPy / GEPA / Pydantic GEPA / Promptim 文档和实验配置。</td>
+<td>作为 eval-first 方法卡片候选。</td>
+</tr>
+<tr>
+<td>GEPA 的关键不是“替代 RL”口号，而是用执行轨迹生成反思，再保留多个候选。</td>
+<td>如果任务有工具调用、编译错误、judge 解释，优化器应读取这些过程信息，而不是只看最终分数。</td>
+<td>GEPA paper、repo、DSPy GEPA docs。</td>
+<td>作为 trace-aware prompt evolution 候选。</td>
+</tr>
+<tr>
+<td>Prompt-as-program 让 prompt 更容易维护和换模型。</td>
+<td>把任务写成 signature/module/metric，而不是在聊天框里维护一大段模板。</td>
+<td>DSPy paper/docs、Drew Breunig writeup。</td>
+<td>作为工程可维护性卡片，非效果结论。</td>
+</tr>
+<tr>
+<td>Prompt Hub 的 diff / rollback 是 prompt 优化的基础设施。</td>
+<td>新 prompt 要像代码一样有 commit、环境、owner、回滚。</td>
+<td>LangSmith manage prompts 官方文档。</td>
+<td>已进入行业实践和工具地图。</td>
+</tr>
+<tr>
+<td>Context engineering 和 prompt optimization 不是同一个变量。</td>
+<td>有时该改的是检索、memory、tool result format，而不是 system prompt。</td>
+<td>LangChain context engineering、12-factor agents。</td>
+<td>作为边界卡片，避免最终报告混因果。</td>
+</tr>
+<tr>
+<td>社媒热度本身不算证据。</td>
+<td>多个账号转发同一论文，只说明传播强，不说明方法更有效。</td>
+<td>需要回到 arXiv、官方 docs、repo 或本项目实验。</td>
+<td>作为证据等级说明保留。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-source-cards">2. Source Cards</h2>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>X 线索</th>
+<th>role</th>
+<th>topic</th>
+<th>claim_type</th>
+<th>linked_primary_source</th>
+<th>evidence_level</th>
+<th>project_value</th>
+<th>next_action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>candidate-twitter-web-647c2de10f</td>
+<td>Omar Khattab：GEPA / natural-language reflection</td>
+<td>framework_maintainer</td>
+<td>GEPA</td>
+<td>method_explanation</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a>, <a href="https://github.com/gepa-ai/gepa">GEPA repo</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>strong</td>
+<td>原作者/维护者视角，可锚定 reflective prompt evolution 定义</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-574ce9d0a1</td>
+<td>Lakshya A Agrawal：GEPA 与 GRPO rollout 对比</td>
+<td>paper_author</td>
+<td>GEPA</td>
+<td>benchmark_claim</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a></td>
+<td>strong</td>
+<td>论文作者解释，适合追踪 rollout、任务和指标边界</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-038825c3e2</td>
+<td>Omar Khattab：GRPO / MIPRO / GEPA optimizer taxonomy</td>
+<td>framework_maintainer</td>
+<td>DSPy</td>
+<td>method_explanation</td>
+<td><a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a>, <a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a></td>
+<td>strong</td>
+<td>可用于 final report 的 optimizer taxonomy</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-37f35971f0</td>
+<td>Lakshya A Agrawal：GEPA 是 prompt optimizer 也是 text evolution engine</td>
+<td>paper_author</td>
+<td>GEPA</td>
+<td>method_explanation</td>
+<td><a href="https://github.com/gepa-ai/gepa">GEPA repo</a>, <a href="https://gepa-ai.github.io/gepa/tutorials/">GEPA tutorials</a></td>
+<td>medium</td>
+<td>帮助避免把 GEPA 只理解成单 prompt rewrite</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-9dd8e21eb4</td>
+<td>Omar Khattab：DSPy 是 programming model，不只是 prompt optimizer</td>
+<td>framework_maintainer</td>
+<td>DSPy</td>
+<td>method_explanation</td>
+<td><a href="https://arxiv.org/abs/2310.03714">DSPy paper</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>strong</td>
+<td>明确 DSPy 在本项目中的框架定位</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-08c641a574</td>
+<td>DSPy 官方：AI safety/control 中的 prompt optimization</td>
+<td>framework_maintainer</td>
+<td>eval/governance</td>
+<td>benchmark_claim</td>
+<td><a href="https://www.greaterwrong.com/posts/bALBxf3yGGx4bvvem/prompt-optimization-can-enable-ai-control-research">Prompt optimization can enable AI control research</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>medium</td>
+<td>与 safety、audit budget、monitor eval 直接相关</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-8c1041f057</td>
+<td>Simon Willison：Drew Breunig 的 DSPy talk/notes</td>
+<td>practitioner</td>
+<td>DSPy</td>
+<td>pointer_only</td>
+<td><a href="https://feeds.simonwillison.net/tags/drew-breunig/">Simon Willison tag feed</a>, <a href="https://www.dbreunig.com/2025/06/10/let-the-model-write-the-prompt.html">Drew Breunig writeup</a></td>
+<td>medium</td>
+<td>工程解释清晰，适合做实践线索，不作论文证据</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-740ad89298</td>
+<td>Drew Breunig：DSPy 的 maintainability / DX</td>
+<td>practitioner</td>
+<td>DSPy</td>
+<td>opinion</td>
+<td><a href="https://www.dbreunig.com/2025/06/10/let-the-model-write-the-prompt.html">Drew Breunig writeup</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>medium</td>
+<td>提示 prompt-as-program 的工程收益：可维护、可换模型、可复评</td>
+<td>cite_as_social_signal</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-ce0558cf83</td>
+<td>Krista Opsahl-Ong：MIPRO / multi-stage LM pipelines 访谈</td>
+<td>paper_author</td>
+<td>MIPRO</td>
+<td>pointer_only</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a></td>
+<td>medium</td>
+<td>作者线索，适合追踪 MIPRO 在 DSPy 中的定位</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-261ef92248</td>
+<td>Michael Ryan：MIPROv2 live in DSPy</td>
+<td>paper_author</td>
+<td>MIPRO</td>
+<td>release_announcement</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a></td>
+<td>strong</td>
+<td>MIPROv2 进入 baseline 候选的官方/作者线索</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-fcffb2c37d</td>
+<td>Omar Khattab：MIPRO optimizer announcement</td>
+<td>framework_maintainer</td>
+<td>MIPRO</td>
+<td>release_announcement</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>strong</td>
+<td>用于解释 MIPRO 如何优化多 prompt LM programs</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-a62d1f4b3a</td>
+<td>Salesforce AI Research：Promptomatix 发布</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/SalesforceAIResearch/promptomatix">Promptomatix repo</a>, <a href="https://arxiv.org/abs/2507.14241">Promptomatix arXiv</a></td>
+<td>strong</td>
+<td>产品/框架化 APO 线索，含论文和代码</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-cc0ff6cc3b</td>
+<td>Pydantic：GEPA + Pydantic AI/Evals 技术博客</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://pydantic.dev/articles/prompt-optimization-with-gepa">Pydantic GEPA article</a></td>
+<td>strong</td>
+<td>明确 eval harness、Agent.override、OpenTelemetry tracing 等工程字段</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-935f6f6975</td>
+<td>LangChain：AutoPrompt / prompt optimization framework</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/Eladlev/AutoPrompt">AutoPrompt repo</a>, <a href="https://www.langchain.com/blog/promptim">LangChain Promptim blog</a></td>
+<td>medium</td>
+<td>需要区分第三方 AutoPrompt 与 LangChain Promptim，保留为工具生态线索</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-521ea71731</td>
+<td>Microsoft Research：PromptWizard open source</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/microsoft/PromptWizard">PromptWizard repo</a>, <a href="https://arxiv.org/abs/2405.18369">PromptWizard arXiv</a></td>
+<td>strong</td>
+<td>self-evolving / feedback-driven prompt optimization 工程线索</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-59897b3054</td>
+<td>Google Cloud Tech：Vertex AI Prompt Optimizer</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-optimizer">Vertex AI prompt optimizer docs</a>, <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/zero-shot-optimizer">zero-shot optimizer docs</a></td>
+<td>strong</td>
+<td>官方产品化 prompt optimizer，关注 sample prompts、custom metrics、optimization job</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-324fae724b</td>
+<td>Matt Farmer：OpenAI official Prompt Optimizer 指针</td>
+<td>practitioner</td>
+<td>prompt optimizer tool</td>
+<td>pointer_only</td>
+<td><a href="https://platform.openai.com/docs/guides/prompt-optimizer/">OpenAI Prompt optimizer</a>, <a href="https://platform.openai.com/docs/guides/prompting">OpenAI prompting guide</a></td>
+<td>medium</td>
+<td>X 线索弱，但官方文档强；已在清单中作为 vendor practice</td>
+<td>cite_as_social_signal</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-2bab072fe3</td>
+<td>Sentient：ROMA V2 / GEPA+ component-wise prompt optimizer</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/sentient-agi/ROMA">ROMA repo</a>, <a href="https://github.com/sentient-agi/ROMA/releases">ROMA releases</a></td>
+<td>medium</td>
+<td>多 agent prompt component optimization 线索，需核验 GEPA+ 实现细节</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-d918a51680</td>
+<td>Tom Dörr：Agent prompt optimization with DSPy + GEPA / DSPyground</td>
+<td>practitioner</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/Scale3-Labs/dspyground">DSPyground repo</a></td>
+<td>medium</td>
+<td>有工具、采样、metrics、runs history，可作为 agent prompt optimizer 实践深读候选</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-1a2f952871</td>
+<td>Cameron Wolfe：四类 automatic prompt optimization algorithms</td>
+<td>practitioner</td>
+<td>APO survey</td>
+<td>pointer_only</td>
+<td><a href="https://arxiv.org/abs/2502.16923">APO survey</a>, <a href="https://arxiv.org/abs/2305.03495">ProTeGi</a>, <a href="https://arxiv.org/abs/2211.01910">APE</a></td>
+<td>medium</td>
+<td>适合作为学习和传播线索，不作实证结论</td>
+<td>cite_as_social_signal</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-22b94ebaff</td>
+<td>Tim Rocktäschel：PromptBreeder 发布</td>
+<td>paper_author</td>
+<td>GEPA</td>
+<td>release_announcement</td>
+<td><a href="https://arxiv.org/abs/2309.16797">PromptBreeder arXiv</a></td>
+<td>strong</td>
+<td>self-referential prompt evolution 历史锚点</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-b22f5a7858</td>
+<td>LangChain：LangSmith Prompt Hub diff / rollback</td>
+<td>vendor</td>
+<td>eval/governance</td>
+<td>release_announcement</td>
+<td><a href="https://docs.langchain.com/langsmith/manage-prompts">LangSmith manage prompts</a></td>
+<td>strong</td>
+<td>补足 prompt versioning、diff、commit、rollback 工程证据</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-0330627d80</td>
+<td>Harrison Chase：context engineering 定义</td>
+<td>framework_maintainer</td>
+<td>context engineering</td>
+<td>method_explanation</td>
+<td><a href="https://www.langchain.com/blog/the-rise-of-context-engineering">LangChain context engineering blog</a>, <a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a></td>
+<td>medium</td>
+<td>用于解释 prompt optimization 与 context engineering 的边界</td>
+<td>cite_as_social_signal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-x-primary-source">3. X -&gt; Primary Source 追溯表</h2>
+<table>
+<thead>
+<tr>
+<th>X 线索簇</th>
+<th>追溯到的一手来源</th>
+<th>当前判断</th>
+<th>后续动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA 作者/维护者 posts</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a>, <a href="https://github.com/gepa-ai/gepa">GEPA repo</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>核心强证据；X 只作作者解释索引</td>
+<td>GEPA 单篇 paper note；核验 tasks、rollout、cost、failure cases</td>
+</tr>
+<tr>
+<td>MIPRO/MIPROv2 posts</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO arXiv</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a></td>
+<td>核心 baseline 候选</td>
+<td>与 GEPA、ProTeGi、PromptBreeder 放入 optimizer taxonomy</td>
+</tr>
+<tr>
+<td>DSPy programming model posts</td>
+<td><a href="https://arxiv.org/abs/2310.03714">DSPy arXiv</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>框架定位强证据</td>
+<td>避免在报告中把 DSPy 简化为 prompt optimizer</td>
+</tr>
+<tr>
+<td>AI safety/control post</td>
+<td><a href="https://www.greaterwrong.com/posts/bALBxf3yGGx4bvvem/prompt-optimization-can-enable-ai-control-research">GreaterWrong article</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>中等证据；需核验任务、audit budget、baseline</td>
+<td>作为 eval/governance 深读候选</td>
+</tr>
+<tr>
+<td>Drew Breunig / Simon Willison posts</td>
+<td><a href="https://www.dbreunig.com/2025/06/10/let-the-model-write-the-prompt.html">Drew writeup</a>, <a href="https://feeds.simonwillison.net/tags/drew-breunig/">Simon tag feed</a></td>
+<td>高质量工程解释，但不是方法实证</td>
+<td>抽取 maintainability、model switching、metric-first 实践</td>
+</tr>
+<tr>
+<td>Promptomatix post</td>
+<td><a href="https://github.com/SalesforceAIResearch/promptomatix">Promptomatix repo</a>, <a href="https://arxiv.org/abs/2507.14241">Promptomatix arXiv</a></td>
+<td>论文+代码强证据</td>
+<td>登记 source_inventory；后续深读 framework 结构</td>
+</tr>
+<tr>
+<td>Pydantic GEPA post</td>
+<td><a href="https://pydantic.dev/articles/prompt-optimization-with-gepa">Pydantic article</a></td>
+<td>官方工程实践强证据</td>
+<td>登记 source_inventory；抽取 eval/tracing 字段</td>
+</tr>
+<tr>
+<td>LangChain AutoPrompt / Promptim posts</td>
+<td><a href="https://github.com/Eladlev/AutoPrompt">AutoPrompt repo</a>, <a href="https://www.langchain.com/blog/promptim">LangChain Promptim blog</a></td>
+<td>工具生态中等证据；名称需去重</td>
+<td>分开记录 AutoPrompt 与 Promptim</td>
+</tr>
+<tr>
+<td>Microsoft PromptWizard post</td>
+<td><a href="https://github.com/microsoft/PromptWizard">PromptWizard repo</a>, <a href="https://arxiv.org/abs/2405.18369">PromptWizard arXiv</a></td>
+<td>论文+代码强证据</td>
+<td>登记 source_inventory；判断是否进入 baseline</td>
+</tr>
+<tr>
+<td>Google Vertex AI Prompt Optimizer posts</td>
+<td><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-optimizer">Prompt optimizer docs</a>, <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/zero-shot-optimizer">zero-shot optimizer docs</a></td>
+<td>官方产品强证据</td>
+<td>与 OpenAI/Promptfoo/Langfuse/Humanloop 放入治理实践</td>
+</tr>
+<tr>
+<td>OpenAI prompt optimizer pointer posts</td>
+<td><a href="https://platform.openai.com/docs/guides/prompt-optimizer/">OpenAI Prompt optimizer</a>, <a href="https://platform.openai.com/docs/guides/prompting">OpenAI prompting</a></td>
+<td>官方文档强证据，X 线索弱</td>
+<td>已在行业实践中记录；继续核验迁移/弃用边界</td>
+</tr>
+<tr>
+<td>Sentient ROMA V2 post</td>
+<td><a href="https://github.com/sentient-agi/ROMA">ROMA repo</a>, <a href="https://github.com/sentient-agi/ROMA/releases">ROMA releases</a></td>
+<td>中等证据；release 提到 DSPy/GEPA support 和 known issues</td>
+<td>需深读实现，避免采信营销指标</td>
+</tr>
+<tr>
+<td>DSPyground post</td>
+<td><a href="https://github.com/Scale3-Labs/dspyground">DSPyground repo</a></td>
+<td>中等证据；README 含 samples、metrics、runs history</td>
+<td>登记 source_inventory；可作为 agent prompt optimizer 工具候选</td>
+</tr>
+<tr>
+<td>Context engineering posts</td>
+<td><a href="https://www.langchain.com/blog/the-rise-of-context-engineering">LangChain context engineering blog</a>, <a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a></td>
+<td>术语边界强于 prompt optimization 实证</td>
+<td>只用于边界章节，不混入 APO 方法证据</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4">4. 待排除或降级清单</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>代表 source_id / 来源</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>纯传播或论文标题转发</td>
+<td><code>candidate-twitter-web-038d289afe</code>, <code>candidate-twitter-web-86303509b7</code>, <code>candidate-twitter-web-f96f4aab2f</code>, <code>candidate-twitter-web-64c577cd52</code>, <code>candidate-twitter-web-5f1f82953f</code>, <code>candidate-twitter-web-6a57dcc1b7</code></td>
+<td>不进入 source card；只说明 GEPA 传播热度</td>
+</tr>
+<tr>
+<td>低信息量社区复述</td>
+<td><code>candidate-twitter-web-0b215316d4</code>, <code>candidate-twitter-web-7df6342ce6</code>, <code>candidate-twitter-web-0b65ed5035</code>, <code>candidate-twitter-web-c16526919c</code>, <code>candidate-twitter-web-680bffcb76</code></td>
+<td>降级为 weak social signal，除非能找到原始实验</td>
+</tr>
+<tr>
+<td>万能 prompt 模板 / Lyra 类内容</td>
+<td><code>candidate-twitter-web-674ff05fa3</code>, <code>candidate-twitter-web-0d8f610697</code>, <code>candidate-twitter-web-d2a97a41b9</code>, <code>candidate-twitter-web-e28fbc0eda</code>, <code>candidate-twitter-web-aaac36eaa9</code>, <code>candidate-twitter-web-78281d2d66</code>, <code>candidate-twitter-web-919bf6c092</code></td>
+<td>排除；与 eval-driven APO 主线弱相关</td>
+</tr>
+<tr>
+<td>仅工具推广且缺少代码/eval</td>
+<td><code>candidate-twitter-web-ead206b784</code>, <code>candidate-twitter-web-672c970436</code>, <code>candidate-twitter-web-f3f4d98861</code>, <code>candidate-twitter-web-9dacebdebb</code></td>
+<td>排除或暂不处理；有公开 repo 时再重开</td>
+</tr>
+<tr>
+<td>JavaScript-disabled / 片段不可读重复页</td>
+<td><code>candidate-twitter-web-4cc13224f0</code>, <code>candidate-twitter-web-b6bf34697e</code>, <code>candidate-twitter-web-7f94bda7d4</code>, <code>candidate-twitter-web-ed4277c26b</code>, <code>candidate-twitter-web-1ae1787848</code></td>
+<td>仅在能核验完整 post/thread 时恢复</td>
+</tr>
+<tr>
+<td><code>GEPA</code> 同名误召回</td>
+<td><code>candidate-twitter-web-4a225a5f5c</code>, <code>candidate-twitter-web-1a6a1db4d2</code>, <code>candidate-twitter-web-c815bfc2a7</code>, <code>candidate-twitter-web-b2d1f9c6c8</code></td>
+<td>排除</td>
+</tr>
+<tr>
+<td>泛 context engineering / agent 热点但无 prompt optimizer 关系</td>
+<td><code>candidate-twitter-web-172c6e920f</code>, <code>candidate-twitter-web-98008fe94e</code>, <code>candidate-twitter-web-1e0dc10f30</code>, 多个低相关 <code>meng shao</code> posts</td>
+<td>只在 context engineering 章节作为背景，不进入 APO 核心</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>候选去向账目（避免静默截断）：120 条候选中，§2 转出 21 张 source card（覆盖可追溯到一手来源的 high/medium 条目）；本节显式排除/降级约 34 条 + <code>meng shao</code> 等低相关簇。其余约 60 条为同一 arXiv / 同一发布的重复页、二次转发或片段不可读，统一计入传播热度、不单独成卡。若后续需要更细的逐条账目，可回到原始 artifact <code>artifacts/source_search/source_candidates_20260608_133117.jsonl</code> 复核。</p>
+</blockquote>
+<h2 id="5">5. 后续动作</h2>
+<ol>
+<li>优先写 GEPA、MIPROv2、PromptBreeder 的 paper notes，形成 prompt evolution / prompt-as-program 基线链路。</li>
+<li>对 Pydantic GEPA、Promptomatix、DSPyground、PromptWizard、LangChain Promptim、Google Vertex AI Prompt Optimizer 做行业实践深读，抽取 dataset、metric、trace、versioning、rollback、cost、failure cases。</li>
+<li>对 DSPy AI safety/control 线索做单独核验：确认 benchmark、audit budget、baseline、learned prompts 和限制。</li>
+<li>对 Sentient ROMA V2 只保留为 agent prompt optimizer 线索，待代码深读后再判断是否进入正式证据。</li>
+<li>最终报告中将 Twitter/X 批次标为“社媒传播与一手来源发现层”，不把 X post 数量或互动热度当成证据强度。</li>
+<li>核验进度（status）：截至本次整理，§2 source card 的 <code>next_action</code>（trace_primary / write_note / source_inventory）与 <a href="twitter_web_parallel_brief_20260608.md">并发分析包</a> 的 7 个 P1 核验项<strong>均为 pending</strong>；尚无 paper note 写出，故洞见卡 <code>main_sources</code> 暂填外部一手来源，待结构化笔记完成后替换为仓库内文件路径，并据此把证据等级从 B/D 升级或标注待验证。</li>
+</ol>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/source_batches/twitter_web_analysis_20260608.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="../analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#1">1. 概述</a>
+<a class="lv2" href="#11">1.1 可转写成具体洞见的社媒线索</a>
+<a class="lv2" href="#2-source-cards">2. Source Cards</a>
+<a class="lv2" href="#3-x-primary-source">3. X -&gt; Primary Source 追溯表</a>
+<a class="lv2" href="#4">4. 待排除或降级清单</a>
+<a class="lv2" href="#5">5. 后续动作</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>
