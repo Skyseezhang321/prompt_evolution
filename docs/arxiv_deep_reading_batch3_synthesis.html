@@ -83,7 +83,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <h1 id="arxiv-batch-3">arXiv 重点论文深读 Batch 3 综合判断</h1>
 <p>日期：2026-06-08</p>
 <p>2026-06-09 补充：新增“可转成普通用户方法的候选”层，用于把论文级判断转写成具体洞见卡片；原有学术结论和证据边界保留。</p>
-<p>2026-06-12 补充：新增「批次外深读」清单——经典锚点 7 篇（同日主线结构评审补读 GrIPS、PromptAgent 两篇）、综述 3 篇、对照基线 2 篇不属于任何 batch，批次累计 27 篇 + 批次外 12 篇 = arXiv 渠道深读笔记共 39 篇，全目录见 <code>docs/literature_map.md</code>；2025/2026 年 25 篇的时间切片综合见 <code>docs/arxiv_2025_2026_frontier_synthesis_20260612.md</code>。</p>
+<p>2026-06-12 补充：新增「批次外深读」清单——经典锚点 7 篇（同日主线结构评审补读 GrIPS、PromptAgent 两篇）、综述 3 篇、对照基线 2 篇不属于任何 batch，批次累计 27 篇 + 批次外 12 篇 = arXiv 渠道深读笔记共 39 篇，全目录见 <code>docs/literature_map.md</code>；2025/2026 年 25 篇的时间切片综合见 <code>docs/arxiv_2025_2026_frontier_synthesis_20260612.md</code>。另注定位：本文被文献地图、前沿综合与主报告作为批次视角综合的总入口引用——八条结论以第三批 16 篇为主，「覆盖矩阵」为批次累计 27 篇口径；Batch 1/2 的批内综合见 <code>docs/arxiv_deep_reading_batch1_synthesis.md</code> 与 <code>docs/arxiv_deep_reading_batch2_synthesis.md</code>。</p>
 <p>范围：第三批新增深读 16 篇，批次累计已深读 27 篇（另有批次外深读 12 篇，见下方清单）。</p>
 <p>第三批新增：</p>
 <ul>
@@ -236,7 +236,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>low-credit round update</li>
 </ul>
 <h2 id="6prompt-meta-instruction">结论 6：prompt 变长、变复杂、加 meta instruction 不一定是进步</h2>
-<p><code>Why Prompt Optimization Works...</code> 和前两批的 TextReg / PrefPO / flawed textual gradients 形成了更完整的警告：</p>
+<p><code>Why Prompt Optimization Works...</code>（即本批清单中的 Edit-Level Causal-Inspired Analysis，论文全名以此开头）和前两批的 TextReg / PrefPO / flawed textual gradients 形成了更完整的警告：</p>
 <ul>
 <li>meta-instruction 在 math-like 任务中与性能下降相关。</li>
 <li>clarity constraint 在 logical 任务中可能负相关。</li>
@@ -289,6 +289,9 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>negative transfer flag</li>
 </ul>
 <h2 id="_2">覆盖矩阵</h2>
+<blockquote>
+<p>2026-06-12 补注：补入此前遗漏的 Are LLMs Good Prompt Optimizers?（本批 16 篇之一，结论 2 已引用）与 Modular Prompt Optimization（Batch 1）；矩阵口径不变（批次累计 27 篇）。</p>
+</blockquote>
 <table>
 <thead>
 <tr>
@@ -300,7 +303,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <tbody>
 <tr>
 <td>critique / textual feedback</td>
-<td>ProTeGi, CriSPO, GEPA, Scaling Textual Gradients, Flawed Textual Gradients, VISTA</td>
+<td>ProTeGi, CriSPO, GEPA, Scaling Textual Gradients, Flawed Textual Gradients, VISTA, Are LLMs Good Prompt Optimizers?</td>
 <td>critique 是候选生成信号，不是真梯度；根因假设空间是关键瓶颈。</td>
 </tr>
 <tr>
@@ -324,9 +327,9 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <td>prompt 膨胀、meta instruction、复杂化和小样本噪声会制造伪提升。</td>
 </tr>
 <tr>
-<td>agent / tool / multi-agent</td>
-<td>AutoPDL, JTPRO, MASPO, MAPRO, Temporal/Structural Credit, SPEAR</td>
-<td>优化对象应扩展到 pattern、tool schema、role、round、topology。</td>
+<td>agent / tool / 模块分块</td>
+<td>AutoPDL, JTPRO, Modular Prompt Optimization, MASPO, MAPRO, Temporal/Structural Credit, SPEAR</td>
+<td>优化对象应扩展到 pattern、tool schema、section、role、round、topology。</td>
 </tr>
 <tr>
 <td>structured extraction / generation</td>
@@ -361,7 +364,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>prompt 没有显著膨胀或重复。</li>
 <li>每次提升能追溯到 candidate、feedback、edit、selector 和评估结果。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_deep_reading_batch3_synthesis.md</code> 自动生成（2026-06-12 01:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_deep_reading_batch3_synthesis.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">可转成普通用户方法的候选</a>
 <a class="lv2" href="#1-optimizer">结论 1：先测优化值不值得做，再跑 optimizer</a>

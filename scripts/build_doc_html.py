@@ -10,11 +10,14 @@ Single source of truth stays the `.md`; re-run this script after editing any sou
 doc. Output `.html` sits next to its `.md`. Internal links among the converted set
 are rewritten `.md` -> `.html`; links to non-converted docs are left untouched.
 
-Usage:  python scripts/build_doc_html.py
+Usage:  python scripts/build_doc_html.py [prefix ...]
+        可选位置参数为 docs/ 相对路径前缀，命中的页面才会重建（CONVERTED 仍是
+        全量，链接改写不受影响），用于并行 session 下避免触碰在途文件。
 """
 import html
 import os
 import re
+import sys
 from datetime import datetime, timezone, timedelta
 
 import markdown
@@ -50,6 +53,29 @@ PAGES = [
     ("source_batches/zhihu_three_layer_analysis_20260608.md", "知乎渠道", "知乎三层分析"),
 ]
 
+def discover_paper_notes():
+    """docs/paper_notes/paper-*.md 全量自动入列（template.md 除外）。
+
+    标题取笔记首个 H1，去掉「Paper Note:」前缀——论文笔记数量持续增长，
+    在 PAGES 里手维护清单必然漏，自动发现保证入口页链接永不指向裸 .md。
+    """
+    notes_dir = os.path.join(DOCS, "paper_notes")
+    pages = []
+    for fn in sorted(os.listdir(notes_dir)):
+        if not (fn.startswith("paper-") and fn.endswith(".md")):
+            continue
+        title = fn[:-3]
+        with open(os.path.join(notes_dir, fn), encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("# "):
+                    title = re.sub(r"^Paper Note[:：]\s*", "", line[2:]).strip()
+                    break
+        pages.append((f"paper_notes/{fn}", "论文笔记", title))
+    return pages
+
+
+PAGES += discover_paper_notes()
+
 CONVERTED = {p[0] for p in PAGES}
 
 LABEL_COLOR = {
@@ -59,6 +85,7 @@ LABEL_COLOR = {
     "其它平台渠道": "#94660f",
     "Twitter/X 渠道": "#2d5fa8",
     "知乎渠道": "#a84055",
+    "论文笔记": "#5e54a8",
 }
 
 THEME_CSS = """
@@ -203,8 +230,11 @@ def build_toc(body: str) -> str:
 
 def main():
     stamp = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M CST")
+    only = sys.argv[1:]
     built = 0
     for relpath, label, title in PAGES:
+        if only and not any(relpath.startswith(p) for p in only):
+            continue
         src = os.path.join(DOCS, relpath)
         if not os.path.exists(src):
             print("SKIP (missing):", relpath)
@@ -218,7 +248,15 @@ def main():
         body, has_mermaid = render_mermaid(body)
         toc = build_toc(body)
 
-        back = rel_back_to_report(relpath)
+        # 论文笔记的上一级索引是文献地图；其余页面回综合论述报告 v3
+        if relpath.startswith("paper_notes/"):
+            back = ("../" * relpath.count("/")) + "literature_map.html"
+            back_text = "← 返回文献地图"
+            back_note = f'论文谱系与索引见 <a href="{back}">文献地图</a>。'
+        else:
+            back = rel_back_to_report(relpath)
+            back_text = "← 返回综合论述报告 v3"
+            back_note = f'可视化综合见 <a href="{back}">综合论述报告 v3</a>。'
         advisor = rel_to_advisor(relpath)
         color = LABEL_COLOR.get(label, "#46525f")
         src_name = os.path.basename(relpath)
@@ -239,7 +277,7 @@ def main():
             "<style>" + THEME_CSS + "</style>\n</head>\n<body>\n"
             "<div class=\"topbar\">"
             f"<a class=\"back home\" href=\"{advisor}\">💬 对话助手主页</a>"
-            f"<a class=\"back\" href=\"{back}\">← 返回综合论述报告 v3</a>"
+            f"<a class=\"back\" href=\"{back}\">{back_text}</a>"
             f"<span class=\"chip\" style=\"background:{color}\">{html.escape(label)}</span>"
             f"<span class=\"doctitle\">{html.escape(title)}</span>"
             "<span class=\"mark\">Prompt Evolution · 研究档案</span>"
@@ -248,7 +286,7 @@ def main():
             f"<article class=\"content\">\n{body}\n"
             "<div class=\"genfoot\">本页由 <code>scripts/build_doc_html.py</code> 从源文件 "
             f"<code>docs/{relpath}</code> 自动生成（{stamp}），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。"
-            f"可视化综合见 <a href=\"{back}\">综合论述报告 v3</a>。</div>\n"
+            f"{back_note}</div>\n"
             "</article>\n"
             f"{toc}\n"
             "</div>\n"

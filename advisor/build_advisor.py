@@ -368,7 +368,10 @@ function renderChips(items){
 
 // ---------- 渲染建议（与表单版同口径，装进一个宽气泡）----------
 function lvlTag(lv){ const cls = lv === 'A' ? 'A' : lv === 'B' ? 'B' : 'pre'; return `<span class="lvl ${cls}">${lv}</span>`; }
-function repoLink(p){ return '../' + p; }
+// 论文笔记与渠道/中间层文档由 scripts/build_doc_html.py 生成同名 .html，引用链接指向渲染页；
+// industry/audit notes 暂无 HTML 版，保持 .md 原样（浏览器显示原文）。
+const HTML_READY = /^docs\/(paper_notes\/paper-[^\/]+|source_batches\/[^\/]+|insight_handbook_20260609)\.md(#|$)/;
+function repoLink(p){ return '../' + (HTML_READY.test(p) ? p.replace(/\.md(?=#|$)/, '.html') : p); }
 function card(ins){
   const ev = (ins.evidence||[]).map(e =>
     `<div class="n"><b>${e.num}</b><small>${e.note}</small>${

@@ -112,14 +112,14 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <p><strong>Automatic Prompt Engineer</strong>（Zhou et al., ICLR 2023）把"写指令"形式化为最简两阶段黑盒搜索：<strong>propose-then-select</strong>。</p>
 <ul>
 <li>
-<p><strong>前史定位</strong>（2026-06-12 补）：GrIPS（v1 2022-03，早于 APE 八个月）已经在做免梯度的黑盒指令搜索，但其候选来自机械短语编辑（删/换/改写/回加），自承无法引入初始指令之外的新信息；APE 的起点地位在于<strong>首次把候选生成交给 LLM</strong>（LLM-as-generator），而非"第一个黑盒指令搜索"。见 <a href="paper_notes/paper-grips-2022.md">paper-grips-2022.md</a>；更早的 AutoPrompt（白盒梯度）/ RLPrompt（RL 策略）属另一信号家族，仍待补读。</p>
+<p><strong>前史定位</strong>（2026-06-12 补）：GrIPS（v1 2022-03，早于 APE 八个月）已经在做免梯度的黑盒指令搜索，但其候选来自机械短语编辑（删/换/改写/回加），自承无法引入初始指令之外的新信息；APE 的起点地位在于<strong>首次把候选生成交给 LLM</strong>（LLM-as-generator），而非"第一个黑盒指令搜索"。见 <a href="paper_notes/paper-grips-2022.html">paper-grips-2022.md</a>；更早的 AutoPrompt（白盒梯度）/ RLPrompt（RL 策略）属另一信号家族，仍待补读。</p>
 </li>
 <li>
 <p><strong>机制</strong>：给 LLM 看少量 input-output 示例，让它反推"什么指令能产生这种映射"，批量生成约 50 条候选；再用 score function（execution accuracy 或 log probability）在小训练集上选最高分。可选迭代 Monte Carlo 搜索——让 LLM 生成高分指令的语义变体再筛一轮，但论文自报收益仅边际。</p>
 </li>
 <li><strong>代表性结果</strong>：24/24 个 instruction induction 任务达到或超过人类（IQM 0.810 vs 0.749）；搜出 zero-shot CoT prompt "Let's work this out in a step by step way to be sure we have the right answer."，把 MultiArith 从 78.7 提到 82.0、GSM8K 从 40.7 提到 43.0（相对 "Let's think step by step." 起点）。</li>
 <li><strong>留下的洞</strong>：纯"生成→评分→选择"，<strong>不利用失败案例的信息</strong>，候选相互独立，搜索近乎盲目；且最早暴露"选择口径必须等于部署场景"的过拟合戒律（zero-shot 口径选出的指令到 few-shot 场景掉分）。</li>
-<li>深读笔记：<a href="paper_notes/paper-ape-2022.md">paper-ape-2022.md</a></li>
+<li>深读笔记：<a href="paper_notes/paper-ape-2022.html">paper-ape-2022.md</a></li>
 </ul>
 <h2 id="2-protegi2023">2. ProTeGi（2023）— 引入"文本梯度"</h2>
 <p><strong>Prompt Optimization with Textual Gradients</strong>（Pryzant et al., EMNLP 2023），论文标题即 "Automatic Prompt Optimization with 'Gradient Descent' and Beam Search"。</p>
@@ -127,7 +127,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li><strong>机制</strong>：把梯度下降类比到自然语言空间——拿当前 prompt 在 minibatch 上的<strong>错误样本</strong>，让 LLM 总结失败原因（这段批评即"文本梯度"），再沿"语义反方向"编辑 prompt；候选经 paraphrase 扩展后进入 beam search，并用 bandit 算法（UCB 系）做评估预算分配，不必每个候选都跑全量验证集。</li>
 <li><strong>代表性结果</strong>：四个分类 benchmark 上平均比 Monte-Carlo 搜索高 3.9%、比 RL 高 8.2%、比原始 prompt 高 15.3%；最高把初始 prompt 提升 31%。消融显示 beam search 与 bandit 选择各自都有贡献。</li>
 <li><strong>留下的洞</strong>：第一次让失败案例成为优化信号，是后续 critique/trace 路线（TextGrad、GEPA）的源头；但学习曲线约 3 步即达峰，之后过拟合或局部停滞，且 critique 本身可能误导（梯度把焦点带偏的定性案例）。</li>
-<li>深读笔记：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a></li>
+<li>深读笔记：<a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a></li>
 </ul>
 <h2 id="3-opro2023-llm">3. OPRO（2023）— LLM 即优化器</h2>
 <p><strong>Optimization by PROmpting</strong>（Yang et al., DeepMind）换角度：不给失败案例，给<strong>优化轨迹</strong>。</p>
@@ -135,7 +135,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li><strong>机制</strong>：构造 meta-prompt，内含按分数<strong>升序</strong>排列的历史 (instruction, 训练分) 轨迹（截断 top-20）+ 少量任务样例；每步让 optimizer LLM 采样 8 条<strong>全新</strong>指令（不是编辑、不要求语义保持），评分后回填轨迹循环。LLM 靠上下文内的"解-分数"模式归纳改进方向。</li>
 <li><strong>代表性结果</strong>：搜出 "Take a deep breath and work on this problem step-by-step."（GSM8K 测试 80.2，对照 "Let's think step by step." 71.8、空串 34.0）；BBH 上多数任务超人写指令 5% 以上。</li>
 <li><strong>留下的洞</strong>：信号只有标量分数，<strong>不知道为什么失败</strong>，无法定位根因；最佳 prompt 高度 model-specific（更像在搜"触发某模型某能力的钥匙短语"）；"默认不留验证集"的论断后续被反复挑战（train-test gap 常达 5%–20%）。本项目把 OPRO 当反面对照，强制 held-out。</li>
-<li>深读笔记：<a href="paper_notes/paper-opro-2023.md">paper-opro-2023.md</a></li>
+<li>深读笔记：<a href="paper_notes/paper-opro-2023.html">paper-opro-2023.md</a></li>
 </ul>
 <h2 id="4-dspy2023-prompt">4. DSPy（2023）— 从"优化一个 prompt"到"编译一个程序"</h2>
 <p><strong>DSPy</strong>（Khattab et al., Stanford）是范式转变而非又一个算法。</p>
@@ -143,15 +143,15 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li><strong>机制</strong>：把多步 LM 流水线抽象成<strong>程序</strong>——用 signature（如 <code>question -&gt; answer</code>）声明每个 LM 调用的输入输出语义，用 module（Predict / ChainOfThought / ReAct）实例化成可组合计算图；prompt 具体文字不手写，由 <strong>teleprompter（编译器内优化器）针对 metric 编译</strong>出来。本版核心优化器是 BootstrapFewShot：让程序高温多跑训练输入、透明追踪多阶段 trace、用 metric 过滤出整条通过的 trace、把其中各模块的 input-output 对自举为 demonstration 候选，再随机搜索/Optuna 在 dev 上选组合。</li>
 <li><strong>代表性结果</strong>：GSM8K 上 GPT-3.5 从 ~33% 编译到 88.3 dev / 81.6 test；编译能让 Llama2-13b-chat 追平 GPT-3.5；T5-770M 仅用 200 条标注追平依赖专家 prompt 的 GPT-3.5 方案。</li>
 <li><strong>关键澄清</strong>（本仓库反复强调）：<strong>这版优化的是 demonstration，不是 instruction</strong>——把 DSPy 当"自动改指令工具"是误读，instruction 层自动优化要到 MIPROv2/COPRO 才系统化。它的范式贡献是把评估口径从"模型 X 在任务 Y"改成"模型 X + 程序 P + 编译策略 S 在任务 Y"。</li>
-<li>深读笔记：<a href="paper_notes/paper-dspy-2023.md">paper-dspy-2023.md</a></li>
+<li>深读笔记：<a href="paper_notes/paper-dspy-2023.html">paper-dspy-2023.md</a></li>
 </ul>
 <h2 id="5-textgrad2024">5. TextGrad（2024）— 文本反向传播的通用化</h2>
 <p><strong>TextGrad</strong>（Yuksekgonul et al., Stanford）把 ProTeGi 的"文本梯度"推广成通用<strong>文本自动微分框架</strong>。</p>
 <ul>
 <li><strong>机制</strong>：把任意 compound 系统建成计算图，变量是文本（prompt、代码、分子、答案……）。前向算出 loss（LLM 评价或规则 metric）后，让 LLM 对每个变量产出自然语言批评（textual gradient）并沿图<strong>逐节点反向传播</strong>，再由文本版梯度下降（TGD）改写变量。API 刻意同构 PyTorch（<code>Variable</code> / <code>loss.backward()</code> / <code>optimizer.step()</code>）。典型成本结构：<strong>弱模型做前向、强模型当 gradient engine</strong>；稳定性靠 minibatch + momentum + <strong>revert-if-worse 验证闸门</strong>（每轮在验证集上只接受变好的更新）支撑。</li>
 <li><strong>代表性结果</strong>：instruction-only（零 demo）的 prompt 优化在 BBH Object Counting 上 77.8 → 91.9，超 DSPy 8-demo 方案 7%；GSM8K 与 DSPy 持平（81.1），把 DSPy 选的 demo 拼到优化后 instruction 上进一步到 82.1——<strong>instruction 与 demonstration 是互补的两条轴</strong>。</li>
-<li><strong>留下的洞</strong>："梯度"是作者自认的隐喻而非真梯度，本仓库另有批判性笔记 <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">paper-textual-gradients-flawed-metaphor-2025.md</a>；每步反传多次 LLM 调用成本不低；自然语言约束堆多后可靠性下降；跨模型迁移未验证。</li>
-<li>深读笔记：<a href="paper_notes/paper-textgrad-2024.md">paper-textgrad-2024.md</a></li>
+<li><strong>留下的洞</strong>："梯度"是作者自认的隐喻而非真梯度，本仓库另有批判性笔记 <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025.md</a>；每步反传多次 LLM 调用成本不低；自然语言约束堆多后可靠性下降；跨模型迁移未验证。</li>
+<li>深读笔记：<a href="paper_notes/paper-textgrad-2024.html">paper-textgrad-2024.md</a></li>
 </ul>
 <h2 id="6-miprov22024">6. MIPROv2（2024）— 指令与演示的联合贝叶斯优化</h2>
 <p><strong>MIPRO</strong>（Opsahl-Ong et al., EMNLP 2024；DSPy 库中实现名 MIPROv2）补上 DSPy 没解决的"多阶段程序里 instruction 怎么自动优化"，并把问题形式化为两个挑战：<strong>proposal</strong>（prompt 空间太大，怎么采到少量高质量候选）与 <strong>credit assignment</strong>（只有程序级 metric、没有模块级标签，怎么归因到各模块）。</p>
@@ -159,7 +159,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li><strong>机制</strong>：三步——(1) <strong>bootstrap demonstration</strong>（沿用 DSPy 的 trace 过滤自举）；(2) <strong>grounded instruction proposal</strong>：给 proposer LM 喂数据集模式摘要、程序控制流摘要、自举 demo 和历史评分，让它写出贴任务的候选指令；(3) <strong>贝叶斯联合搜索</strong>：用 Optuna 的 TPE 建代理模型，在 mini-batch 上评估"各模块选哪条指令 × 哪组 demo"的组合并更新先验，proposal 与 selection 解耦。</li>
 <li><strong>代表性结果</strong>（7 任务，5 次运行 + 显著性检验）：联合优化在 5/7 任务最优，最高 +13%。最重要的分诊结论：<strong>多数任务上优化 bootstrapped demonstration 比优化 instruction 更管用</strong>；instruction 优化只在"含不显然、又无法靠少量样例表达的条件规则"的任务上才是决定性的。</li>
 <li><strong>留下的洞</strong>：optimizer 推不出复杂任务的隐藏规则，仍需人写 seed prompt；代理模型只能在固定候选集里选、不能改进候选本身；demo 集本身高方差。</li>
-<li>深读笔记：<a href="paper_notes/paper-miprov2-2024.md">paper-miprov2-2024.md</a></li>
+<li>深读笔记：<a href="paper_notes/paper-miprov2-2024.html">paper-miprov2-2024.md</a></li>
 </ul>
 <h2 id="7-gepa2025-pareto">7. GEPA（2025）— 反思式进化 + Pareto 前沿</h2>
 <p><strong>GEPA</strong>（Genetic-Pareto，Agrawal et al.）是当前主线终点，定位是"反思式 prompt 进化可以超过 RL 微调"。</p>
@@ -170,7 +170,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
   3. <strong>system-aware merge（crossover）</strong>：把不同进化分支里各模块的优胜 prompt 拼合成新候选（GEPA+Merge）。</li>
 <li><strong>代表性结果</strong>：Qwen3 8B 上 aggregate 45.23 → 54.85，超过 GRPO（RL，固定 24,000 rollouts）的 48.91 与 MIPROv2 的 47.84，而 GEPA 平均只用约 3,936 rollouts；论文口径为对 GRPO 平均高约 6%、最高 20%，最高省 35 倍 rollouts。消融显示 <strong>Pareto 选择本身是主要贡献</strong>（aggregate improvement +12.44 vs 贪心 +6.05、beam +5.11）；产出 prompt 最高比 MIPROv2 短 9.2 倍。</li>
 <li><strong>留下的洞</strong>：AIME-2025 上仍低于 GRPO（反思进化不是处处替代 RL）；Merge 在 Qwen3 8B 上反而掉分；大部分 rollout 预算花在验证候选而非产生学习信号；优势依赖 feedback function 质量，评价只能给标量时优势收窄。适用条件后被 VISTA 收敛为「反馈含轨迹级诊断 + 真实根因在假设空间内」，反例与数字见下文「主线之后」。</li>
-<li>深读笔记：<a href="paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a></li>
+<li>深读笔记：<a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a></li>
 </ul>
 <h2 id="_3">主线总结</h2>
 <table>
@@ -247,15 +247,15 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <ol>
 <li><strong>反馈信息密度决定样本效率</strong>。从标量（APE/OPRO）到批评（ProTeGi/TextGrad）到完整轨迹（GEPA），单位 rollout 被榨取的信息持续上升——这直接对应 GEPA 对 GRPO 的 35 倍 rollout 节省主张。本项目评估方法时按"标量 / critique / trace"三层分类，不把它们混为"LLM 改 prompt"（同 <a href="classic_optimizer_methods_comparison_20260610.html">classic_optimizer_methods_comparison_20260610.md</a> 结论 2）。</li>
 <li><strong>优化对象的升维依赖程序抽象</strong>。从单指令到指令+演示再到多模块系统，DSPy 的 signature/module/编译抽象是承载这种扩展的底座，MIPROv2 与 GEPA 都长在其上；因此任何结果都必须连同程序结构与编译/优化策略一起记录才可复现。</li>
-<li><strong>搜索结构是独立于反馈信号的演进维度</strong>（2026-06-12 补，证据级）。盲目采样（APE/OPRO）→ beam（ProTeGi）→ MCTS 规划（PromptAgent，主线外锚点）→ Pareto 候选池（GEPA）。两组单变量消融跨论文互证：PromptAgent 在候选生成与反馈完全固定、同等探索量下 MCTS 0.754 &gt; Greedy 0.698 ≈ Beam 0.697 &gt; 单步 MC 0.635（<a href="paper_notes/paper-promptagent-2023.md">paper-promptagent-2023.md</a> Table 4）；GEPA 消融显示 Pareto 选择本身是主要贡献（aggregate +12.44 vs 贪心 +6.05、beam +5.11，<a href="paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a>）。对本项目的含义：对比 optimizer 时把"探索候选数"作为预算轴单独报告，search structure 与 feedback signal 分开消融，不可把搜索结构带来的收益归功于"反思有效"。</li>
+<li><strong>搜索结构是独立于反馈信号的演进维度</strong>（2026-06-12 补，证据级）。盲目采样（APE/OPRO）→ beam（ProTeGi）→ MCTS 规划（PromptAgent，主线外锚点）→ Pareto 候选池（GEPA）。两组单变量消融跨论文互证：PromptAgent 在候选生成与反馈完全固定、同等探索量下 MCTS 0.754 &gt; Greedy 0.698 ≈ Beam 0.697 &gt; 单步 MC 0.635（<a href="paper_notes/paper-promptagent-2023.html">paper-promptagent-2023.md</a> Table 4）；GEPA 消融显示 Pareto 选择本身是主要贡献（aggregate +12.44 vs 贪心 +6.05、beam +5.11，<a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a>）。对本项目的含义：对比 optimizer 时把"探索候选数"作为预算轴单独报告，search structure 与 feedback signal 分开消融，不可把搜索结构带来的收益归功于"反思有效"。</li>
 </ol>
 <h2 id="20252026">主线之后：为什么没有第八法（2025/2026）</h2>
 <p>主线终点停在 GEPA 不是更新滞后。<a href="arxiv_2025_2026_frontier_synthesis_20260612.html">arXiv 2025/2026 前沿深读综合</a>对 25 篇的时间切片结论是：<strong>「新方法起名字」的时代（2022–2024）结束了</strong>——25 篇中只有 GEPA 一篇是确立主线的命名方法，其余产出形态是诊断、形式化、对象升维、自进化与卫生。对主线读者，这意味着 GEPA 留下的洞不再由"第八个命名方法"来补，而是由四个转向分头补：</p>
 <ul>
-<li><strong>反思的适用条件</strong>（转向一·降温与诊断）：VISTA 证明根因不在假设空间时反思越多偏越远——defective seed 上 GEPA 23.81%→13.50%，把假设生成与改写解耦后恢复 87.57%；跨模型迁移 GEPA 优化结果只剩 22.74% vs VISTA 86.05%。"反思有用 vs 有害"由此收敛为两个前置条件：反馈含轨迹级诊断、真实根因在 optimizer 假设空间内。见 <a href="paper_notes/paper-vista-reflection-dark-2026.md">paper-vista-reflection-dark-2026.md</a>。</li>
-<li><strong>prompt 膨胀与伪提升</strong>（转向四·卫生与正则）：Prompt Codebooks 把 prompt 拆成按输入路由的可复用单元，HotpotQA 上比 MIPROv2 prompt 短 14.1 倍、性能仍超 GEPA（IFBench 41.33，+2.72）；PrefPO 把长度/重复/hacking 率做进评估（TextGrad hacking 率 86% vs PrefPO 37%）。见 <a href="paper_notes/paper-prompt-codebooks-2026.md">paper-prompt-codebooks-2026.md</a>、<a href="paper_notes/paper-prefpo-2026.md">paper-prefpo-2026.md</a>。</li>
-<li><strong>反馈形态继续升级</strong>（暗线一的延长线）：SPEAR 让 optimizer 自己写 Python 做 confusion matrix / groupby 式错误分析，BBH-7 平均 0.938 vs GEPA 0.628——轨迹之后的下一站可能是"结构化计算分析"。见 <a href="paper_notes/paper-spear-2026.md">paper-spear-2026.md</a>。</li>
-<li><strong>optimizer 自身入轨</strong>（转向三·自进化）：SePO 把 optimizer 的 system prompt 纳入演化（71.89→76.38，去 self-improvement 掉回 74.94）、MemAPO 双记忆跨任务复用（70.7% vs TextGrad 63.6%、成本反降 58.6%）——主线七法共同的"optimizer 静态"默认假设开始松动。见 <a href="paper_notes/paper-sepo-2026.md">paper-sepo-2026.md</a>、<a href="paper_notes/paper-memapo-2026.md">paper-memapo-2026.md</a>。</li>
+<li><strong>反思的适用条件</strong>（转向一·降温与诊断）：VISTA 证明根因不在假设空间时反思越多偏越远——defective seed 上 GEPA 23.81%→13.50%，把假设生成与改写解耦后恢复 87.57%；跨模型迁移 GEPA 优化结果只剩 22.74% vs VISTA 86.05%。"反思有用 vs 有害"由此收敛为两个前置条件：反馈含轨迹级诊断、真实根因在 optimizer 假设空间内。见 <a href="paper_notes/paper-vista-reflection-dark-2026.html">paper-vista-reflection-dark-2026.md</a>。</li>
+<li><strong>prompt 膨胀与伪提升</strong>（转向四·卫生与正则）：Prompt Codebooks 把 prompt 拆成按输入路由的可复用单元，HotpotQA 上比 MIPROv2 prompt 短 14.1 倍、性能仍超 GEPA（IFBench 41.33，+2.72）；PrefPO 把长度/重复/hacking 率做进评估（TextGrad hacking 率 86% vs PrefPO 37%）。见 <a href="paper_notes/paper-prompt-codebooks-2026.html">paper-prompt-codebooks-2026.md</a>、<a href="paper_notes/paper-prefpo-2026.html">paper-prefpo-2026.md</a>。</li>
+<li><strong>反馈形态继续升级</strong>（暗线一的延长线）：SPEAR 让 optimizer 自己写 Python 做 confusion matrix / groupby 式错误分析，BBH-7 平均 0.938 vs GEPA 0.628——轨迹之后的下一站可能是"结构化计算分析"。见 <a href="paper_notes/paper-spear-2026.html">paper-spear-2026.md</a>。</li>
+<li><strong>optimizer 自身入轨</strong>（转向三·自进化）：SePO 把 optimizer 的 system prompt 纳入演化（71.89→76.38，去 self-improvement 掉回 74.94）、MemAPO 双记忆跨任务复用（70.7% vs TextGrad 63.6%、成本反降 58.6%）——主线七法共同的"optimizer 静态"默认假设开始松动。见 <a href="paper_notes/paper-sepo-2026.html">paper-sepo-2026.md</a>、<a href="paper_notes/paper-memapo-2026.html">paper-memapo-2026.md</a>。</li>
 </ul>
 <p>完整时间线、两个张力的收敛（反思有用 vs 有害、大增益 vs 抛硬币）与缺口清点（bi-level/thought-driven 整块缺席）见前沿综合本体；本节只做主线视角的对接，不复制其结论，所有数字与该综合及各笔记同口径。</p>
 <h2 id="_4">对本项目的使用约定</h2>
@@ -267,15 +267,15 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </ul>
 <h2 id="_5">关联文档</h2>
 <ul>
-<li>七篇深读笔记：<a href="paper_notes/paper-ape-2022.md">APE</a>、<a href="paper_notes/paper-protegi-2023.md">ProTeGi</a>、<a href="paper_notes/paper-opro-2023.md">OPRO</a>、<a href="paper_notes/paper-dspy-2023.md">DSPy</a>、<a href="paper_notes/paper-textgrad-2024.md">TextGrad</a>、<a href="paper_notes/paper-miprov2-2024.md">MIPROv2</a>、<a href="paper_notes/paper-gepa-2026.md">GEPA</a></li>
-<li>主线外锚点（2026-06-12 结构评审补读）：<a href="paper_notes/paper-grips-2022.md">GrIPS（前史：免梯度编辑搜索）</a>、<a href="paper_notes/paper-promptagent-2023.md">PromptAgent（规划搜索缺环）</a></li>
+<li>七篇深读笔记：<a href="paper_notes/paper-ape-2022.html">APE</a>、<a href="paper_notes/paper-protegi-2023.html">ProTeGi</a>、<a href="paper_notes/paper-opro-2023.html">OPRO</a>、<a href="paper_notes/paper-dspy-2023.html">DSPy</a>、<a href="paper_notes/paper-textgrad-2024.html">TextGrad</a>、<a href="paper_notes/paper-miprov2-2024.html">MIPROv2</a>、<a href="paper_notes/paper-gepa-2026.html">GEPA</a></li>
+<li>主线外锚点（2026-06-12 结构评审补读）：<a href="paper_notes/paper-grips-2022.html">GrIPS（前史：免梯度编辑搜索）</a>、<a href="paper_notes/paper-promptagent-2023.html">PromptAgent（规划搜索缺环）</a></li>
 <li>主线之后的时间切片：<a href="arxiv_2025_2026_frontier_synthesis_20260612.html">arXiv 2025/2026 前沿深读综合</a>（四个转向 + 两个张力 + 缺口清点）</li>
 <li>进化算法分支与同框架横比：<a href="classic_optimizer_methods_comparison_20260610.html">classic_optimizer_methods_comparison_20260610.md</a></li>
 <li>文献全景与优先阅读顺序：<a href="literature_map.html">literature_map.md</a></li>
-<li>"文本梯度"隐喻的批判：<a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">paper-textual-gradients-flawed-metaphor-2025.md</a></li>
+<li>"文本梯度"隐喻的批判：<a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025.md</a></li>
 <li>字段与证据口径：<code>docs/insight_field_standard.md</code></li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/apo_seven_methods_primer_20260611.md</code> 自动生成（2026-06-12 01:46 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/apo_seven_methods_primer_20260611.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">主线一句话</a>
 <a class="lv2" href="#_2">为什么是这条主线</a>

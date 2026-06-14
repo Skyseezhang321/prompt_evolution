@@ -42,6 +42,7 @@ th,td{padding:.5em .7em;border-bottom:1px solid var(--line-soft);text-align:left
 th{background:var(--soft);font-family:var(--mono);font-size:.82em;letter-spacing:.1em;color:var(--slate);text-transform:uppercase;}
 tr:last-child td{border-bottom:0;}
 td.hi{background:var(--teal-soft);font-weight:700;}
+td.base{background:var(--seal-soft);font-weight:700;}
 ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
 .tag{display:inline-block;padding:.05em .55em;border-radius:4px;border:1px solid var(--line);
   background:var(--soft);font-family:var(--mono);font-size:.7em;font-weight:700;letter-spacing:.08em;color:#565b4c;vertical-align:middle;}
@@ -75,7 +76,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
 <section class="slide">
   <p class="mono" style="color:var(--seal);letter-spacing:.2em">PROMPT EVOLUTION · 2026-06-12</p>
   <h1>别让 AI 自己改作业</h1>
-  <p class="big" style="font-size:1.5em">Prompt 优化与自进化的证据级调研<br><span class="sub" style="font-size:.75em">5 天 · 5 个渠道 · 37 篇论文深读 · 14 条工程纪律 · 1 个能聊天的知识库</span></p>
+  <p class="big" style="font-size:1.5em">Prompt 优化与自进化的证据级调研<br><span class="sub" style="font-size:.75em">5 天 · 5 个渠道 · 40 篇论文深读 · 14 条工程纪律 · 1 个能聊天的知识库</span></p>
   <p class="sub" style="margin-top:2em">仓库：github.com/Skyseezhang321/prompt_evolution（公开共建）<br>导航：<span class="kbd">→</span>/<span class="kbd">空格</span> 下一页 · <span class="kbd">←</span> 上一页 · <span class="kbd">Home</span> 回封面</p>
 </section>
 
@@ -98,7 +99,14 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
       </ul>
     </div>
     <div class="callout red" style="align-self:center">
-      <b>所以这场分享不卖工具。</b><br>卖的是一套纪律：先判断值不值得 → 选对方法与部件 → 把失败变成证据 → 多候选 + 验证集 → 带版本与回滚地运营。
+      <b>所以这场分享不卖工具，卖一套五步纪律——也是今天的目录：</b>
+      <ol style="margin:.4em 0 0;padding-left:1.4em">
+        <li>先判断<b>值不值得</b>优化（体检）</li>
+        <li>选对<b>方法</b>，认清要改的<b>部件</b></li>
+        <li>把失败变成<b>证据</b>，不只是一个分数</li>
+        <li><b>多候选 + 验证集</b>筛选，防伪提升</li>
+        <li>带<b>版本与回滚</b>地运营</li>
+      </ol>
     </div>
   </div>
 </section>
@@ -108,7 +116,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
   <h2><span class="no">02 · 我们做了什么</span>不是又一个优化器，是一份可追溯的证据地图</h2>
   <div class="grid g4">
     <div class="card"><b class="n">5</b><small>证据渠道：arXiv / GitHub / 平台与工具 / Twitter·X / 知乎</small></div>
-    <div class="card"><b class="n">37</b><small>论文深读笔记（含本地 PDF + SHA256，可逐条回溯）</small></div>
+    <div class="card"><b class="n">40</b><small>论文深读笔记（含本地 PDF + SHA256，可逐条回溯）</small></div>
     <div class="card"><b class="n">4 + 5</b><small>仓库源码审计（固定 commit）+ 5 个正典 optimizer 待审</small></div>
     <div class="card"><b class="n">14</b><small>工作流洞见（每条带数字、边界、跨渠道互证）</small></div>
     <div class="card"><b class="n">4 + 1</b><small>可复用方法 HM-01..04 + 1 个升格候选</small></div>
@@ -150,7 +158,13 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
       <tr><td><b>GEPA</b></td><td>2025</td><td><b>完整执行轨迹的反思</b></td><td>多模块 prompt 池（Pareto）</td><td>trace</td></tr>
     </tbody>
   </table>
-  <p class="callout">两条暗线：① <b>反馈信息密度决定样本效率</b>——GEPA 用 ~3,936 rollouts 超过用 24,000 的 GRPO（RL），省 35 倍；② <b>优化对象升维靠程序抽象</b>——从单指令到指令+示例到多模块系统。</p>
+  <div class="callout"><b>看不懂表没关系，记三条暗线：</b>
+    <ol style="margin:.35em 0 0;padding-left:1.4em">
+      <li><b>反馈信息密度决定样本效率</b>——GEPA 用 ~3,936 rollouts 超过用 24,000 的 GRPO（RL），<b>省 35 倍</b>。</li>
+      <li><b>优化对象升维靠程序抽象</b>——单指令 → 指令+示例 → 多模块系统。</li>
+      <li><b>搜索结构是独立维度</b>——盲采样 → beam → MCTS → Pareto 池；PromptAgent 同等探索量消融（MCTS 0.754 vs beam 0.697）与 GEPA「Pareto 选择是主要贡献」互证。</li>
+    </ol>
+  </div>
 </section>
 
 <!-- 7 同框对比 -->
@@ -158,7 +172,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
   <h2><span class="no">05 · 方法地图</span>同框对比的三个残酷事实</h2>
   <table>
     <thead><tr><th>Haiku 4.5 / HelpSteer2</th><th>Zero-Shot</th><th>APE</th><th>OPRO</th><th>EvoPrompt</th><th>PromptBreeder</th><th>DSPy 式</th><th>PROSE</th></tr></thead>
-    <tbody><tr><td>LLM-judge 分</td><td>68.0</td><td>69.3</td><td>73.8</td><td class="hi">74.8</td><td>74.6</td><td>69.8</td><td>74.4</td></tr></tbody>
+    <tbody><tr><td>LLM-judge 分</td><td class="base">68.0</td><td>69.3</td><td>73.8</td><td class="hi">74.8</td><td>74.6</td><td>69.8</td><td>74.4</td></tr></tbody>
   </table>
   <ol style="margin-top:1em">
     <li><b>只有这一个任务（结构化 JSON）人人全胜</b>——其余三个任务平均增益为负或近零，方法间差异统计上不显著。</li>
@@ -179,6 +193,7 @@ ul,ol{margin:.4em 0 0;padding-left:1.3em;} li{margin-bottom:.4em;}
     <li><b>系统能产出可解释 trace？</b>能 → 反思式方法（GEPA 类）才有信息优势；只有标量分 → 用 APE/OPRO 风格。</li>
     <li><b>打得过下限基线吗？</b>打不过 APE/OPRO 的复杂方法不值得引入。</li>
   </ol>
+  <p class="callout">结构记法：<b>前两问</b>定「值不值得做」 · <b>中间三问</b>定「该改哪、用什么信号」 · <b>最后一问</b>定「值不值这个复杂度」——多数团队的问题出在前两问根本没问。</p>
 </section>
 
 <!-- 9 洞见01 -->

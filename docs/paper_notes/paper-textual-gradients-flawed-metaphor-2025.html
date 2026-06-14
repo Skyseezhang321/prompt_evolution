@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Textual Gradients are a Flawed Metaphor · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">Textual Gradients are a Flawed Metaphor</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-textual-gradients-are-a-flawed-metaphor">Paper Note: Textual Gradients are a Flawed Metaphor</h1>
+<p>论文：Textual Gradients are a Flawed Metaphor for Automatic Prompt Optimization</p>
+<p>链接：https://arxiv.org/abs/2512.13598</p>
+<p>source_id：paper-textual-gradients-flawed-metaphor-2025</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：critical-counterevidence</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2512.13598/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>2DEFE19009CD620A53F0092E0ABE1D7BF3B4BBFF225C26722A87687465D061FF</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2512.13598/paper.txt</code></p>
+<p>local_text_sha256：<code>2224D385ABD0E83B2F46B6309CB74847B4F56B889C4E1552871D7AB7D241F0D9</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>这篇论文的关键价值是给 textual-gradient 叙事降温：LLM feedback 可以有用，但它通常不像数学梯度那样工作。很多提升来自任务格式、meta-instruction、候选发现，甚至 prevalence hacking，而不是从具体样本标签中学习可微式方向。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>研究问题：textual-gradient 方法的“梯度”类比是否解释了 APO 的行为。</li>
+<li>任务：GPQA Diamond、BBEH Web of Lies、BBEH Multistep Arithmetic。</li>
+<li>对照变量：</li>
+<li>gradient-like 三步结构 vs one-step feedback-driven generation。</li>
+<li>correct evaluation vs incorrect evaluation vs no evaluation。</li>
+<li>naive selection vs validated selection。</li>
+<li>prompt-only rewrite/improve。</li>
+<li>direct evaluation vs critic-based evaluation。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>Gradient hypothesis：如果 textual feedback 像梯度，正确 loss/evaluation 应该显著重要，错误标签应伤害训练，训练更久应能拟合训练数据。</li>
+<li>作者做一系列破坏性消融：</li>
+<li>用错误 ground truth 生成 evaluation。</li>
+<li>去掉 ground truth。</li>
+<li>将 gradient-like pipeline 改成 one-step update。</li>
+<li>只用 prompt-only 改写。</li>
+<li>训练 100 steps 观察是否过拟合。</li>
+<li>用 LLM critic 替代直接 evaluation，并优化 critic prompt。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据：GPQA Diamond 198 test；训练/验证使用 broader GPQA 中 30/50 问题。Web of Lies 和 Multistep Arithmetic 各 200，30 train、50 val、120 test。</li>
+<li>模型：Claude 3.7 Sonnet。</li>
+<li>采样：temperature 0.5，top-p 0.95，5000 token limit。</li>
+<li>运行：naive configuration 每组 30 trials；validated configuration 每组 5 trials；10 iterations，batch size 3。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>Gradient-like APO 相对默认 prompt 通常有提升，但不稳定超过 one-step APO。只有 Web of Lies naive setting 中显著超过 one-step，其他数据集/配置未显著。</li>
+<li>错误 evaluation labels 通常不降低 test performance。作者没有发现 correct vs incorrect evaluation 的显著下降。</li>
+<li>No-evaluation 在 Web of Lies naive trials 中显著下降，但其它数据集未观察到同样结果。</li>
+<li>Validation selection 没有稳定显著提升；在少数 critic-based Web of Lies 配置中有效。</li>
+<li>Prompt-only rewrite 通常不提升；prompt-only improve 在 GPQA 和 Multistep Arithmetic 上可提升，但 feedback-driven 通常更好。</li>
+<li>训练 100 steps 没有显示传统 gradient descent 式 overfitting：训练集表现 10 epochs 后和 1 epoch 后相近；错误标签训练也没有学会错误标签。</li>
+<li>Case study 中，Web of Lies 的高分 prompt 主要靠强烈禁止 “unknown” 这种 minority class，属于 prevalence hacking；该规则来自 critic 错误反馈，但提高了多数类表现。</li>
+<li>Validated selection 的收益在 Web of Lies smooth critic case 中更像 prompt discovery，多生成几个 candidate 带来命中机会，而不是单纯 regression avoidance。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>作者承认 validated trials 只有 5 次，统计 power 较低，较小效应可能未检出。</li>
+<li>实验只覆盖 3 个任务和一个 APO framework 实现；不能完全否定所有 feedback-driven 方法。</li>
+<li>Prompt hacking case study 很有启发，但不是所有提升都来自 hacking。</li>
+<li>结论针对“gradient metaphor”，不等于否定 natural language feedback 的实用价值。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: textual feedback 有用，但不要把它当成数学梯度来设计实验和解释结果。
+evidence_type: ablation
+paper_evidence:
+  section: &quot;4.1, 4.3, 6&quot;
+  table_or_figure: &quot;Figure 1, Figure 3&quot;
+  quote_or_paraphrase: &quot;错误 evaluation labels 通常不伤害 performance；训练更久也没有学会训练数据或错误标签。&quot;
+mechanism: LLM 改 prompt 更像生成高层任务策略或格式提示，而不是沿样本级 loss gradient 更新参数。
+actionable_rule: 在文档里使用 critique/feedback/update，不把 textual gradient 当作因果解释。
+counterexample_or_limit: 某些实现中 gradient-like pipeline 仍可能是有效工程结构。
+minimal_experiment: correct-label critique vs wrong-label critique vs no-label critique。
+confidence: high-for-metaphor-critique
+</code></pre>
+<pre><code class="language-yaml">insight: prompt 优化可能通过 prevalence hacking 提升分数。
+evidence_type: case-study
+paper_evidence:
+  section: &quot;5.1&quot;
+  table_or_figure: &quot;Figure 4&quot;
+  quote_or_paraphrase: &quot;Web of Lies 高分 prompt 的关键 section 强烈要求不要预测 unknown，提升多数类表现。&quot;
+mechanism: 优化器发现 benchmark label distribution 的捷径，而不是学会更真实的推理规则。
+actionable_rule: 评估 prompt 优化时必须报告 per-class performance 和 minority-class failure，而不只报告 overall accuracy。
+counterexample_or_limit: 在真实分布中 unknown 若很少，限制 unknown 也可能是合理 prior，需要业务判断。
+minimal_experiment: overall accuracy vs balanced accuracy vs per-class recall under optimized prompts。
+confidence: high
+</code></pre>
+<pre><code class="language-yaml">insight: validated selection 的收益可能来自多候选发现，而不是防止退化。
+evidence_type: targeted-experiment
+paper_evidence:
+  section: &quot;5.2&quot;
+  table_or_figure: &quot;Figure 5&quot;
+  quote_or_paraphrase: &quot;validated selection with 5 variants 显著超过 naive；with 1 variant 不显著。&quot;
+mechanism: 多采样增加偶然发现高分 prompt 的概率，selection 只是从更多样本中挑到一个。
+actionable_rule: 报告 optimizer 效果时必须记录每轮生成候选数量，不能把多候选采样收益归因给反馈质量。
+counterexample_or_limit: 某些场景 rollback 确实会避免坏更新。
+minimal_experiment: 1 candidate + validation vs 5 candidates + validation vs 5 candidates random selection。
+confidence: medium-high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>最终报告里要避免“自然语言梯度”作为未经证实的机制解释。</li>
+<li>实验指标必须包括 minority class、balanced accuracy、prompt hacking 检测。</li>
+<li>如果一个方法优于另一个，必须控制候选数量和选择预算，否则可能只是搜索次数更多。</li>
+<li>Critic feedback 可能错误但有效，这会带来“分数提升但语义错误”的风险。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：多类分类或逻辑任务，包含 minority class。</li>
+<li>变量：</li>
+<li>correct feedback。</li>
+<li>wrong-label feedback。</li>
+<li>no-label feedback。</li>
+<li>prompt-only improve。</li>
+<li>multi-candidate selection。</li>
+<li>指标：overall accuracy、balanced accuracy、minority recall、candidate count、hacking flags。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

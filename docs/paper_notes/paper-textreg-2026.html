@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TextReg · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">TextReg</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-textreg">Paper Note: TextReg</h1>
+<p>论文：TextReg: Mitigating Prompt Distributional Overfitting via Regularized Text-Space Optimization</p>
+<p>链接：https://arxiv.org/abs/2605.21318</p>
+<p>source_id：paper-textreg-2026</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：important-extension</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2605.21318/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>F5F80698C4DA38BDDCD3068086BD46313A0353F7DA656A2E65A8724062BFEB51</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2605.21318/paper.txt</code></p>
+<p>local_text_sha256：<code>A415674C70FF00808249E0032C49A03D87020279E84E379CAE1C3330AC82B268</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>TextReg 把 prompt overfitting 解释成 representation control 问题：优化器不断追加长规则和窄规则，训练分数可能提升，但 OOD 泛化下降。它给出一个可操作方向：prompt 优化不只要生成 task gradient，还要生成 regularization gradient，控制 prompt 长度增长和规则适用范围收窄。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：缓解 feedback-based prompt optimization 的 distributional overfitting。</li>
+<li>优化对象：自然语言 prompt。</li>
+<li>目标：source task 上优化后，在 harder variants、相关数据集和不同 test engines 上保持 OOD generalization。</li>
+<li>核心概念：representational inefficiency = capacity cost x scope narrowness。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>Representational inefficiency：</li>
+<li>capacity cost：prompt token length 带来的上下文和注意力成本。</li>
+<li>scope narrowness：prompt 中规则只适用于狭窄样本的程度。</li>
+<li>TextReg 三阶段：</li>
+<li>Dual-Evidence Gradient Purification：用当前 batch evidence 和 RuleBank recurrence evidence 过滤 raw textual gradients，拒绝 case patches 和 style-only updates。</li>
+<li>Semantic Edit Regularization：比较前后 prompt edit，检测长度增长和规则收窄，生成 regularization gradient。</li>
+<li>Regularization-Guided Prompt Update：在 task-faithful candidate 中选择最符合 regularization signal 的改写；若冲突则 task signal 优先。</li>
+<li>RuleBank：保存已接受 generalizable rules，并用 recurrence 作为规则泛化性的代理。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>Source tasks：Logical Deduction 3 objects、Tracking Shuffled Objects 3 objects、GSM8K。</li>
+<li>OOD evaluation：Logical Deduction 5/7 objects、Tracking Shuffled Objects 5/7 objects、SVAMP、MultiArith。</li>
+<li>Test engines：Qwen2-7B-Instruct、Phi-3.5-Mini-Instruct、Llama-3-8B-Instruct、Llama-3.1-8B-Instruct。</li>
+<li>Optimization backend：Qwen2.5-7B-Instruct forward engine；GPT-4o backward engine；同样配置用于 TextReg 和 baselines。</li>
+<li>Baselines：Zero-shot CoT、TextGrad、REVOLVE。</li>
+<li>指标：strict string-based exact-match accuracy。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>Table 1 中 TextReg 在几乎所有 test engine/dataset pair 上达到 best 或 second-best，大多数单元格超过 TextGrad 和 REVOLVE。</li>
+<li>在 Llama-3.1-8B-Instruct 上，Tracking Shuffled Objects 5/7 objects 相比 TextGrad 分别 +10.0 和 +9.9。</li>
+<li>在 Llama-3-8B-Instruct 上，同一任务分别 +8.4 和 +10.3。</li>
+<li>在 Phi-3.5-Mini-Instruct 上，Logical Deduction 5obj +11.8、7obj +8.8，Tracking Shuffled Objects 5obj +10.5，SVAMP +7.9，MultiArith +7.9；但 Tracking Shuffled 7obj 相比 TextGrad -0.6。</li>
+<li>Baselines 经常在 OOD 上低于未优化 CoT，例如 Phi-3.5-Mini-Instruct 上 REVOLVE 在 6 个数据集全低于 CoT。</li>
+<li>Ablation：去掉 Gradient Purification、Semantic Edit Regularization 或 Regularization-Guided Update 都会使平均 OOD accuracy 下降，说明三者非冗余。</li>
+<li>Resilience study：把 Gradient、Regularization 或 Optimizer 中一个角色降级为 Qwen2.5-7B-Instruct 后仍保持强性能，说明 regularization signal 有结构性，不完全依赖最强模型。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>范围限制明显：论文只覆盖 single-turn reasoning with well-defined behavioral rules；开放生成、多轮 prompt、agent instructions 留作 future work。</li>
+<li>Rule scope 的估计依赖 LLM semantic analyzer 和 RuleBank recurrence，是代理指标，不是真实分布范围。</li>
+<li>只用 strict exact-match reasoning benchmarks，和 judge/开放生成指标不同。</li>
+<li>Regularization 可能牺牲对少数真实边界情况的专门规则，需要任务侧判断。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: prompt overfitting 可以表现为“更长 + 更窄”，不是只表现为 dev-test gap。
+evidence_type: conceptual + direct-result
+paper_evidence:
+  section: &quot;1, 3, 5.2&quot;
+  table_or_figure: &quot;Figure 1, Table 1&quot;
+  quote_or_paraphrase: &quot;TextReg 把 overfitting 归因于 capacity cost 和 scope narrowness 的共同增长，并在 OOD 任务上超过 TextGrad/REVOLVE。&quot;
+mechanism: 长 prompt 消耗上下文容量；窄规则只修训练样本，迁移到 harder variants 时失效。
+actionable_rule: prompt 优化日志应记录 length_growth 和 rule_scope_change，不只记录分数。
+counterexample_or_limit: 某些高风险任务可能需要长而具体的规则，不能单纯惩罚长度。
+minimal_experiment: no regularization vs length-only regularization vs scope-aware regularization。
+confidence: high-for-structured-reasoning
+</code></pre>
+<pre><code class="language-yaml">insight: 正则化可以在 text space 里实现为“批评批评”和“约束改写”，不需要可微参数。
+evidence_type: method + ablation
+paper_evidence:
+  section: &quot;4, 5.3&quot;
+  table_or_figure: &quot;Figure 2, Figure 3&quot;
+  quote_or_paraphrase: &quot;三阶段分别过滤 raw gradients、诊断 edit inefficiency、用 regularization signal 指导 prompt update；移除任一组件都会下降。&quot;
+mechanism: 先拒绝 case patches，再检查已发生的规则收窄，最后在 task-faithful edits 中选更泛化的版本。
+actionable_rule: 在 APO pipeline 中加入 second-order critic，专门判断候选改写是否变长、重复、样本特化。
+counterexample_or_limit: 该 critic 本身也可能误判，需要人工抽检和 OOD eval。
+minimal_experiment: standard critique update vs critique + regularization critique update。
+confidence: medium-high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>我们的最小实验应加入 OOD split，而不是只做 train/dev/test 同分布。</li>
+<li>Prompt 候选要记录规则级 diff：新增规则、删除规则、泛化规则、case patch。</li>
+<li>可先实现简化版 RuleBank：把每轮 critique 抽象成 canonical rules，并统计 recurrence。</li>
+<li>Hygiene 和 TextReg 可以合并：长度、重复是 capacity proxy；rule specificity 是 scope proxy。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：从 3-object 训练到 5/7-object OOD 的 toy reasoning 或结构化任务。</li>
+<li>变量：</li>
+<li>TextGrad-style update。</li>
+<li>length penalty。</li>
+<li>RuleBank + case-patch filter。</li>
+<li>full TextReg-like regularized update。</li>
+<li>指标：in-distribution accuracy、OOD accuracy、length growth、rule specificity、case-patch ratio。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-textreg-2026.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

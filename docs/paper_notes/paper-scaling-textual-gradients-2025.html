@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scaling Textual Gradients via Sampling-Based Momentum · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">Scaling Textual Gradients via Sampling-Based Momentum</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-scaling-textual-gradients-via-sampling-based-momentum">Paper Note: Scaling Textual Gradients via Sampling-Based Momentum</h1>
+<p>论文：Scaling Textual Gradients via Sampling-Based Momentum</p>
+<p>链接：https://arxiv.org/abs/2506.00400</p>
+<p>source_id：paper-scaling-textual-gradients-2025</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：important-extension</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2506.00400/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>785E2519F819C0E4D46286247BAB1AF234BDA0ED9966B89211FCF3C6942F37F5</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2506.00400/paper.txt</code></p>
+<p>local_text_sha256：<code>A90C404855A7D2BD3E6FD5ECF5FF2DDC15D23BB5FE9111D2DA790E3AF6B1B380</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>这篇论文的核心结论是：textual-gradient 方法不能简单靠“塞更多训练样本进上下文”扩展。full-batch TGD 会撞上显式 context limit 和隐式 context wall；minibatch TSGD 能扩展数据量但方差大。作者提出的 TSGD-M 把历史高分 prompts 当作 momentum 分布来采样，在不把历史 prompt 串进上下文的情况下稳定搜索。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：研究 textual gradient descent 在训练数据规模变大时是否可扩展。</li>
+<li>优化对象：自然语言 prompt。</li>
+<li>核心问题：更多样本带来更多反馈，但长上下文会退化，minibatch 又带来噪声。</li>
+<li>方法目标：在固定上下文长度附近利用历史 prompt 信息，提高稳定性和泛化。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>TGD：每步用 full training batch 生成 textual gradient，受 context length 和 long-context degradation 限制。</li>
+<li>TSGD：每步随机 minibatch，能使用更多总训练样本，但更新方差高。</li>
+<li>TSGD-M：</li>
+<li>维护历史 prompts、textual gradients、validation estimates。</li>
+<li>用 validation accuracy 作为历史 prompt 的 importance weights。</li>
+<li>通过 Gumbel-Top-k 从历史高分 prompt 中采样，而不是把 K 个历史 prompt 全部拼进上下文。</li>
+<li>支持 promptwise / blockwise generation。</li>
+<li>使用 minibatch validation running mean 降低 full validation 成本。</li>
+<li>可插拔性：扩展 TextGrad、DSPy-COPRO、AdalFlow。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>代表性 scaling 实验：MATH Algebra，训练样本规模 5 到 300，batch size 5 到 110。</li>
+<li>模型：GPT-4o-mini 做 forward/inference；GPT-4o 做 backward textual gradient 和 prompt refinement。</li>
+<li>主实验任务：TREC、ARC-Challenge、GSM8K、MATH、HotPotQA。</li>
+<li>训练：TextGrad/AdalFlow 使用 shuffled minibatch，batch size 5，2 epochs；momentum window 默认 5；5 个随机种子。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>full-batch TGD 只能用到约 110 个样本，且在 50 samples 后出现 implicit context wall，性能开始下降。</li>
+<li>TSGD with 300 samples 可超过最佳 TGD 约 0.5% accuracy，但小 batch 尤其 batch size 5 时方差很大。</li>
+<li>表 2 中 TextGrad-M 在 5 个任务上多数超过 TextGrad：</li>
+<li>TextGrad w/o val revert：TREC 81.92、ARC 91.35、GSM8K 93.15、MATH 84.67、HotPotQA 49.46。</li>
+<li>TextGrad-M Promptwise：83.36、91.96、94.04、86.78、50.53。</li>
+<li>TextGrad-M Blockwise：85.44、92.64、93.98、86.45、50.66。</li>
+<li>COPRO-M 和 AdalFlow-M 也在多数任务上提升，说明 momentum sampling 不依赖 textual gradients。</li>
+<li>Figure 4 显示，TextGrad validation-revert 会让搜索困在初始 prompt 附近；w/o revert 又有下降趋势；TextGrad-M 更稳定。</li>
+<li>成本分析给出实践排序：TSGD 最便宜但不稳；TextGrad-M 比 concatenation-based TextGrad-Momentum 更省上下文；TGD 最贵。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>COPRO-M 在 MATH 上不如 COPRO，作者认为初始 DSPy signature prompt 已接近最优，headroom 很小。</li>
+<li>方法仍依赖 validation estimates；minibatch validation 太小会有噪声，太大又增加成本。</li>
+<li>Momentum sampling 是一种选择/探索策略，不解决 textual feedback 本身是否正确的问题。</li>
+<li>主要在标准 QA/math/reasoning 数据集上验证，未覆盖复杂 agent/tool-use。</li>
+<li>文中部分结论基于 GPT-4o/GPT-4o-mini，其他模型上下文退化曲线可能不同。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: textual-gradient 优化不能靠 full-batch 长上下文扩展，存在隐式 context wall。
+evidence_type: direct-result
+paper_evidence:
+  section: &quot;4, 6.1&quot;
+  table_or_figure: &quot;Figure 2, Figure 3&quot;
+  quote_or_paraphrase: &quot;TGD 在约 50 samples 后性能下降，即使未耗尽显式 context limit。&quot;
+mechanism: 长上下文使 LLM 难以提取相关 gradient information，且推理成本随长度上升。
+actionable_rule: prompt 优化不要把所有失败样本一次性塞进 critic prompt；应采用 minibatch、采样和历史聚合。
+counterexample_or_limit: 极小数据或简单任务可能不需要 scaling 策略。
+minimal_experiment: full-batch critique vs minibatch critique across dataset size。
+confidence: high
+</code></pre>
+<pre><code class="language-yaml">insight: “validation revert 到最高分 prompt”会降低方差，但也可能把搜索锁死。
+evidence_type: direct-observation + ablation
+paper_evidence:
+  section: &quot;6.2, 6.3&quot;
+  table_or_figure: &quot;Figure 4, Table 2&quot;
+  quote_or_paraphrase: &quot;TextGrad with validation revert 在 temperature 0 下 action distribution collapse 到单一 prompt。&quot;
+mechanism: 只利用当前验证最高点会过度 exploit，失去历史候选的探索能力。
+actionable_rule: best-seen prompt 应作为最终回滚点，而不是每一步生成新 prompt 的唯一 parent。
+counterexample_or_limit: 高噪声场景下完全不 revert 也会产生坏 prompt 链式污染。
+minimal_experiment: revert-as-parent vs best-seen-final-only vs momentum sampling。
+confidence: high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>我们应避免“把更多失败样本都放进一次 prompt”这种粗暴 scaling。</li>
+<li>候选选择应使用历史 prompt 分布，而非只用 last prompt 或 best prompt。</li>
+<li>Eval 需要记录 <code>validation_estimate_type</code>：full validation、minibatch、running mean、bootstrapped estimate。</li>
+<li>回滚和 parent selection 应分离：回滚用于最终安全，parent selection 用于探索。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：数学/抽取任务，训练样本从 20 扩到 300。</li>
+<li>变量：</li>
+<li>full-batch critique。</li>
+<li>minibatch TSGD。</li>
+<li>minibatch + best-seen revert。</li>
+<li>minibatch + momentum sampling。</li>
+<li>指标：test accuracy、validation-test gap、prompt variance、token cost、bad update rate。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-scaling-textual-gradients-2025.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MemAPO / Generalizable Self-Evolving Memory for Automatic Prompt Optimization · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">MemAPO / Generalizable Self-Evolving Memory for Automatic Prompt Optimization</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-memapo-generalizable-self-evolving-memory-for-automatic-prompt-optimization">Paper Note: MemAPO / Generalizable Self-Evolving Memory for Automatic Prompt Optimization</h1>
+<p>论文：Generalizable Self-Evolving Memory for Automatic Prompt Optimization</p>
+<p>链接：https://arxiv.org/abs/2603.21520</p>
+<p>source_id：paper-memapo-2026</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：new-hypothesis</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2603.21520/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>29144EB3D8668D1D4AE41A294B3593B85DB2BD7B4720894FB0CC293F3868AD5F</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2603.21520/paper.txt</code></p>
+<p>local_text_sha256：<code>2B977FBE5C3AABECBE8BDD541D0D4CF2913E55B0A741F9AEB94F7432ACC77B4B</code></p>
+<p>evidence_level：method-results-ablation-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>MemAPO 的核心洞见是：prompt 优化不要每个任务从零开始反思，应该把“有效策略模板”和“错误模式”分开记忆并检索复用；它把 memory 从样例缓存提升为优化器的经验资产。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：跨逻辑推理、数学计算、知识密集任务的 prompt optimization。</li>
+<li>优化对象：任务 prompt，并通过跨任务记忆改善候选生成。</li>
+<li>目标指标：各任务 accuracy / performance，另报告优化成本。</li>
+<li>约束：不训练模型；通过可编辑 memory 累积经验。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：先根据当前任务检索 memory，再用 memory-augmented prompt optimizer 生成候选 prompt。</li>
+<li>反馈如何获得：评估候选后，把成功经验和失败模式转成 memory update。</li>
+<li>如何选择候选：按任务表现评估，并把高价值策略写回 memory。</li>
+<li>是否使用记忆/archive：是，核心是 dual memory。</li>
+<li>是否优化 optimizer 自身：部分优化；optimizer 的跨任务经验通过 memory 自我演化，而不是改模型参数。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：GeoShape、AQuA-RAT、Gaokao MathQA、Gaokao Geography、Gaokao History 等跨域任务。</li>
+<li>模型：Qwen3-8B、GPT-4o-mini；另比较使用更强 optimizer 的情况。</li>
+<li>baselines：IO、CoT、Step-Back、RaR、ProTeGi、OPRO、TextGrad、PromptBreeder、SPO。</li>
+<li>train/dev/test 切分：同域任务合并优化、分任务评估；另有跨域混合实验。</li>
+<li>成本或调用次数：报告平均优化成本，MemAPO 通过经验复用降低成本。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<ul>
+<li>GPT-4o-mini 上，MemAPO 平均表现 70.7%，强于 TextGrad 的 63.6%，且平均成本 0.31 美元，低于 TextGrad 的 0.70 美元。</li>
+<li>Qwen3-8B 上，MemAPO 平均表现 70.6%，在多数任务上为最佳。</li>
+<li>成本分析报告 MemAPO 相比 TextGrad 在两个 backbone 上分别降低约 58.6% 和 55.7% 优化成本。</li>
+<li>跨域 Gaokao MathQA + History 实验中，MemAPO 同时保持两类任务提升，优于大多数容易跨域退化的 baseline。</li>
+<li>双 memory 消融显示 CTM 与 EPM 都有明显贡献；AQuA-RAT 从 61.7 提升到 80.5/77.9，双 memory 到 82.5。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>memory 的质量控制是关键风险；错误模板如果被检索复用，会系统性放大坏经验。</li>
+<li>当前证据主要来自作者设定的任务组合，不等价于证明跨所有 prompt 优化任务都能泛化。</li>
+<li>self-evolving memory 仍依赖 LLM 对错误模式和策略模板的抽象质量。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: prompt optimizer 应该显式区分“可复用成功模板”和“应避免错误模式”。
+evidence_type: ablation + cost-result
+paper_evidence:
+  section: &quot;4.2 Main Results; 4.3 Ablation Study&quot;
+  table_or_figure: &quot;Table 1, Table 3, Figure 2&quot;
+  quote_or_paraphrase: &quot;CTM/EPM 单独有效，组合最佳；相比 TextGrad 显著降成本。&quot;
+mechanism: 成功模板提高候选质量，错误模式减少重复踩坑，二者让优化不必每轮从失败样本重新归纳。
+actionable_rule: 本项目的 optimizer 日志应拆出 success_template_memory 和 error_pattern_memory 两张表。
+counterexample_or_limit: memory 会引入跨任务迁移风险，需要检索相似度、有效期和回滚机制。
+minimal_experiment: no-memory vs success-memory vs error-memory vs dual-memory。
+confidence: medium
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>不要把历史 prompt 只当 archive；应提炼为“何时有效”的策略和“何时失败”的反例。</li>
+<li>memory 记录字段至少包含 task type、input pattern、failure type、successful edit、negative transfer flag。</li>
+<li>成本指标应成为 prompt evolution 的一等指标，因为 memory 的价值不只是更高分，也包括更少迭代。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：两个相近任务加一个异质任务，例如数学 QA + 事实判断。</li>
+<li>需要实现的模块：memory schema、retriever、memory update、negative-transfer audit。</li>
+<li>预计风险：memory 抽象过粗；跨域检索误匹配；短期 dev 提升掩盖长期污染。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-memapo-2026.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

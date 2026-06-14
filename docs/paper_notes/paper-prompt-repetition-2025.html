@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Repetition Improves Non-Reasoning LLMs · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">Prompt Repetition Improves Non-Reasoning LLMs</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-prompt-repetition-improves-non-reasoning-llms">Paper Note: Prompt Repetition Improves Non-Reasoning LLMs</h1>
+<p>论文：Prompt Repetition Improves Non-Reasoning LLMs（Yaniv Leviathan, Matan Kalman, Yossi Matias — Google Research；Leviathan/Kalman/Matias 即 speculative decoding 原班作者）</p>
+<p>链接：https://arxiv.org/abs/2512.14982 （v1，2025-12-17）</p>
+<p>source_id：paper-prompt-repetition-2025</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：user_provided_example（用户口头线索「Google 写过重复 prompt 大幅提升非思考模型的论文」；2026-06-09 已按摘要级登记进 <code>source_inventory.md</code>，2026-06-11 用户要求深读闭环）</p>
+<p>新颖性判断：actionable-experiment（零实现成本的固定变换，可直接进入本项目最小 A/B 实验；同时可作为所有 APO 方法的「零智能 baseline 变换」对照）</p>
+<p>阅读日期：2026-06-11</p>
+<p>reviewed_by：Claude</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2512.14982/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>5DD7B024BA18D86A4CA3855620B34BF41DC5905C27A9C6866D971F29AE7E0815</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2512.14982/paper.txt</code></p>
+<p>local_text_sha256：<code>8CD9BB899D660B42E418A97225EDDF6A6141C639FFEF022A70F896139DD3F40C</code></p>
+<p>evidence_level：method-and-results-read（正文 4 页 + 附录 A.1–A.4 全文精读；Figure 1/4 经 PDF 渲染核验面板结构与定性方向，正文文字陈述的汇总数字（47/70 胜 0 负、5 胜 1 负 22 平、NameIndex 21.33%→97.33%）与图一致；Figure 1–3 为位图、图内逐格数字未转录，本笔记不引用任何逐格数字）</p>
+<h2 id="_1">一句话结论</h2>
+<p>把整个 prompt 原样重复一遍（<code>&lt;QUERY&gt;</code> → <code>&lt;QUERY&gt;&lt;QUERY&gt;</code>），在<strong>关闭推理</strong>时对 7 个主流模型 × 10 个 benchmark 配置取得 47/70 显著提升、0 显著下降（McNemar p&lt;0.1），且<strong>不增加输出长度和端到端时延</strong>（重复只发生在可并行的 prefill 阶段）；机制解释是 causal LM 中靠前的 token 看不到靠后的 token，重复让每个 prompt token 都能注意到完整上下文。代价是输入 token 翻倍（论文未讨论计费成本——our-inference：按 token 计费的输入成本约 ×2）。<strong>开启 step-by-step 推理后收益基本消失</strong>（28 组里 5 胜 1 负 22 平），因为推理模型本来就常自发复述题目。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：零样本 prompting 评测（非优化循环）：ARC-Challenge、OpenBookQA、MMLU-Pro（多选题各分 question-first / options-first 两种排列）、GSM8K、MATH，加 2 个自建长上下文索引任务 NameIndex（50 个名字取第 25 个）和 MiddleMatch（N=40、K=10，找两个名字正中间的元素）。</li>
+<li>优化对象：无优化——一个固定的、任务无关的 prompt 结构变换。</li>
+<li>目标指标：accuracy；显著性判定用 McNemar 检验 p&lt;0.1。</li>
+<li>约束：不增加生成 token 数与时延；输出格式不变，可 drop-in 替换现有系统的 prompt。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：无搜索、无候选——单一确定性变换 <code>&lt;QUERY&gt;&lt;QUERY&gt;</code>。另测 3 个变体：Verbose（中间加 "Let me repeat that:"）、Repetition ×3、Padding（用句点补到同等长度，作排除「只是变长」的对照）。</li>
+<li>反馈如何获得：无反馈回路。</li>
+<li>如何选择候选：不适用。</li>
+<li>是否使用记忆/archive：否。</li>
+<li>是否优化 optimizer 自身：否。</li>
+<li>机制假设（论文陈述）：①causal attention 下 prompt 前段 token 无法注意后段（question-first vs options-first 表现不同即症状），重复后第二遍的每个 token 都能注意完整第一遍，近似给 prompt 内部加了「第二遍全注意」；②RL 训练出的推理模型经常自发复述用户请求，把这一行为前移到可并行的 prefill 阶段即免费获得收益（作者明言与他们的 speculative decoding 动机同源）。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：上述 7 个 benchmark，多选题双排列后共 10 个配置；自建任务模板见附录 A.3。</li>
+<li>模型：Gemini 2.0 Flash / Flash-Lite、GPT-4o / GPT-4o-mini、Claude 3 Haiku / Claude 3.7 Sonnet、DeepSeek V3，共 7 个；全部走各家官方 API，运行时间 2025 年 2–3 月。</li>
+<li>baselines：原 prompt；Padding 对照。</li>
+<li>train/dev/test 切分：无——纯评测论文，无任何训练或搜索。</li>
+<li>成本或调用次数：未报告每 benchmark 样本量、总调用次数和 API 费用；输入长度约 ×2（×3 变体约 ×3）。时延实测不增（例外：Claude 两个模型在超长请求上时延上升，作者归因 prefill 变长）。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<ul>
+<li>关闭推理：47/70 显著胜、0 显著负；7 个模型全部受益（论文正文陈述，Figure 1 面板结构经核验为 10 配置 × 7 模型）。</li>
+<li>多选题中 options-first（问题在选项之后）提升大于 question-first——order 敏感性被修复的直接证据。</li>
+<li>NameIndex 上 Gemini 2.0 Flash-Lite 从 21.33% 提至 97.33%（正文数字；这是用户记忆中「大幅提高」的出处级例子）。</li>
+<li>×3 变体在 NameIndex/MiddleMatch 上常显著优于 ×2（而 ×2 已显著优于 baseline）；Verbose 与 vanilla 相近。</li>
+<li>Padding 不提升 → 增益来自「重复」本身而非输入变长。</li>
+<li>开启 step-by-step：28 组里 5 胜 1 负 22 平（Figure 4 经核验）——与显式推理高度重叠、基本不叠加。</li>
+<li>输出长度（均值与中位数）与时延在所有方法上基本持平（Figure 2/3，趋势级核验）。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li>推理模式下几乎无收益且出现 1 个显著下降；具体是哪个模型×任务组合论文未指明（未报告）。</li>
+<li>长 prompt 下重复会推高 prefill 时延，极长 prompt 可能直接不可行（论文脚注 3）。</li>
+<li>相关工作给出的边界：Shaier 2024 只重复 question 部分无增益（arXiv 2412.07923）——必须重复<strong>整个 prompt</strong>；Xu et al. 2024 的 RE2「请再读一遍题」是让模型自己重读，与本文在输入侧物理重复不同。本文未与这两者做同框架对比实验（未报告）。</li>
+<li>被测模型均为 2025 年初一代；对此后模型（可能已在训练中内化复述行为）是否仍成立未知（our-inference）。</li>
+<li>每 benchmark 样本量未报告，无法独立复算 McNemar 显著性。</li>
+</ul>
+<h2 id="_7">对本项目的启发</h2>
+<blockquote>
+<p>字段定义与 insight / conclusion / helpful method 的区分口径见 <code>docs/insight_field_standard.md</code>。</p>
+</blockquote>
+<ul>
+<li>insight：causal attention 导致的「信息顺序敏感」是 prompt 性能的一个<strong>结构性</strong>失效来源，与措辞质量无关；一次完整重复可以在完全不动语义的情况下修复它（证据：options-first 配置提升显著大于 question-first，Padding 对照无效）。这把「prompt 结构/顺序」从工程直觉升级为有受控对照的可操作变量，与 [[paper-modular-prompt-optimization-2026]] 的 section-local 编辑方向互证。</li>
+<li>conclusion：在 2025 年初一代主流模型的<strong>非推理模式</strong>下，整 prompt 重复 ×2 是跨模型稳健正向（47/70 胜 0 负）、零输出成本的默认变换；开启推理后增益基本消失（5/28）。值得注意的对照：[[paper-coin-flip-2026]] 显示 APO 优化收益脆弱且 model-specific，而这里一个静态变换跨 7 模型 0 负——「确定性结构变换」可能比「搜索出来的措辞」更可迁移（两者 setting 不同，此对比为 our-inference）。</li>
+<li>helpful method：把 <code>&lt;QUERY&gt;&lt;QUERY&gt;</code>（或 Verbose 形式）纳入本项目的<strong>廉价 baseline 变换集</strong>——任何 APO 方法在本项目报告的增益，应先回答「是否打得过这个零智能变换」；长上下文索引类任务优先试 ×3。</li>
+<li>anti-pattern / limit：对推理模式叠加它基本无效；超长上下文（如大段 RAG 拼接）盲目翻倍会推高 prefill 成本甚至不可行；只重复局部（如只重复问题）按 Shaier 2024 无增益；按 token 计费时输入成本 ×2。</li>
+<li>适用场景：非推理、低延迟生产路径（分类、抽取、短 QA、路由判断）；上下文内信息顺序不可控的场景（检索结果拼接、表单转写）。</li>
+<li>误用风险：把 47/70 解读为「对任意新模型/任务必然有效」；在推理模型上当作免费增益叠加；在按输入计费的大规模场景忽略成本翻倍。</li>
+</ul>
+<h2 id="_8">最小验证或演示计划</h2>
+<ul>
+<li>要验证的 insight / method：①repetition 在本项目自有任务和 2026 当代模型上是否复现正向、不破坏输出格式；②它作为 APO baseline 时，被测优化方法的净增益还剩多少。</li>
+<li>最小验证任务：取一个 50–100 样本的小评测集（候选：advisor 知识库问答改造的选择题，或一个分类小任务），三臂对比 baseline / repetition×2 / padding。</li>
+<li>需要实现的模块：复用 <code>scripts/llm_clients.py</code>；新增一个 ~100 行的三臂 A/B 脚本与结果表。</li>
+<li>观察指标：accuracy、输出长度、输出格式破坏率、失败类型分布；McNemar 检验。</li>
+<li>预计风险：样本量小导致不显著；2026 代模型可能已内化复述行为使效应衰减（这本身就是有价值的结论）；非推理模式的界定在新 API 上可能与论文不一致。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-prompt-repetition-2025.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">对本项目的启发</a>
+<a class="lv2" href="#_8">最小验证或演示计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSPy / Compiling Declarative LM Calls into Self-Improving Pipelines · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">DSPy / Compiling Declarative LM Calls into Self-Improving Pipelines</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-dspy-compiling-declarative-lm-calls-into-self-improving-pipelines">Paper Note: DSPy / Compiling Declarative LM Calls into Self-Improving Pipelines</h1>
+<p>论文：DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines</p>
+<p>链接：https://arxiv.org/abs/2310.03714</p>
+<p>source_id：paper-dspy-2023</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search（经典锚点补读）</p>
+<p>新颖性判断：duplicate-but-foundational-baseline（prompt-as-program 范式源头；MIPROv2、GEPA、Promptomatix、大量行业工具均建立其上）</p>
+<p>阅读日期：2026-06-10</p>
+<p>reviewed_by：Claude</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2310.03714/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>5309836325C3A580B6C176242F49F21CA40E413B0ACD514E74B67E16BB1B56BC</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2310.03714/paper.txt</code></p>
+<p>local_text_sha256：<code>927F5577E048E9FA3084FB5D68664C972AE0F7AD39CEF0930BB3E706761149E7</code></p>
+<p>evidence_level：method-and-results-read（读了编程模型三要素、compiler 三阶段、GSM8K/HotPotQA 两个 case study 主表和评估假设；附录 teleprompter 伪代码略读）</p>
+<p>版本说明：本地 PDF 为 v1（2023-10-05）。注意：本版 teleprompter 主要优化 <strong>demonstrations</strong>，instruction 的自动优化是后续 [[paper-miprov2-2024]] 才系统化的；引用 DSPy 时要区分"这版优化什么"。</p>
+<h2 id="_1">一句话结论</h2>
+<p>DSPy 把"写 prompt"重构成"写程序再编译"：用 natural-language <strong>signature</strong>（如 <code>question -&gt; answer</code>）声明每个 LM 调用的输入输出，用 <strong>module</strong>（Predict / ChainOfThought / ReAct…）把 signature 实例化成可组合的 define-by-run 计算图，再用 <strong>teleprompter</strong>（编译器内的优化器）自动为每个 module 生成高质量 demonstration / instruction。它的范式贡献不是某个算法，而是把 prompt 从"手搓字符串"升级为<strong>可版本化、可编译、可迁移、可复现</strong>的程序组件——并附带一个对本项目极重要的方法论转向：评估对象应从"模型 X 在 GSM8K"变成"模型 X + 程序 P + 编译策略 S 在 GSM8K"。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：构建并优化多阶段 LM pipeline（数学推理、多跳检索 QA、RAG、agent loop）。</li>
+<li>优化对象：pipeline 中每个 Predict module 的参数——<strong>主要是 demonstrations</strong>，也可含 instruction / field description；以及（higher-order）控制流本身（如 ensemble）。</li>
+<li>目标指标：任意 metric——EM / F1，甚至"另一个 DSPy 程序"（如检查 grounding 的判别程序）。</li>
+<li>约束：训练集可极小且只需最终输出标签（中间步骤标签由 bootstrap 自动补）；适配 promptable 大模型与 finetunable 小模型。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成（Stage 1 Candidate Generation）：编译器递归找出所有 Predict module，对每个 module 用 <strong>BootstrapFewShot</strong>——让 teacher 程序（或 zero-shot 自身）在训练输入上高温多次运行，<strong>透明追踪多阶段 trace</strong>，用 metric 过滤出"整条 pipeline 通过"的 trace，把其中各 module 的好 input-output 对当作候选 demonstration（rejection-sampling 式自举）。</li>
+<li>反馈如何获得：metric pass/fail（可以是程序化 metric）。本版<strong>不做自然语言 critique</strong>，靠"哪些 trace 通过 metric"的筛选信号。</li>
+<li>如何选择候选（Stage 2 Parameter Optimization）：把每个参数的候选集交给超参搜索——<code>BootstrapFewShotWithRandomSearch</code>、<code>BootstrapFewShotWithOptuna</code>（TPE），在 dev/val 上交叉验证选最优；或 <code>BootstrapFinetune</code> 把 demonstration 蒸馏进小模型权重。</li>
+<li>是否使用记忆/archive：弱——候选 demonstration 池 + ensemble（Stage 3）保留 top-k 程序做多数投票；无跨任务长期记忆。</li>
+<li>是否优化 optimizer 自身：否。teleprompter 策略固定，但可<strong>组合</strong>（teacher 程序监督 student 程序：大模型 pipeline 监督小模型/finetune）。</li>
+<li>关键定位：与 OPRO（改 instruction 文本）、TextGrad（改任意变量的 textual gradient）不同，DSPy 这版的核心优化对象是 <strong>demonstration 自举 + pipeline 编译</strong>，instruction 退居其次。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：GSM8K（数学应用题）；HotPotQA（多跳检索 QA，用 ColBERTv2 检索器）。</li>
+<li>模型：GPT-3.5、Llama2-13b-chat；finetune 目标 Flan-T5-Large（770M）。</li>
+<li>baselines：vanilla few-shot、few-shot + human CoT（专家写的 reasoning chain）、专家 ReAct prompt。</li>
+<li>train/dev/test 切分：在 dev 上做候选比较以避免 test 过拟合；HotPotQA 的 T5 编译只用 200 labeled + 800 unlabeled。</li>
+<li>成本或调用次数：强调"编译只需几分钟到几十分钟"；小训练集即可。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li><strong>GSM8K（Table 1，dev/test）</strong>：编译把简单程序从 4–20% 拉到 49–88%。</li>
+<li>GPT-3.5：vanilla 极低（摘要口径 ~33%）→ CoT+ensemble <strong>88.3 dev / 81.6 test</strong> → reflection+ensemble 86.7 dev。</li>
+<li>Llama2-13b-chat：从 ~9% → reflection+ensemble <strong>49.0 dev / 46.9 test</strong>。</li>
+<li>bootstrap×2（自举套自举）明显优于单次 bootstrap（GPT-3.5 vanilla 44.0→64.7 dev）。</li>
+<li><strong>HotPotQA（Table 2，answer EM / passage acc）</strong>：</li>
+<li>GPT-3.5 vanilla few-shot 34.3 EM → CoT-RAG bootstrap 42.3/36.0 → multihop 程序最佳。摘要口径 32%→46%。</li>
+<li>Llama2 22%→41%；编译能让 <strong>Llama2-13b-chat 追平 GPT-3.5</strong>。</li>
+<li><strong>T5-Large（770M）</strong> 经 BootstrapFinetune 后 dev 上 39.3% answer EM / 46.0% passage acc，仅用 200 labeled + 800 unlabeled——小模型经编译可与依赖专家 prompt 的 GPT-3.5 方案竞争。</li>
+<li>定性：bootstrap 的 demonstration 常胜过专家手写 CoT / ReAct prompt；模块化让多种 pipeline（reflection、multihop）便宜地探索。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<ul>
+<li><strong>本版主要优化 demonstration，不是 instruction</strong>：把 DSPy 当"自动改 instruction 工具"是误读；instruction-level 优化要到 MIPROv2/COPRO。引用时必须说清楚优化的是哪一层。</li>
+<li><strong>依赖可自动判定的 metric</strong>：bootstrap 的 rejection sampling 要求 metric 能过滤好 trace；自由生成/主观任务里 metric 难定义时，自举信号失效。</li>
+<li><strong>检索召回受限</strong>：CoT-RAG 完全依赖 ColBERTv2 从原问题直接检索，passage recall 受限；要靠 multihop 生成查询补救——说明 pipeline 结构本身是性能瓶颈，不是 prompt 单点能解决。</li>
+<li><strong>小训练集 + dev 选择仍有过拟合风险</strong>：论文用 dev 比较来"避免 test 过拟合"，但候选选择本身建立在小 dev 上，与 OPRO/TextGrad 同样面临验证集噪声问题（[[paper-coin-flip-2026]]）。</li>
+<li><strong>LM 不可靠是前提假设</strong>：作者明说 LM 高度不可靠，但"对多阶段设计搜索解空间还算高效"；这是经验性赌注，非保证。</li>
+<li><strong>成本未细表</strong>：bootstrap×2 + ensemble(top-7) 会成倍放大调用；论文给"几分钟编译"但无完整 token 成本/推理成本对照。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: prompt 优化的对象应是&quot;程序（signature+module+控制流）&quot;，不是&quot;一段字符串&quot;。
+evidence_type: direct-method + direct-result
+paper_evidence:
+  section: &quot;3, 4, 6, 7&quot;
+  table_or_figure: &quot;Table 1, Table 2&quot;
+  quote_or_paraphrase: &quot;把 prompting 技术翻译成带 signature 的声明式 module，用 teleprompter 编译；GPT-3.5 GSM8K 从~33%到88%，小模型经编译追平 GPT-3.5。&quot;
+mechanism: 把&quot;措辞&quot;与&quot;程序结构/参数&quot;解耦后，优化器能在结构固定下系统搜索参数，换模型只需重编译。
+actionable_rule: 本项目 prompt versioning 应保存 program artifact（signature/module/控制流/编译策略），而非单段文本（与 [[paper-autopdl-2025]]、batch3 的 artifact graph 结论一致）。
+counterexample_or_limit: 一次性简单聊天里，程序化抽象的成本可能超过收益。
+minimal_experiment: 同任务比较&quot;手搓 prompt 字符串&quot;vs&quot;DSPy 程序+bootstrap 编译&quot;的可复现性与换模型迁移成本。
+confidence: high
+</code></pre>
+<pre><code class="language-yaml">insight: 在有可判定 metric 时，自举 demonstration 常胜过专家手写 instruction/示例。
+evidence_type: direct-result
+paper_evidence:
+  section: &quot;6, 7&quot;
+  table_or_figure: &quot;Table 1 (bootstrap vs +humanCoT), Table 2 (bootstrap vs expert ReAct)&quot;
+  quote_or_paraphrase: &quot;bootstrap 的 demonstration 超过 few-shot+humanCoT 与专家 ReAct prompt；Llama2 经编译追平 GPT-3.5。&quot;
+mechanism: 模型自己生成、被 metric 过滤过的 trace，比人写示例更贴合该模型该 pipeline 的分布。
+actionable_rule: 有 labeled dev 时，把 demonstration 自举当一等优化变量，与 instruction 改写并列对照（呼应 [[paper-teach-better-show-smarter-2024]]、[[paper-textgrad-2024]] 的互补性）。
+counterexample_or_limit: metric 不可自动判定、或小 dev 噪声大时自举失效。
+minimal_experiment: instruction-only / bootstrapped-demo / 二者叠加 三格，记录 EM 与推理成本。
+confidence: high
+</code></pre>
+<pre><code class="language-yaml">insight: 评估口径应绑定&quot;程序 P + 编译策略 S&quot;，而非裸模型分。
+evidence_type: author-claim
+paper_evidence:
+  section: &quot;5 Goals of Evaluation&quot;
+  table_or_figure: &quot;无&quot;
+  quote_or_paraphrase: &quot;从'不同 LM 在 GSM8K 怎么比'转向'它们在程序 P、编译策略 S 下怎么比'，才是可复现的 run。&quot;
+mechanism: 同一模型在不同 program/编译下分数差异巨大，脱离 program 谈模型分无法复现。
+actionable_rule: 本项目所有 APO 结果必须连同 program 结构、teleprompter/optimizer、编译预算一起记录，否则不可复现（直接喂入渠道综合的 provenance 字段）。
+counterexample_or_limit: 增加记录负担；对单点 prompt 实验略重。
+minimal_experiment: 固定模型、变 program/编译策略，量化分数离散度，证明&quot;裸模型分&quot;不可比。
+confidence: high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<blockquote>
+<p>字段定义与 insight / conclusion / helpful method 的区分口径见 <code>docs/insight_field_standard.md</code>。</p>
+</blockquote>
+<ul>
+<li>conclusion：DSPy 是 prompt-as-program 的<strong>奠基锚点</strong>。它的实证支持本项目三条主张——(1) 优化对象是 artifact graph 不是字符串；(2) 有 metric 时自举 demonstration 极强；(3) 评估必须绑定 program+编译策略才可复现。但本版优化的是 demonstration，不是 instruction。</li>
+<li>helpful method：把 DSPy 的"signature 声明 → module 组合 → teleprompter 编译（bootstrap trace + 候选搜索 + ensemble）"作为 pipeline 级优化的参考骨架；本项目的 prompt ledger 字段应对齐 signature/module/编译策略。</li>
+<li>anti-pattern / limit：把 DSPy 当"自动改 instruction"工具（误读优化层）；或脱离 program 谈模型分。</li>
+<li>适用场景：多阶段 pipeline / RAG / agent、有可自动判定 metric、想让小模型替代大模型省成本。</li>
+<li>误用风险：在 metric 不可判定的主观任务上硬套自举；忽略 bootstrap×2+ensemble 的成本放大。</li>
+</ul>
+<h2 id="_9">最小验证或演示计划</h2>
+<ul>
+<li>要验证的 insight / method：program+编译可复现性，以及"自举 demo vs instruction 改写 vs 叠加"。</li>
+<li>最小验证任务：一个两阶段 RAG 或结构化抽取任务，有 EM/F1 metric，100–300 样本。</li>
+<li>需要实现的模块：(1) 用现成 dspy 库声明最小 program（Predict/ChainOfThought）；(2) BootstrapFewShot(+RandomSearch) 编译；(3) 与 instruction-only optimizer（OPRO/TextGrad 式）共用同一评估集；(4) 换模型重编译测迁移。</li>
+<li>观察指标：编译前后 EM、达到目标分的标注样本数（标签效率）、换模型迁移 delta、编译总调用成本、train-dev-test gap。</li>
+<li>预计风险：小 dev 选择过拟合；metric 设计不当导致自举筛错 trace；ensemble 成本放大。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-dspy-2023.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">最小验证或演示计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

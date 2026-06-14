@@ -566,7 +566,7 @@ dev：87% ↑（看起来涨了）
               <div class="num"><b>~3 步</b><small>ProTeGi：约 3 步达峰，之后多在训练集过拟合</small></div>
               <div class="num"><b>47/70</b><small>Prompt Repetition：非推理模式下把 query 原样重复一遍，7 模型×10 基准 47/70 显著胜、0 显著负，时延不增——零智能变换也能涨分</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>（recent-preprint）、<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-prompt-repetition-2025.md">prompt-repetition-2025</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.html">coin-flip-2026</a>（recent-preprint）、<a href="./paper_notes/paper-protegi-2023.html">protegi-2023</a>、<a href="./paper_notes/paper-prompt-repetition-2025.html">prompt-repetition-2025</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -603,7 +603,7 @@ dev：87% ↑（看起来涨了）
               <div class="num"><b>+6.8</b><small>Coin Flip：唯一让 6 种方法全超 zero-shot 的是结构化 JSON 任务 HelpSteer2</small></div>
               <div class="num"><b>+16% → ~1%</b><small>KG 抽取：同数据集 triple F1 +16%，换数据集只剩约 1%</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.md">coin-flip-2026</a>、<a href="./paper_notes/paper-apo-kg-construction-2025.md">apo-kg-construction-2025</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-coin-flip-2026.html">coin-flip-2026</a>、<a href="./paper_notes/paper-apo-kg-construction-2025.html">apo-kg-construction-2025</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -645,7 +645,7 @@ dev：87% ↑（看起来涨了）
               <div class="num"><b>+15.3% / 最高 +31%</b><small>ProTeGi：用失败样本生成文字"梯度"再改写，比原始 prompt</small></div>
               <div class="num"><b>越改越差</b><small>同论文：让 AutoGPT 自己反馈改 6 轮，反而把起始 prompt 改差</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">textual-gradients-flawed-metaphor-2025</a>（文字"梯度"是比喻，非真梯度）</p>
+            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.html">protegi-2023</a>、<a href="./paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">textual-gradients-flawed-metaphor-2025</a>（文字"梯度"是比喻，非真梯度）</p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -675,7 +675,7 @@ dev：87% ↑（看起来涨了）
             <div class="stat">
               <div class="num"><b>23.81% → 13.50% → 87.57%</b><small>VISTA：GEPA 在缺陷种子上反而掉到 13.50%；解耦"假设生成/改写"后恢复 87.57%</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-vista-reflection-dark-2026.md">vista-reflection-dark-2026</a>、<a href="./paper_notes/paper-llm-prompt-optimizers-2024.md">llm-prompt-optimizers-2024</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-vista-reflection-dark-2026.html">vista-reflection-dark-2026</a>、<a href="./paper_notes/paper-llm-prompt-optimizers-2024.html">llm-prompt-optimizers-2024</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -716,7 +716,7 @@ C5   0.86   0%    1.0x   ✔候选
             <div class="stat">
               <div class="num"><b>0.85 / 0.67 / 0.88</b><small>ProTeGi：beam 选择在 Jailbreak/Liar/Sarcasm 明显优于贪心；bandit &gt; 均匀选</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.md">protegi-2023</a>、<a href="./paper_notes/paper-gepa-2026.md">gepa-2026</a>、<a href="./paper_notes/paper-promptbreeder-2023.md">promptbreeder-2023</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-protegi-2023.html">protegi-2023</a>、<a href="./paper_notes/paper-gepa-2026.html">gepa-2026</a>、<a href="./paper_notes/paper-promptbreeder-2023.html">promptbreeder-2023</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -746,7 +746,7 @@ dev +5，压力测试集 −8</pre>
               <div class="num"><b>14.7x / 86%</b><small>PrefPO：放任时 TextGrad 撑到 14.7 倍长、86% 在偷改任务本身（PrefPO 仅 37%）</small></div>
               <div class="num"><b>+10.0 / +9.9</b><small>TextReg：加正则化管住膨胀，反而比 TextGrad 更高</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-prefpo-2026.md">prefpo-2026</a>、<a href="./paper_notes/paper-textreg-2026.md">textreg-2026</a>、<a href="./paper_notes/paper-causal-edit-level-2026.md">causal-edit-level-2026</a>（均 recent-preprint）</p>
+            <p class="src">来源：<a href="./paper_notes/paper-prefpo-2026.html">prefpo-2026</a>、<a href="./paper_notes/paper-textreg-2026.html">textreg-2026</a>、<a href="./paper_notes/paper-causal-edit-level-2026.html">causal-edit-level-2026</a>（均 recent-preprint）</p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -787,7 +787,7 @@ dev +5，压力测试集 −8</pre>
               <div class="num"><b>+12.63</b><small>Teach Better：不改 instruction、只优化示例就达 72.92（PaLM 2 / BBH）</small></div>
               <div class="num"><b>75.77 &gt; 65.91</b><small>Gemini 1.0 Pro：优化示例 &gt; 只优化 instruction；且精选 3 个 &gt; 全部示例</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-teach-better-show-smarter-2024.md">teach-better-show-smarter-2024</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-teach-better-show-smarter-2024.html">teach-better-show-smarter-2024</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -818,7 +818,7 @@ safety_rules       v1   [FROZEN]  ← 安全/权限不进搜索空间</pre>
             <div class="stat">
               <div class="num"><b>6.5% → 74.0%</b><small>AutoPDL：只把 prompting 模式换对（非重写措辞），FEVER 跳 +67.5pp</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-autopdl-2025.md">autopdl-2025</a>、<a href="./paper_notes/paper-jtpro-2026.md">jtpro-2026</a>、<a href="./paper_notes/paper-prompt-codebooks-2026.md">prompt-codebooks-2026</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-autopdl-2025.html">autopdl-2025</a>、<a href="./paper_notes/paper-jtpro-2026.html">jtpro-2026</a>、<a href="./paper_notes/paper-prompt-codebooks-2026.html">prompt-codebooks-2026</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -852,7 +852,7 @@ amount: integer
               <div class="num"><b>51.27% → 64.46%</b><small>JTPRO：联合优化全局指令 + 每工具 schema，o3-mini 整体成功率（ToolACE 1000 工具）</small></div>
               <div class="num"><b>选对≠成功</b><small>ETID：工具选得准但成功率低，瓶颈是 slot-filling 不是选择</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-jtpro-2026.md">jtpro-2026</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-jtpro-2026.html">jtpro-2026</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -896,7 +896,7 @@ amount: integer
               <div class="num"><b>70.7% vs 63.6%｜$0.31 vs $0.70</b><small>MemAPO：双记忆比 TextGrad 更好且更便宜</small></div>
               <div class="num"><b>第7步 68.6 vs 第13步 58.5</b><small>ERM：过滤记忆收敛近两倍速；原始记忆无收益</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-memapo-2026.md">memapo-2026</a>（recent-preprint）、<a href="./paper_notes/paper-erm-memory-2024.md">erm-memory-2024</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-memapo-2026.html">memapo-2026</a>（recent-preprint）、<a href="./paper_notes/paper-erm-memory-2024.html">erm-memory-2024</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>
@@ -927,7 +927,7 @@ amount: integer
               <div class="num"><b>55.13 → 64.63</b><small>Temporal/Structural Credit：credit-guided 在 MedMCQA（+9.50）；无差别更新所有轮反而掉分</small></div>
               <div class="num"><b>70.39 vs 65.31</b><small>MASPO：联合优化平均优于顺序 baseline</small></div>
             </div>
-            <p class="src">来源：<a href="./paper_notes/paper-temporal-structural-credit-mas-2026.md">temporal-structural-credit-mas-2026</a>、<a href="./paper_notes/paper-maspo-2026.md">maspo-2026</a>、<a href="./paper_notes/paper-mapro-2025.md">mapro-2025</a></p>
+            <p class="src">来源：<a href="./paper_notes/paper-temporal-structural-credit-mas-2026.html">temporal-structural-credit-mas-2026</a>、<a href="./paper_notes/paper-maspo-2026.html">maspo-2026</a>、<a href="./paper_notes/paper-mapro-2025.html">mapro-2025</a></p>
           </div>
           <div class="block">
             <h4>你该怎么做</h4>

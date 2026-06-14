@@ -63,6 +63,7 @@
 | 2025 | [MAPRO](https://arxiv.org/abs/2510.07475) | 多 agent prompt 优化形式化为 MAP 推断，credit 沿拓扑传播。 | [paper-mapro-2025](paper_notes/paper-mapro-2025.md) |
 | 2025 | [Prompt Repetition](https://arxiv.org/abs/2512.14982) | 对照基线（非 APO 方法）：prompt 原样重复一遍，非推理模式 47/70 显著胜 0 负；零成本结构变换的对照底线。 | [paper-prompt-repetition-2025](paper_notes/paper-prompt-repetition-2025.md) |
 | 2026 | [GEPA](https://arxiv.org/abs/2507.19457) | 执行轨迹反思 + Pareto 候选保留，少量 rollouts 超过 RL；当前最值得复现的强 baseline。 | [paper-gepa-2026](paper_notes/paper-gepa-2026.md) |
+| 2026 | [ACE](https://arxiv.org/abs/2510.04618) | 上下文当 playbook 增量进化（delta + 确定性合并）防上下文坍缩与简洁偏置；agent/知识密集任务上与 GEPA 类候选竞争范式正面分野。 | [paper-ace-2026](paper_notes/paper-ace-2026.md) |
 | 2026 | [SePO](https://arxiv.org/abs/2606.04465) | 把 optimizer 自己的 system prompt 也纳入演化；「optimizer/judge 版本化」的直接证据。 | [paper-sepo-2026](paper_notes/paper-sepo-2026.md) |
 | 2026 | [SPEAR](https://arxiv.org/abs/2605.26275) | optimizer 自己写 Python 做结构化错误分析（confusion matrix/groupby），auto-rollback 护住下限。 | [paper-spear-2026](paper_notes/paper-spear-2026.md) |
 | 2026 | [Modular Prompt Optimization](https://arxiv.org/abs/2601.04055) | 固定 schema 分 section 做局部 textual gradient；最直接的可回滚优化实验方案。 | [paper-modular-prompt-optimization-2026](paper_notes/paper-modular-prompt-optimization-2026.md) |

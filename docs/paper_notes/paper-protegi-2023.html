@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProTeGi / Automatic Prompt Optimization with &quot;Gradient Descent&quot; and Beam Search · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">ProTeGi / Automatic Prompt Optimization with &quot;Gradient Descent&quot; and Beam Search</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-protegi-automatic-prompt-optimization-with-gradient-descent-and-beam-search">Paper Note: ProTeGi / Automatic Prompt Optimization with "Gradient Descent" and Beam Search</h1>
+<p>论文：Automatic Prompt Optimization with "Gradient Descent" and Beam Search</p>
+<p>链接：https://arxiv.org/abs/2305.03495</p>
+<p>source_id：paper-protegi-2023</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：extension</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2305.03495/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>90ED9BD62D8E8C1F5BB810C7749C8272F2DE4CAC037CB75306746C9C9CFCB094</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2305.03495/paper.txt</code></p>
+<p>local_text_sha256：<code>C08AA4A0B410CE2F80AF10281CC6DCCDC25198E1CEC2C029FED87AFB29D380F3</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>ProTeGi 的核心洞见不是“文本真的有可微梯度”，而是把失败样本压缩成可编辑的自然语言批评，再用多候选搜索和数据选择筛掉坏改写；它是后续 textual critique / prompt evolution 实验必须对照的经典 baseline。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：给定初始 prompt 和带标签训练数据，自动改写 prompt，提高黑盒 LLM 在任务上的表现。</li>
+<li>优化对象：自然语言 task prompt；few-shot examples 在实验中保持固定。</li>
+<li>目标指标：四个分类任务上的 test binary F1。</li>
+<li>约束：不训练模型，不访问 LLM 内部状态；通过 LLM API 做 prompt 生成、编辑和评估。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：对当前 prompt 在 minibatch 上的错误样本生成自然语言“gradient”，再用另一个 LLM prompt 将该 gradient 转成 prompt 编辑；随后对候选做 paraphrase 扩展。</li>
+<li>反馈如何获得：错误样本 + 当前 prompt 的行为，被 LLM 总结成当前 prompt 的缺陷。</li>
+<li>如何选择候选：beam search 外循环；候选选择被建模为 best-arm identification，实验比较 UCB、UCB-E、Successive Rejects、Successive Halving 等。</li>
+<li>是否使用记忆/archive：使用 beam 保留候选，但不是长期 memory。</li>
+<li>是否优化 optimizer 自身：否。<code>gradient prompt</code> 和 <code>editing prompt</code> 是静态的。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：</li>
+<li>Jailbreak：452 个多语言样本，人工标注是否为 jailbreak。</li>
+<li>Ethos：997 条英文 hate speech comments。</li>
+<li>Liar：4000 条英文 fake news statements。</li>
+<li>Sarcasm：10000 条阿拉伯语 sarcasm comments。</li>
+<li>模型：主实验使用 January 2023 版 <code>gpt-3.5-turbo</code>；另比较 GPT-3、InstructGPT、ChatGPT、GPT-4。</li>
+<li>baselines：Monte-Carlo / APE-style search、RL phrase-level operations、AutoGPT feedback、uniform evolutionary selection。</li>
+<li>train/dev/test 切分：每任务随机采样 50 development、150 test；结果为 3 次实验平均。</li>
+<li>成本或调用次数：主设置 minibatch size 64、beam size 4、6 optimization steps；每步每 4 个错误生成 4 个 gradients，每个 gradient 编辑一次，再生成 2 个 Monte Carlo paraphrases；每个 parent prompt 随机保留 8 个 successors 进入 bandit selection。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>ProTeGi 在四个 benchmark 上均超过对照算法；平均比 MC 高 3.9%，比 RL 高 8.2%，比原始 prompt 高 15.3%，比 AutoGPT 高 15.2%。</li>
+<li>摘要和引言报告，最高可把初始 prompt 表现提升 31%。</li>
+<li>Beam search ablation 中，Beam(ProTeGi) 在 Jailbreak、Liar、Sarcasm 上分别为 0.85、0.67、0.88，优于 no iteration 和 greedy。</li>
+<li>Bandit selection 中，UCB/UCB-E/SR/SH 均超过 uniform selection；论文发现 UCB-style 实践中优于 successive-rejects-style，与作者原先理论直觉不完全一致。</li>
+<li>学习曲线显示，所有数据集大约 3 step 达峰，之后可能在训练数据上过拟合或卡入 local minima。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>Qualitative analysis 显示，Jailbreak 的某些 gradient 会把 prompt 焦点错误转到 child grooming 等局部问题；有时 ProTeGi 没有正确利用 gradient，而是用模型内部知识重新定义概念。</li>
+<li>AutoGPT 在 Jailbreak 和 Sarcasm 上 6 轮反馈反而降低起始 prompt 表现，说明“让 agent 自己改”不等于有效优化。</li>
+<li>ProTeGi 实际效率受 LLM API rate limit 限制；即使候选选择相对高效，gradient generation、beam candidates full evaluation 和长 prompt 可能让小预算运行超过 1 小时。</li>
+<li>只测试了四个 classification benchmark，未覆盖生成、agent、tool-use、多目标或安全治理任务。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 失败样本需要转成可编辑语言反馈，而不是只转成分数。
+evidence_type: direct-method + direct-result
+paper_evidence:
+  section: &quot;2.1, 2.2, 3.4&quot;
+  table_or_figure: &quot;Figure 3, Table 1, Table 2, Figure 4&quot;
+  quote_or_paraphrase: &quot;论文用 minibatch 错误生成 natural language gradients，再编辑 prompt；主结果显示比 MC/RL/AutoGPT 和原始 prompt 更好。&quot;
+mechanism: critique 指出当前 prompt 缺陷，beam/bandit 选择避免采纳单次不可靠改写。
+actionable_rule: 每轮 prompt 优化至少记录失败样本、critique、候选 prompt、选择指标和淘汰理由。
+counterexample_or_limit: critique 可能误导，学习曲线显示约 3 step 后可能过拟合或局部停滞。
+minimal_experiment: scalar-score rewrite vs critique-guided rewrite vs critique-guided beam search。
+confidence: high-for-classification-baseline; medium-for-general-agent-use
+</code></pre>
+<pre><code class="language-yaml">insight: 候选选择机制和候选生成机制同等重要。
+evidence_type: ablation
+paper_evidence:
+  section: &quot;3.4 Beam Search Ablation; Bandit Algorithms&quot;
+  table_or_figure: &quot;Table 1, Table 2&quot;
+  quote_or_paraphrase: &quot;Beam search 优于 flat / greedy；bandit best-arm identification 方法优于 uniform selection。&quot;
+mechanism: LLM 生成的 prompt 候选方差很高，需要用数据和搜索结构筛选。
+actionable_rule: 不直接采用 optimizer 的第一条改写；至少保留多个候选并用 dev set 或 Pareto 指标选择。
+counterexample_or_limit: 搜索预算增加也会增加 dev overfitting 风险。
+minimal_experiment: one-shot rewrite vs beam width 4 + dev selection。
+confidence: high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>ProTeGi 是第一组最小实验的必要 baseline，但不要照搬“gradient”措辞，应称为 natural-language critique 或 textual feedback。</li>
+<li>评估日志必须记录 <code>optimization_step</code>，因为论文显示过多 step 可能过拟合。</li>
+<li>如果复现，应先用小分类/抽取任务；不要直接推断它适合 agent 或开放生成任务。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：二分类或结构化抽取任务，90-150 条样本。</li>
+<li>需要实现的模块：</li>
+<li>failure minibatch sampler。</li>
+<li>critique prompt。</li>
+<li>edit prompt。</li>
+<li>candidate beam。</li>
+<li>dev-set selector。</li>
+<li>预计风险：</li>
+<li>API 成本和运行时间。</li>
+<li>critique 误导。</li>
+<li>dev overfitting。</li>
+<li>prompt bloat。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-protegi-2023.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPEAR / Code-Augmented Agentic Prompt Optimization · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">SPEAR / Code-Augmented Agentic Prompt Optimization</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-spear-code-augmented-agentic-prompt-optimization">Paper Note: SPEAR / Code-Augmented Agentic Prompt Optimization</h1>
+<p>论文：SPEAR: Code-Augmented Agentic Prompt Optimization</p>
+<p>链接：https://arxiv.org/abs/2605.26275</p>
+<p>source_id：paper-spear-2026</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search</p>
+<p>新颖性判断：high-signal-extension</p>
+<p>阅读日期：2026-06-08</p>
+<p>reviewed_by：Codex</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2605.26275/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>03396532204482691E8992E087EEF3F0DC134972CF2E79EA33C333448B47B1B8</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2605.26275/paper.txt</code></p>
+<p>local_text_sha256：<code>8603C48F33B8BBEDB04988746D55DC189C7FA884F88A670CC65B2C1FE70DF084</code></p>
+<p>evidence_level：method-and-results-read</p>
+<h2 id="_1">一句话结论</h2>
+<p>SPEAR 的核心洞见是：很多 prompt 失败不是“模型没有读懂批评”，而是错误模式隐藏在 eval DataFrame 的结构里；让 optimizer 自己写 Python 做 confusion matrix、groupby、per-class metrics，再用 auto-rollback 护住下限，会比把原始数据塞进长上下文更有效。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：自动改写 LLM-as-judge、BBH、GSM8K 等任务的 system prompt，提高 labeled dataset 上的主指标。</li>
+<li>优化对象：单个 system prompt，不改 task model 权重。</li>
+<li>核心场景：工业 judge prompts，尤其是多类别、类别不平衡、标签规则细节复杂的评估器。</li>
+<li>关键问题：现有 APE pipeline 固定了错误分析方式，无法按任务动态发现 confused class pair、label-rule contradiction 或 feature-level error cluster。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：free-form agent 在循环中选择 <code>evaluate</code>、<code>python</code>、<code>set_prompt</code>、<code>finish</code> 四个工具；没有固定 evaluate-analyze-rewrite 顺序。</li>
+<li>反馈如何获得：<code>evaluate</code> 返回 per-row predictions；<code>python</code> 在受限 sandbox 中读取 eval DataFrame，用 pandas/numpy 生成自定义错误分析。</li>
+<li>如何选择候选：full-split evaluate 后若主指标低于 best-seen，auto-rollback 到最佳 prompt；可选 guard metric floor 防止副指标跌破阈值。</li>
+<li>是否使用记忆/archive：维护 best metric baseline 和 eval history，但不是长期 prompt archive。</li>
+<li>是否优化 optimizer 自身：否。SPEAR 改变 optimizer 的工具能力和 orchestration autonomy，而不是训练 optimizer prompt。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>工业任务：Hiring Assistant 10 个 extraction-judge dimensions、CMA 2 个 tool-selection judges、Facet Suggestion 1 个 filter-relevance judge。</li>
+<li>公开任务：BBH-7 和 GSM8K。</li>
+<li>指标：工业任务主要用 Cohen's kappa 或 macro-F1；BBH/GSM8K 用 accuracy。</li>
+<li>模型：task model 为 GPT-4o；SPEAR 和 GEPA optimizer 使用 GPT-5.4 内部部署；TextGrad 主配置使用 GPT-4o，附录有 GPT-5.4 统一视图。</li>
+<li>预算：SPEAR <code>max_eval_calls=15-20</code>；GEPA <code>max_metric_calls=400-500</code>；TextGrad <code>max_steps=5</code>。</li>
+<li>注意：工业 headline 是 best-of-N，且各方法 N 不完全对称；论文用 single-seed unified-optimizer view 和 multi-seed 方差补充约束。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>工业主表中，SPEAR 在 12 个可比工业任务里赢 11 个；唯一例外是 near-ceiling 的 Hiring Assistant unsound inference，TextGrad 为 0.968，SPEAR 为 0.937。</li>
+<li>最大增益集中在难任务：Hiring Assistant job location kappa 0.760 vs TextGrad 0.110 / GEPA 0.361；CMA tool-missing 0.976 vs 0.694 / 0.631；Facet macro-F1 0.846 vs 0.751 / 0.734。</li>
+<li>BBH-7 平均准确率 SPEAR 0.938，GEPA 0.628，TextGrad 0.484；但论文指出大部分来自 output-format rewriting，不应被解读成所有 reasoning 任务的结构性胜利。</li>
+<li>GSM8K 上三者几乎都不动：SPEAR 0.965，GEPA 0.960，TextGrad 0.956。</li>
+<li>消融中，移除 Python tool 是复杂 judge 任务最大损失来源：Hiring Assistant location 降 0.35 kappa，CMA tool-missing 降 0.79 kappa。</li>
+<li>把完整 train eval DataFrame 作为文本塞给无 Python agent 不能恢复 Python tool：在 CMA tool-missing 上只恢复 A1-to-full gap 的 2%，说明关键不是信息量，而是结构化聚合能力。</li>
+<li>free-form agent 换成同工具 rigid loop，会在 Hiring Assistant location 损失 0.27 kappa，在 BBH logical_deduction_5obj 损失 26 个百分点。</li>
+<li>78 个 archived SPEAR runs 中，71 个有实质提升，7 个 plateau，没有一个最终低于 seed；论文把这归因于 auto-rollback 抬高下限。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>优化器模型 GPT-5.4 是内部部署别名，外部无法精确复现具体 point release。</li>
+<li>三个工业 benchmark 和部分 optimized prompts 不能完整公开，因为涉及内部标注和专有政策内容。</li>
+<li>GPT-4o 在 <code>T=0</code> 下也不是 bit-reproducible；小样本 judge 的 kappa 方差很大，单 seed 消融里小于 0.05 的差异只能视为方向性。</li>
+<li>SPEAR 能看到 valid aggregate label distribution，虽不看 valid row content，但相对 GEPA/TextGrad 有 read-side asymmetry。</li>
+<li>优化后的 prompt 长度约增长 2 倍，生产可能需要后处理压缩或长度惩罚。</li>
+<li>Python sandbox 假设 trusted optimizer LLM 和内部数据；AST whitelist 不是强安全边界，不适合直接面对不可信用户数据。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 错误分析能力应该是 optimizer 的工具，而不只是 prompt 里的要求。
+evidence_type: direct-method + ablation
+paper_evidence:
+  section: &quot;3, 4.4, 5&quot;
+  table_or_figure: &quot;Figure 1, Table 9, Case studies&quot;
+  quote_or_paraphrase: &quot;移除 Python tool 在 CMA tool-missing 上损失约 0.79 kappa；直接把完整 DataFrame 放进上下文只恢复 2% gap。&quot;
+mechanism: LLM 长上下文不稳定地抽取多维统计结构；代码可以可靠计算 confusion matrix、groupby、per-class metrics。
+actionable_rule: 对 judge/分类/抽取 prompt 优化，优先给 optimizer 提供受控表格分析工具，而不是只给自然语言 critique。
+counterexample_or_limit: 对 GSM8K 或 near-saturated tasks，Python tool 几乎没有增益。
+minimal_experiment: text-only critique vs full-DF-in-context vs python-analysis tool。
+confidence: high-for-structured-eval; low-for-open-ended-generation
+</code></pre>
+<pre><code class="language-yaml">insight: prompt 优化里的“agent 自主编排”本身可产生收益。
+evidence_type: ablation
+paper_evidence:
+  section: &quot;4.4&quot;
+  table_or_figure: &quot;Component ablations&quot;
+  quote_or_paraphrase: &quot;同样四个工具但固定 rigid loop，在 Hiring Assistant location 损失 0.27 kappa，在 BBH logical_deduction_5obj 损失 26 pp。&quot;
+mechanism: 不同任务需要不同分析顺序；有些先写代码聚类，有些先修格式，有些需要多次 eval 后再改 prompt。
+actionable_rule: 不要把 optimizer 固定成单一 evaluate -&gt; critique -&gt; rewrite pipeline；至少允许工具调用顺序由策略选择。
+counterexample_or_limit: autonomy 依赖强 optimizer model；降到 GPT-4o 时论文报告 near-total failure。
+minimal_experiment: fixed-cycle optimizer vs tool-choice optimizer under same tools and budget。
+confidence: medium-high
+</code></pre>
+<pre><code class="language-yaml">insight: auto-rollback 更像是提高优化器下限，而不是提高平均最优点。
+evidence_type: discussion + ablation
+paper_evidence:
+  section: &quot;3.2, 4.4, 6&quot;
+  table_or_figure: &quot;Algorithm 1, Failure modes&quot;
+  quote_or_paraphrase: &quot;A2 在单 seed CI 内，作者不声称显著提高均值；但 78 个 logged runs 中没有低于 seed 结束。&quot;
+mechanism: 回滚阻止坏 prompt 留在最终结果，但不一定帮助发现更好 prompt。
+actionable_rule: 所有自动 prompt 改写实验都应该默认保留 seed prompt 和 best-seen prompt，并报告是否曾出现 metric regression。
+counterexample_or_limit: 如果 dev metric 噪声大，rollback 可能保守地拒绝有泛化潜力的候选。
+minimal_experiment: with rollback vs without rollback under noisy dev split。
+confidence: high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<ul>
+<li>对任何有表格标签的任务，prompt evolution pipeline 应内置 dataframe analysis step，至少生成 confusion matrix、top error clusters、per-label precision/recall。</li>
+<li>日志字段要保存 optimizer 写出的 analysis code、代码输出、基于该输出的 prompt rewrite rationale。</li>
+<li>我们不能把“把数据放进上下文”当作结构化分析的替代品；SPEAR 的消融正好说明长上下文无法稳定完成聚合。</li>
+<li>生产化时必须区分 offline trusted sandbox 和 online untrusted execution；本项目只能先做离线复现实验。</li>
+</ul>
+<h2 id="_9">可复现计划</h2>
+<ul>
+<li>最小复现任务：多类别 judge 或结构化抽取任务，50-200 行 labeled eval DataFrame。</li>
+<li>需要实现的模块：</li>
+<li>evaluate tool 返回 per-row predictions。</li>
+<li>restricted Python analysis sandbox。</li>
+<li>set_prompt + auto-rollback。</li>
+<li>guard metric floor。</li>
+<li>code/output/rewrite 日志。</li>
+<li>预计风险：</li>
+<li>optimizer model 不够强时无法写出有效分析代码。</li>
+<li>小样本 kappa 方差导致伪提升。</li>
+<li>sandbox 安全边界不足。</li>
+<li>prompt 变长影响部署成本。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-spear-2026.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">可复现计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -109,8 +109,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </code></pre>
 <p>30 条样本一测，准确率 82%。你上了个自动优化器，它跑了 6 轮，产出一个又长又「专业」的新 prompt（加了一堆边界规则）。dev 上涨到 87%，你很开心——<strong>但换到没见过的 100 条测试集，掉到 79%，比最初那句话还低</strong>。那 5 个点是优化器在 30 条小样本的噪声里「捡」到的，不是真本事。</p>
 <p><strong>论文怎么说</strong>
-- <em>Prompt Optimization Is a Coin Flip</em>（2026，<code>recent-preprint</code>）：在 Claude Haiku 4.5 上，<strong>72 次优化运行里 49% 低于 zero-shot</strong>；在自由文本任务上（XSum、WildBench）最好的提升只有 +0.6、+0.7，落在测量噪声里。唯一稳赚的是 HelpSteer2 这种<strong>严格 JSON/rubric 输出</strong>任务，六种方法全部超过 zero-shot（最高 +6.8）。来源：<a href="paper_notes/paper-coin-flip-2026.md">paper-coin-flip-2026.md</a>
-- ProTeGi（2023）自己也承认：学习曲线大约 <strong>3 步达峰</strong>，之后往往在训练数据上过拟合。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a></p>
+- <em>Prompt Optimization Is a Coin Flip</em>（2026，<code>recent-preprint</code>）：在 Claude Haiku 4.5 上，<strong>72 次优化运行里 49% 低于 zero-shot</strong>；在自由文本任务上（XSum、WildBench）最好的提升只有 +0.6、+0.7，落在测量噪声里。唯一稳赚的是 HelpSteer2 这种<strong>严格 JSON/rubric 输出</strong>任务，六种方法全部超过 zero-shot（最高 +6.8）。来源：<a href="paper_notes/paper-coin-flip-2026.html">paper-coin-flip-2026.md</a>
+- ProTeGi（2023）自己也承认：学习曲线大约 <strong>3 步达峰</strong>，之后往往在训练数据上过拟合。来源：<a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a></p>
 <p><strong>你该怎么做</strong>（花优化器的钱之前，先做 5 分钟体检）
 1. 跑 zero-shot 和你手写的 baseline，各记一个分。
 2. 手写或让模型生成 10–20 个候选 prompt。
@@ -132,8 +132,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </ul>
 <p>任务乙能把失败拆成「字段漏抽 / 标签错 / 格式破坏 / 过度推断」，每一类都能对应到 prompt 的具体改动。所以第一批验证选乙，不选甲。</p>
 <p><strong>论文怎么说</strong>
-- <em>Coin Flip</em>（2026，<code>recent-preprint</code>）：唯一让所有方法都超过 zero-shot 的，是 HelpSteer2 这种<strong>结构化 JSON/rubric 输出</strong>任务（+6.8）；自由文本任务全在噪声里。来源：<a href="paper_notes/paper-coin-flip-2026.md">paper-coin-flip-2026.md</a>
-- <em>APO for KG Construction</em>（2025）：在结构化三元组抽取上，同数据集优化能拿到 <strong>triple F1 +16%</strong>；但换数据集只剩 <strong>约 1%</strong>——结构化任务收益清楚，可跨域迁移仍要单独测。来源：<a href="paper_notes/paper-apo-kg-construction-2025.md">paper-apo-kg-construction-2025.md</a></p>
+- <em>Coin Flip</em>（2026，<code>recent-preprint</code>）：唯一让所有方法都超过 zero-shot 的，是 HelpSteer2 这种<strong>结构化 JSON/rubric 输出</strong>任务（+6.8）；自由文本任务全在噪声里。来源：<a href="paper_notes/paper-coin-flip-2026.html">paper-coin-flip-2026.md</a>
+- <em>APO for KG Construction</em>（2025）：在结构化三元组抽取上，同数据集优化能拿到 <strong>triple F1 +16%</strong>；但换数据集只剩 <strong>约 1%</strong>——结构化任务收益清楚，可跨域迁移仍要单独测。来源：<a href="paper_notes/paper-apo-kg-construction-2025.html">paper-apo-kg-construction-2025.md</a></p>
 <p><strong>你该怎么做</strong>
 - 第一批最小验证选：信息抽取（JSON schema）、文本分类、工具调用——评分客观、错误可拆解。
 - 暂时别用开放生成（写作、摘要、对话）当第一块试验田，它的因果最难看清。</p>
@@ -153,9 +153,9 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </ul>
 <p>后者就是「文本梯度 / critique」——但注意，它是<strong>改写方向的线索</strong>，不是数学意义上的梯度，别把它当成精确的因果解释。</p>
 <p><strong>论文怎么说</strong>
-- ProTeGi（2023）：用失败样本生成自然语言「gradient」再编辑 prompt，<strong>比原始 prompt 平均高 15.3%，最高可提升 31%</strong>。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>
-- 反面证据同样有力：ProTeGi 论文里，<strong>让 AutoGPT「自己反馈、自己改」6 轮，反而把起始 prompt 改差了</strong>——可见「让 agent 自己改」不等于有效优化。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>
-- 「文本梯度其实是个有缺陷的比喻」这一点，有专门论文论证。来源：<a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.md">paper-textual-gradients-flawed-metaphor-2025.md</a></p>
+- ProTeGi（2023）：用失败样本生成自然语言「gradient」再编辑 prompt，<strong>比原始 prompt 平均高 15.3%，最高可提升 31%</strong>。来源：<a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>
+- 反面证据同样有力：ProTeGi 论文里，<strong>让 AutoGPT「自己反馈、自己改」6 轮，反而把起始 prompt 改差了</strong>——可见「让 agent 自己改」不等于有效优化。来源：<a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>
+- 「文本梯度其实是个有缺陷的比喻」这一点，有专门论文论证。来源：<a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025.md</a></p>
 <p><strong>你该怎么做</strong>
 每个 eval case 至少记五样：<code>prediction</code>、<code>gold</code>、<code>error_type</code>（失败类型）、<code>critique</code>（一句话诊断）、<code>candidate_prompt_id</code>（这次改写编号）。先把 20 条失败样本整理成一张「失败类型表」，再让优化器<strong>只基于这张表</strong>改 prompt。</p>
 <p><strong>边界</strong>：critique 会带评委偏见，必须绑定到具体样本和指标；不能把一句诊断当成「真实因果」写进结论。</p>
@@ -177,8 +177,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <p>三个候选都在 minibatch 上验证，谁真的把那 30% 拉回来了，就采用谁。</p>
 <p>关键动作是<strong>把「猜原因」和「改 prompt」拆成两步</strong>，而不是让同一个反思器一口气给出最终答案。</p>
 <p><strong>论文怎么说</strong>
-- VISTA / <em>Reflection in the Dark</em>（2026，<code>recent-preprint</code>）：GEPA 在一个有缺陷的 GSM8K 种子 prompt 上，表现<strong>从 23.81% 掉到 13.50%</strong>——因为真正的根因从没进入它的假设空间；VISTA 把「假设生成」和「prompt 改写」解耦后，<strong>恢复到 87.57%</strong>。来源：<a href="paper_notes/paper-vista-reflection-dark-2026.md">paper-vista-reflection-dark-2026.md</a>
-- <em>Are LLMs Good Prompt Optimizers?</em>（2024）：同样指出 LLM 的反思不一定能识别真实错误根因。来源：<a href="paper_notes/paper-llm-prompt-optimizers-2024.md">paper-llm-prompt-optimizers-2024.md</a></p>
+- VISTA / <em>Reflection in the Dark</em>（2026，<code>recent-preprint</code>）：GEPA 在一个有缺陷的 GSM8K 种子 prompt 上，表现<strong>从 23.81% 掉到 13.50%</strong>——因为真正的根因从没进入它的假设空间；VISTA 把「假设生成」和「prompt 改写」解耦后，<strong>恢复到 87.57%</strong>。来源：<a href="paper_notes/paper-vista-reflection-dark-2026.html">paper-vista-reflection-dark-2026.md</a>
+- <em>Are LLMs Good Prompt Optimizers?</em>（2024）：同样指出 LLM 的反思不一定能识别真实错误根因。来源：<a href="paper_notes/paper-llm-prompt-optimizers-2024.html">paper-llm-prompt-optimizers-2024.md</a></p>
 <p><strong>你该怎么做</strong>
 对同一批失败样本，强制生成 <strong>2–3 个互斥的根因假设</strong>（典型三类：缺规则、缺上下文/示例、格式或定义冲突），每个假设生成一个候选 prompt，分别评分。运行记录里要存 <code>failure_hypothesis</code>，而不只是 <code>critique</code>——这样你才能区分「没想到原因」和「改写失败」。</p>
 <p><strong>边界</strong>：开放写作任务的根因边界模糊，多假设验证的成本可能超过收益；这套更适合有明确失败类型的结构化/分类任务。</p>
@@ -241,8 +241,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </table>
 <p>不是只看 dev 分最高的 C2，而是综合 dev 分、格式、长度三个维度挑——这就是「Pareto 选择」的朴素版。同时永远保留一个 <code>best-seen</code>（目前见过最好的），它不会被任何新候选直接覆盖，随时能回滚。</p>
 <p><strong>论文怎么说</strong>
-- ProTeGi（2023）：beam search 选择（Beam 在 Jailbreak/Liar/Sarcasm 上 <strong>0.85 / 0.67 / 0.88</strong>）明显优于不迭代和贪心；用 bandit（UCB 等）做候选选择也明显优于均匀随机选。来源：<a href="paper_notes/paper-protegi-2023.md">paper-protegi-2023.md</a>
-- 这一结构在 GEPA、PromptBreeder、EvoPrompt、SePO、MASPO 等方法里反复出现（archive / 进化搜索 / Pareto / bandit）。来源：<a href="paper_notes/paper-gepa-2026.md">paper-gepa-2026.md</a>、<a href="paper_notes/paper-promptbreeder-2023.md">paper-promptbreeder-2023.md</a></p>
+- ProTeGi（2023）：beam search 选择（Beam 在 Jailbreak/Liar/Sarcasm 上 <strong>0.85 / 0.67 / 0.88</strong>）明显优于不迭代和贪心；用 bandit（UCB 等）做候选选择也明显优于均匀随机选。来源：<a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>
+- 这一结构在 GEPA、PromptBreeder、EvoPrompt、SePO、MASPO 等方法里反复出现（archive / 进化搜索 / Pareto / bandit）。来源：<a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a>、<a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023.md</a></p>
 <p><strong>你该怎么做</strong>
 每轮至少保存：<code>seed</code>（起点）、<code>candidates</code>（候选池）、<code>scores</code>、<code>selection_policy</code>（按什么选）、<code>rejected_reason</code>（为什么弃）、<code>best_seen</code>、<code>rollback_point</code>。生成 5 个候选，按 dev 分 + 格式错误 + 长度三维选 Pareto 候选。</p>
 <p><strong>边界</strong>：搜索预算越大，越容易在 dev 上过拟合——必须有 validation/test 分层兜底。</p>
@@ -265,9 +265,9 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </code></pre>
 <p>dev 涨了 5 分，但这些规则全是从个别训练样本反推出来的「伪规律」。换到压力测试集（OOD），掉 8 分。<strong>判断标准不是「短就好」，而是「每条新增规则能不能对应到一类真实失败，并通过压力测试」。</strong></p>
 <p><strong>论文怎么说</strong>
-- PrefPO（2026，<code>recent-preprint</code>）：放任优化时，TextGrad 在 IFEval-Hard 上把 prompt 撑到 <strong>14.7 倍长度</strong>；更严重的是 <strong>86% 的情况下它在「prompt hacking」</strong>（偷偷改写任务本身），而带约束的 PrefPO 只有 37%。来源：<a href="paper_notes/paper-prefpo-2026.md">paper-prefpo-2026.md</a>
-- TextReg（2026，<code>recent-preprint</code>）：给优化加上「正则化梯度」控制长度和规则范围后，在 Tracking Shuffled Objects 上比 TextGrad <strong>高 +10.0 / +9.9</strong>——管住膨胀反而更好。来源：<a href="paper_notes/paper-textreg-2026.md">paper-textreg-2026.md</a>
-- Edit-Level 因果分析（2026，<code>recent-preprint</code>）：加 meta-instruction 在数学类任务上与性能<strong>负相关（-0.103）</strong>，加 clarity 约束在逻辑任务上也负相关（-0.083）。来源：<a href="paper_notes/paper-causal-edit-level-2026.md">paper-causal-edit-level-2026.md</a></p>
+- PrefPO（2026，<code>recent-preprint</code>）：放任优化时，TextGrad 在 IFEval-Hard 上把 prompt 撑到 <strong>14.7 倍长度</strong>；更严重的是 <strong>86% 的情况下它在「prompt hacking」</strong>（偷偷改写任务本身），而带约束的 PrefPO 只有 37%。来源：<a href="paper_notes/paper-prefpo-2026.html">paper-prefpo-2026.md</a>
+- TextReg（2026，<code>recent-preprint</code>）：给优化加上「正则化梯度」控制长度和规则范围后，在 Tracking Shuffled Objects 上比 TextGrad <strong>高 +10.0 / +9.9</strong>——管住膨胀反而更好。来源：<a href="paper_notes/paper-textreg-2026.html">paper-textreg-2026.md</a>
+- Edit-Level 因果分析（2026，<code>recent-preprint</code>）：加 meta-instruction 在数学类任务上与性能<strong>负相关（-0.103）</strong>，加 clarity 约束在逻辑任务上也负相关（-0.083）。来源：<a href="paper_notes/paper-causal-edit-level-2026.html">paper-causal-edit-level-2026.md</a></p>
 <p><strong>你该怎么做</strong>
 候选选择时记录这些「卫生指标」：<code>prompt_length_ratio</code>（相对种子的长度比）、<code>repetition_ratio</code>、<code>edit_family</code>（这次改的是哪类）、<code>dev_test_gap</code>、<code>OOD/stress_delta</code>。<strong>候选若长度超过阈值，必须说明每条新增规则绑定了哪些失败样本，并通过压力测试</strong>，否则拒绝——哪怕它 dev 分更高。</p>
 <p><strong>边界</strong>：某些复杂任务确实需要更明确的约束；标准不是「短」，而是「必要、可追溯、不过拟合」。</p>
@@ -291,7 +291,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </code></pre>
 <p>光是这一步，往往就比绞尽脑汁重写 instruction 收益更大——因为示例直接展示了「决策边界」和「输出格式」，比抽象规则更容易被模型照着做。</p>
 <p><strong>论文怎么说</strong>
-- <em>Teach Better or Show Smarter?</em>（2024）：在 PaLM 2 + BBH 上，<strong>不优化 instruction、只优化示例</strong>就达到 72.92（比基线 +12.63）；在 Gemini 1.0 Pro 上，<strong>优化示例（75.77）超过只优化 instruction 的 ProTeGi（65.91）</strong>；而且<strong>精选 3 个示例 &gt; 全部示例</strong>——数量不等于质量。来源：<a href="paper_notes/paper-teach-better-show-smarter-2024.md">paper-teach-better-show-smarter-2024.md</a></p>
+- <em>Teach Better or Show Smarter?</em>（2024）：在 PaLM 2 + BBH 上，<strong>不优化 instruction、只优化示例</strong>就达到 72.92（比基线 +12.63）；在 Gemini 1.0 Pro 上，<strong>优化示例（75.77）超过只优化 instruction 的 ProTeGi（65.91）</strong>；而且<strong>精选 3 个示例 &gt; 全部示例</strong>——数量不等于质量。来源：<a href="paper_notes/paper-teach-better-show-smarter-2024.html">paper-teach-better-show-smarter-2024.md</a></p>
 <p><strong>你该怎么做</strong>
 每个优化实验至少比较四组：<code>no-example</code>、<code>random-example</code>、<code>optimized-example</code>、<code>instruction + optimized-example</code>。固定 instruction，从候选池里搜 3 个示例，看留出表现是否超过 instruction-only。运行记录里存 <code>exemplar_source</code>、<code>selector</code>、<code>k</code>。</p>
 <p><strong>边界</strong>：上下文很紧张、示例分布偏、或示例可能泄漏敏感信息/答案时，优化示例可能伤害泛化——这时要回退到 no-example 或 random-example。</p>
@@ -315,8 +315,8 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </code></pre>
 <p>很多时候你会发现：真正的 bug 不在 <code>task_prompt</code> 的措辞，而在 <code>prompting_pattern</code>（该用 CoT 却用了 Zero-Shot）或 <code>tool_schema</code>。先定位部件，结论才写得清「变化来自哪里」。</p>
 <p><strong>论文怎么说</strong>
-- AutoPDL（2025）：<strong>只是把 prompting pattern 换对</strong>（而非重写指令措辞），FEVER 上 Granite 13B Instruct V2 <strong>从 6.5% 跳到 74.0%（+67.5 个百分点）</strong>；但同样的优化在 MBPP+ 上拒绝了 ReWOO 模式（因为它用不上执行反馈）——可见「改哪个部件」高度依任务而定。来源：<a href="paper_notes/paper-autopdl-2025.md">paper-autopdl-2025.md</a>
-- JTPRO（2026）、Prompt Codebooks（2026）等进一步把可优化对象扩展到 tool schema、codebook、routing。来源：<a href="paper_notes/paper-jtpro-2026.md">paper-jtpro-2026.md</a>、<a href="paper_notes/paper-prompt-codebooks-2026.md">paper-prompt-codebooks-2026.md</a></p>
+- AutoPDL（2025）：<strong>只是把 prompting pattern 换对</strong>（而非重写指令措辞），FEVER 上 Granite 13B Instruct V2 <strong>从 6.5% 跳到 74.0%（+67.5 个百分点）</strong>；但同样的优化在 MBPP+ 上拒绝了 ReWOO 模式（因为它用不上执行反馈）——可见「改哪个部件」高度依任务而定。来源：<a href="paper_notes/paper-autopdl-2025.html">paper-autopdl-2025.md</a>
+- JTPRO（2026）、Prompt Codebooks（2026）等进一步把可优化对象扩展到 tool schema、codebook、routing。来源：<a href="paper_notes/paper-jtpro-2026.html">paper-jtpro-2026.md</a>、<a href="paper_notes/paper-prompt-codebooks-2026.html">paper-prompt-codebooks-2026.md</a></p>
 <p><strong>你该怎么做</strong>
 为每次优化生成一份 artifact manifest，至少拆出 <code>task_prompt</code>、<code>examples</code>、<code>prompting_pattern</code>、<code>tool_schema</code>、<code>context_packaging</code>、<code>evaluator</code>、<code>selection_policy</code>，并明确标 <code>mutable / frozen</code>。<strong>评委、测试集、安全规则必须 frozen</strong>——这是防 reward hacking 的底线。</p>
 <p><strong>边界</strong>：简单一次性任务不需要完整 manifest；但研究级和生产级优化需要。</p>
@@ -340,7 +340,7 @@ agent 反复用错误格式调退款工具：传了 <code>amount: 99.5</code>，
 </code></pre>
 <p>工具调用的失败要拆成三层来看：<strong>选错工具</strong>（Tool Selection）、<strong>填错参数</strong>（Slot Filling）、<strong>整体是否成功</strong>（Overall Success）。很多时候工具选对了，错在 slot——那就该改 schema，不该改 agent 指令。</p>
 <p><strong>论文怎么说</strong>
-- JTPRO（2026，<code>recent-preprint</code>）：在 ToolACE 的 1000 工具设置下，<strong>联合优化「全局指令 + 每个工具的 schema」让 o3-mini 的整体成功率从 51.27% 提到 64.46%（+13.19）</strong>；GPT-4o mini 上 OSR +20.30。诊断里 ETID 数据集<strong>工具选得很准但整体成功率低，瓶颈正是 slot-filling</strong>。来源：<a href="paper_notes/paper-jtpro-2026.md">paper-jtpro-2026.md</a></p>
+- JTPRO（2026，<code>recent-preprint</code>）：在 ToolACE 的 1000 工具设置下，<strong>联合优化「全局指令 + 每个工具的 schema」让 o3-mini 的整体成功率从 51.27% 提到 64.46%（+13.19）</strong>；GPT-4o mini 上 OSR +20.30。诊断里 ETID 数据集<strong>工具选得很准但整体成功率低，瓶颈正是 slot-filling</strong>。来源：<a href="paper_notes/paper-jtpro-2026.html">paper-jtpro-2026.md</a></p>
 <p><strong>你该怎么做</strong>
 工具 eval 必须拆成 <strong>Tool Selection Accuracy / Slot Filling Accuracy / Overall Success Rate</strong> 三个指标分别记。对一批相似工具构造 tool-call eval，分别测「只改全局指令 / 只改 schema / 两者联合」，看瓶颈到底在哪一层。</p>
 <p><strong>边界</strong>：外部 API 的 schema 不可改时，可以用 wrapper 文档或检索上下文来承载这些局部规则。</p>
@@ -365,8 +365,8 @@ agent 反复用错误格式调退款工具：传了 <code>amount: 99.5</code>，
 </code></pre>
 <p>检索时只取 3–5 条<strong>经过验证、且适用条件匹配当前任务</strong>的记忆，而不是把历史全倒进去。</p>
 <p><strong>论文怎么说</strong>
-- MemAPO（2026，<code>recent-preprint</code>）：<strong>平均表现 70.7%，优于 TextGrad 的 63.6%，而且更便宜——平均成本 $0.31 vs $0.70</strong>；把记忆拆成「成功模板 + 错误模式」双记忆后，AQuA-RAT 从 61.7 提到 82.5。来源：<a href="paper_notes/paper-memapo-2026.md">paper-memapo-2026.md</a>
-- ERM（2024）：<strong>原始反馈记忆没有收益，只有过滤 + 选择性遗忘才带来增益</strong>；带记忆的 ERM 在 LIAR 上第 7 步就到 68.6，而 ProTeGi 第 13 步才 58.5——<strong>接近两倍速度</strong>。来源：<a href="paper_notes/paper-erm-memory-2024.md">paper-erm-memory-2024.md</a></p>
+- MemAPO（2026，<code>recent-preprint</code>）：<strong>平均表现 70.7%，优于 TextGrad 的 63.6%，而且更便宜——平均成本 $0.31 vs $0.70</strong>；把记忆拆成「成功模板 + 错误模式」双记忆后，AQuA-RAT 从 61.7 提到 82.5。来源：<a href="paper_notes/paper-memapo-2026.html">paper-memapo-2026.md</a>
+- ERM（2024）：<strong>原始反馈记忆没有收益，只有过滤 + 选择性遗忘才带来增益</strong>；带记忆的 ERM 在 LIAR 上第 7 步就到 68.6，而 ProTeGi 第 13 步才 58.5——<strong>接近两倍速度</strong>。来源：<a href="paper_notes/paper-erm-memory-2024.html">paper-erm-memory-2024.md</a></p>
 <p><strong>你该怎么做</strong>
 记忆 schema 至少包含：<code>success_template</code> / <code>error_pattern</code>、<code>source_task</code>、<code>applicability_condition</code>、<code>retrieval_reason</code>、<code>quality_score</code>、<code>forget_reason</code>。<strong>别直接塞历史对话</strong>，只检索经过验证、与当前任务匹配的 3–5 条。</p>
 <p><strong>边界</strong>：高度非平稳的任务、安全敏感任务里，历史经验可能快速过期或泄漏隐私——这时遗忘策略和 opt-out 比「记得多」更重要。</p>
@@ -390,9 +390,9 @@ agent 反复用错误格式调退款工具：传了 <code>amount: 99.5</code>，
 </code></pre>
 <p>根因在 agent_1。<strong>只改 agent_1 的 prompt</strong>，别动另外两个。</p>
 <p><strong>论文怎么说</strong>
-- MASPO（2026，<code>recent-preprint</code>）：联合优化下平均 <strong>70.39，超过顺序 baseline 65.31</strong>。来源：<a href="paper_notes/paper-maspo-2026.md">paper-maspo-2026.md</a>
-- Temporal/Structural Credit（2026，<code>recent-preprint</code>）：在 MedMCQA 上，credit-guided 把 LLaMA3-8B 辩论 baseline <strong>从 55.13 提到 64.63（+9.50）</strong>；并且<strong>无差别地更新所有轮次的 prompt 反而会掉分</strong>——必须只更新低 credit 的角色/轮次。来源：<a href="paper_notes/paper-temporal-structural-credit-mas-2026.md">paper-temporal-structural-credit-mas-2026.md</a>
-- MAPRO（2025）：把多 agent prompt 优化建模为图上的 MAP 推断，沿拓扑传播 credit。来源：<a href="paper_notes/paper-mapro-2025.md">paper-mapro-2025.md</a></p>
+- MASPO（2026，<code>recent-preprint</code>）：联合优化下平均 <strong>70.39，超过顺序 baseline 65.31</strong>。来源：<a href="paper_notes/paper-maspo-2026.html">paper-maspo-2026.md</a>
+- Temporal/Structural Credit（2026，<code>recent-preprint</code>）：在 MedMCQA 上，credit-guided 把 LLaMA3-8B 辩论 baseline <strong>从 55.13 提到 64.63（+9.50）</strong>；并且<strong>无差别地更新所有轮次的 prompt 反而会掉分</strong>——必须只更新低 credit 的角色/轮次。来源：<a href="paper_notes/paper-temporal-structural-credit-mas-2026.html">paper-temporal-structural-credit-mas-2026.md</a>
+- MAPRO（2025）：把多 agent prompt 优化建模为图上的 MAP 推断，沿拓扑传播 credit。来源：<a href="paper_notes/paper-mapro-2025.html">paper-mapro-2025.md</a></p>
 <p><strong>你该怎么做</strong>
 trace 里保存 <code>role_id</code>、<code>round_id</code>、<code>local_validity</code>、<code>successor_utility</code>、<code>global_outcome</code>，并标出 <code>local_pass_global_fail</code> 的样本。对失败 trace 标记哪个 role/round <strong>首次</strong>引入错误，只允许优化器改那一块。如果 agent 之间耦合很弱，先做 coupling test，别急着联合优化。</p>
 <p><strong>边界</strong>：如果 agent 交互很弱，联合优化的成本可能不划算——先测耦合强度再决定。</p>
@@ -430,7 +430,7 @@ Gemini 2.0 Flash-Lite  21.33% → 97.33%
 </code></pre>
 <p>机制：causal attention 下，prompt 前段的 token <strong>看不到</strong>后段的内容（多选题里「问题在前还是选项在前」表现不同，就是这个症状）；重复之后，第二遍的每个 token 都能注意到完整的第一遍，相当于免费给 prompt 内部加了一次「全注意」。重复发生在可并行的 prefill 阶段，所以<strong>不增加输出长度和时延</strong>。</p>
 <p><strong>论文怎么说</strong>
-- <em>Prompt Repetition Improves Non-Reasoning LLMs</em>（Google Research，2025-12，<code>recent-preprint</code>）：关闭推理时，7 模型 × 10 benchmark 配置 <strong>47/70 显著胜、0 显著负</strong>（McNemar p&lt;0.1）；<strong>Padding 对照（把 prompt 用句点补到同等长度）无提升</strong>——增益来自「重复」本身，不是「变长」；开启 step-by-step 推理后基本无效（<strong>28 组里 5 胜 1 负 22 平</strong>，推理模型本就常自发复述题目）。来源：<a href="paper_notes/paper-prompt-repetition-2025.md">paper-prompt-repetition-2025.md</a>
+- <em>Prompt Repetition Improves Non-Reasoning LLMs</em>（Google Research，2025-12，<code>recent-preprint</code>）：关闭推理时，7 模型 × 10 benchmark 配置 <strong>47/70 显著胜、0 显著负</strong>（McNemar p&lt;0.1）；<strong>Padding 对照（把 prompt 用句点补到同等长度）无提升</strong>——增益来自「重复」本身，不是「变长」；开启 step-by-step 推理后基本无效（<strong>28 组里 5 胜 1 负 22 平</strong>，推理模型本就常自发复述题目）。来源：<a href="paper_notes/paper-prompt-repetition-2025.html">paper-prompt-repetition-2025.md</a>
 - 对照读法：Coin Flip 显示搜索出来的措辞 model-specific 且脆弱（洞见 01），而这个确定性结构变换跨 7 模型 0 负——「结构」可能比「措辞」更可迁移（两者 setting 不同，此对比为推断）。</p>
 <p><strong>你该怎么做</strong>
 1. 非推理、低延迟生产路径（分类 / 抽取 / 短 QA / 路由）先测重复 ×2；长上下文索引类任务试 ×3。
@@ -450,8 +450,8 @@ optimizer_prompt / judge_prompt 没有版本号
 → 分数变化是任务 prompt 的功劳，还是评委口味变了？无法归因
 </code></pre>
 <p><strong>论文怎么说</strong>
-- SePO（2026，<code>recent-preprint</code>）：把 prompt agent 自己的 system prompt 也纳入演化流程并多任务预训练，五任务平均<strong>从 Manual-CoT 的 71.89 提到 76.38</strong>；消融去掉 self-improvement <strong>掉回 74.94</strong>；而 optimizer 固定的 TextGrad（70.39）、MetaSPO（71.32）平均还不如 Manual-CoT——论文正是归因于「optimizer 本身固定」。来源：<a href="paper_notes/paper-sepo-2026.md">paper-sepo-2026.md</a>
-- PromptBreeder（2023）：经典六法中<strong>唯一连 mutation prompt 一起进化</strong>（hyper-mutation）的方法，是这条思路的早期形态。来源：<a href="paper_notes/paper-promptbreeder-2023.md">paper-promptbreeder-2023.md</a>
+- SePO（2026，<code>recent-preprint</code>）：把 prompt agent 自己的 system prompt 也纳入演化流程并多任务预训练，五任务平均<strong>从 Manual-CoT 的 71.89 提到 76.38</strong>；消融去掉 self-improvement <strong>掉回 74.94</strong>；而 optimizer 固定的 TextGrad（70.39）、MetaSPO（71.32）平均还不如 Manual-CoT——论文正是归因于「optimizer 本身固定」。来源：<a href="paper_notes/paper-sepo-2026.html">paper-sepo-2026.md</a>
+- PromptBreeder（2023）：经典六法中<strong>唯一连 mutation prompt 一起进化</strong>（hyper-mutation）的方法，是这条思路的早期形态。来源：<a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023.md</a>
 - 工程渠道互证：web_search WPI-10「judge prompt 也应被版本化、评估和优化」（B 级），GitHub autoresearch 的 ledger 把优化器配置与结果绑定（GHI-05）。来源：<a href="source_batches/web_search_platform_insight_cards_20260609.html">web_search_platform_insight_cards_20260609.md</a>、<a href="github_repo_insight_cards_20260608.html">github_repo_insight_cards_20260608.md</a></p>
 <p><strong>你该怎么做</strong>
 1. 给 <code>optimizer_prompt</code>、<code>judge_prompt</code>、<code>meta_prompt</code> 各建版本号，列入实验运行记录的必填字段（这条不需要独立实验，随任意 P0 实验一并生效）。
@@ -525,7 +525,7 @@ optimizer_prompt / judge_prompt 没有版本号
 </ol>
 <hr>
 <p><em>本手册所有标「示意」的例子均为讲解虚构，非本项目实验数据；论文数字为各论文设置下的结果，非本项目复现；<code>recent-preprint</code> 结论需独立复现后才能采信。证据追溯入口见各条「论文怎么说」中的文件链接。</em></p>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_handbook_20260609.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/insight_handbook_20260609.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">这本手册是写给谁的</a>
 <a class="lv2" href="#_2">怎么读这本手册里的「证据」</a>

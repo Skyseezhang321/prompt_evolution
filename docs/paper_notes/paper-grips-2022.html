@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrIPS / Gradient-free, Edit-based Instruction Search for Prompting Large Language Models · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="../literature_map.html">← 返回文献地图</a><span class="chip" style="background:#5e54a8">论文笔记</span><span class="doctitle">GrIPS / Gradient-free, Edit-based Instruction Search for Prompting Large Language Models</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="paper-note-grips-gradient-free-edit-based-instruction-search-for-prompting-large-language-models">Paper Note: GrIPS / Gradient-free, Edit-based Instruction Search for Prompting Large Language Models</h1>
+<p>论文：GrIPS: Gradient-free, Edit-based Instruction Search for Prompting Large Language Models</p>
+<p>链接：https://arxiv.org/abs/2203.07281 （EACL 2023：https://aclanthology.org/2023.eacl-main.277/）</p>
+<p>source_id：paper-grips-2022</p>
+<p>关联 issue：无</p>
+<p>线索贡献者：internal-arxiv-search（经典锚点补读遗留项；2026-06-12 主线结构评审时定向补读，检验"APE 作为主线起点"是否被更早的黑盒指令搜索动摇）</p>
+<p>新颖性判断：extension</p>
+<p>阅读日期：2026-06-12</p>
+<p>reviewed_by：Claude</p>
+<p>local_pdf_path：<code>local_sources/raw/arxiv_papers/2203.07281/paper.pdf</code></p>
+<p>local_pdf_sha256：<code>51570662994E142F8AEC131C239AF95D4537A500F1E7D65117D47714792561D5</code></p>
+<p>local_text_path：<code>local_sources/raw/arxiv_papers/2203.07281/paper.txt</code></p>
+<p>local_text_sha256：<code>E0A9373CC47389EC563BD162F94582493EC63B8B12CFCB78F19BA2D70C2579CD</code></p>
+<p>evidence_level：method-and-results-read（正文 §1–6 + Limitations 全读，含 Table 1–7 与 Figure 3；附录 A–G 仅按正文指针抽查）</p>
+<h2 id="_1">一句话结论</h2>
+<p>GrIPS（v1 2022-03，<strong>早于 APE 八个月</strong>）证明黑盒、免梯度的自然语言指令搜索不需要 LLM 当生成器——纯机械的短语级编辑算子（删/换/改写/回加）+ 小验证集打分就能稳定提分；它和 APE 的真正分界不是时间而是<strong>候选生成方式</strong>（机械编辑 vs LLM 提案），且其"语义不连贯的指令照样涨分"发现比 flawed-metaphor（2025）早三年指向同一结论。</p>
+<h2 id="_2">问题设定</h2>
+<ul>
+<li>任务：NATURAL-INSTRUCTIONS 中 8 个二分类任务（zero-shot instructional prompt 设定）。</li>
+<li>优化对象：自然语言 task instruction（显式区别于 few-shot examples 与 prompt template）；也测了 instruction + 4-shot examples 组合模式。</li>
+<li>目标指标：balanced accuracy（测试集 300 条/任务，消融 100 条/任务）。</li>
+<li>约束：免梯度、API 可用；明确针对"梯度法对大模型算力不可行、对 API 模型不可得"的痛点。</li>
+</ul>
+<h2 id="_3">方法摘要</h2>
+<ul>
+<li>候选如何生成：<strong>不用 LLM</strong>。用 CRF 成分句法分析器把指令切成短语级片段，对随机选中的短语施加 4 种编辑算子——del（删除）、swap（两短语互换）、par（用 PEGASUS paraphrase 模型改写）、add（把此前删掉的短语随机加回）。每轮 m=5 个候选 × l=1 个编辑。</li>
+<li>反馈如何获得：score set S（默认 100 条，可降到 20）上的 balanced accuracy + α·预测熵（α=10；熵项鼓励产出多样标签、打破平分并避开局部极小）。纯标量信号，无 critique、无轨迹。</li>
+<li>如何选择候选：贪心爬山——最优候选超过当前 base 才替换；n=10 轮、patience P=2 早停。可选 beam search 保留 top-B（B=5，模型调用量约 ×B）。</li>
+<li>是否使用记忆/archive：被删短语池供 add 算子复用（弱 archive）；无其他记忆。</li>
+<li>是否优化 optimizer 自身：否（也没有 LLM optimizer 可优化）。</li>
+</ul>
+<h2 id="_4">实验设置</h2>
+<ul>
+<li>数据集：NATURAL-INSTRUCTIONS 8 个二分类任务；主表测试 300 条/任务，其余分析 100 条/任务。</li>
+<li>模型：GPT-2 XL（1.5B）、InstructGPT babbage（~1.3B）、curie（~6.7B）；扩展到 OPT 1.3B–30B、BLOOM 1B/3B、GPT-J 6B、GPT-NeoX 20B、FLAN-T5 3B。未测 davinci（成本）。</li>
+<li>baselines：No Search、人工改写（Mishra et al. 2022b 指南，作者自行执行）、example search（同预算同 score set）、直接微调 / Adapters / Prefix-Tuning（仅 GPT-2 XL 可比）。</li>
+<li>train/dev/test 切分：score set 与测试集分离；与梯度法对比时 score set 做 80:20 train/dev。3 个种子（含示例的实验 5 个种子），95% 置信区间 + bootstrap 显著性检验。</li>
+<li>成本或调用次数：<strong>论文直接报告美元成本</strong>——单次搜索（8 任务）babbage 每种子 $20–25、curie $125–175；全部实验约 $2400；单任务调用量 O(m×n×|S|×B)。</li>
+</ul>
+<h2 id="_5">主要结果</h2>
+<p>论文直接报告：</p>
+<ul>
+<li>主表（Table 1，Instruction-Only）：GPT-2 XL 49.54→58.90（+9.36）、babbage 55.80→60.09（+4.29）、curie 63.71→66.07（+2.36），均 p&lt;0.05；模型越强、提升越小但越稳（置信区间更窄）。</li>
+<li>vs 人工改写（Table 3）：GrIPS 高 5.56 / 2.29 / 1.50 点（三模型）——自动编辑搜索胜过按指南人工重写。</li>
+<li>vs example search（同预算）：InstructGPT 上 GrIPS 高 1.54 / 1.62 点；GPT-2 XL 上反而是 example search 更好（该模型不会跟指令）。</li>
+<li>vs 梯度法（Table 4，GPT-2 XL）：贪心 GrIPS 53.68 低于直接微调 55.88 与 Adapters 55.08，但 beam B=5 达 56.50 超过全部梯度法；恒超 Prefix-Tuning（53.29 / 51.12）。作者推断（引 Li &amp; Liang）Prefix-Tuning 上界 AutoPrompt，故预期 GrIPS 也超 AutoPrompt——<strong>此为作者推断，非直接实验</strong>。</li>
+<li>消融（Table 2）：去掉 del/swap/par/add 分别 -2.56/-1.01/-1.14/-1.26，去掉熵项 -1.48——四个算子和熵项全都有贡献。</li>
+<li>score set 大小（Figure 3）：|S|=100 提升 4.27 点、|S|=20 仅 +1.0 点——数据越少收益越小，但 20 条仍有正收益。</li>
+<li>任务无关初始化（Table 5）：从"只有标签列表"的 task-agnostic 指令出发也能提升（最多 +2.42），但不如 task-specific 起点的终点高。</li>
+<li>开源模型（Table 6）：OPT/BLOOM/GPT-J/NeoX 提升约 6–7 点，FLAN-T5 +3.08。</li>
+<li>质性（Table 7）：编辑可能让指令<strong>语义不连贯甚至误导人类</strong>（如 Task 195 优化结果为 "In this task, you are given a text from tweets . There."），但准确率照样提升；呼应 Webson &amp; Pavlick 的"误导性指令可以更好"。</li>
+</ul>
+<h2 id="_6">失败案例和局限</h2>
+<p>论文直接报告（Limitations 节）：</p>
+<ul>
+<li>编辑算子<strong>无法引入初始指令之外的新信息</strong>——只能改述、删减、重排已有内容；作者点名"给 add 算子加生成能力"是未来方向（注：这正是 APE/ProTeGi 用 LLM 生成候选补上的洞）。</li>
+<li>不适合纯生成任务：score function 里没有可替代 accuracy 的好指标。</li>
+<li>指令理解越强的模型可能越不需要 prompt 优化（curie 提升已收窄到 2.36）。</li>
+<li>GPT-2 XL 上 example search 优于指令搜索——指令搜索的前提是模型会跟指令。</li>
+</ul>
+<h2 id="_7">洞见卡片</h2>
+<pre><code class="language-yaml">insight: 黑盒指令搜索的提分不依赖 LLM 生成器，也不依赖语义连贯——机械编辑 + 小验证集选择就够；&quot;提升&quot;与&quot;指令更易被人理解&quot;可以脱钩。
+evidence_type: direct-result + failure-case
+paper_evidence:
+  section: &quot;5.1, 5.7&quot;
+  table_or_figure: &quot;Table 1, Table 7&quot;
+  quote_or_paraphrase: &quot;三模型 +2.36~+9.36 显著提升；Task 021/195 的优化产物语义不连贯甚至误导人类但照样涨分。&quot;
+mechanism: 验证集上的爬山只对分数负责，不对人类可读性负责；模型对指令的利用方式与人类理解不同构。
+actionable_rule: 评估任何 optimizer 的&quot;改进&quot;时，把可读性/语义合理性与分数分开记录；分数上涨不能当作&quot;指令更好地表达了任务&quot;的证据。
+counterexample_or_limit: InstructGPT 在 task-specific 起点上整体更高（§5.4），说明语义并非完全无关——是&quot;部分脱钩&quot;不是&quot;完全无关&quot;。
+minimal_experiment: 对优化前后 prompt 做人类可读性盲评 vs 分数变化的相关性检验。
+confidence: high（与 [[paper-textual-gradients-flawed-metaphor-2025]] 的&quot;提升常来自候选发现而非梯度式学习&quot;跨年代互证）
+</code></pre>
+<pre><code class="language-yaml">insight: 主线起点 APE 的真正贡献边界是&quot;LLM 当候选生成器&quot;，而非&quot;第一个黑盒指令搜索&quot;——GrIPS v1 早于 APE 八个月完成了后者。
+evidence_type: direct-method（时间线与方法对照）
+paper_evidence:
+  section: &quot;1, 3.2; arXiv v1 时间戳 2022-03-14&quot;
+  table_or_figure: &quot;Figure 1&quot;
+  quote_or_paraphrase: &quot;GrIPS 候选来自句法短语级 del/swap/par/add 机械算子 + PEGASUS 改写，无 LLM 提案；APE（2022-11）才把候选生成交给 LLM 反推。&quot;
+mechanism: 两者同属&quot;标量信号 + 黑盒搜索&quot;，差异在候选生成器的表达能力：编辑算子无法引入新信息（GrIPS 自承局限），LLM 提案可以。
+actionable_rule: 主线叙事中 APE 的定位应表述为&quot;LLM-as-generator 谱系的起点&quot;，并给 GrIPS（编辑搜索）一行前史定位，避免读者误以为 APE 之前没有黑盒指令优化。
+counterexample_or_limit: GrIPS 仅 8 个二分类任务、模型最大 30B；与 APE 的 24 任务 instruction induction 设置不可横比。
+minimal_experiment: 同任务同预算下 GrIPS 编辑算子 vs APE 式 LLM 提案的候选质量对比（验证&quot;生成器表达能力&quot;是否是分水岭）。
+confidence: high（时间线与机制均为论文直接证据；&quot;分水岭&quot;判断为 our-inference 性质的定位结论）
+</code></pre>
+<pre><code class="language-yaml">insight: 验证集大小直接定价优化收益——|S|=100 提升 4.27 点、|S|=20 只剩 1.0 点。
+evidence_type: direct-result
+paper_evidence:
+  section: &quot;5.6&quot;
+  table_or_figure: &quot;Figure 3&quot;
+  quote_or_paraphrase: &quot;score set 从 100 缩到 20，babbage 平均提升从 4.27 衰减到 1.0。&quot;
+mechanism: score set 即训练集，小样本下选择信号噪声大、泛化差。
+actionable_rule: 报告任何 optimizer 增益时必须连同验证集大小一起报告；样本预算 &lt;50 时对宣称的增益打折。
+counterexample_or_limit: 单一模型（babbage）上的曲线；不同任务噪声水平不同。
+minimal_experiment: 本项目最小实验固定加一条&quot;验证集减半&quot;敏感性检查。
+confidence: medium-high
+</code></pre>
+<h2 id="_8">对本项目的启发</h2>
+<blockquote>
+<p>字段定义与 insight / conclusion / helpful method 的区分口径见 <code>docs/insight_field_standard.md</code>。</p>
+</blockquote>
+<ul>
+<li>insight：见上方三张洞见卡片。</li>
+<li>conclusion：无（单篇论文不出 conclusion）。</li>
+<li>helpful method：① 分数函数里加预测熵项（α 加权）防候选塌缩到单一标签——廉价、可直接抄进本项目最小实验的 selector；② 论文的成本披露格式（每种子每模型美元数 + 调用量大 O 式）值得作为本项目运行记录的范例。</li>
+<li>anti-pattern / limit：把"分数上涨"解读成"指令语义更好"；在不会跟指令的模型上做指令搜索（GPT-2 XL 上 example search 更优）。</li>
+<li>适用场景：分类/标签任务、有 50–100 条带标签样本、API 黑盒模型、希望保持指令大体可读时的廉价基线。</li>
+<li>误用风险：生成任务（无好指标）；期待编辑算子发现初始指令之外的领域知识（它做不到——那是 LLM 提案/critique 线的活）。</li>
+</ul>
+<h2 id="_9">最小验证或演示计划</h2>
+<ul>
+<li>要验证的 insight / method：熵正则选择项的独立贡献（洞见卡 3 + helpful method ①）。</li>
+<li>最小验证任务：本项目意图抽取最小任务（与 ProTeGi/APE 复现共用数据）。</li>
+<li>需要实现的模块：短语切分（可用现成 parser）、4 编辑算子、balanced accuracy + 熵打分器。</li>
+<li>观察指标：有/无熵项的最终分数与候选标签分布偏斜度；验证集 100 vs 20 的增益衰减。</li>
+<li>预计风险：中文任务的短语切分质量；8 任务结论是否迁移到抽取任务。</li>
+</ul>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/paper_notes/paper-grips-2022.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。论文谱系与索引见 <a href="../literature_map.html">文献地图</a>。</div>
+</article>
+<aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">一句话结论</a>
+<a class="lv2" href="#_2">问题设定</a>
+<a class="lv2" href="#_3">方法摘要</a>
+<a class="lv2" href="#_4">实验设置</a>
+<a class="lv2" href="#_5">主要结果</a>
+<a class="lv2" href="#_6">失败案例和局限</a>
+<a class="lv2" href="#_7">洞见卡片</a>
+<a class="lv2" href="#_8">对本项目的启发</a>
+<a class="lv2" href="#_9">最小验证或演示计划</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

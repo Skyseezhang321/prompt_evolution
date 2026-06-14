@@ -47,7 +47,7 @@
 | paper-autopdl-2025 | skimmed | high | AutoPDL: Automatic Prompt Optimization for LLM Agents | 2025 | https://arxiv.org/abs/2504.04365 | agent prompt optimization |  | 需深读 |
 | paper-efficient-accurate-apo-2025 | candidate | medium | Efficient and Accurate Prompt Optimization | 2025 | https://aclanthology.org/2025.acl-long.37/ | efficient APO |  | 需核验 |
 | paper-kg-apo-2025 | candidate | medium | Automatic Prompt Optimization for Knowledge Graph Construction: Insights from an Empirical Study | 2025 | https://www.vldb.org/2025/Workshops/VLDB-Workshops-2025/LLM%2BGraph/LLMGraph-7.pdf | empirical APO case study |  | 需核验 |
-| paper-gepa-2025 | skimmed | high | GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning | 2025 | https://arxiv.org/abs/2507.19457 | reflective prompt evolution |  | 需深读 |
+| paper-gepa-2026 | noted | high | GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning | 2025（v2 2026-02，ICLR 2026 Oral） | https://arxiv.org/abs/2507.19457 | reflective prompt evolution | 深读笔记 `docs/paper_notes/paper-gepa-2026.md`；2026-06-08 初读，2026-06-12 升至 ablation+附录级（id 由 paper-gepa-2025 归一为与笔记/文献地图一致的 paper-gepa-2026） | 已深读；轨迹反思 + Pareto 候选保留的主线锚点与本项目首要复现 baseline；成本结构"学习信号便宜、验证昂贵"（反思调用仅 17–92 次）与 merge 跨模型负优化是两条关键边界 |
 | paper-promptomatix-2025 | skimmed | medium | Promptomatix: An Automatic Prompt Optimization Framework for Large Language Models | 2025 | https://arxiv.org/abs/2507.14241 | prompt generation framework |  | 需深读 |
 | paper-context-engineering-2025 | noted | high | A Survey of Context Engineering for LLMs | 2025 | https://arxiv.org/abs/2507.13334 | context engineering survey | 深读笔记 `docs/paper_notes/paper-context-engineering-2025.md`；2026-06-10 taxonomy 级（166 页，仅读结构） | 已读结构；确认 prompt 优化为 context engineering 子集，用于范围边界声明 |
 | paper-modular-prompt-optimization-2026 | skimmed | high | Modular Prompt Optimization: Optimizing Structured Prompts with Section-Local Textual Gradients | 2026 | https://arxiv.org/abs/2601.04055 | modular prompt optimization |  | 需深读 |
@@ -56,6 +56,7 @@
 | paper-promptolution-2026 | candidate | medium | promptolution | 2026 | https://aclanthology.org/2026.eacl-demo.21/ | prompt optimization tool |  | 需核验 |
 | paper-sepo-2026 | skimmed | high | SePO: Self-Evolving Prompt Agent for System Prompt Optimization | 2026 | https://arxiv.org/abs/2606.04465 | self-evolving prompt optimization |  | 需深读 |
 | paper-prompt-repetition-2025 | noted | high | Prompt Repetition Improves Non-Reasoning LLMs | 2025-12-17 | https://arxiv.org/abs/2512.14982 | prompt repetition / non-reasoning prompt technique | user_provided_example；深读笔记 `docs/paper_notes/paper-prompt-repetition-2025.md`；2026-06-11 方法+结果级（Figure 逐格数字未转录） | 已深读；非推理模式 47/70 显著胜 0 负、零输出成本的结构变换，定位为本项目 APO baseline 变换 + 最小三臂 A/B 候选（baseline/×2/padding）；推理模式收益消失（5/28），长 prompt 与输入计费翻倍是边界 |
+| paper-ace-2026 | noted | high | ACE: Agentic Context Engineering — Evolving Contexts for Self-Improving Language Models | 2025/2026 | https://arxiv.org/abs/2510.04618 | incremental context evolution / agentic playbook | user_request（2025/2026 年度代表作选题）；深读笔记 `docs/paper_notes/paper-ace-2026.md`；2026-06-12 全文证据级（正文+附录消融全读） | 已深读；累积式 playbook 与候选竞争范式正面分野——delta+确定性合并防上下文坍缩（去掉该设计 test-normal 平均 70.3→56.9），AppWorld 比 GEPA 高约 13 点、adaptation 延迟 -82.3%；边界：FiNER online 无标签 -3.4 跌破 base，反馈质量是自进化硬约束 |
 
 ## 行业实践与工具
 
