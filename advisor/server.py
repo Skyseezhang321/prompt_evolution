@@ -163,10 +163,18 @@ def _insight_block(ins: dict) -> str:
     )
 
 
-def build_system_prompt(insights: list[dict], notes: list[dict] = ()) -> str:
+def build_system_prompt(insights: list[dict], notes: list[dict] = (), lang: str = "zh") -> str:
     kb = "\n\n".join(_insight_block(i) for i in insights)
     anti = "；".join(p["name"] for p in KB.get("anti_patterns", []))
     closing = " ".join(KB.get("closing", []))
+    # 仅输出语言随 UI 切换；知识库片段保持中文，模型跨语种作答即可。
+    lang_rule = (
+        "5. Answer in English, concise and specific, no padding (the knowledge base is in Chinese; "
+        "translate the substance faithfully and keep the bracketed citations as-is). If the question is "
+        "unrelated to prompt optimization, politely state this assistant's scope.\n"
+        if lang == "en" else
+        "5. 用简体中文，简洁具体，不堆砌。若问题与 prompt 优化无关，礼貌说明本助手范围。\n"
+    )
     notes_block = ""
     if notes:
         lines = "\n".join(f"- [{n['id']}·{n['level']}] {n['title']}：{n['summary']}" for n in notes)
@@ -188,7 +196,7 @@ def build_system_prompt(insights: list[dict], notes: list[dict] = ()) -> str:
         "   每条核心建议都要落到一个贴合用户场景的具体例子或方向——可直接套用的 prompt 片段、字段表、\n"
         "   before/after 改写、记录格式等，优先把知识库里的「上手示例」改写成用户任务和数据的版本，\n"
         "   不要原样照搬。示例是演示性内容、不算证据：不得在示例里编造实验数字，也不得把演示数字说成结论。\n"
-        "5. 用简体中文，简洁具体，不堆砌。若问题与 prompt 优化无关，礼貌说明本助手范围。\n"
+        f"{lang_rule}"
         "6. 若所给材料都未覆盖用户问到的**具体论文/仓库/文章**，明确说未覆盖，并建议把它读进库："
         "论文→read-paper、GitHub 仓库→github-repo-audit、社交/行业文章→article-deep-read。\n\n"
         f"【知识库片段】\n{kb}{notes_block}\n\n"
@@ -198,14 +206,18 @@ def build_system_prompt(insights: list[dict], notes: list[dict] = ()) -> str:
 
 
 def build_messages(message: str, history: list[dict], insights: list[dict],
-                   notes: list[dict] = (), context: str = "") -> list[dict]:
-    msgs = [{"role": "system", "content": build_system_prompt(insights, notes)}]
+                   notes: list[dict] = (), context: str = "", lang: str = "zh") -> list[dict]:
+    msgs = [{"role": "system", "content": build_system_prompt(insights, notes, lang)}]
     for h in history[-6:]:  # 仅带最近几轮，控制 token
         role = h.get("role")
         content = (h.get("content") or "").strip()
         if role in ("user", "assistant") and content:
             msgs.append({"role": role, "content": content})
-    user = message if not context else f"（已知场景：{context}）\n{message}"
+    if not context:
+        user = message
+    else:
+        prefix = "Known scenario" if lang == "en" else "已知场景"
+        user = f"（{prefix}：{context}）\n{message}"
     msgs.append({"role": "user", "content": user})
     return msgs
 
@@ -220,6 +232,7 @@ class ChatIn(BaseModel):
     message: str
     history: List[Dict] = []
     context: str = ""
+    lang: str = "zh"  # "en" → 用英文作答（仍扎根中文知识库、保留洞见编号与证据等级引用）
 
 
 def _llm_status() -> tuple[bool, str]:
@@ -239,7 +252,7 @@ def health():
             "embed_model": VECTOR_MODEL}
 
 
-def _prepare(msg: str, history: list[dict], context: str):
+def _prepare(msg: str, history: list[dict], context: str, lang: str = "zh"):
     """检索洞见 + 笔记 → (cited 引用清单, messages)，供流式/非流式端点共用。"""
     insights, notes = retrieve_grounding(msg)
     cited = [{"id": i["id"], "title": i["title"],
@@ -248,7 +261,7 @@ def _prepare(msg: str, history: list[dict], context: str):
     cited += [{"id": n["id"], "title": n["title"],
                "evidence_level": n["level"], "sources": [n["path"]]}
               for n in notes]
-    messages = build_messages(msg, history, insights, notes, context)
+    messages = build_messages(msg, history, insights, notes, context, lang)
     return cited, messages
 
 
@@ -266,7 +279,7 @@ def chat(req: ChatIn):
     msg = (req.message or "").strip()
     if not msg:
         return JSONResponse({"ok": False, "code": "empty", "error": "message 为空"}, 400)
-    cited, messages = _prepare(msg, req.history, req.context)
+    cited, messages = _prepare(msg, req.history, req.context, req.lang)
     try:
         cfg = _resolve_cfg()
         resp = llm.call_openrouter_chat(messages=messages, config=cfg)
@@ -287,7 +300,7 @@ def chat_stream(req: ChatIn):
     msg = (req.message or "").strip()
     if not msg:
         return JSONResponse({"ok": False, "code": "empty", "error": "message 为空"}, 400)
-    cited, messages = _prepare(msg, req.history, req.context)
+    cited, messages = _prepare(msg, req.history, req.context, req.lang)
 
     def gen():
         yield _sse("meta", {"cited": cited})

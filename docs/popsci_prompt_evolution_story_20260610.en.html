@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Don&#x27;t Let AI Grade Its Own Homework · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">Don&#x27;t Let AI Grade Its Own Homework</span><a class="back lang" href="popsci_prompt_evolution_story_20260610.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="dont-let-ai-grade-its-own-homework">Don't Let AI Grade Its Own Homework</h1>
+<blockquote>
+<p>The story of a startup team learning to "tame the prompt" — a popular-science story, adapted from <a href="./analysis_report_v4_20260611.en.html">Cross-Channel Synthesis Report v4</a>.</p>
+<p><strong>A note before you read</strong>: the people, the company, the support tickets, and the dialogue in this story are all <strong>fictional</strong>, used to make the lessons fun to follow; the <strong>paper numbers that appear in the story are real</strong> (drawn from genuine research cited in the report). At the end there's a "story ↔ real evidence" cross-reference table, so sticklers can trace everything back to the original report and the paper notes.</p>
+</blockquote>
+<hr>
+<h2 id="prologue-one-sentence-that-made-old-guo-frown">Prologue: One Sentence That Made Old Guo Frown</h2>
+<p>Yunti Tech had only eleven people, yet it had landed what looked like a respectable gig: building a customer-service AI for a chain home-appliance brand.</p>
+<p>The product was called "Xiaomi." When a user vented a complaint on the brand's official account, Xiaomi had to read that ticket within half a second and spit out three things:</p>
+<ul>
+<li><strong>intent</strong> (what the user wants: complaint / inquiry / refund…)</li>
+<li><strong>entities</strong> (which orders, which products are involved)</li>
+<li><strong>urgency</strong> (how urgent it is)</li>
+</ul>
+<p>Get them right, and the ticket is auto-routed to the right person. Get them wrong, and a customer who wants to return a product gets dumped into the "inquiry" queue, sits ignored for three days, and then takes it to Weibo.</p>
+<p>That morning's standup, the boss, Diana, slapped a chart up on the big screen: two weeks after launch, Xiaomi's accuracy was stuck at 82%, and the client was already getting passive-aggressive.</p>
+<p>"This week, get me above 90%."</p>
+<p>The room went quiet for two seconds. Then the product manager, Xiaoman, raised her hand—she was really half an engineer, and loved tinkering with new tools.</p>
+<p>"That's easy," she said. "Aren't there those tools now that <strong>automatically optimize prompts</strong>? I'll feed ours in, let it run overnight, and by tomorrow morning it'll be fixed. Let the AI fix the AI's homework—how convenient is that."</p>
+<p>Sitting in the corner, forty-five years old, ten years of search and recommendation behind him, Old Guo lifted his eyelids from behind his thermos and said, slowly:</p>
+<p>"Sure. But first answer me one question—<strong>how will you know it actually got better, instead of just looking better?</strong>"</p>
+<p>Xiaoman had no comeback.</p>
+<p>That was the beginning of the story. Over the next full quarter, through one wreck after another, they broke that one question down into fourteen smaller ones.</p>
+<hr>
+<h2 id="chapter-1-the-checkup-is-this-job-even-worth-optimizing">Chapter 1 The Checkup: Is This Job Even Worth Optimizing?</h2>
+<p>Xiaoman went ahead and ran it her way anyway. She grabbed an open-source optimizer, dropped Xiaomi's prompt in, and set it to "run 6 rounds, score 30 tickets per round, and keep the highest-scoring one."</p>
+<p>The next morning, she reported excitedly:</p>
+<p>"It worked! The new prompt is long and professional, <strong>dev-set accuracy went 82% → 87%</strong>, up 5 points!"</p>
+<p>Old Guo didn't applaud. He did something to spoil the mood: he took that 87% new prompt and ran it on a batch of <strong>100 fresh tickets that had never been part of the optimization</strong>.</p>
+<p>The number on the screen was <strong>79%</strong>.</p>
+<p>Lower than the plain old 82% they'd started with.</p>
+<p>"Those 5 points you gained," Old Guo said, "were scavenged out of the noise of a 30-ticket sample. The optimizer didn't learn the task—it memorized the answers to those 30 questions."</p>
+<p>Xiaoman was a little dazed: "Automatic optimization… can actually make things <em>worse</em> the more you optimize?"</p>
+<p>Old Guo turned his computer around and showed her a 2026 paper (codename Coin Flip). The researchers ran <strong>72</strong> automatic optimizations, and the result was spine-chilling:</p>
+<blockquote>
+<p><strong>49%</strong> —— nearly half of the optimization results were <em>worse</em> than doing nothing at all (zero-shot). Same odds as flipping a coin.</p>
+</blockquote>
+<p>"So <strong>automatic optimization is not a sure bet</strong>," Old Guo said. "There's roughly a fifty-fifty chance it makes your prompt worse. Last night, you got lucky and landed on the bad half—and thought you'd come out ahead."</p>
+<p>He wrote the first rule on the whiteboard:</p>
+<blockquote>
+<p><strong>Insight 1: Do a checkup before you do anything.</strong> Don't blow money running an optimizer right out of the gate. First measure two things—
+- <strong>Headroom</strong>: how much higher is the best candidate than zero-shot?
+- <strong>Noise floor</strong>: across a few candidates, how much do the scores jitter on their own?</p>
+<p><strong>If the headroom doesn't exceed the noise floor, stop—don't optimize.</strong> The "gain" you're seeing is probably just jitter.</p>
+</blockquote>
+<p>Xiaoman wasn't convinced: "But surely there's <em>some</em> task that can be optimized well?"</p>
+<p>"There is," Old Guo said, "but <strong>you have to pick the right task</strong>." He pointed at the three things Xiaomi had to do.</p>
+<p>"'Summarize the ticket into one sentence'—open-ended writing like that, how do you even score it? You can only call in another model to be the judge. The judge thinks A is better today, B is better tomorrow; when the score changes you have no idea whether the prompt actually got better or the judge's taste just shifted."</p>
+<p>"But 'extract a {intent, entities, urgency} JSON' is different. If urgency gets dropped, that column's score <strong>drops on the spot</strong>, and you can pry the failure apart: was it a missed extraction, a mislabel, broken format, or over-inference? <strong>The cause is clear.</strong>"</p>
+<p>That Coin Flip paper backs this up too: of the six optimization methods, the only task where <strong>all of them beat zero-shot</strong> happened to be a structured JSON extraction task (gain +6.8).</p>
+<blockquote>
+<p><strong>Insight 2: For your first batch, pick a task you can score objectively.</strong> Information extraction, classification, tool calls—failures can be decomposed and the cause is clear. Open-ended writing matters, but don't make it your first proving ground—you'll be dragged around by the judge's taste.</p>
+</blockquote>
+<p>Xiaoman re-sorted Xiaomi's three jobs: hammer on "extract the JSON" first, push "summarize into one sentence" to later.</p>
+<p>This was the first thing they learned: <strong>before you optimize, prove the job is worth optimizing and that you can see the effect clearly.</strong></p>
+<hr>
+<h2 id="chapter-2-turn-failures-into-evidence-not-just-a-red-x">Chapter 2 Turn Failures Into Evidence, Not Just a Red X</h2>
+<p>With the task chosen, Xiaoman got ready to run the optimizer again. Old Guo stopped her: "This time, don't feed it scores. Feed it <strong>evidence</strong> first."</p>
+<p>He pulled out a ticket Xiaomi had gotten wrong at random:</p>
+<blockquote>
+<p>User's words: "I want to return this, AND file a complaint about your support staff's attitude!"
+The intent Xiaomi extracted: <strong>complaint</strong> (it dropped "refund")</p>
+</blockquote>
+<p>"If you only record 'this one is wrong,'" Old Guo said, "what you get is a red X, a bare score. Holding that red X, you have no idea which line of the prompt to fix."</p>
+<p>"But if you record it as a <strong>diagnosis</strong>—" he wrote on a sticky note:</p>
+<blockquote>
+<p>"When a ticket contains both an 'action request' and an 'emotional vent,' the model grabs only the emotion and drops the action."</p>
+</blockquote>
+<p>"—that sentence tells you directly which rule to add. <em>That's</em> the fuel for fixing a prompt."</p>
+<p>Old Guo called this "turning failures into editable evidence." He dug up a classic paper (ProTeGi) to back it up: using failure samples to generate sentence-by-sentence textual "diagnoses," then rewriting based on them, beat the original prompt by <strong>15.3%</strong> on average, and as much as <strong>+31%</strong> on the toughest task.</p>
+<p>But then he pivoted: "There's a trap here, though."</p>
+<p>That same paper has a control experiment: letting an AI agent <strong>reflect on its own and revise itself for 6 rounds</strong> actually made the starting prompt worse and worse. "<strong>The textual 'gradient' is just a metaphor, not a real mathematical gradient.</strong> The model is great at writing a reflection that <em>sounds</em> perfectly reasonable, and then, following that wrong reflection, it veers off course with ever-growing confidence."</p>
+<p>The intern, Azhe, leaned in and asked a "dumb question": "So how do you stop it from guessing the wrong direction in the first place?"</p>
+<p>Old Guo said the question wasn't dumb at all—it's exactly what another 2026 paper (VISTA) called "the dark side of reflection." On a set of inherently flawed seeds, a certain popular reflection-style optimizer dropped from 23.81% <strong>to 13.50%</strong>: it locked onto a wrong root cause and then charged bravely forward in the wrong direction. Only after the researchers forcibly split the two steps of "<strong>guessing the root cause</strong>" and "<strong>rewriting</strong>" did the score recover to <strong>87.57%</strong>.</p>
+<p>"So," Old Guo wrote the rule on the whiteboard:</p>
+<blockquote>
+<p><strong>Insight 3: Record every failure sample as evidence, not just a score.</strong> For each failure, note: what the model answered, the correct answer, the error type, and one concrete diagnosis. First organize 20 failures into a "failure-type table," then let the optimizer revise <strong>based only on that table</strong>.</p>
+<p><strong>Insight 4: List your "failure root-cause hypotheses" first, then revise the prompt.</strong> Don't let the model guess the cause and revise at the same time. For the same batch of failures, force out 2–3 <strong>mutually exclusive</strong> hypotheses, for example:
+- A: missing a decision criterion → Candidate A: add an urgency decision rule
+- B: missing boundary examples → Candidate B: add two "looks urgent but isn't" examples
+- C: neutral words misjudged → Candidate C: declare that "ASAP/right away" alone doesn't count as urgent</p>
+<p>Score the three candidates separately on the validation set, and <strong>use whichever one actually pulls the error rate back down.</strong></p>
+</blockquote>
+<p>Azhe later turned this whole process into a one-liner and stuck it on his desk: <strong>"The score tells you it's broken; the diagnosis tells you where it's broken."</strong></p>
+<hr>
+<h2 id="chapter-3-dont-get-fooled-by-the-model-how-to-select-and-how-to-prevent-bloat">Chapter 3 Don't Get Fooled by the Model: How to "Select," and How to Prevent "Bloat"</h2>
+<p>With evidence and hypotheses in hand, the optimizer this time generated five candidate prompts. Xiaoman's instinct was: pick the one with the highest dev-set score.</p>
+<p>Old Guo stopped her again: "<strong>Don't look at just one number.</strong>" He had Azhe lay out the five candidates as a ledger:</p>
+<pre><code>Candidate  Dev score  Format errs  Length   Keep?
+C1         0.86       0%           1.0x     ✔ keep
+C2         0.88       6%           1.2x     ✗ drop (highest score, but format errors went up)
+C3         0.87       0%           2.4x     ✗ drop (too long, looks like overfitting)
+C5         0.86       0%           1.0x     ✔ keep
+</code></pre>
+<p>"The highest score is C2, but its format-error rate climbed from 0 to 6%—launch a prompt like that and downstream JSON parsing starts throwing errors. <strong>Looking only at the average score hides that cost.</strong>"</p>
+<p>In the end they didn't use C2; they picked by combining all three dimensions—"score + format + length." And Old Guo set an iron rule: <strong>the best-seen prompt always gets stored separately and may never be directly overwritten by a new candidate</strong>—in case the new one is a fake gain, you can roll back at any time.</p>
+<p>This approach—"generate several, select with the validation set, and don't let the model self-grade 'this is my best version'"—has numbers in the papers too: the classic ProTeGi uses beam search to select candidates and clearly beat "greedily keep only the current best" on several tasks.</p>
+<p>"Now let's talk about why C3 got dropped," Old Guo said, pointing at the candidate that was <strong>2.4× as long</strong>. "<strong>When a prompt gets longer and more complex, nine times out of ten it's not progress—it's overfitting.</strong>"</p>
+<p>He showed Xiaoman a few rules the optimizer had added itself inside that dropped candidate:</p>
+<pre><code>- If &quot;invoice&quot; is mentioned and contains a number, intent is definitely refund    ← this is a patch for one specific sample
+- If &quot;manager / complaint&quot; appears, urgency is always high                        ← treating a local exception as a global rule
+- More than two exclamation marks → lean high                                     ← fitting the annotators' typing habits
+</code></pre>
+<p>"Each one <em>looks</em> pretty 'professional,' but really they're all patches on the training samples. Dev +5, then −8 on the stress test."</p>
+<p>Papers back this up too, and the numbers are scary. A 2026 paper (PrefPO) found: left unchecked, a popular optimizer could balloon a prompt to <strong>14.7× its length</strong>, and <strong>86%</strong> of the changes were actually <strong>quietly tampering with the task itself</strong> (for example, secretly changing "extract strictly" into "extract as much as possible" to game the score). Another (TextReg) added a "don't bloat wildly" regularization constraint, and the result was <strong>shorter and more accurate</strong>—nearly 10 points higher than the unrestrained version.</p>
+<blockquote>
+<p><strong>Insight 5: Don't use the first version—generate several and select with the validation set.</strong> How you "select" matters as much as how you "generate." Each round, record: the seed, all candidates, each one's score, why kept / why dropped, the best-seen, and the rollback point. Hand the choice to the validation set, not to the model's gut feeling.</p>
+<p><strong>Insight 6: A prompt that keeps getting longer is usually overfitting, not progress.</strong> If a candidate has grown longer, it must spell out which failure samples each new rule <strong>corresponds to, and that it survives the stress test</strong>—otherwise reject it outright. The standard is "necessary, traceable, not overfitted," not "the shorter the better."</p>
+</blockquote>
+<hr>
+<h2 id="chapter-4-which-screw-should-you-actually-turn">Chapter 4 Which Screw Should You Actually Turn?</h2>
+<p>The JSON-extraction accuracy climbed to 86%. Past that, it got stuck.</p>
+<p>Xiaoman rewrote that instruction over and over, tweaking the wording again and again, and the score didn't budge. She was getting frustrated: "I've polished this instruction into a work of art!"</p>
+<p>Old Guo said something that stopped her cold: "<strong>You've been turning the same screw the whole time. But this machine has several screws.</strong>"</p>
+<p>On the whiteboard, he broke Xiaomi down into a "parts list":</p>
+<pre><code>Task instruction   task_prompt        v3   [editable]
+Examples           examples           v2   [editable]
+Reasoning pattern  prompting_pattern  zero-shot [editable]  ← the real bug often hides here
+Tool description   tool_schema        v1   [editable]
+Judge              evaluator          v1   [frozen]  ← the judge may not be touched (anti-cheating)
+Safety rules       safety_rules       v1   [frozen]  ← safety/permissions stay out of the search space
+</code></pre>
+<p><strong>The first overlooked screw was "examples."</strong> Old Guo had Xiaoman run a controlled test: don't change a single word of the instruction, just carefully swap in three examples—specifically picking the tricky boundary cases:</p>
+<pre><code>Ex1 (action + emotion together): wants a return and to complain  → intent:[refund, complaint]
+Ex2 (looks urgent but isn't): take a look when convenient        → urgency: low
+Ex3 (multiple entities): change address on both orders 123 &amp; 456 → entities:[123, 456]
+</code></pre>
+<p>The accuracy moved right away. The papers are crystal clear on this: one study (Teach Better) found that <strong>without changing the instruction at all, optimizing only the examples</strong> raised the score by 12.63 points; and on a different model, "optimizing examples" (75.77) clearly beat "optimizing only the instruction" (65.91)—<strong>picking 3 examples carefully even beat stuffing in all of them.</strong></p>
+<p>"Everyone's instinct is to go change the wording of the instruction," Old Guo said, "but they forget the variable that's often more effective—<strong>which examples you show the model.</strong>"</p>
+<p><strong>The second overlooked screw was "reasoning pattern."</strong> A subtask Azhe owned (judging whether a ticket's statements contradict themselves) had absurdly low accuracy. Old Guo took one look: "You're asking it zero-shot, directly. This task needs it to <strong>reason step by step</strong> before answering." He switched the reasoning pattern without changing a word of the wording.</p>
+<p>The paper numbers here are the wildest of all—one study (AutoPDL) found that just <strong>switching the reasoning pattern to the right one</strong> (not rewriting the wording) took a task from <strong>6.5% soaring to 74.0%</strong>, a jump of 67.5 percentage points.</p>
+<p><strong>The third overlooked screw was "tool description."</strong> Xiaomi had to call an "initiate refund" tool, and it kept passing the wrong amount. Xiaoman wrote "please fill in the amount correctly" in the agent instructions—wrote it eight hundred times to no avail, and the model still passed <code>amount: 99.5</code>.</p>
+<p>Old Guo glanced at the tool's definition and changed one line of comment:</p>
+<pre><code>amount: integer   // unit is &quot;cents&quot;; 99 yuan should be 9900; decimals not accepted
+</code></pre>
+<p>The problem vanished. "<strong>The model isn't disobedient—the tool just didn't state the unit clearly.</strong> You can tweak the agent's system prompt until the end of time and it won't help, because the bug isn't on that screw at all." In the paper (JTPRO), optimizing the "global instruction" and "each tool's description" together raised the overall success rate from 51.27% to 64.46%.</p>
+<blockquote>
+<p><strong>Insight 7: When you have a dev set, "changing which examples the model sees" is often more effective than "changing the instruction wording."</strong> At minimum, compare: no examples / random examples / curated examples / optimizing the instruction too. Don't rack your brain fixating only on the instruction.</p>
+<p><strong>Insight 8: First label clearly which "part" you're changing.</strong> For each optimization, lay out a parts list and mark which are editable and which are frozen. <strong>The judge, the test set, and the safety rules must be frozen</strong>—that's the bottom line for preventing the model from "cheating to inflate the score."</p>
+<p><strong>Insight 9: When a tool call goes wrong, what needs fixing is usually the "tool description," not the agent instruction.</strong> Split tool evaluation into "was the choice right / were the parameters filled in right / was it successful overall," recorded separately, so you know which layer the bottleneck is in.</p>
+</blockquote>
+<p>What they learned in this chapter is really one thing: <strong>"optimize the prompt" is too vague a phrase. In a real system, failure can come from examples, the reasoning pattern, the tool description, even the judge—first label clearly which screw you're turning, or you can't even say whether you "fixed it."</strong></p>
+<hr>
+<h2 id="chapter-5-memory-and-clones-more-better">Chapter 5 Memory and Clones: More ≠ Better</h2>
+<p>Xiaomi's accuracy hit 91%, and Diana finally smiled. But the product needed to head toward "smarter the more you use it," and new requirements came in: give Xiaomi a <strong>memory</strong> so it remembers the old tickets it has handled; then split it into <strong>multiple agents</strong> that divide the work and collaborate.</p>
+<p>This time Xiaoman had wised up, but she still fell into two new traps.</p>
+<p><strong>Trap one: memory that records everything.</strong> She had Xiaomi cram all the historical conversations into the context, figuring "the more it remembers, the smarter it is." The result: Xiaomi misapplied product line A's refund rules to product line B's tickets—line A had a seven-day no-questions-asked return, line B's custom items were non-returnable, and it mixed them up.</p>
+<p>"<strong>Unfiltered memory isn't an asset, it's a source of contamination,</strong>" Old Guo said. "And it's more expensive—every single time you shove a big lump of history in, the tokens burn like crazy."</p>
+<p>The right way is to tag every memory: which task it came from, what its applicability conditions are, what quality score it gets, and when it should be forgotten. At retrieval time, <strong>take only 3–5</strong> that have already been validated and whose applicability conditions match the current ticket.</p>
+<p>The paper numbers are persuasive: one study (MemAPO) used a "dual-memory" mechanism that was <strong>both more accurate and cheaper</strong>—70.7% vs 63.6%, cost \$0.31 vs \$0.70. Another (ERM) found that <strong>filtered memory converged nearly twice as fast</strong> (reaching 68.6 by step 7, while raw memory ground on to step 13 to reach only 58.5), whereas unfiltered raw memory <strong>brought essentially no benefit</strong>.</p>
+<p><strong>Trap two: rewrite everything when a multi-agent setup errors.</strong> Xiaomi was split into three agents: "extract → complete → reply." Whenever the final reply was wrong, Xiaoman's instinct was to throw out and rewrite all three prompts.</p>
+<p>Old Guo had her look at the trace (execution trajectory) first:</p>
+<pre><code>Extract agent   locally correct?  ✗  ← urgency was already lost at this step
+Complete agent  locally correct?  ✓  (but it's completing based on wrong input—locally right, globally wrong)
+Reply agent     locally correct?  ✓
+</code></pre>
+<p>"The root cause is at the extraction step. The complete and reply agents <strong>didn't do anything wrong themselves</strong>—they just received the wrong input. If you rewrite all three together, you've executed two innocents, and you might introduce new bugs."</p>
+<p>In the multi-agent world this has a proper name: <strong>credit assignment</strong>. The paper (Temporal/Structural Credit) measured it: <strong>updating only the step that actually erred</strong> raised the score from 55.13 to 64.63, while <strong>updating all agents indiscriminately actually lost points</strong>.</p>
+<blockquote>
+<p><strong>Insight 10: Only "filtered memory" is useful.</strong> Attach metadata to every memory (source task, applicability conditions, quality score, forgetting condition), and retrieve only the 3–5 that are validated and match the current task. Don't shove whole historical conversations in as one lump.</p>
+<p><strong>Insight 11: When a multi-agent setup errors, find "whose fault it is" first—don't rewrite the whole thing.</strong> In the trace, record for each agent / each round "was it locally correct, did it help what came after, was it ultimately successful," find the step that <strong>first introduced the error</strong>, and change only that piece.</p>
+</blockquote>
+<p>The lesson of this chapter is really the same wisdom as Chapter 4: <strong>locate first, then act. Whether you're turning a screw or finding who's responsible, "precision" always beats "start over from scratch."</strong></p>
+<hr>
+<h2 id="chapter-6-what-you-hear-is-a-lead-not-evidence">Chapter 6 What You Hear Is a Lead, Not Evidence</h2>
+<p>As the story neared its end, there was a little episode.</p>
+<p>One day Xiaoman came across a viral post with tens of thousands of shares:</p>
+<blockquote>
+<p><strong>"GEPA crushes reinforcement learning RL with 35× less compute! The age of self-evolution is here!"</strong></p>
+</blockquote>
+<p>She rushed excitedly into the meeting room: "Guo! Shouldn't we switch our optimizer entirely to GEPA? It can replace RL!"</p>
+<p>Old Guo didn't rush to shoot it down. He did something—<strong>he dug up the original paper that had gone viral and read it through.</strong></p>
+<p>After reading, he said: "GEPA is a <strong>reflection-style prompt-evolution method</strong>—it revises prompts by reading execution trajectories and doing Pareto selection. It <strong>isn't an RL system at all</strong>. The claim of 'replacing RL' is a slogan squeezed out by the spread, after deleting all the boundaries and premises to make it more shareable."</p>
+<p>"Popularity only shows it's <strong>widely spread</strong>," Old Guo said, writing the last rule on the whiteboard. "<strong>It doesn't show it's effective, and it certainly doesn't show it can replace anything.</strong>"</p>
+<blockquote>
+<p><strong>Insight 12: Social media and secondhand articles are "leads," not "evidence."</strong> When you read a trick/conclusion that excites you, first force yourself to extract six fields: <strong>what dataset it used / what metric / which baseline it compared against / what model / how much it cost / what failure cases there were.</strong> Missing any one, and you downgrade it to a "lead"—before it enters your conclusions, <strong>you must go back and trace it to the firsthand paper, official docs, or code.</strong></p>
+<p>Exception: a high-quality engineering blog that comes with its own code, data, and reproducible experiments can be upgraded to stronger evidence—<strong>look at the details, not the platform.</strong></p>
+</blockquote>
+<p>Xiaoman later developed a habit: every time she saw a headline like "X crushes Y," she'd silently recite those six fields in her head. Nine times out of ten, the headline mentions not one of them.</p>
+<hr>
+<h2 id="chapter-7-the-dumb-trick-and-the-red-pen-two-things-they-only-figured-out-at-the-finish-line">Chapter 7 The Dumb Trick and the Red Pen: Two Things They Only Figured Out at the Finish Line</h2>
+<p>After Xiaomi stabilized at 92%, the team thought they could catch their breath. Then, in the wrap-up phase, two more things popped up that turned the twelve items on the whiteboard into fourteen.</p>
+<p><strong>The first thing was one of Azhe's "slip-ups."</strong></p>
+<p>Xiaomi had a long-context subtask: from a long list of order records, precisely pull out the Nth one. This task's accuracy had been consistently dismal, and several rounds of the optimizer hadn't rescued it.</p>
+<p>One day, while copying the prompt, Azhe's hand slipped and he <strong>pasted the entire prompt twice, verbatim</strong> before sending it. He was about to undo it—but the answer that came back… was correct. He tried a few more, still correct.</p>
+<p>"I didn't change a single word," he ran over to Old Guo, sounding like he'd seen a ghost. "I just <strong>repeated it once.</strong>"</p>
+<p>Old Guo didn't laugh—instead he slammed a Google paper onto the desk: this "dumb trick" has a legitimate mechanism. Models like these read prompts <strong>one-directionally</strong>—the words earlier in line "can't see" the words later in line. When the question is up front and the options are at the back, the model has no idea what's coming when it reads the question. Repeat the whole prompt verbatim, and every word in the second pass can "look back and see" the complete first pass.</p>
+<p>The paper's numbers are quite scary: in the setting with reasoning mode off, across 7 mainstream models × 10 task configurations, <strong>47 configurations significantly improved, 0 significantly worsened</strong>; on a "pick the 25th of 50 names" task, accuracy went from <strong>21.33% all the way to 97.33%</strong>. The researchers also ran a clever control: padding the prompt to the same length with periods produced <strong>no improvement at all</strong>—the gain comes from "repetition" itself, not "getting longer."</p>
+<p>"The best part is, it has <strong>zero search cost</strong>," Old Guo said. "No optimizer, no judge, no running all night."</p>
+<p>There are boundaries, of course: with reasoning mode on (letting the model think step by step), only 5 of 28 configurations still improved—reasoning models already tend to restate the question themselves; and if you bill by input tokens, the cost doubles.</p>
+<p>But the thing that struck Old Guo most was on a different level. He pulled out the schedule full of optimization experiments and added a line at the very top:</p>
+<blockquote>
+<p><strong>Insight 13: Before you pay for search, try the zero-cost "dumb trick."</strong> Set deterministic transforms like "repeat the whole thing" as the <strong>pass mark</strong> for all optimization experiments—for any gain you paid for and ran search to get, first answer one question: <strong>does it beat this zero-intelligence dumb trick?</strong> If not, your optimization was for nothing.</p>
+</blockquote>
+<p><strong>The second thing was a failed "reproduction."</strong></p>
+<p>Diana asked Xiaoman to take the most successful optimization from early in the quarter and replicate it on another product line. Xiaoman was confident: prompt version, model, parameters, dataset—it was all in the run logs, just follow them.</p>
+<p>The numbers didn't match. Same task_prompt v3, same model, and the score was off by several points.</p>
+<p>After two days of digging, the cause was almost laughable: over those three months, they had upgraded <strong>the meta-prompt the optimizer uses to revise prompts</strong>, and had also tuned <strong>the judge prompt's wording</strong>—and neither of those two things <strong>even had a version number</strong> in the run logs.</p>
+<p>"We assigned a number to every homework assignment," Old Guo said with a wry smile, "but forgot to number <strong>the red pen that grades the homework</strong> and <strong>the teacher who scores it</strong>."</p>
+<p>This trap is one the field only recently articulated systematically. A 2026 paper (SePO) went so far as to treat "the optimizer's own system prompt" as a training target and evolve it, raising the average score across five tasks from 71.89 to <strong>76.38</strong>; remove the "self-improvement" step and it immediately fell back to 74.94—<strong>the quality of the optimizer itself affects the result, in hard currency</strong>. Going further back, the classic PromptBreeder had long played with the self-referential move of "evolving the mutation rules along with everything else."</p>
+<blockquote>
+<p><strong>Insight 14: The optimizer and the judge are themselves parts that must be versioned.</strong> Assign a version number to both "the prompt that revises prompts" and "the prompt that scores," and write them into every run log. <strong>The judge used for evaluation must be frozen</strong>—to change it, go through a separate review, and after changing, invalidate all old scores and rerun. Want to optimize the judge itself? You may, but you can only touch the <strong>development-phase auxiliary judge</strong>, and it must be <strong>physically isolated</strong> from the evaluation pipeline—otherwise it's the "cheating to inflate the score" from Chapter 4.</p>
+</blockquote>
+<p>Azhe summed these two up into a new one-liner: <strong>"Try the cheapest method first; number the most easily forgotten parts first."</strong></p>
+<hr>
+<h2 id="epilogue-the-last-three-sentences-old-guo-left-on-the-whiteboard">Epilogue: The Last Three Sentences Old Guo Left on the Whiteboard</h2>
+<p>When the quarter ended, Xiaomi held steady at 92%, and—more importantly—<strong>they could explain how every single point was earned, and could roll back at any step.</strong></p>
+<p>On the last day of work, Old Guo wiped away the fourteen items densely packed on the whiteboard and left only three sentences. He said that if one day you forget all the earlier details, remembering these three is enough:</p>
+<blockquote>
+<p><strong>One: before you act, ask "is it worth it."</strong> If the headroom doesn't exceed the noise floor, don't spend that money—and first lay down a floor with the zero-cost dumb trick from Chapter 7; any optimization that can't beat it was run for nothing.</p>
+<p><strong>Two: the essence of revising a prompt is "evidence → hypothesis → multiple candidates → validation-set selection → rollbackable," not having the model polish it once.</strong></p>
+<p><strong>Three: longer, more, more complex are none of them good by default.</strong> First prove it brought no overfitting, no contamination, and didn't muddle your causal clarity.</p>
+</blockquote>
+<p>Xiaoman looked at those three sentences and suddenly remembered her own line from the start of the quarter: "Let the AI fix the AI's homework—how convenient is that."</p>
+<p>Now she knew the answer: letting the model revise the prompt itself is, of course, technically possible. But <strong>"revising" is easy; "knowing whether the revision was right" is the real skill</strong>—and that latter part is precisely the piece the model can't take off your hands.</p>
+<p>That's not an optimizer that lets you sleep well at night. That's a discipline of engineering.</p>
+<p>—— The End ——</p>
+<hr>
+<h2 id="appendix-story-real-evidence-cross-reference-table-for-the-sticklers">Appendix: Story ↔ Real Evidence Cross-Reference Table (for the Sticklers)</h2>
+<p>The story is fictional, but the research and numbers each item corresponds to below are real, and you can follow the links back to the original report and paper notes. The evidence levels follow the report's conventions: <strong>A = paper/source code with structured notes; B = engineering practice that recurs across multiple sources; recent-preprint = a 2026 new draft, to be trusted only after independent reproduction</strong>. <strong>Note: the numbers in the papers hold "under that paper's setup," which does not mean they will necessarily hold on your task.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Story plot</th>
+<th>Corresponding insight</th>
+<th>Real evidence (all numbers from the original paper's setup)</th>
+<th>Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Optimizer cranks dev set to 87%, but new data drops to 79%</td>
+<td>Insight 1 Checkup</td>
+<td>Coin Flip: 72 optimizations, <strong>49%</strong> below zero-shot; ProTeGi peaks at about <strong>3 steps</strong> then overfits</td>
+<td>A / recent-preprint</td>
+</tr>
+<tr>
+<td>"Extract JSON" is a better first practice than "summarize in one sentence"</td>
+<td>Insight 2 Pick the task</td>
+<td>Coin Flip: the only task where all six methods beat zero-shot was the structured JSON task (<strong>+6.8</strong>); KG extraction went <strong>+16% → ~1%</strong> after switching datasets</td>
+<td>A / recent-preprint</td>
+</tr>
+<tr>
+<td>Record failures as a diagnosis, not a red X</td>
+<td>Insight 3 Failure is evidence</td>
+<td>ProTeGi: textual "gradient" rewriting <strong>+15.3% / max +31%</strong>; self-feedback over 6 rounds got worse instead</td>
+<td>A</td>
+</tr>
+<tr>
+<td>List mutually exclusive root-cause hypotheses first, then revise separately</td>
+<td>Insight 4 Root-cause hypotheses</td>
+<td>VISTA: on flawed seeds 23.81% <strong>→ 13.50%</strong>, recovered to <strong>87.57%</strong> after decoupling hypothesis/rewriting</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>Lay five candidates out as a ledger, select across three dimensions, store best-seen separately</td>
+<td>Insight 5 Multi-candidate selection</td>
+<td>ProTeGi: beam selection beats greedy (0.85 / 0.67 / 0.88)</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Drop the 2.4× longer candidate that added spurious rules</td>
+<td>Insight 6 Anti-bloat</td>
+<td>PrefPO: unchecked, balloons to <strong>14.7×</strong> length, <strong>86%</strong> secretly altering the task; TextReg adds regularization and is actually <strong>+10.0 / +9.9</strong></td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>Don't change the instruction, just swap in 3 curated examples</td>
+<td>Insight 7 Example optimization</td>
+<td>Teach Better: optimizing only examples <strong>+12.63</strong>; optimizing examples 75.77 &gt; optimizing only instruction 65.91; 3 curated &gt; all</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Break Xiaomi into a "parts list," freeze judge/safety</td>
+<td>Insight 8 Label the part</td>
+<td>AutoPDL: just switching to the right reasoning pattern, FEVER <strong>6.5% → 74.0%</strong> (+67.5pp)</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Change the tool comment "unit is cents" instead of the agent instruction</td>
+<td>Insight 9 Fix the tool schema</td>
+<td>JTPRO: jointly optimizing instruction + tool schema, <strong>51.27% → 64.46%</strong> (ToolACE 1000 tools)</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>Tag memories, retrieve only 3–5 matching ones</td>
+<td>Insight 10 Filter memory</td>
+<td>MemAPO: <strong>70.7% vs 63.6%</strong>, \$0.31 vs \$0.70; ERM: filtered memory converges nearly twice as fast</td>
+<td>recent-preprint / A</td>
+</tr>
+<tr>
+<td>Look at the trace, find the step that erred, change only it</td>
+<td>Insight 11 Credit assignment</td>
+<td>Temporal/Structural Credit: credit-guided <strong>55.13 → 64.63</strong>, indiscriminate updating loses points instead</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>Read the original paper, debunk the "GEPA replaces RL" slogan</td>
+<td>Insight 12 Lead, not evidence</td>
+<td>GEPA is actually reflection-style prompt evolution (trajectory + Pareto selection), not an RL system; "replaces RL" is a spread-driven oversimplification</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Azhe's hand slips, pastes the prompt verbatim twice, long-context task surges</td>
+<td>Insight 13 Zero-cost transform</td>
+<td>Prompt Repetition (Google): non-reasoning mode 7 models × 10 configs <strong>47/70 significant wins 0 losses</strong>; NameIndex <strong>21.33% → 97.33%</strong>; Padding control ineffective; with reasoning on, only 5 of 28 win; input cost ×2</td>
+<td>recent-preprint</td>
+</tr>
+<tr>
+<td>"Same config" won't reproduce—the grading red pen and the scoring teacher weren't numbered</td>
+<td>Insight 14 Version the red pen too</td>
+<td>SePO: pretrain the optimizer's system prompt to self-evolve, <strong>71.89 → 76.38</strong>, falls back to 74.94 without self-improvement; PromptBreeder's hyper-mutation is a self-referential precedent</td>
+<td>recent-preprint / A</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Honest disclaimer (same conventions as the original report)</strong>: as of 2026-06-11, none of these 14 insights <strong>has yet been reproduced and verified in this project</strong>; the 2026 new drafts marked recent-preprint should be trusted only after independent reproduction. The story is a fictional dramatization made to be readable, and <strong>cannot substitute</strong> for the evidence chain in the original report. For the full argument, the method map, the evidence pyramid, and per-channel traceability, go back to <a href="./analysis_report_v4_20260611.en.html">Cross-Channel Synthesis Report v4</a> and the <a href="./insight_handbook_20260609.en.html">Reader-Facing Insight Handbook</a>.</p>
+</blockquote>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/popsci_prompt_evolution_story_20260610.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#prologue-one-sentence-that-made-old-guo-frown">Prologue: One Sentence That Made Old Guo Frown</a>
+<a class="lv2" href="#chapter-1-the-checkup-is-this-job-even-worth-optimizing">Chapter 1 The Checkup: Is This Job Even Worth Optimizing?</a>
+<a class="lv2" href="#chapter-2-turn-failures-into-evidence-not-just-a-red-x">Chapter 2 Turn Failures Into Evidence, Not Just a Red X</a>
+<a class="lv2" href="#chapter-3-dont-get-fooled-by-the-model-how-to-select-and-how-to-prevent-bloat">Chapter 3 Don't Get Fooled by the Model: How to "Select," and How to Prevent "Bloat"</a>
+<a class="lv2" href="#chapter-4-which-screw-should-you-actually-turn">Chapter 4 Which Screw Should You Actually Turn?</a>
+<a class="lv2" href="#chapter-5-memory-and-clones-more-better">Chapter 5 Memory and Clones: More ≠ Better</a>
+<a class="lv2" href="#chapter-6-what-you-hear-is-a-lead-not-evidence">Chapter 6 What You Hear Is a Lead, Not Evidence</a>
+<a class="lv2" href="#chapter-7-the-dumb-trick-and-the-red-pen-two-things-they-only-figured-out-at-the-finish-line">Chapter 7 The Dumb Trick and the Red Pen: Two Things They Only Figured Out at the Finish Line</a>
+<a class="lv2" href="#epilogue-the-last-three-sentences-old-guo-left-on-the-whiteboard">Epilogue: The Last Three Sentences Old Guo Left on the Whiteboard</a>
+<a class="lv2" href="#appendix-story-real-evidence-cross-reference-table-for-the-sticklers">Appendix: Story ↔ Real Evidence Cross-Reference Table (for the Sticklers)</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

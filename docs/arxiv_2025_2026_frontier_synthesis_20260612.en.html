@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arXiv 2025/2026 Frontier Deep-Read Synthesis · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#176a5e">arXiv Channel</span><span class="doctitle">arXiv 2025/2026 Frontier Deep-Read Synthesis</span><a class="back lang" href="arxiv_2025_2026_frontier_synthesis_20260612.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="arxiv-20252026-frontier-deep-read-synthesis">arXiv 2025/2026 Frontier Deep-Read Synthesis</h1>
+<p>Date: 2026-06-12</p>
+<p>Scope: A <strong>time-slice synthesis</strong> of the 25 deep-read notes for 2025/2026 papers in the <a href="literature_map.en.html">literature map full index</a>, answering the question "What has been happening in this field over the past two years, and how does it differ from the era of classical methods?" Detailed per-paper evidence remains in the individual paper notes; the synthesis organized by reading batch is in <a href="arxiv_deep_reading_batch3_synthesis.en.html">Batch 1–3 Synthesis</a>. This document focuses solely on cross-paper timeline narrative and consensus/tension convergence — it does not replace any of those sources.</p>
+<p>Scope and criteria: 25 papers = 10 from 2025 + 15 from 2026 under the literature-map year convention (GEPA arXiv first submission 2507, note filed under 2026; PROSE is a coin-flip internal baseline with no independent arXiv ID). arXiv first-submission IDs span 2502–2606; collection covers the top-80 search through 2026-06-08 plus subsequent targeted supplementary reads.</p>
+<p>Evidence boundary: Paper-level synthesis. All material comes from existing deep-read notes; all numbers are cross-verified against the same note sources. <strong>This is not a reproduction result from this project.</strong> 2026 new submissions in particular should be independently reproduced before being treated as stable regularities.</p>
+<h2 id="one-page-conclusions">One-Page Conclusions</h2>
+<ol>
+<li><strong>The era of "name a new method" (2022–2024) is over.</strong> Among the 25 papers in 2025/2026, only GEPA qualifies as "a named method that establishes a new main line." The rest produce diagnostics (is optimization worth it? did the edit actually help?), formalizations (multi-agent credit assignment), object upgrades (tool schema / pattern / codebook), self-evolution (the optimizer itself), and hygiene &amp; regularization (anti-spurious-gain).</li>
+<li><strong>A pre-optimization gate has become cross-paper consensus.</strong> Coin Flip gives the strongest constraint (49% of 72 optimization runs on Haiku fall below zero-shot); APO-KG gives the positive condition (the more complex the schema, the clearer the gain; cross-dataset transfer leaves only ~1% F1 gain); Prompt Repetition gives the zero-cost comparison baseline (non-reasoning mode: 47/70 significant wins, 0 losses).</li>
+<li><strong>"Score went up ≠ actually got better" now has an actionable detection surface.</strong> PrefPO quantifies prompt hacking rate (TextGrad 86% vs PrefPO 37% vs Minimal 31%); TextReg turns overfitting into a regularization target (OOD multi-task +8~+11.8); Edit-Level causal analysis yields edit-family priors (meta_instruction × math = −0.103).</li>
+<li><strong>The real theme of multi-agent optimization is credit assignment, not more agents.</strong> MASPO (explicit misalignment modeling), MAPRO (MAP inference + belief propagation), and Temporal/Structural Credit (block updates by role/round) converge from three independent directions.</li>
+<li><strong>The optimizer itself is now a managed, optimized artifact.</strong> SePO ablation (removing self-improvement: 76.38→74.94), SPEAR (rigid loop significantly worse than free-form agent), and PrefPO (upgrading the optimizer +11.5 &gt; upgrading the discriminator +6.1) support this from three directions.</li>
+<li><strong>The real gap is reasoning models.</strong> None of the 25 papers addresses bi-level / thought-driven (the o1/R1 era treats prompts as reasoning controllers); this is consistent with the conclusions of the <a href="arxiv_taxonomy_completeness_check_20260610.md">taxonomy completeness check</a> and is the highest-priority registered direction for targeted search.</li>
+</ol>
+<h2 id="timeline-how-paper-form-has-shifted-over-two-years">Timeline: How Paper Form Has Shifted Over Two Years</h2>
+<p>Looking at arXiv first-submission months, 2025/2026 has a clear rhythm:</p>
+<ul>
+<li><strong>2025 H1 (2502–2507): the field takes stock of itself.</strong> Two optimization-perspective surveys (<a href="paper_notes/paper-apo-survey-2025.html">APO Survey</a>, <a href="paper_notes/paper-ape-survey-2025.html">APE Survey</a>) and the <a href="paper_notes/paper-context-engineering-2025.html">Context Engineering Survey</a> successively frame the field within unified frameworks and call out the frontier; concurrently, <a href="paper_notes/paper-autopdl-2025.html">AutoPDL</a> (2504) makes prompting patterns the primary search variable, <a href="paper_notes/paper-scaling-textual-gradients-2025.html">Scaling Textual Gradients</a> (2506) exposes the context wall of textual gradients, and <a href="paper_notes/paper-apo-kg-construction-2025.html">APO-KG</a> (2506) gives empirical evidence for "when optimization is worth doing."</li>
+<li><strong>July 2025: <a href="paper_notes/paper-gepa-2026.html">GEPA</a> (2507) establishes a new main line.</strong> Trajectory reflection + Pareto candidate retention; on Qwen3 8B, aggregate score 45.23→54.85, surpassing GRPO's 48.91, using on average only ~3,936 rollouts (GRPO fixed at 24,000). This is the only named method from 2025/2026 to enter the "seven-method main line."</li>
+<li><strong>2025 H2 (2508–2512): scaling up and cooling down in parallel.</strong> <a href="paper_notes/paper-distillprompt-2025.html">DistillPrompt</a> (2508) and <a href="paper_notes/paper-mapro-2025.html">MAPRO</a> (2510) continue to broaden the optimization target; toward year-end two cooling shots appear — <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">Flawed Metaphor</a> (2512) dismantles the metaphorical shell of textual gradients, and <a href="paper_notes/paper-prompt-repetition-2025.html">Prompt Repetition</a> (2512) shows that a zero-intelligence transform can match many optimization scenarios.</li>
+<li><strong>2026 H1 (2601–2606): 14 dense papers in half a year across three parallel lines.</strong> Object upgrades (<a href="paper_notes/paper-jtpro-2026.html">JTPRO</a>, <a href="paper_notes/paper-maspo-2026.html">MASPO</a>, <a href="paper_notes/paper-prompt-codebooks-2026.html">Prompt Codebooks</a>, <a href="paper_notes/paper-temporal-structural-credit-mas-2026.html">Temporal/Structural Credit</a>, <a href="paper_notes/paper-modular-prompt-optimization-2026.html">Modular PO</a>); self-evolution (<a href="paper_notes/paper-sepo-2026.html">SePO</a>, <a href="paper_notes/paper-memapo-2026.html">MemAPO</a>); hygiene and diagnostics (<a href="paper_notes/paper-textreg-2026.html">TextReg</a>, <a href="paper_notes/paper-prefpo-2026.html">PrefPO</a>, <a href="paper_notes/paper-causal-edit-level-2026.html">Edit-Level</a>, <a href="paper_notes/paper-vista-reflection-dark-2026.html">VISTA</a>, <a href="paper_notes/paper-coin-flip-2026.html">Coin Flip</a>, <a href="paper_notes/paper-spear-2026.html">SPEAR</a>). The most recent paper, SePO (2606), was submitted just days before this document's collection cutoff.</li>
+</ul>
+<h2 id="shift-one-ask-whether-its-worth-it-before-asking-whether-the-edit-was-right-cooling-down-diagnostics">Shift One: Ask Whether It's Worth It Before Asking Whether the Edit Was Right (Cooling Down &amp; Diagnostics)</h2>
+<p>This is the most distinctive line of 2025/2026: the field has begun systematically interrogating itself.</p>
+<ul>
+<li><strong><a href="paper_notes/paper-coin-flip-2026.html">Coin Flip</a> (2604)</strong> gives the strongest practical constraint: in a compound AI setup, 49% of Claude Haiku 4.5's 72 optimization runs fall below zero-shot; 14 of Nova Lite's 24 method×task means fall below zero-shot; agent-to-agent interaction shows F&lt;1 and p&gt;0.52 across all tests (very weak coupling — joint optimization lacks a prerequisite). Its actionable output is a pre-optimization gate: zero-shot baseline → 10–20 candidates to estimate headroom and noise floor → coupling test → stop if below threshold. The only task with positive returns across all methods is HelpSteer2 (best gain +6.8); best gains on other tasks are only +1.1 / +0.7 / +0.6.</li>
+<li><strong>PROSE (Appendix C of the same paper, <a href="paper_notes/paper-prose-2026.html">note</a>)</strong> is the authors' own controlled counter-example: structured five-stage decomposition + six-operator evolution + risk-adjusted fitness (0.70·mean score + 0.15·Sharpe + 0.15·DRO), all enabled, yet no measurable robustness advantage — "adding risk engineering on the selection side" cannot rescue fragility. Note: it is an internal baseline, not an independent publication.</li>
+<li><strong><a href="paper_notes/paper-vista-reflection-dark-2026.html">VISTA</a> (2603)</strong> gives reflection-based optimization a structural counter-example: on a defective GSM8K seed, GEPA drops from 23.81% to 13.50% (the root cause never enters its hypothesis space); decoupling "hypothesis generation about the root cause" from "rewriting based on the hypothesis" and running them in parallel recovers performance to 87.57%. On cross-model transfer, GEPA's optimized prompt yields only 22.74% on Qwen3-4B; VISTA still reaches 86.05%.</li>
+<li><strong><a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">Flawed Metaphor</a> (2512)</strong> dismantles the metaphor with destructive ablations: wrong evaluation labels typically do not reduce test performance; 100-step training shows gradient-free overfitting; high-scoring prompts may rely on prevalence hacking (strongly forbidding the minority class "unknown"). The conclusion is that method comparisons must control for the number of candidates and the selection budget; otherwise credit for "gradients" may belong entirely to "more sampling."</li>
+<li><strong><a href="paper_notes/paper-prompt-repetition-2025.html">Prompt Repetition</a> (2512)</strong> establishes the zero-cost comparison baseline: <code>&lt;QUERY&gt;&lt;QUERY&gt;</code> in non-reasoning mode scores 47/70 significant wins and 0 losses across 7 models × 10 configurations (NameIndex: 21.33%→97.33%); padding controls have no effect; in reasoning mode only 5/28 groups win. Before any optimizer reports a gain, the first question should be whether it beats this zero-intelligence transform.</li>
+<li><strong><a href="paper_notes/paper-apo-kg-construction-2025.html">APO-KG</a> (2506)</strong> is the positive-side piece of this picture: gains are clear for complex schemas / long inputs / strict formatting (ECR triple F1 up to +16%, rel=100: 0.62→0.72), but cross-dataset transfer leaves only ~1% F1 gain (in-dataset ~8% or more) — optimization is "a robustness tool under a complexity amplifier," not universal gain.</li>
+</ul>
+<p><strong>Convergence:</strong> "Is it worth optimizing?" now has an executable decision procedure (headroom / noise floor / coupling / zero-cost baseline) for the first time. "Did the edit actually help?" now has structural failure explanations (hypothesis space, prevalence hacking, transfer collapse) for the first time.</p>
+<h2 id="shift-two-expanding-the-optimization-target-from-a-single-prompt-to-an-artifact-graph">Shift Two: Expanding the Optimization Target — From a Single Prompt to an Artifact Graph</h2>
+<p>Almost none of the methodology papers in 2025/2026 ask "how to edit one instruction segment" anymore; instead they disaggregate and enlarge the optimizable target:</p>
+<ul>
+<li><strong><a href="paper_notes/paper-autopdl-2025.html">AutoPDL</a></strong>: the pattern itself is the most important search variable — on FEVER, Granite 13B goes from 6.5% to 74.0% (the best configuration is 3-shot ReWOO, not a better instruction); but the optimal pattern varies strongly by task and model, and GPT-4o-mini shows no MBPP+ gain on transfer.</li>
+<li><strong><a href="paper_notes/paper-jtpro-2026.html">JTPRO</a></strong>: failures in tool-use agents are usually in per-tool schema and slot descriptions, not in global instructions — on ToolACE 1000 tools: o3-mini OSR 51.27→64.46, GPT-5 62.37→73.55; ETID GPT-4o mini 46.53→66.83.</li>
+<li><strong><a href="paper_notes/paper-modular-prompt-optimization-2026.html">Modular PO</a></strong>: fixed schema, section-local edits only — ARC-Challenge: LLaMA-3 8B 75.0→79.10 (TextGrad only 75.67); MMLU: 57.21→61.50 (TextGrad drops to 56.40). This is the most direct experimental design for "rollback-able optimization."</li>
+<li><strong><a href="paper_notes/paper-prompt-codebooks-2026.html">Prompt Codebooks</a></strong>: optimize prompts into routable, reusable instinct units keyed by input — HotpotQA: prompt length 14.1× shorter than MIPROv2, aggregate 9.6× shorter, while performance still exceeds GEPA (IFBench 41.33, +2.72).</li>
+<li><strong><a href="paper_notes/paper-maspo-2026.html">MASPO</a> / <a href="paper_notes/paper-mapro-2025.html">MAPRO</a> / <a href="paper_notes/paper-temporal-structural-credit-mas-2026.html">Temporal-Structural Credit</a></strong>: three multi-agent lines jointly formalize "who to update and which round" — MASPO uses misalignment cases + joint reward (Sequential MAS average 70.39 vs baseline 65.31; removing Joint Evaluate drops to 67.77); MAPRO uses max-product belief propagation for MAP inference (removing demonstration-guided reward: HumanEval-ET 80.21→76.04, CodeContest 31.52→29.70); Temporal/Structural Credit updates only low-credit roles or rounds (MedMCQA LLaMA3-8B Debate 55.13→64.63).</li>
+<li><strong><a href="paper_notes/paper-spear-2026.html">SPEAR</a></strong>: even the optimizer's tools and autonomy are variables — give the optimizer a Python sandbox for confusion-matrix / groupby-style error analysis; on industrial tasks: 0.760 vs TextGrad 0.110 (job location kappa), BBH-7 average 0.938 vs GEPA 0.628; stuffing the full DataFrame into context recovers only 2% of the gap; a rigid fixed loop is significantly worse than a free-form agent; 0 of 78 archived runs fall below seed (auto-rollback protects the lower bound).</li>
+</ul>
+<p><strong>Convergence:</strong> This project's v4 report summarizes this line as "the optimization target is now an artifact graph" (prompt, pattern, tool schema, slot, role, round, codebook, optimizer tools and strategy); versioning must also be upgraded to artifact-graph level. These 8 papers are the complete primary evidence for that judgment.</p>
+<h2 id="shift-three-from-one-shot-optimization-to-self-evolution-and-experience-reuse">Shift Three: From One-Shot Optimization to Self-Evolution and Experience Reuse</h2>
+<ul>
+<li><strong><a href="paper_notes/paper-gepa-2026.html">GEPA</a></strong>: the main-line anchor. Trajectory reflection + Pareto frontier; Qwen3 8B aggregate 45.23→54.85 (GRPO 48.91, MIPROv2 47.84), ~3,936 rollouts vs GRPO's 24,000; ablation shows that Pareto selection itself contributes the most (GEPA +12.44 vs SelectBestCandidate +6.05); generated prompts are 9.2× shorter than MIPROv2. Boundaries are equally clear: on AIME-2025, 32.00 falls below GRPO's 38.00; degrades to ordinary rewriting when no reliable trace is available.</li>
+<li><strong><a href="paper_notes/paper-sepo-2026.html">SePO</a></strong>: brings the system prompt of "the prompt agent responsible for editing prompts" into the evolution loop — Manual-CoT 71.89→SePO-Generalist 76.38; removing self-improvement drops to 74.94; removing open-ended evolution drops to 72.64; multi-task pre-training cost $37.14 spread over five tasks is ~$7.43/task, and transfers to tasks not seen during pre-training (Sudoku 96.95→99.90). This is the core evidence for project insight 14, "optimizer/judge must also be versioned."</li>
+<li><strong><a href="paper_notes/paper-memapo-2026.html">MemAPO</a></strong>: success templates and error patterns stored in separate memories (CTM/EPM dual memory) — GPT-4o-mini average 70.7% vs TextGrad 63.6%, at 58.6% lower cost (average $0.31 vs $0.70); AQuA-RAT with dual memory: 61.7→82.5 (CTM-only / EPM-only reach only 80.5 / 77.9).</li>
+<li><strong><a href="paper_notes/paper-distillprompt-2025.html">DistillPrompt</a></strong>: examples are first distilled into task principles, then compressed and aggregated; average improvement across all datasets relative to Grips: +20.12% — another low-cost path for experience reuse.</li>
+<li><strong><a href="paper_notes/paper-scaling-textual-gradients-2025.html">Scaling Textual Gradients</a></strong>: full-batch textual gradients hit the context wall at ~50 examples; using historically high-scoring prompts as a momentum distribution for sampling (TSGD-M) — TREC 81.92→83.36, GSM8K 93.15→94.04 — "historical experience goes into the sampling distribution, not into the context."</li>
+</ul>
+<p><strong>Convergence:</strong> The engineering implication of self-evolution is not "let the system modify itself freely" but rather <strong>bringing all artifacts on the optimizer side (its prompts, tools, memory, sampling distribution) under the same versioning, evaluation, and rollback discipline applied to task prompts</strong>. SePO's ablation, SPEAR's rigid-loop comparison, and PrefPO's finding that "upgrading the optimizer (+11.5) is more effective than upgrading the discriminator (+6.1)" support the same conclusion from three independent directions.</p>
+<h2 id="shift-four-from-score-went-up-to-actually-got-better-hygiene-regularization-constraints">Shift Four: From "Score Went Up" to "Actually Got Better" (Hygiene, Regularization &amp; Constraints)</h2>
+<ul>
+<li><strong><a href="paper_notes/paper-prefpo-2026.html">PrefPO</a></strong>: hygiene is built into evaluation — BBH average 0.875 (MIPROv2 0.873, GEPA 0.870, TextGrad 0.850), while prompt length inflates only 4.7× (TextGrad 14.7×, Minimal variant 2.2×), repetition rate 0.044 (TextGrad 0.117, Minimal 0.012), prompt hacking rate 37% (TextGrad 86%, Minimal 31%, unoptimized baseline 12.8%). A prompt that is long, repetitive, and games the metric does not count as a successful optimization.</li>
+<li><strong><a href="paper_notes/paper-textreg-2026.html">TextReg</a></strong>: makes overfitting a regularization target — generates a regularization gradient alongside the task gradient to control length growth and rule narrowing; on OOD relative to TextGrad, multi-task +8~+11.8 (Phi-3.5-Mini Logical Deduction 5obj +11.8), while TextGrad/REVOLVE frequently fall below unoptimized CoT on OOD. Scope limitation is explicit: single-turn, rule-clear reasoning tasks only.</li>
+<li><strong><a href="paper_notes/paper-causal-edit-level-2026.html">Edit-Level causal analysis</a></strong>: observational analysis of 2,095 DSPy pairs + 17,708 TextGrad/GEPA pairs — meta_instruction × math = −0.103, clarity_constraint × logical = −0.083, extraneous_load × sequential = −0.060; 83% of association directions are stable under leave-one-out. Different tasks respond to the same edit family in opposite directions; "the clearer and more complex, the better" is a misconception.</li>
+</ul>
+<p><strong>Convergence:</strong> Combined with the prevalence hacking cases from Flawed Metaphor, these four papers together give a directly deployable "spurious-gain detection surface": length ratio, repetition ratio, seed similarity, edit family, minority-class performance, OOD/stress delta, hacking flag — these are the origin of this project's v4 engineering layer's release gate and ledger fields.</p>
+<h2 id="survey-layer-the-fields-self-positioning">Survey Layer: The Field's Self-Positioning</h2>
+<p>The three surveys (all 2025) produce no new methods but accomplish two things:</p>
+<ol>
+<li><strong>Unified frameworks</strong>: APO Survey uses a 5-stage process anatomy (seed → evaluation feedback → candidate generation → selection and retention → iteration depth); APE Survey uses three axes (optimization space × objective function (including constraints) × optimization method); Context Engineering Survey positions prompt optimization as a fundamental component under "Context Retrieval &amp; Generation" in the larger context engineering picture — confirming that this project's scope of "black-box, discrete, natural-language prompt" is a reasonable narrow slice.</li>
+<li><strong>Jointly naming the frontier</strong>: constrained optimization (formalizing length/readability constraints — naturally adjacent to the hygiene empirics of Shift Four); multi-task and negative transfer; online/task-agnostic optimization; multi-objective Pareto. <strong>Only APE Survey names bi-level / thought-driven (o1/R1 reasoning models as high-level controllers)</strong> — and this is precisely the direction absent from all 25 empirical papers.</li>
+</ol>
+<p>All three have been used in the <a href="arxiv_taxonomy_completeness_check_20260610.md">taxonomy external completeness check</a>: 7 clusters show no missing wholesale sections; what is missing is the above-mentioned frontier.</p>
+<h2 id="two-tensions-how-inconsistencies-converge-into-applicability-conditions">Two Tensions: How Inconsistencies Converge into Applicability Conditions</h2>
+<p>The most valuable thing in 2025/2026 is not individual paper conclusions but the fact that "surface contradictions" between papers have converged into applicability conditions:</p>
+<ol>
+<li><strong>Reflection is useful (GEPA) vs. reflection is harmful (VISTA).</strong> Unified condition: whether the feedback signal contains trajectory-level diagnostic information and whether the true root cause falls within the optimizer's hypothesis space. Trace available, root cause visible → reflection-based optimization is extremely sample-efficient; root cause structurally absent → more reflection means more drift, requiring decoupling of hypothesis generation from rewriting.</li>
+<li><strong>Large gains (JTPRO +13.19pp / AutoPDL +67.5pp / SPEAR 0.110→0.760) vs. coin flip (Coin Flip: 49% below zero-shot).</strong> Unified condition: task structure. Complex schema, tool selection, strict formatting, latent capability not activated by default → optimization has exploitable structure. Free text, zero-shot already near ceiling, dev set small and noisy → optimization is expensive search through noise.</li>
+</ol>
+<p>These two "tension → condition" convergences are something you can only obtain by reading the 2025/2026 literature as a whole. They are also the literature foundation for this project's six selection questions and pre-optimization gate.</p>
+<h2 id="what-20252026-has-not-yet-covered-honest-inventory">What 2025/2026 Has Not Yet Covered (Honest Inventory)</h2>
+<ul>
+<li><strong>bi-level / thought-driven</strong>: not a single paper among the 25; only APE Survey names it conceptually. The optimization of "prompt as reasoning controller" in the reasoning-model era is a wholesale-absent direction in the current library, registered as the highest-priority targeted search (top-80 sampling may simply not surface these — different search terms are needed).</li>
+<li><strong>Task-agnostic / online optimization</strong>: inference-time optimization without a dev set in production, only tangentially touched by memory-style work.</li>
+<li><strong>Theoretical formulation for constrained optimization</strong>: there is substantial empirical work on hygiene/length (Shift Four), but no representative paper with a formal solution in the style of "Γ(P)≤κ" has entered the library.</li>
+<li><strong>Multi-task negative transfer</strong>: cross-task results from MemAPO/SePO are positive cases; systematic negative-transfer research is not covered.</li>
+</ul>
+<h2 id="inputs-to-this-project">Inputs to This Project</h2>
+<ol>
+<li><strong>The audit chain is now complete.</strong> Pre-optimization (Coin Flip gate + Prompt Repetition zero-cost baseline) → during optimization (trajectory/hypothesis/code three categories of feedback signal, artifact block editing) → post-optimization (PrefPO/TextReg/Edit-Level hygiene panel + OOD split) forms a complete closed loop; this is precisely the literature source for the v4 engineering layer's five-piece kit and release gate. No additional list is created here.</li>
+<li><strong>The selection rationale for the first experiments is now stronger.</strong> "Structured extraction / tool calling / strict formatting first, open-ended generation later" is now supported from both positive and negative sides by APO-KG, JTPRO, AutoPDL, and Coin Flip (see the minimum-experiment suggestions in <a href="arxiv_deep_reading_batch3_synthesis.en.html">Batch 3 Synthesis</a>).</li>
+<li><strong>Next collection actions are clear:</strong> targeted search for bi-level / thought-driven; then supplement 1–2 representative papers for each of APE Survey's three axes: constrained / multi-task / online.</li>
+</ol>
+<h2 id="provenance">Provenance</h2>
+<p>Source material = 25 deep-read notes (full list with per-paper links in the 2025/2026 rows of the <a href="literature_map.en.html">literature map full index</a>). Related synthesis documents: <a href="arxiv_deep_reading_batch3_synthesis.en.html">Batch 1–3 Synthesis</a> (batch perspective), <a href="arxiv_top80_taxonomy.en.html">taxonomy</a> and <a href="arxiv_taxonomy_completeness_check_20260610.md">completeness check</a> (coverage perspective), <a href="apo_seven_methods_primer_20260611.en.html">APO Seven-Method Primer</a> (classical anchor perspective), main report v4 (all-channel perspective). All numbers were individually checked against the original note text at the time of writing; for individual papers whose charts are bitmap images with no extracted numbers (e.g., most of Flawed Metaphor's figures), this document cites only trends stated in the paper's main text and has noted this accordingly.</p>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/arxiv_2025_2026_frontier_synthesis_20260612.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#one-page-conclusions">One-Page Conclusions</a>
+<a class="lv2" href="#timeline-how-paper-form-has-shifted-over-two-years">Timeline: How Paper Form Has Shifted Over Two Years</a>
+<a class="lv2" href="#shift-one-ask-whether-its-worth-it-before-asking-whether-the-edit-was-right-cooling-down-diagnostics">Shift One: Ask Whether It's Worth It Before Asking Whether the Edit Was Right (Cooling Down &amp; Diagnostics)</a>
+<a class="lv2" href="#shift-two-expanding-the-optimization-target-from-a-single-prompt-to-an-artifact-graph">Shift Two: Expanding the Optimization Target — From a Single Prompt to an Artifact Graph</a>
+<a class="lv2" href="#shift-three-from-one-shot-optimization-to-self-evolution-and-experience-reuse">Shift Three: From One-Shot Optimization to Self-Evolution and Experience Reuse</a>
+<a class="lv2" href="#shift-four-from-score-went-up-to-actually-got-better-hygiene-regularization-constraints">Shift Four: From "Score Went Up" to "Actually Got Better" (Hygiene, Regularization &amp; Constraints)</a>
+<a class="lv2" href="#survey-layer-the-fields-self-positioning">Survey Layer: The Field's Self-Positioning</a>
+<a class="lv2" href="#two-tensions-how-inconsistencies-converge-into-applicability-conditions">Two Tensions: How Inconsistencies Converge into Applicability Conditions</a>
+<a class="lv2" href="#what-20252026-has-not-yet-covered-honest-inventory">What 2025/2026 Has Not Yet Covered (Honest Inventory)</a>
+<a class="lv2" href="#inputs-to-this-project">Inputs to This Project</a>
+<a class="lv2" href="#provenance">Provenance</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

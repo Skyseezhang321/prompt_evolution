@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zhihu Candidate Materials Three-Layer Analysis · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="../analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#a84055">Zhihu Channel</span><span class="doctitle">Zhihu Candidate Materials Three-Layer Analysis</span><a class="back lang" href="zhihu_three_layer_analysis_20260608.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="zhihu-candidate-materials-three-layer-analysis">Zhihu Candidate Materials Three-Layer Analysis</h1>
+<p>Updated: 2026-06-09</p>
+<p>2026-06-09 content supplement: Following the latest insight-first principle, Zhihu insights, helpful methods, anti-patterns, and minimal-verification candidates oriented toward the final report have been organized into <a href="zhihu_insight_cards_20260609.en.html">Zhihu Candidate Materials Insight and Method Cards</a>. This file continues to serve as the three-layer source analysis and traceability draft.</p>
+<p>2026-06-10 two additional notes: (1) The "evidence level" (weak/medium/unknown) in each thematic table in this file is a rough quick-screen judgment for sorting purposes only; the authoritative evidence_strength follows the canonical A/B/C/D grading converged in the <a href="zhihu_insight_cards_20260609.en.html">Insight and Method Cards</a>. (2) Channel-level coverage gap: this batch contains only approximately 2 candidates in Safety / Eval / Observability, well below the coverage matrix threshold for eval/governance (8 entries); the Zhihu channel should be assessed as weak coverage in this direction, and the relevant evidence must be supplemented from official tool documentation and other channels — do not artificially inflate numbers within this channel.</p>
+<h2 id="scope-of-analysis">Scope of Analysis</h2>
+<p>This analysis is based on the titles and Brave Search summaries of the Zhihu batch candidates, not on full-text deep reads. Direct access to some Zhihu links returned 403 errors; this document therefore represents a quick-screen analysis at the source-collection stage and does not constitute final research conclusions.</p>
+<ul>
+<li>Raw candidates: <code>artifacts/source_search/source_candidates_20260608_132914.jsonl</code></li>
+<li>Markdown preview: <code>artifacts/source_search/source_candidates_20260608_132914.md</code></li>
+<li>Candidate count: 99</li>
+<li>Rough relevance scores: high 9, medium 65, low 25</li>
+<li>Processing goal: compress 99 entries into a thematic map, priority deep-read sources, and key paper/framework traceability paths</li>
+</ul>
+<p>Evidence boundary:</p>
+<ul>
+<li>Zhihu articles serve primarily as leads for Chinese-community dissemination, tooling ecosystem, and engineering understanding.</li>
+<li>Claims involving method effectiveness, performance gains, cost reduction, or outperforming RL must be traced back to the original papers, official documentation, code repositories, or reproducible experiments.</li>
+<li>Generic prompt-technique and tool-marketing articles: retain only a small number of representative examples; do not include in the core evidence chain.</li>
+</ul>
+<h2 id="step-0-quick-screen-results">Step 0: Quick-Screen Results</h2>
+<p>Thematic rough groupings overlap; a single article may belong to multiple themes. Based on titles and search summaries, the main distribution of the current batch is:</p>
+<table>
+<thead>
+<tr>
+<th>Theme</th>
+<th style="text-align: right;">Approximate Count</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent / self-evolving / Hermes / Manus / Skill</td>
+<td style="text-align: right;">26</td>
+<td>Highest volume, but high evidence noise; must return to projects, code, and original articles for verification</td>
+</tr>
+<tr>
+<td>APO / APE / OPRO / EvoPrompt / PRewrite</td>
+<td style="text-align: right;">19</td>
+<td>Suitable as a method index; most are paper retellings</td>
+</tr>
+<tr>
+<td>Context Engineering</td>
+<td style="text-align: right;">17</td>
+<td>Heavily concentrated in Chinese-community discussion; primary lead for the shift from prompt to context/workflow</td>
+</tr>
+<tr>
+<td>DSPy / MIPRO / prompt-as-program</td>
+<td style="text-align: right;">16</td>
+<td>Directly relevant to experimental framework selection; prioritize articles with code and metrics</td>
+</tr>
+<tr>
+<td>GEPA / reflective prompt evolution</td>
+<td style="text-align: right;">15</td>
+<td>Highly aligned with the self-evolving main thread; but titles often contain exaggerated language</td>
+</tr>
+<tr>
+<td>Tool practice / Prompt Optimizer / OPIK / Coze</td>
+<td style="text-align: right;">12</td>
+<td>Can supplement productization and domestic tooling ecosystem leads; retain only articles with eval or configuration details</td>
+</tr>
+<tr>
+<td>Generic prompt techniques</td>
+<td style="text-align: right;">8</td>
+<td>Weak contribution to this project; most are downweighted</td>
+</tr>
+<tr>
+<td>Safety / Eval / Observability</td>
+<td style="text-align: right;">2</td>
+<td>Few in number but governance-relevant; should be supplemented from official tool documentation later</td>
+</tr>
+</tbody>
+</table>
+<p>Quick-screen conclusions:</p>
+<ol>
+<li>The most valuable aspect of Zhihu materials is not providing new methods, but illustrating how the Chinese community connects APO, GEPA, DSPy, and context engineering to agent, self-evolving, and tool practice.</li>
+<li>High-relevance materials are clearly concentrated in the GEPA, DSPy/MIPROv2, context engineering, and Hermes Agent directions from 2025–2026.</li>
+<li>There are many tool-related articles, but most resemble experience introductions or promotional pieces; filter using "does it include a dataset, scorer, comparison, failure cases, and version rollback?"</li>
+</ol>
+<h2 id="insight-translation-layer-for-general-users">Insight Translation Layer for General Users</h2>
+<p>The strength of the Zhihu batch lies in "how users understand, misunderstand, and use these methods," not in proving method effectiveness. When incorporated into the final report, priority should be given to translating findings into problem awareness and accessible examples, with papers, official documentation, code, or project experiments supplying the evidence.</p>
+<table>
+<thead>
+<tr>
+<th>Problem exposed by the Chinese community</th>
+<th>Specific insight it can be translated into</th>
+<th>What a general user can do</th>
+<th>Evidence boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Many articles are still searching for a "universal prompt."</td>
+<td>A good prompt is not a universal template, but is bound to a task, samples, and a scorer.</td>
+<td>First write 10–20 of your own test samples, then determine whether a template is useful.</td>
+<td>Generic technique articles are mostly downweighted; used only as user pain points.</td>
+</tr>
+<tr>
+<td>GEPA is commonly spread as "stronger than RL."</td>
+<td>The more accurate insight is: natural-language trajectory reflection provides denser information than scalar reward alone on certain tasks.</td>
+<td>For tasks with traces, compare <code>score-only</code> and <code>trace+critique</code> rewriting.</td>
+<td>Performance ratios must go back to the GEPA paper and this project's reproductions.</td>
+</tr>
+<tr>
+<td>DSPy/MIPRO is simplified to "auto-writing prompts."</td>
+<td>The more accurate insight is: treating prompt, examples, and metric as program components compiled by an optimizer.</td>
+<td>Decompose tasks into signature, examples, and metric rather than only maintaining a chat template.</td>
+<td>Chinese articles can help with terminology; evidence goes back to DSPy/MIPRO.</td>
+</tr>
+<tr>
+<td>Many context engineering articles exist.</td>
+<td>Failure does not necessarily come from the prompt; it may come from the context the model sees.</td>
+<td>Separately inspect RAG hits, memory, tool output, history compression, and output schema.</td>
+<td>This is a boundary lead, not evidence of automatic prompt optimizer effectiveness.</td>
+</tr>
+<tr>
+<td>Hermes / agent self-evolving is very appealing.</td>
+<td>Self-evolving is not "accumulating more and more memory," but distilling evidence-backed failure patterns, skills, and rollback points.</td>
+<td>For each memory/skill, record its source, applicable scope, validation results, and a disable switch.</td>
+<td>Currently mostly weak; must return to the original project, issues, code, and run logs.</td>
+</tr>
+<tr>
+<td>Tool experience articles commonly lack eval.</td>
+<td>Whether a tool is useful depends on whether it makes testing, versioning, failure cases, and rollback easier.</td>
+<td>When reading tool articles, extract only: dataset, metric, diff, cost, failure, rollback.</td>
+<td>Articles lacking these fields do not enter the core evidence chain.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="layer-1-brief-overview">Layer 1: Brief Overview</h2>
+<p>This batch of Zhihu candidates shows that the Chinese community has shifted from "prompt techniques" to three more engineering-oriented categories of problems.</p>
+<p>The first is automatic prompt optimization. Articles repeatedly mention methods such as APE, APO, OPRO, EvoPrompt, PRewrite, PromptBreeder, GEPA, and DSPy/MIPROv2, indicating that Chinese materials are sufficient to help build a method index and a Chinese terminology glossary. However, most of these articles are second-hand interpretations of papers or English-language materials and cannot directly support performance conclusions.</p>
+<p>The second is context engineering. Several high-relevance candidates focus on Context Engineering, agent context, memory, tool context, RAG context, and Manus experience. Together they express a trend: Chinese practitioners have stopped limiting the optimization target to a single prompt and have shifted toward "what context, tools, and memory the model sees at each step." This aligns with the project's research hypothesis of extending the optimization target to <code>prompt + examples + context + tools + evaluator</code>.</p>
+<p>The third is tooling and agent self-evolving practice. Candidates such as OPIK, Prompt Optimizer, PromptPilot, Coze, and Hermes Agent indicate that the Chinese ecosystem contains many tooling and productization leads. Their value lies in surfacing real-world workflows, user pain points, and domestic tools — not in proving automatic optimization is effective.</p>
+<p>The directions most worth continuing to track in this batch are GEPA/DSPy, context engineering, Hermes Agent self-evolving, and eval-driven tool practice. Most in need of downweighting are generic prompt techniques, pure headline-driven tool promotions, and paper summaries lacking primary sources.</p>
+<h2 id="layer-2-thematic-detailed-analysis">Layer 2: Thematic Detailed Analysis</h2>
+<h3 id="21-apo-ape-opro-evoprompt-prewrite">2.1 APO / APE / OPRO / EvoPrompt / PRewrite</h3>
+<p>Representative candidates:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>URL</th>
+<th>Value</th>
+<th>Evidence Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Auto-generating prompts: Automatic prompt engineering (自动生成prompt：Automatic prompt engineering)</td>
+<td>https://zhuanlan.zhihu.com/p/672206721</td>
+<td>Mentions iterative generation, evaluation, and selection of prompts; points to ProTeGi/APO</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>Automatic prompt engineering: APE, APO, EvoPrompt, OPRO, PE2 (自动提示工程：APE，APO，EvoPrompt，OPRO，PE2)</td>
+<td>https://zhuanlan.zhihu.com/p/16918997361</td>
+<td>Suitable as an early method index</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>LLM agent series (4): Automatic prompt optimization — from APE's "find," OPRO's "realize," to PRewrite's "practice" (LLM agent 专题（4）提示词自动优化：从 APE 的"找"、OPRO 的"悟"到 PRewrite 的"练")</td>
+<td>https://zhuanlan.zhihu.com/p/1993711012239664512</td>
+<td>Covers APE, OPRO, PRewrite; can serve as a traceability checklist</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Finding the optimal prompt via LLM self-optimization: OPRO (通过 LLM 自我优化找到最优提示词的方法: OPRO)</td>
+<td>https://zhuanlan.zhihu.com/p/661890697</td>
+<td>Chinese interpretation of OPRO</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>Auto Prompt 2025 latest survey from Amazon (Auto Prompt 2025最新综述from Amazon)</td>
+<td>https://zhuanlan.zhihu.com/p/1943346001843815123</td>
+<td>Points to Amazon/APO survey framework; original must be traced</td>
+<td>medium</td>
+</tr>
+</tbody>
+</table>
+<p>Analysis:</p>
+<p>The shared value of these articles is elevating automatic prompt optimization from "manually tuning prompts" to an optimization problem of "generate candidates, evaluate, select, iterate." They can help organize the method taxonomy, but the search summaries currently show insufficient experimental detail. Before incorporating into the final report, the APE, ProTeGi/APO, OPRO, EvoPrompt, and PRewrite papers should be consulted directly.</p>
+<p>Relevance to this project:</p>
+<ul>
+<li>Supplement Chinese explanations for the method taxonomy.</li>
+<li>Help define baselines: manual prompt, APE-style, OPRO-style, ProTeGi-style.</li>
+<li>Flag common risks: sample overfitting, initialization sensitivity, evaluator bias.</li>
+</ul>
+<h3 id="22-gepa-reflective-prompt-evolution">2.2 GEPA / Reflective Prompt Evolution</h3>
+<p>Representative candidates:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>URL</th>
+<th>Value</th>
+<th>Evidence Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>When the prompt optimizer learns to evolve, it can surpass reinforcement learning (当提示词优化器学会进化，竟能胜过强化学习)</td>
+<td>https://zhuanlan.zhihu.com/p/1934299196959199541</td>
+<td>Core lead for GEPA dissemination in Chinese</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>DSPy GEPA: Introducing evolutionary algorithms into prompt optimization (DSPy GEPA: 将演化算法引入prompt优化)</td>
+<td>https://zhuanlan.zhihu.com/p/1933283590302601451</td>
+<td>Connects GEPA with DSPy</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>GEPA: Optimizing prompts with natural-language reflection — a more efficient optimization method than RL (GEPA：自然语言反思优化Prompt，比 RL 更高效的优化方法)</td>
+<td>https://zhuanlan.zhihu.com/p/2026228834559697783</td>
+<td>Emphasizes natural-language reflection signals</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>GEPA: How reflective prompt evolution surpasses reinforcement learning (GRPO, etc.) (GEPA：反思性提示进化如何超越强化学习（GRPO等）)</td>
+<td>Item 55 in candidate artifact</td>
+<td>Likely a paper retelling</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>GEPA: Reflective prompt evolution can surpass reinforcement learning (GEPA：反思性提示词进化可超越强化学习)</td>
+<td>Item 63 in candidate artifact</td>
+<td>Likely a paper retelling</td>
+<td>weak</td>
+</tr>
+</tbody>
+</table>
+<p>Analysis:</p>
+<p>GEPA articles on Zhihu concentrate on three points: natural-language trajectory reflection provides higher information density than scalar reward; evolutionary/Pareto search can more efficiently select candidates; and prompt optimization requires fewer samples than RL in certain settings. These points are directionally consistent with the claims in the GEPA paper, but titles often contain strong statements such as "surpassing reinforcement learning" that must be verified against the paper's experimental setup.</p>
+<p>Relevance to this project:</p>
+<ul>
+<li>Serves as a Chinese-community dissemination lead for "why trajectory reflection may be more useful than final score alone."</li>
+<li>Supports a subsequent minimal experiment candidate: compare candidate generation with score-only vs. candidate generation with failure trace.</li>
+<li>Reminds the final report to clearly state GEPA's applicable tasks, baseline, rollout cost, Pareto selection, and limitations.</li>
+</ul>
+<p>Should not be taken at face value:</p>
+<ul>
+<li>Numbers such as "35× efficiency improvement" or "20% higher performance" must be traced to paper tables and task settings.</li>
+<li>Generalized conclusions such as "no RL needed" or "replacing RL" should be rewritten as observations under specific experimental conditions.</li>
+</ul>
+<h3 id="23-dspy-mipro-prompt-as-program">2.3 DSPy / MIPRO / Prompt-as-Program</h3>
+<p>Representative candidates:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>URL</th>
+<th>Value</th>
+<th>Evidence Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Auto-writing prompts: Introduction and practice of DSPy.MIPROv2 (with code) (自动写提示词：DSPy.MIPROv2的介绍与实践（附代码）)</td>
+<td>https://zhuanlan.zhihu.com/p/18156572393</td>
+<td>Priority deep-read if code is confirmed</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>The past and present of DSPy (DSPy 的前世今生)</td>
+<td>https://zhuanlan.zhihu.com/p/707184607</td>
+<td>Explains DSPy's technical evolution</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>DSPy quick-start from 0 to 1 (DSPy 使用从 0 到 1 快速上手)</td>
+<td>https://zhuanlan.zhihu.com/p/707925423</td>
+<td>Engineering onboarding lead</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>DSPy Visualizer: Visualizing the prompt optimization process (DSPy Visualizer：可视化 Prompt 优化过程)</td>
+<td>https://zhuanlan.zhihu.com/p/714277212</td>
+<td>Visualization and tracing lead</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>DSPy prompt optimization survey (DsPy优化提示词调研)</td>
+<td>https://zhuanlan.zhihu.com/p/1955642727363478849</td>
+<td>Survey lead; content depth needs verification</td>
+<td>unknown</td>
+</tr>
+</tbody>
+</table>
+<p>Analysis:</p>
+<p>The value of DSPy articles lies in placing prompt optimization in the context of "program compilation," emphasizing the combination of instructions, few-shot examples, metric, and optimizer. MIPROv2 is described as simultaneously optimizing instruction and few-shot examples, which aligns closely with this project's focus on "prompt is not an isolated string."</p>
+<p>Relevance to this project:</p>
+<ul>
+<li>DSPy/MIPRO is a strong candidate for the first reproducible experiment harness or baseline.</li>
+<li>These articles may supplement how Chinese developers understand module, signature, metric, teleprompter/optimizer.</li>
+<li>Visualizer-type articles can help design run artifact and prompt diff presentation for subsequent work.</li>
+</ul>
+<p>Needs to be traced:</p>
+<ul>
+<li>DSPy original paper and documentation.</li>
+<li>MIPROv2 paper.</li>
+<li>Official implementation and cookbook for GEPA in DSPy.</li>
+</ul>
+<h3 id="24-context-engineering">2.4 Context Engineering</h3>
+<p>Representative candidates:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>URL</th>
+<th>Value</th>
+<th>Evidence Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A complete guide to context engineering for large language models (一文搞懂：大语言模型的上下文工程)</td>
+<td>https://zhuanlan.zhihu.com/p/1956359769540526470</td>
+<td>Overview of RAG, memory, tool-use, multi-agent</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>On context engineering for AI agents (聊下 AI Agent 的上下文工程)</td>
+<td>https://zhuanlan.zhihu.com/p/1932720788206778299</td>
+<td>Connects practitioner definitions</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>LangChain's official share on LLM context engineering techniques (LangChain 官方分享 LLM 的上下文工程技巧)</td>
+<td>https://zhuanlan.zhihu.com/p/1920981931920693117</td>
+<td>Traceable to LangChain official source</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Context Engineering — one article is enough (Context Engineering，一篇就够了)</td>
+<td>https://zhuanlan.zhihu.com/p/1938967453951571269</td>
+<td>Spreads definitions and key references</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>From prompt to context: A systematic survey of Context Engineering based on 1400+ papers (从 Prompt 到 Context：基于 1400+ 论文的 Context Engineering 系统综述)</td>
+<td>https://zhuanlan.zhihu.com/p/1951318616042631326</td>
+<td>Points to systematic survey and Manus experience</td>
+<td>medium</td>
+</tr>
+</tbody>
+</table>
+<p>Analysis:</p>
+<p>Context engineering is the densest non-APO theme in the Zhihu batch. Candidate summaries repeatedly mention dynamic systems, the right information and tools, RAG, memory, tool-augmented reasoning, multi-agent, KV cache, and other concepts. This indicates that the Chinese community has already extended the target of prompt optimization to the organization and management of the context window.</p>
+<p>Relevance to this project:</p>
+<ul>
+<li>Supports research hypothesis H2: the optimization target is often <code>prompt + examples + context + tools + evaluator</code>.</li>
+<li>Provides task design directions for agent/tool-use minimal experiments.</li>
+<li>Helps define immutable layers and variable layers: business objectives/safety boundaries are immutable; context selection, example selection, and tool hints are variable.</li>
+</ul>
+<p>Points to note:</p>
+<ul>
+<li>Many context engineering articles may be concept dissemination without experimental evidence.</li>
+<li>Priority should be given to tracing back to Anthropic, LangChain, Manus, and context engineering survey primary sources.</li>
+</ul>
+<h3 id="25-tool-practice-prompt-optimizer-opik-coze">2.5 Tool Practice / Prompt Optimizer / OPIK / Coze</h3>
+<p>Representative candidates:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>URL</th>
+<th>Value</th>
+<th>Evidence Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPIK: An open-source automatic prompt optimization framework (OPIK：一个开源的自动提示词优化框架)</td>
+<td>https://zhuanlan.zhihu.com/p/1998120566998204578</td>
+<td>Tool practice lead; summary mentions scoring functions and iterative optimization</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Don't know how to write AI prompts? Try Prompt Optimizer (AI 提示词不会写？试试 Prompt Optimizer)</td>
+<td>https://zhuanlan.zhihu.com/p/28302950149</td>
+<td>Tool experience; should be downweighted</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>Prompt-Optimizer: A complete guide to the AI prompt optimization tool (Prompt-Optimizer: AI 提示词优化神器全攻略)</td>
+<td>https://zhuanlan.zhihu.com/p/1892351710292332883</td>
+<td>Open-source tool lead; GitHub should be checked</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>PromptPilot: The end of prompt engineering? (PromptPilot：提示词优化工程终结者？)</td>
+<td>https://zhuanlan.zhihu.com/p/1916783655751250271</td>
+<td>Product experience lead</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>Structured prompts (3): ByteDance Coze prompt optimizer (结构化提示词（三）：字节跳动 Coze 提示词优化器)</td>
+<td>https://zhuanlan.zhihu.com/p/701894071</td>
+<td>Domestic platform lead</td>
+<td>weak</td>
+</tr>
+</tbody>
+</table>
+<p>Analysis:</p>
+<p>Tool-related articles can supplement the perspective of "how real users use prompt optimizers," but they are most prone to mixing in marketing and experience pieces. Only articles containing a dataset, scorer, comparison results, cost, failure cases, or version management are worth including in industry notes.</p>
+<p>Screening criteria:</p>
+<ul>
+<li>Does it describe the source of input samples?</li>
+<li>Does it describe the evaluator or scoring function?</li>
+<li>Does it record pre- and post-optimization metrics, rather than only displaying subjective output?</li>
+<li>Does it include version management, rollback, or manual review?</li>
+<li>Does it mention safety boundaries and non-rewritable constraints?</li>
+</ul>
+<h3 id="26-agent-self-evolving-hermes-skill-manus">2.6 Agent Self-Evolving / Hermes / Skill / Manus</h3>
+<p>Representative candidates:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>URL</th>
+<th>Value</th>
+<th>Evidence Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>When AI begins to self-evolve: What has Hermes Agent actually changed? (当 AI 开始自我进化：Hermes Agent 到底改变了什么？)</td>
+<td>https://zhuanlan.zhihu.com/p/2032842861587252215</td>
+<td>Connects self-evolution with GEPA/DSPy</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Hermes Agent: The open-source AI agent that "self-evolves" (Hermes Agent：「会自我进化」的开源 AI Agent)</td>
+<td>https://zhuanlan.zhihu.com/p/2026106192003437649</td>
+<td>Already has an industry-note lead; needs further verification</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>Open-source AI agents HermesAgent and Openclaw — each with a distinct design philosophy (开源 AI 智能体 HermesAgent 与 Openclaw 各具设计哲学)</td>
+<td>https://www.zhihu.com/question/2025650365819810327</td>
+<td>Comparative lead; original project needs verification</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>What is it like to use Hermes Agent? (使用 Hermes Agent 是什么样的体验？)</td>
+<td>https://www.zhihu.com/question/2027666092630319823</td>
+<td>User experience lead</td>
+<td>weak</td>
+</tr>
+<tr>
+<td>YC reveals top AI agent prompt engineering (YC 揭秘顶尖 AI 智能体 Prompt 工程)</td>
+<td>https://zhuanlan.zhihu.com/p/1912633580997309973</td>
+<td>meta-prompting / agent workflow lead</td>
+<td>weak</td>
+</tr>
+</tbody>
+</table>
+<p>Analysis:</p>
+<p>Agent self-evolving materials are directly relevant to this project's long-term goals, but the evidence chain is most easily broken. Summaries contain strong claims such as "automatically optimizing skill, system prompt, tool description, and tool implementation code," which must be verified by returning to the Hermes/OpenClaw project, issues, code, and official documentation.</p>
+<p>Relevance to this project:</p>
+<ul>
+<li>Provides concrete case leads for "prompt self-evolving goes beyond changing prompt text."</li>
+<li>Helps design the variable layers in subsequent memory/self-evolving schemes: skill, tool description, reflection policy, prompt generator.</li>
+<li>Reminds that self-evolving systems must have versioning, rollback, approval, and safety boundaries.</li>
+</ul>
+<h2 id="layer-3-priority-content-traceability">Layer 3: Priority Content Traceability</h2>
+<h3 id="31-gepa-reflective-prompt-evolution">3.1 GEPA: Reflective Prompt Evolution</h3>
+<p>Understanding in Zhihu:</p>
+<ul>
+<li>Summarizes GEPA as using natural-language reflection and evolutionary search to optimize prompts.</li>
+<li>Emphasizes sample efficiency compared to RL / GRPO.</li>
+<li>Connects it with DSPy, agent prompt optimization, and self-evolving systems.</li>
+</ul>
+<p>Primary traceability targets:</p>
+<ul>
+<li>GEPA paper: task setup, baseline, rollout count, Pareto selection, failure cases.</li>
+<li>GEPA / DSPy official implementation: optimizer API, artifact, metric requirements.</li>
+<li>Hugging Face cookbook / Arize and similar engineering practices: whether they reproduce or only demonstrate.</li>
+</ul>
+<p>Project conversion:</p>
+<ul>
+<li>Minimal experiment candidate: score-only APO vs. trace-reflection APO.</li>
+<li>Fields to record: original prompt, failure trace, reflection, candidate prompt, dev/validation scores, cost, rollback point.</li>
+</ul>
+<h3 id="32-dspy-miprov2-prompt-as-program-baseline">3.2 DSPy / MIPROv2: Prompt-as-Program Baseline</h3>
+<p>Understanding in Zhihu:</p>
+<ul>
+<li>Treats instruction and few-shot examples as optimizable parameters.</li>
+<li>Compares prompt development to shifting from handwritten prompts to compilation.</li>
+<li>Emphasizes the roles of metric and optimizer.</li>
+</ul>
+<p>Primary traceability targets:</p>
+<ul>
+<li>DSPy documentation and paper.</li>
+<li>MIPROv2 paper.</li>
+<li>DSPy GEPA cookbook.</li>
+</ul>
+<p>Project conversion:</p>
+<ul>
+<li>Strong candidate for the first reproducible experiment harness.</li>
+<li>Use typed signature / module / metric to solidify task boundaries and avoid pure-text prompt drift.</li>
+</ul>
+<h3 id="33-ape-opro-evoprompt-prewrite-early-apo-method-taxonomy">3.3 APE / OPRO / EvoPrompt / PRewrite: Early APO Method Taxonomy</h3>
+<p>Understanding in Zhihu:</p>
+<ul>
+<li>APE: LLM generates candidate instructions; selects by task score.</li>
+<li>APO / ProTeGi: uses failed samples to generate natural-language critiques, then rewrites the prompt.</li>
+<li>OPRO: uses LLM to propose better solutions based on historical candidates and scores.</li>
+<li>PRewrite: trains a prompt rewriter via RL.</li>
+</ul>
+<p>Primary traceability targets:</p>
+<ul>
+<li>APE, ProTeGi, OPRO, EvoPrompt, PRewrite original papers.</li>
+<li>Train/dev/test data splits and overfitting controls for each method.</li>
+</ul>
+<p>Project conversion:</p>
+<ul>
+<li>Form a baseline sequence: manual → few-shot → APE-style → ProTeGi-style → GEPA-style.</li>
+<li>Use these methods to decompose candidate generation, feedback signal, candidate selection, and optimization target.</li>
+</ul>
+<h3 id="34-context-engineering-from-prompt-to-system-context">3.4 Context Engineering: From Prompt to System Context</h3>
+<p>Understanding in Zhihu:</p>
+<ul>
+<li>Context engineering is a dynamic system that provides LLMs with the information, tools, and format needed to complete tasks.</li>
+<li>Typical implementations include RAG, memory, tool-use, multi-agent, context compression, and KV cache design.</li>
+<li>For agent systems, the prompt is only one part of context management.</li>
+</ul>
+<p>Primary traceability targets:</p>
+<ul>
+<li>Context Engineering survey.</li>
+<li>Anthropic / LangChain / Manus related engineering articles.</li>
+<li>Failure cases of context selection and memory in RAG/tool-use/agent workflows.</li>
+</ul>
+<p>Project conversion:</p>
+<ul>
+<li>Extend the optimization target beyond instruction alone.</li>
+<li>Establish variable/immutable layers: context selection, examples, and tool hints are variable; safety boundaries, permissions, and business objectives are immutable.</li>
+</ul>
+<h3 id="35-tool-practice-from-optimizing-prompts-to-eval-driven-workflow">3.5 Tool Practice: From "Optimizing Prompts" to Eval-Driven Workflow</h3>
+<p>Understanding in Zhihu:</p>
+<ul>
+<li>Tools such as OPIK, Prompt Optimizer, PromptPilot, and Coze provide experiences for automatically generating, optimizing, testing, comparing, and managing prompts.</li>
+<li>Some tools only rewrite prompts; others may include dataset, evaluator, and iterative optimization.</li>
+</ul>
+<p>Primary traceability targets:</p>
+<ul>
+<li>Official documentation and code for OPIK / Prompt Optimizer / Coze / PromptPilot.</li>
+<li>Whether they include prompt versioning, eval, cost records, rollback, and manual approval.</li>
+</ul>
+<p>Project conversion:</p>
+<ul>
+<li>Not to replicate tool UIs, but to extract the governance workflow: dataset → candidate → eval → diff → approval → rollback.</li>
+<li>Establish a tool practice evaluation checklist for use in industry note organization.</li>
+</ul>
+<h2 id="recommended-retain-deep-read-exclude-list">Recommended Retain / Deep-Read / Exclude List</h2>
+<h3 id="priority-retain-and-deep-read">Priority Retain and Deep-Read</h3>
+<table>
+<thead>
+<tr>
+<th>Theme</th>
+<th>Candidates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA</td>
+<td>"When the prompt optimizer learns to evolve, it can surpass reinforcement learning" (当提示词优化器学会进化，竟能胜过强化学习), "DSPy GEPA: Introducing evolutionary algorithms into prompt optimization" (DSPy GEPA: 将演化算法引入prompt优化), "GEPA: Optimizing prompts with natural-language reflection — a more efficient optimization method than RL" (GEPA：自然语言反思优化Prompt，比 RL 更高效的优化方法)</td>
+</tr>
+<tr>
+<td>DSPy/MIPRO</td>
+<td>"Auto-writing prompts: Introduction and practice of DSPy.MIPROv2 (with code)" (自动写提示词：DSPy.MIPROv2的介绍与实践（附代码）), "The past and present of DSPy" (DSPy 的前世今生), "DSPy Visualizer" (DSPy Visualizer)</td>
+</tr>
+<tr>
+<td>APO taxonomy</td>
+<td>"LLM agent series (4): Automatic prompt optimization" (LLM agent 专题（4）提示词自动优化), "Automatic prompt engineering: APE, APO, EvoPrompt, OPRO, PE2" (自动提示工程：APE，APO，EvoPrompt，OPRO，PE2), "Finding the optimal prompt via LLM self-optimization: OPRO" (通过 LLM 自我优化找到最优提示词的方法: OPRO)</td>
+</tr>
+<tr>
+<td>Context Engineering</td>
+<td>"LangChain's official share on LLM context engineering techniques" (LangChain官方分享LLM的上下文工程技巧), "From prompt to context" (从 Prompt 到 Context), "Context Engineering — one article is enough" (Context Engineering，一篇就够了)</td>
+</tr>
+<tr>
+<td>Agent self-evolving</td>
+<td>"Hermes Agent: The open-source AI agent that 'self-evolves'" (Hermes Agent：「会自我进化」的开源 AI Agent), "When AI begins to self-evolve: What has Hermes Agent actually changed?" (当 AI 开始自我进化：Hermes Agent 到底改变了什么？)</td>
+</tr>
+<tr>
+<td>Tool practice</td>
+<td>"OPIK: An open-source automatic prompt optimization framework" (OPIK：一个开源的自动提示词优化框架), "Prompt-Optimizer: A complete guide to the AI prompt optimization tool" (Prompt-Optimizer: AI 提示词优化神器全攻略)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="use-as-leads-only">Use as Leads Only</h3>
+<ul>
+<li>Paper summaries, paper dailies, and hot-topic decoder articles.</li>
+<li>Tool introductions without eval, dataset, code, or failure cases.</li>
+<li>Articles that only propagate GEPA conclusions without additional information.</li>
+</ul>
+<h3 id="tend-to-exclude">Tend to Exclude</h3>
+<ul>
+<li>Generic prompt techniques, golden rules, universal prompts.</li>
+<li>Articles whose titles are relevant but whose summaries only cover ordinary prompt engineering.</li>
+<li>Multi-modal or safety paper roundups weakly related to the prompt optimization main thread, unless a dedicated safety/eval extension is planned later.</li>
+</ul>
+<h2 id="next-steps">Next Steps</h2>
+<ol>
+<li>Select 15–20 P1/P2 candidates for full-text verification; if full text needs to be retained, place it in <code>local_sources/raw/</code> and record the SHA256.</li>
+<li>For each individual source that enters deep-read, use <code>docs/industry_notes/template.md</code>.</li>
+<li>Build a traceability table mapping "Zhihu source → primary paper/official documentation/code."</li>
+<li>Register the final retained sources in <code>docs/source_inventory.md</code>; do not bulk-import all 99 entries.</li>
+<li>Extract one minimal experiment or engineering plan candidate from each of the three threads: GEPA, DSPy/MIPRO, and Context Engineering.</li>
+</ol>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/source_batches/zhihu_three_layer_analysis_20260608.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="../analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#scope-of-analysis">Scope of Analysis</a>
+<a class="lv2" href="#step-0-quick-screen-results">Step 0: Quick-Screen Results</a>
+<a class="lv2" href="#insight-translation-layer-for-general-users">Insight Translation Layer for General Users</a>
+<a class="lv2" href="#layer-1-brief-overview">Layer 1: Brief Overview</a>
+<a class="lv2" href="#layer-2-thematic-detailed-analysis">Layer 2: Thematic Detailed Analysis</a>
+<a class="lv3" href="#21-apo-ape-opro-evoprompt-prewrite">2.1 APO / APE / OPRO / EvoPrompt / PRewrite</a>
+<a class="lv3" href="#22-gepa-reflective-prompt-evolution">2.2 GEPA / Reflective Prompt Evolution</a>
+<a class="lv3" href="#23-dspy-mipro-prompt-as-program">2.3 DSPy / MIPRO / Prompt-as-Program</a>
+<a class="lv3" href="#24-context-engineering">2.4 Context Engineering</a>
+<a class="lv3" href="#25-tool-practice-prompt-optimizer-opik-coze">2.5 Tool Practice / Prompt Optimizer / OPIK / Coze</a>
+<a class="lv3" href="#26-agent-self-evolving-hermes-skill-manus">2.6 Agent Self-Evolving / Hermes / Skill / Manus</a>
+<a class="lv2" href="#layer-3-priority-content-traceability">Layer 3: Priority Content Traceability</a>
+<a class="lv3" href="#31-gepa-reflective-prompt-evolution">3.1 GEPA: Reflective Prompt Evolution</a>
+<a class="lv3" href="#32-dspy-miprov2-prompt-as-program-baseline">3.2 DSPy / MIPROv2: Prompt-as-Program Baseline</a>
+<a class="lv3" href="#33-ape-opro-evoprompt-prewrite-early-apo-method-taxonomy">3.3 APE / OPRO / EvoPrompt / PRewrite: Early APO Method Taxonomy</a>
+<a class="lv3" href="#34-context-engineering-from-prompt-to-system-context">3.4 Context Engineering: From Prompt to System Context</a>
+<a class="lv3" href="#35-tool-practice-from-optimizing-prompts-to-eval-driven-workflow">3.5 Tool Practice: From "Optimizing Prompts" to Eval-Driven Workflow</a>
+<a class="lv2" href="#recommended-retain-deep-read-exclude-list">Recommended Retain / Deep-Read / Exclude List</a>
+<a class="lv3" href="#priority-retain-and-deep-read">Priority Retain and Deep-Read</a>
+<a class="lv3" href="#use-as-leads-only">Use as Leads Only</a>
+<a class="lv3" href="#tend-to-exclude">Tend to Exclude</a>
+<a class="lv2" href="#next-steps">Next Steps</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

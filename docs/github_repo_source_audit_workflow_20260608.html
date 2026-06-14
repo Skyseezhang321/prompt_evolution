@@ -29,6 +29,7 @@ border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-
 .topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
 .topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
 .topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
 .topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
 .topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
 .topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
@@ -77,7 +78,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4a742f">GitHub 渠道</span><span class="doctitle">GitHub 仓库审计工作流</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#4a742f">GitHub 渠道</span><span class="doctitle">GitHub 仓库审计工作流</span><a class="back lang" href="github_repo_source_audit_workflow_20260608.en.html">EN</a><span class="mark">Prompt Evolution · 研究档案</span></div>
 <div class="wrap">
 <article class="content">
 <h1 id="github-2026-06-08">GitHub 仓库源码审计流程：2026-06-08</h1>
@@ -259,7 +260,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>从 12 条候选 insight 中选择 2-4 条进入 <code>docs/experiment_plan.md</code>，优先冻结 evaluator / data / ledger schema。</li>
 <li>选择 1 个最小实验，把 <code>autoresearch</code> 的”只允许修改目标对象、不允许修改 evaluator/data”迁移为 prompt/context 优化闭环。</li>
 </ol>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/github_repo_source_audit_workflow_20260608.md</code> 自动生成（2026-06-11 23:31 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/github_repo_source_audit_workflow_20260608.md</code> 自动生成（2026-06-14 14:52 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">当前目标</a>
 <a class="lv2" href="#_2">执行命令</a>

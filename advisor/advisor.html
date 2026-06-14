@@ -83,6 +83,10 @@ a:hover{color:var(--seal);}
 .btn-restart{font-size:12px;padding:6px 13px;border:1px solid var(--line);border-radius:7px;
   background:transparent;color:var(--muted);cursor:pointer;font-family:var(--sans);transition:.15s;}
 .btn-restart:hover{border-color:var(--seal);color:var(--seal);}
+.btn-lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:6px 12px;border:1px solid var(--line);
+  border-radius:7px;background:var(--paper);color:var(--slate);cursor:pointer;transition:.15s;}
+.btn-lang:hover{border-color:var(--teal);color:var(--teal-deep);background:var(--teal-soft);}
+.btn-lang:focus-visible{outline:2px solid var(--teal);outline-offset:1px;}
 
 .msgs{flex:1;overflow-y:auto;padding:21px 20px;display:flex;flex-direction:column;gap:15px;
   background:linear-gradient(180deg,#f4f2e6,#efedde);}
@@ -204,12 +208,13 @@ a:hover{color:var(--seal);}
   <header class="topbar">
     <div class="dot">优</div>
     <div class="ttl">
-      <h1>Prompt 优化建议助手</h1>
-      <p class="sub">扎根证据分级知识库 · 回答可追溯到出处 · 知识库更新 2026-06-11</p>
+      <h1 id="appTitle">Prompt 优化建议助手</h1>
+      <p class="sub" id="appSub">扎根证据分级知识库 · 回答可追溯到出处 · 知识库更新 2026-06-11</p>
     </div>
     <span class="pill" id="llmpill">LLM 模式：<b>未接入</b>（当前确定性）</span>
     <button class="toggle left" id="tgLeft">📚 知识库</button>
     <button class="toggle right" id="tgRight">📄 详情</button>
+    <button class="btn-lang" id="tgLang">EN</button>
     <button class="btn-restart" id="restart">重新开始</button>
   </header>
   <div class="shell">
@@ -234,6 +239,87 @@ const Q = KB.questions;
 const state = { step: 0, answers: {}, phase: 'asking' };
 const LLM = { available: false, model: '' };   // 由 api/health 探测填充
 let llmHistory = [];                            // LLM 模式多轮上下文
+
+// ---------- 双语 i18n（仅 UI chrome；知识库卡片/引导问题/确定性建议保持中文）----------
+const I18N = {
+  zh: {
+    htmlLang: 'zh-CN',
+    title: 'Prompt 优化建议助手 · 对话式 v1',
+    h1: 'Prompt 优化建议助手',
+    sub: '扎根证据分级知识库 · 回答可追溯到出处 · 知识库更新 2026-06-11',
+    pillOff: 'LLM 模式：<b>未接入</b>（当前确定性）',
+    pillOn: 'LLM 模式：<b style="color:var(--green)">已接入</b>',
+    tgLeft: '📚 知识库', tgRight: '📄 详情', restart: '重新开始', langBtn: 'EN',
+    placeholder: '直接打字提问（如：多个 agent 出错怎么定位？）', send: '发送',
+    greetMain: '你好，我是 Prompt 优化建议助手 👋 我会从我们整理的<b>证据分级知识库</b>里，按你的场景给出<b>分层、可追溯</b>的建议。<br>',
+    greetTailLLMa: '当前已接入 <b>LLM 模式</b>（', greetTailLLMb: '）：直接用自然语言问我任意 prompt 优化问题，我会<b>扎根知识库</b>作答并标注引用；也可以点「走引导问答」。',
+    greetTailDet: '先回答几个问题（点选项即可，随时可「直接给建议」或打字追问）。',
+    freeChips: [
+      {label:'工具调用出错', q:'我的工具调用总是填错参数，该怎么优化？'},
+      {label:'记忆 / 历史', q:'该怎么给系统加记忆而不互相污染？'},
+      {label:'多 agent 定位', q:'多个 agent 协作出错，怎么定位是谁的责任？'},
+      {label:'prompt 越改越长', q:'prompt 优化后变得又长又复杂，是过拟合吗？'},
+      {label:'没有评测集', q:'我还没有评测集，能直接让模型优化 prompt 吗？'},
+    ],
+    guidedChip: '走引导问答', restartChip: '重新开始',
+    skip: '跳过这题', giveAdvice: '直接给建议 →', skipped: '（跳过）',
+    genIntro: '好，根据你说的，我从知识库里挑了适用的洞见，给你分层建议 👇',
+    genLLMIntro: '上面是确定性命中的完整卡片。下面我再<b>结合你的场景做个总结</b>，把适用洞见串成一份行动计划（LLM 流式生成、扎根知识库）👇',
+    genNoLLM: '建议看完了。你可以继续追问任意话题，我会从知识库里捞相关洞见（当前为关键词匹配，<b>非 LLM</b>；要用 LLM 总结与自由问答，请按 advisor/README.md 起后端并访问 http://localhost:8000/）。',
+    llmPlanPrompt: '请结合我的场景，把适用的洞见总结成一份按优先级排序的行动计划（3–5 步）：每一步给出贴合我场景的具体例子或方向，并标注洞见引用与证据等级。',
+    startGuidedMsg: '好，我们走一遍引导问答，几个问题帮你精确定位 👇',
+    kwNone: '这个问题我在知识库里没直接命中相关洞见。可以换个说法，或点「走引导问答」精确定位。<br><span class="corr">若你问的是某篇具体论文/仓库/文章，可用对应阅读流程把它读进库再来问：论文→read-paper、GitHub 仓库→github-repo-audit、社交/行业文章→article-deep-read。</span>',
+    kwFoundA: '在知识库里找到 ', kwFoundB: ' 条相关洞见（关键词匹配，非 LLM）：',
+    llmErr: 'LLM 调用失败：', llmErrTail: '<br>已回退到关键词匹配 👇', llmUnknown: '未知错误',
+    llmEmpty: '（模型没有返回内容，已回退到关键词匹配 👇）', llmReqErr: 'LLM 请求异常：',
+    citedHeader: '本回答可追溯到的知识库条目', citedPanel: '本轮回答引用的来源',
+    rdHowTitle: '怎么用',
+    rdHowP: '左侧点开任意<b>洞见 / 反模式 / 实验</b>，详情显示在这里；中间直接打字提问，回答会标注引用并把<b>本轮来源</b>列在这里。',
+    rdEvTitle: '证据等级', rdEvA: ' 论文/源码并已结构化笔记　', rdEvB: ' 多源工程实践　', rdEvPre: ' 2026 新稿待复现',
+    rdBannerA: '论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；', rdBannerB: ' 条洞见<b>均尚未在本项目复现</b>。',
+    secDocs: '文档与报告', secChannels: '分渠道详细报告', secInsightsB: ' 条核心洞见', secAnti: '要避开的反模式', secExp: '首批最小验证',
+  },
+  en: {
+    htmlLang: 'en',
+    title: 'Prompt Optimization Advisor · Chat v1',
+    h1: 'Prompt Optimization Advisor',
+    sub: 'Grounded in an evidence-graded knowledge base · answers trace to sources · KB updated 2026-06-11',
+    pillOff: 'LLM mode: <b>off</b> (deterministic)',
+    pillOn: 'LLM mode: <b style="color:var(--green)">on</b>',
+    tgLeft: '📚 KB', tgRight: '📄 Details', restart: 'Restart', langBtn: '中文',
+    placeholder: 'Type a question (e.g. how do I localize which agent failed?)', send: 'Send',
+    greetMain: "Hi, I'm the Prompt Optimization Advisor 👋 I give <b>layered, traceable</b> advice from our <b>evidence-graded knowledge base</b>, tailored to your scenario.<br>",
+    greetTailLLMa: 'LLM mode is on (', greetTailLLMb: "): ask me anything about prompt optimization in natural language — I answer <b>grounded in the KB</b> with citations. You can also use Guided Q&amp;A.",
+    greetTailDet: 'Answer a few questions first (click an option; you can hit Give advice or type anytime).',
+    freeChips: [
+      {label:'Tool-call errors', q:'My tool calls keep filling in the wrong arguments — how do I optimize this?'},
+      {label:'Memory / history', q:'How do I add memory to the system without cross-contamination?'},
+      {label:'Multi-agent triage', q:'When several agents fail together, how do I localize whose fault it is?'},
+      {label:'Prompt keeps growing', q:'My prompt got long and complex after optimization — is that overfitting?'},
+      {label:'No eval set', q:"I don't have an eval set yet — can I just let the model optimize the prompt?"},
+    ],
+    guidedChip: 'Guided Q&A', restartChip: 'Restart',
+    skip: 'Skip', giveAdvice: 'Give advice →', skipped: '(skipped)',
+    genIntro: 'OK — based on what you said, here are the applicable insights from the KB, as layered advice 👇 (cards shown in Chinese)',
+    genLLMIntro: "Above are the full deterministic-match cards. Now I'll <b>summarize for your scenario</b>, weaving the applicable insights into an action plan (LLM-streamed, grounded in the KB) 👇",
+    genNoLLM: "That's the advice. You can keep asking anything and I'll pull relevant insights from the KB (currently keyword matching, <b>not LLM</b>; for LLM summary and free Q&amp;A, start the backend per advisor/README.md and open http://localhost:8000/).",
+    llmPlanPrompt: 'Based on my scenario, summarize the applicable insights into a prioritized action plan (3-5 steps): for each step give a concrete example or direction fitting my scenario, and cite the insight IDs and evidence levels.',
+    startGuidedMsg: "OK, let's do a quick guided Q&A — a few questions to pinpoint your situation 👇 (questions shown in Chinese)",
+    kwNone: "I didn't find a directly matching insight in the KB. Try rephrasing, or use Guided Q&A to pinpoint it.<br><span class=\"corr\">If you're asking about a specific paper/repo/article, read it into the KB first via the matching flow: paper→read-paper, GitHub repo→github-repo-audit, social/industry article→article-deep-read.</span>",
+    kwFoundA: 'Found ', kwFoundB: ' relevant insight(s) in the KB (keyword match, not LLM):',
+    llmErr: 'LLM call failed: ', llmErrTail: '<br>Fell back to keyword matching 👇', llmUnknown: 'unknown error',
+    llmEmpty: '(The model returned nothing; fell back to keyword matching 👇)', llmReqErr: 'LLM request error: ',
+    citedHeader: 'KB entries this answer traces to', citedPanel: 'Sources cited in this answer',
+    rdHowTitle: 'How to use',
+    rdHowP: "Open any <b>insight / anti-pattern / experiment</b> on the left to see details here; type a question in the middle and the answer is cited, with <b>this turn's sources</b> listed here.",
+    rdEvTitle: 'Evidence levels', rdEvA: ' paper/source + structured notes　', rdEvB: ' multi-source engineering practice　', rdEvPre: ' 2026 preprint, pending reproduction',
+    rdBannerA: "Paper numbers <b>hold under that paper's setting</b>, not necessarily on your task; ", rdBannerB: ' insights are <b>not yet reproduced in this project</b>.',
+    secDocs: 'Docs & reports', secChannels: 'Per-channel reports', secInsightsB: ' core insights', secAnti: 'Anti-patterns to avoid', secExp: 'First minimal validations',
+  },
+};
+let LANG = 'zh';
+try { const _u = new URLSearchParams(location.search).get('lang'); LANG = ((_u || localStorage.getItem('advisorLang') || 'zh').toLowerCase() === 'en') ? 'en' : 'zh'; } catch (e) { LANG = 'zh'; }
+function t(k){ return (I18N[LANG] || I18N.zh)[k]; }
 
 // ---------- 触发 DSL（与 test_advisor.py 同口径）----------
 function evalCond(c, a){
@@ -335,8 +421,8 @@ function askNext(){
   const q = Q[state.step];
   botSay(`${esc(q.title)}<div class="qh">${esc(q.hint||'')}</div>`);
   const chips = q.options.map(o => ({ label: o.label, onClick: () => answer(q, o) }));
-  chips.push({ label: '跳过这题', cls: 'ghost', onClick: () => { meSay('（跳过）'); state.step++; askNext(); } });
-  chips.push({ label: '直接给建议 →', cls: 'go', onClick: generate });
+  chips.push({ label: t('skip'), cls: 'ghost', onClick: () => { meSay(t('skipped')); state.step++; askNext(); } });
+  chips.push({ label: t('giveAdvice'), cls: 'go', onClick: generate });
   renderChips(chips);
 }
 function answer(q, o){
@@ -347,32 +433,26 @@ function answer(q, o){
 }
 function generate(){
   state.phase = 'free';
-  botSay('好，根据你说的，我从知识库里挑了适用的洞见，给你分层建议 👇', false);
+  botSay(t('genIntro'), false);
   botSay(adviceHTML(state.answers), true);
   if (LLM.available){
     // LLM 模式：确定性卡片是可追溯底座，再让 LLM 结合场景把洞见总结成行动计划
-    botSay('上面是确定性命中的完整卡片。下面我再<b>结合你的场景做个总结</b>，把适用洞见串成一份行动计划（LLM 流式生成、扎根知识库）👇', false);
-    llmAsk('请结合我的场景，把适用的洞见总结成一份按优先级排序的行动计划（3–5 步）：每一步给出贴合我场景的具体例子或方向，并标注洞见引用与证据等级。');
+    botSay(t('genLLMIntro'), false);
+    llmAsk(t('llmPlanPrompt'));
   } else {
-    botSay('建议看完了。你可以继续追问任意话题，我会从知识库里捞相关洞见（当前为关键词匹配，<b>非 LLM</b>；要用 LLM 总结与自由问答，请按 advisor/README.md 起后端并访问 http://localhost:8000/）。', false);
+    botSay(t('genNoLLM'), false);
   }
   freeChips();
 }
 function freeChips(){
-  const chips = [
-    {label:'工具调用出错', onClick:()=>freeReply('我的工具调用总是填错参数，该怎么优化？')},
-    {label:'记忆 / 历史', onClick:()=>freeReply('该怎么给系统加记忆而不互相污染？')},
-    {label:'多 agent 定位', onClick:()=>freeReply('多个 agent 协作出错，怎么定位是谁的责任？')},
-    {label:'prompt 越改越长', onClick:()=>freeReply('prompt 优化后变得又长又复杂，是过拟合吗？')},
-    {label:'没有评测集', onClick:()=>freeReply('我还没有评测集，能直接让模型优化 prompt 吗？')},
-    {label:'走引导问答', cls:'ghost', onClick:startGuided},
-    {label:'重新开始', cls:'ghost', onClick:restart},
-  ];
+  const chips = t('freeChips').map(it => ({ label: it.label, onClick: () => freeReply(it.q) }));
+  chips.push({label: t('guidedChip'), cls:'ghost', onClick:startGuided});
+  chips.push({label: t('restartChip'), cls:'ghost', onClick:restart});
   renderChips(chips);
 }
 function startGuided(){
   state.step = 0; state.answers = {}; state.phase = 'asking';
-  botSay('好，我们走一遍引导问答，几个问题帮你精确定位 👇', false);
+  botSay(t('startGuidedMsg'), false);
   askNext();
 }
 
@@ -397,10 +477,10 @@ function keywordReply(text){
     return {i, s};
   }).filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0, 3);
   if (!scored.length){
-    botSay('这个问题我在知识库里没直接命中相关洞见。可以换个说法，或点「走引导问答」精确定位。<br><span class="corr">若你问的是某篇具体论文/仓库/文章，可用对应阅读流程把它读进库再来问：论文→read-paper、GitHub 仓库→github-repo-audit、社交/行业文章→article-deep-read。</span>', false);
+    botSay(t('kwNone'), false);
     return;
   }
-  botSay(`在知识库里找到 ${scored.length} 条相关洞见（关键词匹配，非 LLM）：`, false);
+  botSay(t('kwFoundA') + scored.length + t('kwFoundB'), false);
   botSay(scored.map(x => card(x.i)).join(''), true);
 }
 
@@ -508,10 +588,10 @@ function renderAnswer(text){
 function citedRefs(cited){
   if (!cited || !cited.length) return '';
   const items = cited.map(c => {
-    const src = (c.sources && c.sources[0]) ? `<a href="${repoLink(c.sources[0])}">出处</a>` : '';
+    const src = (c.sources && c.sources[0]) ? `<a href="${repoLink(c.sources[0])}">${LANG==='en'?'source':'出处'}</a>` : '';
     return `<li><b>${c.id}</b> ${c.title} ${lvlTag(c.evidence_level)} ${src}</li>`;
   }).join('');
-  return `<div class="refs"><div class="group-label">本回答可追溯到的知识库条目</div><ul>${items}</ul></div>`;
+  return `<div class="refs"><div class="group-label">${t('citedHeader')}</div><ul>${items}</ul></div>`;
 }
 async function llmAsk(text){
   const bub = streamBubble();
@@ -519,7 +599,7 @@ async function llmAsk(text){
   try{
     const res = await fetch('api/chat/stream', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ message: text, history: llmHistory, context: contextFromAnswers() })
+      body: JSON.stringify({ message: text, history: llmHistory, context: contextFromAnswers(), lang: LANG })
     });
     if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
     const reader = res.body.getReader();
@@ -539,16 +619,16 @@ async function llmAsk(text){
       }
     }
     if (errd){
-      bub.set(`LLM 调用失败：${esc(errd.error || errd.code || '未知错误')}<br>已回退到关键词匹配 👇`);
+      bub.set(t('llmErr') + esc(errd.error || errd.code || t('llmUnknown')) + t('llmErrTail'));
       keywordReply(text); return;
     }
-    if (!acc.trim()){ bub.set('（模型没有返回内容，已回退到关键词匹配 👇）'); keywordReply(text); return; }
+    if (!acc.trim()){ bub.set(t('llmEmpty')); keywordReply(text); return; }
     bub.set(renderAnswer(acc) + citedRefs(cited));
     showCitedPanel(cited);
     llmHistory.push({ role: 'user', content: text });
     llmHistory.push({ role: 'assistant', content: acc });
   } catch(e){
-    bub.set(`LLM 请求异常：${esc(String(e))}<br>已回退到关键词匹配 👇`);
+    bub.set(t('llmReqErr') + esc(String(e)) + t('llmErrTail'));
     keywordReply(text);
   }
 }
@@ -569,42 +649,39 @@ function restart(){
 }
 function greet(){
   const tail = LLM.available
-    ? `当前已接入 <b>LLM 模式</b>（${esc(LLM.model)}）：直接用自然语言问我任意 prompt 优化问题，我会<b>扎根知识库</b>作答并标注引用；也可以点「走引导问答」。`
-    : `先回答几个问题（点选项即可，随时可「直接给建议」或打字追问）。`;
-  botSay('你好，我是 Prompt 优化建议助手 👋 我会从我们整理的<b>证据分级知识库</b>里，按你的场景给出<b>分层、可追溯</b>的建议。<br>' + tail, false);
+    ? t('greetTailLLMa') + esc(LLM.model) + t('greetTailLLMb')
+    : t('greetTailDet');
+  botSay(t('greetMain') + tail, false);
   if (LLM.available){ state.phase = 'free'; freeChips(); } else { askNext(); }
 }
 async function init(){
   try{
     const r = await fetch('api/health');
     const d = await r.json();
-    if (d && d.ok && d.llm_available){
-      LLM.available = true; LLM.model = d.model || '';
-      const pill = document.getElementById('llmpill');
-      if (pill) pill.innerHTML = 'LLM 模式：<b style="color:var(--green)">已接入</b>';
-    }
+    if (d && d.ok && d.llm_available){ LLM.available = true; LLM.model = d.model || ''; }
   } catch(e){ /* file:// 或无后端 → 保持确定性模式 */ }
+  applyLang();
   greet();
 }
 
 // ---------- 左右面板：知识库导览 + 详情/引用 ----------
 const RESOURCES = [
-  { t: '综合报告 v4（主报告 · 四层结构）', p: 'docs/analysis_report_v4_20260611.html' },
-  { t: '读者向洞见手册（洞见 01–12 详解）', p: 'docs/insight_handbook_20260609.html' },
-  { t: 'Insight / Method 候选清单', p: 'docs/insight_method_catalog_20260609.html' },
-  { t: '全景脑图（渲染版）', p: 'docs/prompt_evolution_mindmap_20260610.html' },
-  { t: '小说体科普《别让 AI 自己改作业》', p: 'docs/popsci_prompt_evolution_story_20260610.html' },
-  { t: '分享 Deck（1 小时演示稿 · 20 页）', p: 'docs/share_deck_20260612.html' },
-  { t: '项目一页纸总览（可打印）', p: 'docs/project_onepager_20260612.html' },
+  { zh:'综合报告 v4（主报告 · 四层结构）', en:'Synthesis Report v4 (main · 4 layers)', p:'docs/analysis_report_v4_20260611.html', pen:'docs/analysis_report_v4_20260611.en.html' },
+  { zh:'读者向洞见手册（洞见 01–12 详解）', en:'Reader-facing Insight Handbook (01–12)', p:'docs/insight_handbook_20260609.html', pen:'docs/insight_handbook_20260609.en.html' },
+  { zh:'Insight / Method 候选清单', en:'Insight / Method candidate list', p:'docs/insight_method_catalog_20260609.html', pen:'docs/insight_method_catalog_20260609.en.html' },
+  { zh:'全景脑图（渲染版）', en:'Panoramic mind map (rendered)', p:'docs/prompt_evolution_mindmap_20260610.html', pen:'docs/prompt_evolution_mindmap_20260610.en.html' },
+  { zh:'小说体科普《别让 AI 自己改作业》', en:"Popular-science story: \"Don't Let AI Grade Its Own Homework\"", p:'docs/popsci_prompt_evolution_story_20260610.html', pen:'docs/popsci_prompt_evolution_story_20260610.en.html' },
+  { zh:'分享 Deck（1 小时演示稿 · 20 页）', en:'Share Deck (1-hr talk · 20 slides · 中文)', p:'docs/share_deck_20260612.html', pen:null },
+  { zh:'项目一页纸总览（可打印）', en:'Project one-pager (printable · 中文)', p:'docs/project_onepager_20260612.html', pen:null },
 ];
 // 与 v3 报告「分渠道整理」同口径：每渠道一个核心入口，等级标注沿用证据金字塔
 const CHANNEL_REPORTS = [
-  { t: 'arXiv（A）· 深读综合 batch3', p: 'docs/arxiv_deep_reading_batch3_synthesis.html' },
-  { t: 'arXiv（A）· 2025/2026 前沿综合', p: 'docs/arxiv_2025_2026_frontier_synthesis_20260612.html' },
-  { t: 'GitHub（B）· 渠道洞见综合', p: 'docs/github_repo_channel_synthesis_20260609.html' },
-  { t: '其它平台（B）· 洞见卡', p: 'docs/source_batches/web_search_platform_insight_cards_20260609.html' },
-  { t: 'Twitter/X（B*）· 洞见卡', p: 'docs/source_batches/twitter_web_insight_cards_20260609.html' },
-  { t: '知乎（D）· 洞见卡', p: 'docs/source_batches/zhihu_insight_cards_20260609.html' },
+  { zh:'arXiv（A）· 深读综合 batch3', en:'arXiv (A) · deep-read synthesis batch3', p:'docs/arxiv_deep_reading_batch3_synthesis.html', pen:'docs/arxiv_deep_reading_batch3_synthesis.en.html' },
+  { zh:'arXiv（A）· 2025/2026 前沿综合', en:'arXiv (A) · 2025/2026 frontier synthesis', p:'docs/arxiv_2025_2026_frontier_synthesis_20260612.html', pen:'docs/arxiv_2025_2026_frontier_synthesis_20260612.en.html' },
+  { zh:'GitHub（B）· 渠道洞见综合', en:'GitHub (B) · channel insight synthesis', p:'docs/github_repo_channel_synthesis_20260609.html', pen:'docs/github_repo_channel_synthesis_20260609.en.html' },
+  { zh:'其它平台（B）· 洞见卡', en:'Other platforms (B) · insight cards', p:'docs/source_batches/web_search_platform_insight_cards_20260609.html', pen:'docs/source_batches/web_search_platform_insight_cards_20260609.en.html' },
+  { zh:'Twitter/X（B*）· 洞见卡', en:'Twitter/X (B*) · insight cards', p:'docs/source_batches/twitter_web_insight_cards_20260609.html', pen:'docs/source_batches/twitter_web_insight_cards_20260609.en.html' },
+  { zh:'知乎（D）· 洞见卡', en:'Zhihu (D) · insight cards', p:'docs/source_batches/zhihu_insight_cards_20260609.html', pen:'docs/source_batches/zhihu_insight_cards_20260609.en.html' },
 ];
 const insightById = {}; KB.insights.forEach(i => insightById[i.id] = i);
 const leftPanel = document.getElementById('leftPanel');
@@ -614,11 +691,11 @@ function openRightIfSmall(){ if (window.innerWidth <= 1180) document.body.classL
 
 function rightDefault(){
   rightPanel.innerHTML =
-    '<div class="pan-h">怎么用</div>'
-    + '<p class="pan-p">左侧点开任意<b>洞见 / 反模式 / 实验</b>，详情显示在这里；中间直接打字提问，回答会标注引用并把<b>本轮来源</b>列在这里。</p>'
-    + '<div class="pan-h">证据等级</div>'
-    + '<p class="pan-p">' + lvlTag('A') + ' 论文/源码并已结构化笔记　' + lvlTag('B') + ' 多源工程实践　' + lvlTag('recent-preprint') + ' 2026 新稿待复现</p>'
-    + '<div class="banner" style="margin-top:10px">论文数字=<b>该论文设置下成立</b>，不等于在你的任务上一定成立；' + KB.insights.length + ' 条洞见<b>均尚未在本项目复现</b>。</div>';
+    '<div class="pan-h">' + t('rdHowTitle') + '</div>'
+    + '<p class="pan-p">' + t('rdHowP') + '</p>'
+    + '<div class="pan-h">' + t('rdEvTitle') + '</div>'
+    + '<p class="pan-p">' + lvlTag('A') + t('rdEvA') + lvlTag('B') + t('rdEvB') + lvlTag('recent-preprint') + t('rdEvPre') + '</p>'
+    + '<div class="banner" style="margin-top:10px">' + t('rdBannerA') + KB.insights.length + t('rdBannerB') + '</div>';
 }
 function showInsight(id){ rightPanel.innerHTML = '<div class="pan-h">洞见详情</div>' + card(insightById[id]); openRightIfSmall(); rightPanel.scrollTop = 0; }
 function showAnti(p){
@@ -638,7 +715,7 @@ function showExp(e){
 }
 function showCitedPanel(cited){
   if (!cited || !cited.length){ return; }
-  let h = '<div class="pan-h">本轮回答引用的来源</div>';
+  let h = '<div class="pan-h">' + t('citedPanel') + '</div>';
   cited.forEach(c => {
     if (insightById[c.id]){
       h += `<button class="navitem" data-ins="${c.id}">${lvlTag(c.evidence_level)} ${c.id} ${esc(c.title)}</button>`;
@@ -657,21 +734,42 @@ function navItem(label, onClick, lv){
 function renderLeft(){
   leftPanel.innerHTML = '';
   const sec = (title) => { const h = document.createElement('div'); h.className = 'pan-h'; h.textContent = title; leftPanel.appendChild(h); };
-  sec('文档与报告');
-  RESOURCES.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
-  sec('分渠道详细报告');
-  CHANNEL_REPORTS.forEach(r => { const a = document.createElement('a'); a.className = 'reslink'; a.href = repoLink(r.p); a.textContent = r.t; leftPanel.appendChild(a); });
-  sec(KB.insights.length + ' 条核心洞见');
+  const reslink = (r) => { const a = document.createElement('a'); a.className = 'reslink';
+    a.href = repoLink((LANG === 'en' && r.pen) ? r.pen : r.p); a.textContent = (LANG === 'en') ? r.en : r.zh; leftPanel.appendChild(a); };
+  sec(t('secDocs'));
+  RESOURCES.forEach(reslink);
+  sec(t('secChannels'));
+  CHANNEL_REPORTS.forEach(reslink);
+  sec(KB.insights.length + t('secInsightsB'));
   let lastG = null;
   KB.insights.forEach(i => {
     if (i.group_title !== lastG){ const g = document.createElement('div'); g.className = 'nav-group'; g.textContent = i.group_title; leftPanel.appendChild(g); lastG = i.group_title; }
     leftPanel.appendChild(navItem(`${i.id} ${i.title}`, () => showInsight(i.id), i.evidence_level));
   });
-  sec('要避开的反模式');
+  sec(t('secAnti'));
   KB.anti_patterns.forEach(p => leftPanel.appendChild(navItem(p.name, () => showAnti(p))));
-  sec('首批最小验证');
+  sec(t('secExp'));
   KB.experiments.forEach(e => leftPanel.appendChild(navItem(`${e.priority} ${e.verify}`, () => showExp(e))));
 }
+
+// ---------- 语言切换 ----------
+function applyLang(){
+  const d = I18N[LANG] || I18N.zh;
+  document.documentElement.lang = d.htmlLang;
+  document.title = d.title;
+  document.getElementById('appTitle').textContent = d.h1;
+  document.getElementById('appSub').textContent = d.sub;
+  const box = document.getElementById('box'); if (box) box.placeholder = d.placeholder;
+  document.getElementById('send').textContent = d.send;
+  document.getElementById('restart').textContent = d.restart;
+  document.getElementById('tgLeft').textContent = d.tgLeft;
+  document.getElementById('tgRight').textContent = d.tgRight;
+  document.getElementById('tgLang').textContent = d.langBtn;
+  const pill = document.getElementById('llmpill'); if (pill) pill.innerHTML = LLM.available ? d.pillOn : d.pillOff;
+  try { localStorage.setItem('advisorLang', LANG); } catch (e) {}
+  renderLeft(); rightDefault();
+}
+function setLang(l){ LANG = (l === 'en') ? 'en' : 'zh'; applyLang(); restart(); }
 
 // 抽屉开关（小屏）
 document.getElementById('tgLeft').onclick = () => document.body.classList.toggle('dr-left');
@@ -682,7 +780,8 @@ document.getElementById('send').onclick = onSend;
 // 中文输入法组词时按回车只是确认候选词（isComposing/keyCode 229），不应触发发送
 document.getElementById('box').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) onSend(); });
 document.getElementById('restart').onclick = restart;
-renderLeft(); rightDefault();
+document.getElementById('tgLang').onclick = () => setLang(LANG === 'en' ? 'zh' : 'en');
+applyLang();
 init();
 </script>
 </body>

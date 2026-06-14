@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arXiv Top80 Taxonomy Overview and Cross-Sectional Matrix · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#176a5e">arXiv Channel</span><span class="doctitle">arXiv Top80 Taxonomy Overview and Cross-Sectional Matrix</span><a class="back lang" href="arxiv_top80_taxonomy.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="arxiv-top80-taxonomy-overview-and-cross-sectional-matrix">arXiv Top80 Taxonomy Overview and Cross-Sectional Matrix</h1>
+<p>Updated: 2026-06-08</p>
+<p>Data source: <code>outputs/arxiv_prompt_search/arxiv_focus_top80_20260608T131514Z.csv</code></p>
+<p>Evidence level: title + arXiv abstract + first-pass matrix via automated classification. This document is for coarse filtering and deep-read scheduling, not for final conclusions.</p>
+<h2 id="analysis-framework">Analysis Framework</h2>
+<p>All papers in this batch are analyzed along the following dimensions:</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Focus Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Optimization target</td>
+<td>Whether the target is instruction, few-shot examples, system prompt, structured prompt section, workflow, agent role, tool policy, memory, or the optimizer itself.</td>
+</tr>
+<tr>
+<td>Feedback signal</td>
+<td>Whether the signal used is task score, natural-language critique, textual gradient, pairwise preference, human feedback, judge score, execution trajectory, tool error, failure samples, or memory.</td>
+</tr>
+<tr>
+<td>Candidate generation</td>
+<td>Whether the approach uses LLM rewrite, beam search, evolutionary operators, bandit/Bayesian, program compiler, agentic tool loop, code analysis, or synthetic data.</td>
+</tr>
+<tr>
+<td>Candidate selection</td>
+<td>Whether selection is based on dev set score, Pareto frontier, successive halving, pairwise preference, joint agent outcome, guard metric, cost-aware objective, or archive.</td>
+</tr>
+<tr>
+<td>Evaluation credibility</td>
+<td>Whether the paper reports dataset, model, baseline, train/dev/test isolation, cost, failure cases, generalization, and code.</td>
+</tr>
+<tr>
+<td>Value to this project</td>
+<td>Whether it can serve as a baseline, taxonomy source, risk evidence, engineering design reference, or minimal experiment candidate.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="method-cluster-1-classic-apo-and-baseline-anchors">Method Cluster 1: Classic APO and Baseline Anchors</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2305.03495">ProTeGi</a>: criticizes prompts with natural-language "gradients," then performs beam search.</li>
+<li><a href="https://arxiv.org/abs/2307.07415">AutoHint</a>: automatic prompt optimization via hint generation.</li>
+<li><a href="https://arxiv.org/abs/2309.08532">EvoPrompt</a>: connects LLMs with evolutionary algorithms for discrete prompt search.</li>
+<li><a href="https://arxiv.org/abs/2309.16797">PromptBreeder</a>: co-evolves task prompts and mutation prompts.</li>
+<li><a href="https://arxiv.org/abs/2402.02101">Are Large Language Models Good Prompt Optimizers?</a>: directly evaluates the capability boundary of LLMs as prompt optimizers.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>These papers form the historical baseline. Their value lies not merely in performance numbers but in problem formalization: prompts can be generated, evaluated, selected, and rolled back as discrete natural-language objects. Any future experiment establishing a baseline should cover at least 2–3 of the following classes: manual prompt, APE/LLM rewrite, ProTeGi-style textual feedback, and evolutionary search.</p>
+<h2 id="method-cluster-2-textual-gradient-and-reflection-based-optimization">Method Cluster 2: Textual Gradient and Reflection-Based Optimization</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2506.00400">Scaling Textual Gradients via Sampling-Based Momentum</a>: discusses context-wall and stability issues when scaling textual gradients to larger training data.</li>
+<li><a href="https://arxiv.org/abs/2410.02748">CriSPO</a>: guides prompt revision with multi-aspect critique-suggestion for generation tasks.</li>
+<li><a href="https://arxiv.org/abs/2601.04055">Modular Prompt Optimization</a>: decomposes structured prompts into sections and optimizes each with local textual gradients.</li>
+<li><a href="https://arxiv.org/abs/2603.18388">Reflection in the Dark</a>: identifies black-box trajectory and failure modes in reflective APO, and separates hypothesis generation from rewriting using a multi-agent design.</li>
+<li><a href="https://arxiv.org/abs/2605.21318">TextReg</a>: treats prompt distributional overfitting as a regularization problem in text-space optimization.</li>
+<li><a href="https://arxiv.org/abs/2512.13598">Textual Gradients are a Flawed Metaphor</a>: challenges the textual gradient analogy itself and warns against treating natural-language feedback as differentiable gradients.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>The true value of textual gradients may not lie in the "gradient analogy" but in converting failure samples into readable, auditable, and locally applicable revision suggestions. The direction most worth adapting into this project's experiments is: comparing scalar score, free-form critique, and section-local critique as three feedback signals on the same task, while tracking prompt growth, generalization, and failure modes.</p>
+<h2 id="method-cluster-3-evolutionary-self-referential-and-memory-based-self-evolution">Method Cluster 3: Evolutionary, Self-Referential, and Memory-Based Self-Evolution</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2309.08532">EvoPrompt</a>: population + evolutionary operators.</li>
+<li><a href="https://arxiv.org/abs/2309.16797">PromptBreeder</a>: self-referentially optimizes the mutation prompt.</li>
+<li><a href="https://arxiv.org/abs/2507.19457">GEPA</a>: combines trajectory reflection, Pareto frontier, and prompt evolution.</li>
+<li><a href="https://arxiv.org/abs/2603.21520">MemAPO</a>: distills successful strategies and failure patterns into a dual memory.</li>
+<li><a href="https://arxiv.org/abs/2606.04465">SePO</a>: includes the prompt agent's own system prompt as an optimization target.</li>
+<li><a href="https://arxiv.org/abs/2605.28360">Prompt Codebooks</a>: organizes reusable instruction units into a codebook and routes them per instance.</li>
+<li><a href="https://arxiv.org/abs/2602.10874">C-MOP</a>: applies momentum and clustering to prompt evolution.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>Self-evolution in this batch of papers targets three distinct objects: task prompt, optimizer prompt, and experience memory. Future documentation and experiments must record these separately; otherwise it is impossible to determine whether gains come from a better prompt, a larger search budget, or experience transfer in the optimizer itself.</p>
+<h2 id="method-cluster-4-prompt-as-program-structured-prompts-and-framework-level-tooling">Method Cluster 4: Prompt-as-Program, Structured Prompts, and Framework-Level Tooling</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2507.14241">Promptomatix</a>: generates prompts from task descriptions, combining a meta-prompt optimizer and DSPy compiler.</li>
+<li><a href="https://arxiv.org/abs/2504.04365">AutoPDL</a>: encodes agentic prompting patterns and demonstration search as executable PDL programs.</li>
+<li><a href="https://arxiv.org/abs/2512.02840">promptolution</a>: a unified, modular prompt optimization framework.</li>
+<li><a href="https://arxiv.org/abs/2507.03620">Is It Time To Treat Prompts As Code?</a>: a multi-use-case prompt optimization case study using DSPy.</li>
+<li><a href="https://arxiv.org/abs/2412.15298">A Comparative Study of DSPy Teleprompter Algorithms</a>: compares DSPy teleprompter algorithms with human evaluation alignment.</li>
+<li><a href="https://arxiv.org/abs/2508.04660">Composing Policy Gradients and Prompt Optimization for Language Model Programs</a>: discusses prompt optimization within language model programs.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>This cluster of papers elevates prompts from text fragments to compilable, composable, executable, and reusable program components. For this project, the engineering value of prompt-as-program outweighs single-run score improvements because it naturally supports version tracking, local rollback, and experiment isolation.</p>
+<h2 id="method-cluster-5-agent-system-prompt-multi-agent-and-tool-chain-optimization">Method Cluster 5: Agent, System Prompt, Multi-Agent, and Tool-Chain Optimization</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2605.26275">SPEAR</a>: an agentic optimizer that uses evaluate/python/set_prompt/finish tools and provides auto-rollback and guard metrics.</li>
+<li><a href="https://arxiv.org/abs/2504.04365">AutoPDL</a>: searches over agentic and non-agentic prompting patterns.</li>
+<li><a href="https://arxiv.org/abs/2505.09666">System Prompt Optimization with Meta-Learning</a>: focuses specifically on system prompt optimization.</li>
+<li><a href="https://arxiv.org/abs/2605.06623">MASPO</a>: jointly optimizes role prompts in a multi-agent system.</li>
+<li><a href="https://arxiv.org/abs/2510.07475">MAPRO</a>: reformulates multi-agent prompt optimization as MAP inference.</li>
+<li><a href="https://arxiv.org/abs/2603.02630">MASPOB</a>: bandit-based multi-agent prompt optimization.</li>
+<li><a href="https://arxiv.org/abs/2604.19821">JTPRO</a>: joint tool-prompt reflective optimization.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>In agent settings, the optimization target is no longer a "response prompt" but the credit assignment between role, tool policy, workflow, local agent output, and global success. This direction is well suited for minimal experiments in this project: choose a small tool-use task and compare manual prompts, local role-prompt rewriting, and an agentic optimizer with guard metrics.</p>
+<h2 id="method-cluster-6-preference-human-feedback-judge-and-governance">Method Cluster 6: Preference, Human Feedback, Judge, and Governance</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2603.19311">PrefPO</a>: supports label-free optimization via pairwise preference and an LLM discriminator.</li>
+<li><a href="https://arxiv.org/abs/2402.08702">PROMST</a>: combines human feedback and heuristic sampling for multi-step tasks.</li>
+<li><a href="https://arxiv.org/abs/2510.13907">LLM Prompt Duel Optimizer</a>: uses label-free dueling / preference for prompt optimization.</li>
+<li><a href="https://arxiv.org/abs/2603.19247">When Prompt Optimization Becomes Jailbreaking</a>: connects prompt optimization with adaptive red-teaming.</li>
+<li><a href="https://arxiv.org/abs/2605.26046">When Gradients Collide</a>: analyzes multi-objective prompt optimization failure modes in LLM judges.</li>
+<li><a href="https://arxiv.org/abs/2604.20726">Exploiting LLM-as-a-Judge Disposition</a>: warns that optimizers may exploit judge disposition.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>This cluster is the core evidence source for the risk section in future documentation. Whenever an optimizer targets a judge or preference signal, it is essential to guard against prompt hacking, judge gaming, overfitting to rubrics, safety boundary erosion, and prompt length inflation.</p>
+<h2 id="method-cluster-7-application-domain-apo-and-empirical-studies">Method Cluster 7: Application-Domain APO and Empirical Studies</h2>
+<p>Representative papers:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2506.19773">APO for Knowledge Graph Construction</a>: compares DSPy, APE, and TextGrad on triple extraction.</li>
+<li><a href="https://arxiv.org/abs/2502.15944">AutoMedPrompt</a>: medical prompt optimization.</li>
+<li><a href="https://arxiv.org/abs/2506.10751">Clinical QA / ArchEHR-QA series</a>: agentic prompt optimization for medical evidence-grounded QA.</li>
+<li><a href="https://arxiv.org/abs/2601.15037">Knowledge Restoration-driven Prompt Optimization</a>: targets open-domain relation triplet extraction.</li>
+<li><a href="https://arxiv.org/abs/2409.01466">Political Science Text Classification</a>: text classification and dynamic exemplar selection.</li>
+<li><a href="https://arxiv.org/abs/2509.25196">APRIL</a>: APO + RL in API synthesis.</li>
+</ul>
+<p>First-pass assessment:</p>
+<p>The value of application papers lies not in proposing general-purpose algorithms but in providing task boundaries, metric choices, cross-model performance, and failure cases. They are appropriate as reference scenarios for future experiments but should not take priority as core evidence in the method taxonomy.</p>
+<h2 id="cross-sectional-evidence-matrix-priority-deep-read-candidates">Cross-Sectional Evidence Matrix: Priority Deep-Read Candidates</h2>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Optimization Target</th>
+<th>Feedback Signal</th>
+<th>Search / Selection</th>
+<th>Value to This Project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ProTeGi</td>
+<td>task prompt</td>
+<td>textual critique / task score</td>
+<td>semantic edit + beam search</td>
+<td>classic textual-gradient baseline</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>task prompt population</td>
+<td>dev score</td>
+<td>evolutionary operators</td>
+<td>classic evolutionary baseline</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>task prompt + mutation prompt</td>
+<td>fitness on train set</td>
+<td>self-referential evolution</td>
+<td>starting point for self-referential optimization</td>
+</tr>
+<tr>
+<td>GEPA</td>
+<td>prompts in AI system</td>
+<td>trajectory reflection</td>
+<td>Pareto / evolutionary search</td>
+<td>current strong baseline and experiment candidate</td>
+</tr>
+<tr>
+<td>SePO</td>
+<td>task agent prompt + prompt agent system prompt</td>
+<td>task benchmark score / self-evolution archive</td>
+<td>open-ended evolutionary search</td>
+<td>core evidence that the optimizer itself can be optimized</td>
+</tr>
+<tr>
+<td>MemAPO</td>
+<td>prompt + reusable memory</td>
+<td>success strategies + failure patterns</td>
+<td>memory retrieval/editing</td>
+<td>mechanism for accumulating long-term experience</td>
+</tr>
+<tr>
+<td>Modular Prompt Optimization</td>
+<td>structured prompt sections</td>
+<td>section-local textual gradients</td>
+<td>schema-preserving local edits</td>
+<td>reference for rollback-capable structured prompt approach</td>
+</tr>
+<tr>
+<td>Scaling Textual Gradients</td>
+<td>prompt updates</td>
+<td>minibatch textual gradients</td>
+<td>momentum sampling / Gumbel-Top-k</td>
+<td>evidence for textual gradient scalability</td>
+</tr>
+<tr>
+<td>Textual Gradients are a Flawed Metaphor</td>
+<td>textual-gradient methods</td>
+<td>behavioral experiments</td>
+<td>critique / case study</td>
+<td>counter-evidence and terminology risk</td>
+</tr>
+<tr>
+<td>PrefPO</td>
+<td>prompt</td>
+<td>pairwise preference</td>
+<td>LLM discriminator + optimizer loop</td>
+<td>label-free optimization and prompt hacking risk</td>
+</tr>
+<tr>
+<td>CriSPO</td>
+<td>generation task prompt</td>
+<td>multi-aspect critique-suggestion</td>
+<td>optimizer + suffix tuning</td>
+<td>APO for multi-metric generation tasks</td>
+</tr>
+<tr>
+<td>SPEAR</td>
+<td>prompt + optimizer workflow</td>
+<td>eval dataframe / code analysis</td>
+<td>agentic tool loop + rollback</td>
+<td>reference for engineering-grade agent optimizer</td>
+</tr>
+<tr>
+<td>AutoPDL</td>
+<td>agent configuration / PDL prompt program</td>
+<td>task score</td>
+<td>successive halving over prompt programs</td>
+<td>prompt-as-program baseline</td>
+</tr>
+<tr>
+<td>MASPO</td>
+<td>multi-agent role prompts</td>
+<td>joint downstream outcome</td>
+<td>evolutionary beam search</td>
+<td>multi-agent credit assignment</td>
+</tr>
+<tr>
+<td>TextReg</td>
+<td>prompt edits</td>
+<td>regularized textual gradients</td>
+<td>OOD-aware regularized update</td>
+<td>prompt overfitting governance</td>
+</tr>
+<tr>
+<td>Why Prompt Optimization Works...</td>
+<td>prompt edit families</td>
+<td>cross-task observational analysis</td>
+<td>causal-inspired analysis</td>
+<td>explaining failure and transfer boundaries</td>
+</tr>
+<tr>
+<td>Prompt Codebooks</td>
+<td>reusable instruction units</td>
+<td>structured critic verdict</td>
+<td>codebook + router + generator</td>
+<td>reusable experience units</td>
+</tr>
+<tr>
+<td>Reflection in the Dark</td>
+<td>reflective APO trajectory</td>
+<td>labeled hypotheses / minibatch verification</td>
+<td>multi-agent explore-exploit</td>
+<td>interpretability of reflective optimizer</td>
+</tr>
+<tr>
+<td>Prompt Optimization Is a Coin Flip</td>
+<td>compound AI prompts</td>
+<td>task outcomes / failure diagnosis</td>
+<td>diagnostic analysis</td>
+<td>when not to auto-optimize</td>
+</tr>
+<tr>
+<td>When Prompt Optimization Becomes Jailbreaking</td>
+<td>adversarial prompts</td>
+<td>safety eval / red-team signal</td>
+<td>adaptive optimization</td>
+<td>safety boundary evidence</td>
+</tr>
+</tbody>
+</table>
+<h2 id="preliminary-deep-read-priority">Preliminary Deep-Read Priority</h2>
+<h3 id="p0-directly-affects-solution-design">P0: Directly Affects Solution Design</h3>
+<ul>
+<li>ProTeGi, GEPA, SePO, MemAPO, Modular Prompt Optimization, SPEAR, AutoPDL, MASPO, TextReg, PrefPO.</li>
+</ul>
+<h3 id="p1-affects-taxonomy-and-risk-sections">P1: Affects Taxonomy and Risk Sections</h3>
+<ul>
+<li>Textual Gradients are a Flawed Metaphor, Why Prompt Optimization Works, Reflection in the Dark, Prompt Optimization Is a Coin Flip, When Prompt Optimization Becomes Jailbreaking, When Gradients Collide.</li>
+</ul>
+<h3 id="p2-application-and-scenario-reference">P2: Application and Scenario Reference</h3>
+<ul>
+<li>Knowledge Graph APO, AutoMedPrompt, ArchEHR-QA series, Political Science Text Classification, APRIL, Knowledge Restoration-driven Prompt Optimization.</li>
+</ul>
+<h2 id="current-gaps">Current Gaps</h2>
+<ul>
+<li>~~Need to supplement classic anchors not necessarily in the top80: APE, OPRO, DSPy, MIPROv2, TextGrad original papers.~~（Closed 2026-06-10: all 5 papers completed full evidence-level deep reads; notes at <code>docs/paper_notes/paper-ape-2022.md</code>, <code>paper-opro-2023.md</code>, <code>paper-dspy-2023.md</code>, <code>paper-miprov2-2024.md</code>, <code>paper-textgrad-2024.md</code>; together with existing ProTeGi/EvoPrompt/PromptBreeder they form the baseline trunk APE→ProTeGi→OPRO→PromptBreeder/EvoPrompt→DSPy→TextGrad→MIPROv2→GEPA. Still-pending earlier anchors: AutoPrompt, RLPrompt; GrIPS supplemented 2026-06-12 (<code>docs/paper_notes/paper-grips-2022.md</code>, pre-history positioning: gradient-free edit search predates APE, no LLM generator), same date PromptAgent supplemented (<code>docs/paper_notes/paper-promptagent-2023.md</code>, MCTS planning search missing link).)</li>
+<li>2026-06-10 completed <strong>external completeness verification</strong> against 3 survey papers (APO survey 2502.16923, APE survey 2502.11560, Context Engineering survey 2507.13334); conclusions in <code>docs/arxiv_taxonomy_completeness_check_20260610.md</code>: the 7 clusters have no whole-block omissions within the scope of "discrete natural-language prompt optimization"; identified issues are: under-coverage of sub-mechanisms within clusters (learned scoring / token-level editing / bandit filtering / MoE routing), frontiers to register (task-agnostic/online, constrained optimization, bi-level/thought-driven reasoning models, multi-task), and intentional boundaries to declare explicitly (soft prompts, multimodal, full context-engineering systems). Highest-priority single-item follow-up: bi-level/thought-driven (o1/R1 reasoning model) prompt optimization.</li>
+<li>The current matrix has not yet verified train/dev/test splits, cost, and code availability for each paper.</li>
+<li>P0 papers need to be converted one by one into <code>docs/paper_notes/</code> template notes before selecting minimal experiment candidates.</li>
+<li>To move from paper taxonomy into insights and experience synthesis, start with <code>docs/arxiv_top80_insights.md</code>, which distills the main paper entries into verifiable insight cards.</li>
+<li>To move from taxonomy into an executable workflow, start with <code>docs/arxiv_top80_action_playbook.md</code>, which breaks down major problems into specific symptoms, solutions, and minimal experiments.</li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/arxiv_top80_taxonomy.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#analysis-framework">Analysis Framework</a>
+<a class="lv2" href="#method-cluster-1-classic-apo-and-baseline-anchors">Method Cluster 1: Classic APO and Baseline Anchors</a>
+<a class="lv2" href="#method-cluster-2-textual-gradient-and-reflection-based-optimization">Method Cluster 2: Textual Gradient and Reflection-Based Optimization</a>
+<a class="lv2" href="#method-cluster-3-evolutionary-self-referential-and-memory-based-self-evolution">Method Cluster 3: Evolutionary, Self-Referential, and Memory-Based Self-Evolution</a>
+<a class="lv2" href="#method-cluster-4-prompt-as-program-structured-prompts-and-framework-level-tooling">Method Cluster 4: Prompt-as-Program, Structured Prompts, and Framework-Level Tooling</a>
+<a class="lv2" href="#method-cluster-5-agent-system-prompt-multi-agent-and-tool-chain-optimization">Method Cluster 5: Agent, System Prompt, Multi-Agent, and Tool-Chain Optimization</a>
+<a class="lv2" href="#method-cluster-6-preference-human-feedback-judge-and-governance">Method Cluster 6: Preference, Human Feedback, Judge, and Governance</a>
+<a class="lv2" href="#method-cluster-7-application-domain-apo-and-empirical-studies">Method Cluster 7: Application-Domain APO and Empirical Studies</a>
+<a class="lv2" href="#cross-sectional-evidence-matrix-priority-deep-read-candidates">Cross-Sectional Evidence Matrix: Priority Deep-Read Candidates</a>
+<a class="lv2" href="#preliminary-deep-read-priority">Preliminary Deep-Read Priority</a>
+<a class="lv3" href="#p0-directly-affects-solution-design">P0: Directly Affects Solution Design</a>
+<a class="lv3" href="#p1-affects-taxonomy-and-risk-sections">P1: Affects Taxonomy and Risk Sections</a>
+<a class="lv3" href="#p2-application-and-scenario-reference">P2: Application and Scenario Reference</a>
+<a class="lv2" href="#current-gaps">Current Gaps</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

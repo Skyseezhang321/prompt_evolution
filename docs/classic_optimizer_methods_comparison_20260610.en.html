@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classic Prompt Optimizer Methods Side-by-Side Comparison: Six Approaches (APE / OPRO / EvoPrompt / PromptBreeder / DSPy-style / PROSE) · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">Classic Prompt Optimizer Methods Side-by-Side Comparison: Six Approaches (APE / OPRO / EvoPrompt / PromptBreeder / DSPy-style / PROSE)</span><a class="back lang" href="classic_optimizer_methods_comparison_20260610.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="classic-prompt-optimizer-methods-side-by-side-comparison-six-approaches-ape-opro-evoprompt-promptbreeder-dspy-style-prose">Classic Prompt Optimizer Methods Side-by-Side Comparison: Six Approaches (APE / OPRO / EvoPrompt / PromptBreeder / DSPy-style / PROSE)</h1>
+<p>Generated: 2026-06-10</p>
+<p>reviewed_by: Claude</p>
+<p>Scope: This table compares the 6 optimizers benchmarked in <em>Prompt Optimization Is a Coin Flip</em> ([[paper-coin-flip-2026]]). The first 5 are independently citable external methods, each with its own deep-read note; the 6th, PROSE, is an internal baseline built by that paper (see [[paper-prose-2026]]—its sole source is coin-flip Appendix C).</p>
+<p>Evidence level: The mechanism and numbers for each method come directly from the corresponding deep-read notes (mostly <code>method-and-results-read</code>, read from local PDFs). The "same-framework comparison" numbers across methods come from coin-flip's unified experimental setup (Haiku / Nova Lite × 4 tasks, equal compute budget).</p>
+<blockquote>
+<p>Note: Scores reported in each method's <strong>original paper are not directly comparable</strong> (different tasks, models, and eras). The only fair cross-method comparison is the score coin-flip produces by placing all 6 methods inside the same framework (see "Same-Framework Comparison" at the end). The "Original paper representative results" column below serves only as a qualitative anchor for each method's own capabilities.</p>
+</blockquote>
+<h2 id="one-line-positioning">One-Line Positioning</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Year</th>
+<th>One-Line Positioning</th>
+<th>Standalone Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APE</strong></td>
+<td>2022</td>
+<td>Simplest foundational anchor: LLM proposes a batch of instructions + selects the best by score on a small training set (propose-then-select); no gradients, no iteration</td>
+<td><a href="paper_notes/paper-ape-2022.html">paper-ape-2022.md</a></td>
+</tr>
+<tr>
+<td><strong>OPRO</strong></td>
+<td>2023</td>
+<td>LLM-as-optimizer baseline: packs "history of prompts + scores" in ascending order into a meta-prompt, letting the LLM infer patterns from the score trajectory to generate entirely new candidates (pure scalar trajectory)</td>
+<td><a href="paper_notes/paper-opro-2023.html">paper-opro-2023.md</a></td>
+</tr>
+<tr>
+<td><strong>EvoPrompt</strong></td>
+<td>2023/24</td>
+<td>Translates classical GA/DE into semantic operators the LLM can execute: EA handles selection/update, LLM handles crossover/mutation</td>
+<td><a href="paper_notes/paper-evoprompt-2024.html">paper-evoprompt-2024.md</a></td>
+</tr>
+<tr>
+<td><strong>PromptBreeder</strong></td>
+<td>2023</td>
+<td>Self-referential evolution: evolves mutation prompts alongside task prompts (hyper-mutation), learning both "the task prompt" and "how to change the prompt"</td>
+<td><a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023.md</a></td>
+</tr>
+<tr>
+<td><strong>DSPy-style</strong></td>
+<td>2023</td>
+<td>Prompt-as-program: signature declaration + module composition + teleprompter compilation; this version primarily <strong>bootstraps demonstrations</strong> rather than instructions</td>
+<td><a href="paper_notes/paper-dspy-2023.html">paper-dspy-2023.md</a> (+ <a href="paper_notes/paper-miprov2-2024.html">miprov2</a> for the instruction layer)</td>
+</tr>
+<tr>
+<td><strong>PROSE</strong></td>
+<td>2026</td>
+<td>coin-flip's own controlled negative-result baseline: structured decomposition + multi-operator evolution + <strong>risk-aware selection</strong> (mean + Sharpe + DRO); used to falsify "risk-aware selection helps"—conclusion: no advantage</td>
+<td><a href="paper_notes/paper-prose-2026.html">paper-prose-2026.md</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="five-dimension-structured-comparison">Five-Dimension Structured Comparison</h2>
+<h3 id="1-optimization-target-what-is-being-changed">1. Optimization Target (What Is Being Changed)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Optimization Target</th>
+<th>Structural Granularity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>Single instruction segment</td>
+<td>Entire text</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>Single instruction segment (with optional insertion position Q_begin / Q_end / A_begin)</td>
+<td>Entire text</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>Single task instruction segment</td>
+<td>Entire segment (DE version edits only the "differing parts," protecting consensus segments)</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>Task prompt + mutation prompt + few-shot contexts + some hyperparameters</td>
+<td>Multi-object (including the optimizer itself)</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>Parameters of each module—<strong>primarily demonstrations</strong>, optionally instruction / field description—plus control flow</td>
+<td>Program level (signature / module / control flow)</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>Single prompt segment, decomposed into five targeted-edit blocks: role / task / constraints / examples / format</td>
+<td>Five-component segments</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-feedback-signal-what-the-optimizer-sees">2. Feedback Signal (What the Optimizer Sees)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Signal Type</th>
+<th>Critique?</th>
+<th>Trace?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>Scalar (execution accuracy or log prob)</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>Pure scalar training score (ascending trajectory)</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>Scalar dev score (fitness)</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>Scalar batch fitness</td>
+<td>No</td>
+<td>No (Lamarckian variant back-infers from correct working-out)</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>Metric pass / fail (programmable)</td>
+<td>No</td>
+<td><strong>Yes</strong> (transparent multi-stage trace used for rejection sampling)</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>Scalar LLM-judge score</td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>All six are members of the <strong>scalar-signal family</strong> (no natural-language critique). This is precisely the gap that the ProTeGi → TextGrad → GEPA critique/trace lineage is designed to fill—none of these 6 methods belongs to that lineage. DSPy's trace is used to "filter good demos," not to "diagnose the root cause of errors."</p>
+</blockquote>
+<h3 id="3-search-mechanism-how-candidates-are-generated-and-selected">3. Search Mechanism (How Candidates Are Generated and Selected)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Candidate Generation</th>
+<th>Selection Mechanism</th>
+<th>Archive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>LLM infers instructions (forward / reverse / resample), default ~50 candidates</td>
+<td>Pick highest score on training set; optional iterative Monte Carlo</td>
+<td>None (iterative version's previous pool is a weak archive)</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>8 entirely new instructions sampled each step</td>
+<td>Pick highest training score; trajectory truncated to top-20 as archive</td>
+<td>Weak (top-20 trajectory)</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>GA: roulette-select parents → LLM crossover + mutation; DE: only differing parts merged with best</td>
+<td>Population + dev score, retain top-N</td>
+<td>Population</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>9 mutation operator types (including hyper-mutation / Lamarckian / crossover)</td>
+<td>Binary-tournament GA; BERT-similarity deduplication + fitness sharing</td>
+<td>Population (with lineage)</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>BootstrapFewShot bootstraps trace (rejection sampling)</td>
+<td>RandomSearch / Optuna (TPE) cross-validates on dev; can ensemble top-k</td>
+<td>Candidate demo pool + ensemble</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>20 seeds → top-10 population; 6 adaptive-weight operators (targeted / crossover / random / exploration / simplification / random-gen)</td>
+<td><strong>Risk-adjusted fitness</strong>: 0.70·mean + 0.15·Sharpe + 0.15·DRO; elite 5, early stop after 4 generations without improvement</td>
+<td>Population (20) + elite</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-self-reference-does-the-optimizer-optimize-itself">4. Self-Reference / Does the Optimizer Optimize Itself?</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Self-Referential</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>No</td>
+<td>Fixed proposal template</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>No</td>
+<td>Fixed meta-prompt structure</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>No</td>
+<td>Fixed GA/DE operator prompt</td>
+</tr>
+<tr>
+<td><strong>PromptBreeder</strong></td>
+<td><strong>Yes</strong></td>
+<td>Hyper-mutation also evolves the mutation prompt (<code>M' = LLM(H+M)</code>)—the only method among the 6 with explicit self-reference</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>No (composable)</td>
+<td>Teleprompter strategy is fixed, but a teacher program can supervise a student</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>No</td>
+<td>Operator weights are adaptive, but the fitness formula / templates are fixed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-original-paper-representative-results-and-key-limitations-qualitative-anchors-not-cross-comparable">5. Original Paper Representative Results and Key Limitations (Qualitative Anchors — Not Cross-Comparable)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Original Paper Representative Results</th>
+<th>Key Limitations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>Matches or exceeds human performance on 24/24 instruction-induction tasks (IQM 0.810 vs. 0.749); produces zero-shot CoT prompt</td>
+<td>Optimizes only a single instruction; mismatch between selection criteria and deployment scenario leads to overfitting; iterative search yields weak gains</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>GSM8K up to +8% vs. hand-written zero-shot ("Take a deep breath…" 80.2 vs. 71.8)</td>
+<td>Pure scalar provides no way to localize root cause; strong model/task dependency; "validation set not required" claim challenged by follow-up work</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>BBH average DE +3.5% / GA +2.5%, up to +25%; outperforms APE / MI / NI</td>
+<td>GPT-3.5 mostly single-seed; DE tends toward longer, higher-variance prompts; only canonical GA/DE tested</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>GSM8K 83.5, ETHOS 89% vs. hand-written 80%; zero-order hyper-mutation achieves up to 42% improvement rate</td>
+<td>High cost (population 50, 1–2k evaluations); few-shot context may overshadow prompt; task prompt can drift into nonsense</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>Compilation takes GSM8K from ~33% → 88%; Llama2-13b compiled to match GPT-3.5; T5-770M with only 200 labels matches larger models</td>
+<td>This version optimizes demos, not instructions; requires a decidable metric; bootstrap×2 + ensemble amplifies cost</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>See same-framework table below</td>
+<td><strong>Negative result</strong>: risk-aware selection shows no measurable robustness advantage</td>
+</tr>
+</tbody>
+</table>
+<h2 id="same-framework-comparison-the-only-fair-cross-method-numbers-from-coin-flip">Same-Framework Comparison (The Only Fair Cross-Method Numbers, from coin-flip)</h2>
+<p>LLM-judge 0–100, mean of 3 repeats, held-out 100 test questions, equal compute budget (~100 candidates per method). <strong>Bold = highest score for that task.</strong></p>
+<h3 id="claude-haiku-45-coin-flip-table-2">Claude Haiku 4.5 (coin-flip Table 2)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Feedback-Bench</th>
+<th>HelpSteer2</th>
+<th>WildBench</th>
+<th>XSum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zero-Shot</td>
+<td>82.4</td>
+<td>68.0</td>
+<td>68.9</td>
+<td>76.0</td>
+</tr>
+<tr>
+<td>APE</td>
+<td>82.3</td>
+<td>69.3</td>
+<td>68.0</td>
+<td><strong>76.6</strong></td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>81.4</td>
+<td>73.8</td>
+<td>69.0</td>
+<td>74.7</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>82.0</td>
+<td><strong>74.8</strong></td>
+<td>68.3</td>
+<td>75.6</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td><strong>83.5</strong></td>
+<td>74.6</td>
+<td>68.5</td>
+<td>76.0</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>81.9</td>
+<td>69.8</td>
+<td>65.1</td>
+<td>76.2</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>82.1</td>
+<td>74.4</td>
+<td><strong>69.6</strong></td>
+<td>75.9</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Across the entire table, only HelpSteer2 sees every optimizer beat zero-shot; the average gain on the other three tasks is negative or near zero. Differences among the 6 methods are not statistically significant.</p>
+</blockquote>
+<h3 id="amazon-nova-lite-coin-flip-table-4-worse-overall">Amazon Nova Lite (coin-flip Table 4, worse overall)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Feedback-Bench</th>
+<th>HelpSteer2</th>
+<th>WildBench</th>
+<th>XSum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zero-Shot</td>
+<td>80.4</td>
+<td>70.7</td>
+<td>64.6</td>
+<td>73.5</td>
+</tr>
+<tr>
+<td>APE</td>
+<td>81.1</td>
+<td>69.4</td>
+<td>64.4</td>
+<td>73.9</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>81.9</td>
+<td>70.0</td>
+<td>64.2</td>
+<td>73.5</td>
+</tr>
+<tr>
+<td>EvoPrompt</td>
+<td>81.0</td>
+<td>69.7</td>
+<td>62.9</td>
+<td>71.8</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>80.2</td>
+<td>72.8</td>
+<td>65.6</td>
+<td>72.9</td>
+</tr>
+<tr>
+<td>DSPy-style</td>
+<td>81.0</td>
+<td>69.1</td>
+<td>60.2</td>
+<td>73.3</td>
+</tr>
+<tr>
+<td>PROSE</td>
+<td>80.4</td>
+<td>70.0</td>
+<td>64.6</td>
+<td>72.8</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>14 of 24 method × task cells fall below zero-shot; the 6/6 sweep that HelpSteer2 showed on Haiku collapses to 1/6 on Nova Lite.</p>
+</blockquote>
+<h2 id="actionable-conclusions-for-this-project">Actionable Conclusions for This Project</h2>
+<ol>
+<li><strong>Lower-bound baseline stratification</strong>: Any optimizer experiment should include at minimum APE (propose-then-select) and OPRO (scalar trajectory) as lower-bound controls. A more complex method that cannot beat these two is not worth pursuing.</li>
+<li><strong>Signal structure is the true classification axis</strong>: All 6 methods belong to the "scalar signal" family; the genuine capability leap lies in the critique/trace lineage (ProTeGi → TextGrad → GEPA). When evaluating, do not lump "prompt-editing" methods together—stratify by "scalar / critique / trace" (see insight card in [[paper-opro-2023]]).</li>
+<li><strong>DSPy optimizes demos, not instructions</strong>: When citing "DSPy-style," always specify the optimization layer; automatic instruction optimization requires MIPROv2 / COPRO.</li>
+<li><strong>Self-reference only in PromptBreeder</strong>: For research on "optimizer self-evolution," PromptBreeder is the only entry point among the 6—but it runs multiple operators simultaneously, making causal attribution difficult; reproduction requires ablating each component individually.</li>
+<li><strong>PROSE is a negative result—do not treat it as a strong method to reproduce</strong>: First run coin-flip's coupling/headroom gate; then discuss selection signal engineering. "Adding a risk term to the fitness function" has already been falsified as yielding no gain.</li>
+<li><strong>The only trustworthy cross-method comparison is the same-framework one</strong>: Raw scores from different original papers are not comparable. Any claim that "X is stronger than Y" must be bound to the same model + task + budget; otherwise it is merely an illusion created by each method's own benchmark.</li>
+</ol>
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li>Full method-by-method coverage of the seven baseline methods (APE → ProTeGi → OPRO → DSPy → TextGrad → MIPROv2 → GEPA): <a href="apo_seven_methods_primer_20260611.en.html">apo_seven_methods_primer_20260611.md</a></li>
+<li>Side-by-side source and diagnostic framework: [[paper-coin-flip-2026]] ("the brake on whether to optimize at all")</li>
+<li>Critique/trace lineage reference: ProTeGi [[paper-protegi-2023]], TextGrad [[paper-textgrad-2024]], GEPA [[paper-gepa-2026]]</li>
+<li>Joint instruction + demo optimization: [[paper-miprov2-2024]]</li>
+<li>Structured / modular prompt: [[paper-modular-prompt-optimization-2026]]</li>
+<li>Field and evidence criteria: <code>docs/insight_field_standard.md</code></li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/classic_optimizer_methods_comparison_20260610.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#one-line-positioning">One-Line Positioning</a>
+<a class="lv2" href="#five-dimension-structured-comparison">Five-Dimension Structured Comparison</a>
+<a class="lv3" href="#1-optimization-target-what-is-being-changed">1. Optimization Target (What Is Being Changed)</a>
+<a class="lv3" href="#2-feedback-signal-what-the-optimizer-sees">2. Feedback Signal (What the Optimizer Sees)</a>
+<a class="lv3" href="#3-search-mechanism-how-candidates-are-generated-and-selected">3. Search Mechanism (How Candidates Are Generated and Selected)</a>
+<a class="lv3" href="#4-self-reference-does-the-optimizer-optimize-itself">4. Self-Reference / Does the Optimizer Optimize Itself?</a>
+<a class="lv3" href="#5-original-paper-representative-results-and-key-limitations-qualitative-anchors-not-cross-comparable">5. Original Paper Representative Results and Key Limitations (Qualitative Anchors — Not Cross-Comparable)</a>
+<a class="lv2" href="#same-framework-comparison-the-only-fair-cross-method-numbers-from-coin-flip">Same-Framework Comparison (The Only Fair Cross-Method Numbers, from coin-flip)</a>
+<a class="lv3" href="#claude-haiku-45-coin-flip-table-2">Claude Haiku 4.5 (coin-flip Table 2)</a>
+<a class="lv3" href="#amazon-nova-lite-coin-flip-table-4-worse-overall">Amazon Nova Lite (coin-flip Table 4, worse overall)</a>
+<a class="lv2" href="#actionable-conclusions-for-this-project">Actionable Conclusions for This Project</a>
+<a class="lv2" href="#related-documents">Related Documents</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

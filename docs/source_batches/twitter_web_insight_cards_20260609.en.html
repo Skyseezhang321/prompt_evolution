@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitter/X Social-Media Leads Insight Cards: 2026-06-09 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="../analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#2d5fa8">Twitter/X Channel</span><span class="doctitle">Twitter/X Social-Media Leads Insight Cards: 2026-06-09</span><a class="back lang" href="twitter_web_insight_cards_20260609.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="twitterx-social-media-leads-insight-cards-2026-06-09">Twitter/X Social-Media Leads Insight Cards: 2026-06-09</h1>
+<p>This page is an insight-first supplement to the <a href="twitter_web_analysis_20260608.en.html">Twitter/X candidate posts analysis</a>. The goal is not to continue listing X/Twitter posts, but to compress social-media leads into candidates ready to enter the final report:</p>
+<ul>
+<li>insight candidates</li>
+<li>conclusion candidates</li>
+<li>helpful method candidates</li>
+<li>anti-patterns / limits</li>
+<li>validation or demo candidates</li>
+</ul>
+<p>Evidence boundary:</p>
+<ul>
+<li>X/Twitter fragments are used only to discover leads, misreadings, propagation paths, and primary sources — they do not directly support conclusions about method effectiveness.</li>
+<li>Each insight must be traced back to a paper, official documentation, code, structured notes, experiment records, or failure cases before it can enter the final report.</li>
+<li><code>evidence_strength</code> uniformly follows the canonical A/B/C/D scale (see <a href="../insight_field_standard.en.html">insight_field_standard.md</a>): most insights in this batch have multi-source primary/official backing and are marked <code>B</code>; a few remain speculative pending verification and are marked <code>D</code>; non-canonical values such as <code>B-candidate</code> are not used.</li>
+<li>Note: structured deep-reads (paper notes) are not yet fully complete; the entire batch remains in candidate status. Each card's <code>main_sources</code> is temporarily filled with external primary sources and must be replaced with repository file paths once the structured notes are written — these insights may not enter the final report until that is done.</li>
+</ul>
+<h2 id="insight-candidates">Insight Candidates</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>insight</th>
+<th>user_facing_one_liner</th>
+<th>evidence_strength</th>
+<th>status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tw-insight-01</td>
+<td>The value of automatic prompt optimization lies not in "letting the model rewrite freely," but in generating comparable candidates under metric, trace, and version constraints.</td>
+<td>Build a test set and a scorer first; then talk about automatic prompt improvement.</td>
+<td>B</td>
+<td>Ready for helpful method candidates</td>
+</tr>
+<tr>
+<td>tw-insight-02</td>
+<td>GEPA's social-media coverage tends to be simplified to "an RL replacement," but the more transferable mechanism is trace-aware reflection + population/Pareto selection.</td>
+<td>Don't just look at the final score — let the optimizer read failure traces.</td>
+<td>B</td>
+<td>Requires GEPA paper note as backing</td>
+</tr>
+<tr>
+<td>tw-insight-03</td>
+<td>DSPy is commonly labeled a prompt optimizer on social media, but leads from the original authors better support positioning it as a prompt-as-program programming model.</td>
+<td>Write the task as a program, then let the optimizer compile it.</td>
+<td>B</td>
+<td>Ready for state-of-the-art landscape map</td>
+</tr>
+<tr>
+<td>tw-insight-04</td>
+<td>Prompt versioning, diff, owner, environment, and rollback are prerequisite infrastructure before automatic optimization can enter production.</td>
+<td>Prompts must be comparable, reviewable, and rollback-able — just like code.</td>
+<td>B</td>
+<td>Ready for industry practice methods</td>
+</tr>
+<tr>
+<td>tw-insight-05</td>
+<td>Context engineering and prompt optimization must track variables separately; many "prompt improvements" actually come from changes in retrieval, memory, tool output, or context organization.</td>
+<td>Diagnose first whether to change the prompt or the context.</td>
+<td>B</td>
+<td>Ready for anti-patterns and experiment design</td>
+</tr>
+<tr>
+<td>tw-insight-06</td>
+<td>Social-media popularity can surface directions and misreadings, but cannot rank method effectiveness.</td>
+<td>High retweet count does not mean more effective.</td>
+<td>B</td>
+<td>Ready for evidence level explanation</td>
+</tr>
+<tr>
+<td>tw-insight-07</td>
+<td>Prompt optimization in AI safety/control scenarios should focus on audit budget, monitor failure, and safety regression — not ordinary accuracy.</td>
+<td>Safety-monitoring prompts cannot be optimized for average score alone.</td>
+<td>D</td>
+<td>Requires deep-read of DSPy AI control source</td>
+</tr>
+<tr>
+<td>tw-insight-08</td>
+<td>The trustworthy information from productized prompt optimizers is the process fields, not the vendor-claimed improvement percentages.</td>
+<td>Trust dataset, metric, baseline, cost, rollback; downgrade marketing numbers.</td>
+<td>B</td>
+<td>Ready for industry practice methods</td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-cards">Detailed Cards</h2>
+<h3 id="tw-insight-01-eval-first-automatic-optimization">tw-insight-01: Eval-first Automatic Optimization</h3>
+<pre><code class="language-yaml">insight: The value of automatic prompt optimization lies not in &quot;letting the model rewrite freely,&quot; but in generating comparable candidates under metric, trace, and version constraints.
+user_facing_one_liner: Build a test set and a scorer first; then talk about automatic prompt improvement.
+phenomenon: In the Twitter/X batch, leads from GEPA, Pydantic, Promptim, Vertex AI Prompt Optimizer, PromptWizard, and others all bind the prompt optimizer to a dataset, metric, evaluator, or optimization job.
+mechanism: Without an eval, an LLM can only produce stylistically rewritten text; with an eval and traces, candidate prompts can be compared, rejected, rolled back, and reused.
+actionable_rule: Before each automatic prompt change, freeze the task samples, primary metric, failure types, cost budget, and rollback point.
+helpful_method: metric_trace_constrained_prompt_iteration
+exact_action_to_try: For an existing prompt, build 20–50 development samples, record baseline outputs and failure types, then ask the model to propose 3 candidate prompts based solely on the failure samples.
+before_after_example: &quot;Before: Help me optimize this prompt. After: On validation set v0.1, reduce the format error rate from 18% to below 8%, with cost not exceeding 1.5x baseline.&quot;
+counterexample_or_limit: Creative writing, exploratory brainstorming, or one-off ad hoc tasks may not be worth building a full eval pipeline.
+evidence_strength: B
+main_sources: Pydantic GEPA article; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; GEPA/DSPy docs.
+validation_or_demo: Compare &quot;rewrite without eval&quot; vs &quot;rewrite with failure samples + metric constraints,&quot; observing differences on the validation set and hidden samples.
+</code></pre>
+<h3 id="tw-insight-02-trace-aware-prompt-evolution">tw-insight-02: Trace-aware Prompt Evolution</h3>
+<pre><code class="language-yaml">insight: GEPA's transferable mechanism is generating prompt edits from execution traces and failure explanations — not simply understanding it as an RL replacement.
+user_facing_one_liner: Let the optimizer read the failure process, not just the final score.
+phenomenon: Posts from authors and maintainers repeatedly emphasize natural-language reflection, rollout/trajectory, MIPRO/GRPO/GEPA taxonomy, and Pareto-style candidate selection.
+mechanism: Prompts are readable text; tool calls, intermediate reasoning, judge explanations, and error logs within failure traces provide more editable feedback than scalar rewards.
+actionable_rule: For agent/tool-use tasks, the prompt optimizer's input should include at minimum the failure input, output, key intermediate steps, error types, and scoring rationale.
+helpful_method: metric_trace_constrained_prompt_iteration
+exact_action_to_try: On a small tool-use task, save 10 failure traces, have the model first summarize the root causes of failure, then propose a localized prompt edit.
+before_after_example: &quot;Before: Give the optimizer only a 0/1 score. After: Give the optimizer the failure input, tool calls, erroneous output, judge explanation, and constraints on what may not be rewritten.&quot;
+counterexample_or_limit: If the task has no interpretable intermediate process, or judge explanation quality is poor, trace-aware methods may only amplify noise.
+evidence_strength: B
+main_sources: GEPA arXiv; GEPA repo; DSPy GEPA docs; Omar Khattab / Lakshya A Agrawal X leads.
+validation_or_demo: scalar-only rewrite vs trace-aware rewrite, controlling candidate count and model parameters, comparing only the feedback signal difference.
+</code></pre>
+<h3 id="tw-insight-03-positioning-prompt-as-program">tw-insight-03: Positioning Prompt-as-Program</h3>
+<pre><code class="language-yaml">insight: DSPy should not be written up only as a prompt optimizer; the more accurate positioning is to declare the task, signatures, modules, and metrics, then use an optimizer to compile the LM program.
+user_facing_one_liner: Don't pile prompts into a chat box — write out the task structure.
+phenomenon: Many social-media accounts simplify DSPy to an automatic prompt optimization system; leads from Omar Khattab and Drew Breunig emphasize the programming model, maintainability, and DX.
+mechanism: When a task is decomposed into signature/module/metric, the prompt text is just one optimizable asset — examples, models, module composition, and the evaluator can all be managed by the system.
+actionable_rule: Replace the discussion of &quot;whether the prompt got better&quot; with &quot;whether the program spec, optimizer, metric, and split are clearly defined.&quot;
+helpful_method: prompt_as_program_spec
+exact_action_to_try: For a multi-step prompt, first write out input fields, output fields, scorer, and variable components; then decide whether to optimize with DSPy/Promptim or a hand-written script.
+before_after_example: &quot;Before: An 800-word system prompt. After: task signature + output schema + metric + fixed examples + versioned instruction.&quot;
+counterexample_or_limit: Using prompt-as-program for single-turn simple Q&amp;A or low-value one-off tasks may be over-engineering.
+evidence_strength: B
+main_sources: DSPy docs; DSPy paper; Drew Breunig writeup; Simon Willison X leads.
+validation_or_demo: Choose a multi-step task and compare a pure prompt template vs a structured spec in terms of maintainability for model switching, failure localization, and version diff.
+</code></pre>
+<h3 id="tw-insight-04-prompt-versioning-is-the-release-gate-for-automatic-optimization">tw-insight-04: Prompt Versioning Is the Release Gate for Automatic Optimization</h3>
+<pre><code class="language-yaml">insight: Before automatic prompt optimization can enter production, it must have prompt diff, commit, environment, owner, eval gate, and rollback.
+user_facing_one_liner: Release prompts the way you release code.
+phenomenon: LangSmith Prompt Hub, Langfuse, Humanloop, Promptfoo, and Google/OpenAI optimizer documentation all emphasize eval, versioning, observability, or deployment controls.
+mechanism: Automatically generating candidates increases the risk of behavioral drift; without versioning and rollback, it is impossible to identify which rewrite broke the system when a failure occurs.
+actionable_rule: A new prompt may only move from candidate to staging, then enter production after passing the eval gate and human review.
+helpful_method: prompt_release_gate
+exact_action_to_try: For each prompt variant, record prompt_id, parent_id, diff, reason, dataset_version, metric_delta, cost_delta, and rollback_target.
+before_after_example: &quot;Before: Replace the production prompt directly. After: candidate -&gt; offline eval -&gt; reviewer approval -&gt; production tag -&gt; rollback pointer.&quot;
+counterexample_or_limit: Offline personal tasks can simplify the process, but the original prompt and candidates should still be saved.
+evidence_strength: B
+main_sources: LangSmith manage prompts; Langfuse prompt management/tracing; Promptfoo optimization; Humanloop docs; OpenAI/Google prompt optimizer docs.
+validation_or_demo: Run a release record for one prompt optimization, and verify that the adoption rationale and rollback point can be reproduced.
+</code></pre>
+<h3 id="tw-insight-05-prompt-and-context-as-separate-variables">tw-insight-05: Prompt and Context as Separate Variables</h3>
+<pre><code class="language-yaml">insight: Many &quot;prompt optimization&quot; leads are actually context engineering, retrieval, memory, or tool policy problems — variables must be separated first.
+user_facing_one_liner: Diagnose which layer to fix before touching the system prompt.
+phenomenon: The Twitter/X batch simultaneously contains leads on prompt optimizer, context engineering, LangGraph/LangChain, 12-factor agents, and agent reliability.
+mechanism: LLM output is jointly influenced by instruction, few-shot examples, retrieved context, tool result format, memory, and model parameters; changing them together produces spurious causality.
+actionable_rule: Each optimization pass may only change one variable layer; if both prompt and context are changed simultaneously, the round may only be marked as a multi-factor observation.
+helpful_method: prompt_context_variable_audit
+exact_action_to_try: For failure samples, first label the failure owner: instruction / example / retrieval / memory / tool policy / schema / model.
+before_after_example: &quot;Before: Attribute all failures to a bad prompt. After: Of 10 failures, 4 are due to missing retrieval, 3 to unclear schema, 2 to tool output format, and 1 to the instruction.&quot;
+counterexample_or_limit: In early exploration, multi-factor trial-and-error is acceptable, but must not be written up as a single-variable conclusion.
+evidence_strength: B
+main_sources: LangChain context engineering blog/docs; 12-factor agents; Anthropic context engineering; Twitter/X context engineering posts.
+validation_or_demo: Label failure owners on a set of agent failure cases, then decide on the minimum-change layer.
+</code></pre>
+<h3 id="tw-insight-06-social-media-popularity-is-not-evidence">tw-insight-06: Social-Media Popularity Is Not Evidence</h3>
+<pre><code class="language-yaml">insight: X/Twitter can be used to discover primary sources, misreadings, and propagation paths, but post count, account popularity, or retweet density cannot prove method effectiveness.
+user_facing_one_liner: Trending does not mean effective.
+phenomenon: Among GEPA-related candidates there is extensive media coverage, paper-title reposts, and repeated summaries; these entries frequently paraphrase the same arXiv link.
+mechanism: Social-media ranking is driven by recency, account influence, headline impact, and search recall — it cannot substitute for task setup, baseline, metric, and failure analysis.
+actionable_rule: When social-media sources enter a report, they may only be labeled as source discovery, adoption signal, misunderstanding signal, or pointer; performance conclusions must have separate evidence.
+helpful_method: social_signal_triage
+exact_action_to_try: Tag each social-media lead: primary_author / official_release / practitioner_case / media_repost / marketing / unrelated.
+before_after_example: &quot;Before: Multiple accounts say GEPA outperforms RL. After: Multiple accounts point to the same GEPA paper; performance claims cite only the paper's tables and subsequent reproductions.&quot;
+counterexample_or_limit: Author posts can provide method explanations and limitations, but still require tracing back to the paper or official materials.
+evidence_strength: B
+main_sources: Twitter/X candidate batch; GEPA repost exclusion list; source_collection_plan evidence boundary.
+validation_or_demo: No experiment needed; enforce social-media usage annotations in the evidence level section of the final report.
+</code></pre>
+<h3 id="tw-insight-07-special-metrics-for-safetycontrol-optimizers">tw-insight-07: Special Metrics for Safety/Control Optimizers</h3>
+<pre><code class="language-yaml">insight: Prompt optimization in AI safety/control scenarios should prioritize recording audit budget, monitor failure, false negative, coverage, and safety regression — not just average task score.
+user_facing_one_liner: Safety prompt optimization cannot chase a higher average score alone.
+phenomenon: Official DSPy leads mention prompt-optimized monitors, audit budget, and baseline monitor, which are valuable for this project's eval/governance dimension.
+mechanism: The failure cost of a safety monitor differs from an ordinary task; an optimizer may improve surface scores while degrading critical boundaries or being gamed by the judge/rubric.
+actionable_rule: Safety-related prompts may only be automatically optimized when an adversarial/safety regression set and a human review gate are in place.
+helpful_method: safety_prompt_optimizer_gate (to be completed: evidence is D, requires deep-reading the DSPy AI control source before a complete card can be written)
+exact_action_to_try: For safety monitor prompts, record false_negative_rate, audit_budget, critical_failure_examples, and rollback rule.
+before_after_example: &quot;Before: monitor accuracy improves. After: audit budget fixed at 1%, critical false negatives do not increase, refusal/false-positive costs are explainable.&quot;
+counterexample_or_limit: The current Twitter batch provides only leads; conclusions cannot be formed until the DSPy AI control source has been deeply read.
+evidence_strength: D
+main_sources: DSPy AI safety X post; Prompt optimization can enable AI control research; DSPy GEPA docs.
+validation_or_demo: Design a small safety classification/monitor demo and compare ordinary accuracy against critical failure metrics for conflicts.
+</code></pre>
+<h3 id="tw-insight-08-trust-process-fields-not-numbers-from-vendor-optimizers">tw-insight-08: Trust Process Fields, Not Numbers, from Vendor Optimizers</h3>
+<pre><code class="language-yaml">insight: The reusable information from productized prompt optimizers is typically the process and fields — not the marketed improvement percentages.
+user_facing_one_liner: Look at how it evaluates and how it rolls back — not how much improvement it claims.
+phenomenon: Leads from Pydantic, Promptim, Google, Microsoft, Salesforce, Sentient, OpenAI, and others all appear in product/tool form, but vary widely in evidence strength.
+mechanism: Vendor benchmarks may be biased by task selection, model selection, metric selection, and presentation effects; process fields are more transferable to this project.
+actionable_rule: When reading product optimizer documentation, extract only: dataset, metric, baseline, candidate generation, selection, cost, failure cases, versioning, rollback.
+helpful_method: vendor_optimizer_evidence_filter
+exact_action_to_try: For each product source, fill in an evidence checklist; entries lacking eval or rollback are downgraded to leads.
+before_after_example: &quot;Before: A tool improved performance by 20%. After: What samples, what metric, how many candidates, how overfitting is avoided, and how to roll back on failure.&quot;
+counterexample_or_limit: Some official documentation describes only the product process without providing experiment details; such sources can only serve as engineering practice, not performance evidence.
+evidence_strength: B
+main_sources: Pydantic GEPA; LangChain Promptim; Google Vertex AI Prompt Optimizer; Microsoft PromptWizard; Salesforce Promptomatix; Sentient ROMA.
+validation_or_demo: Audit 5 tool sources using the same checklist and filter out fields that can support helpful methods.
+</code></pre>
+<h2 id="conclusion-candidates">Conclusion Candidates</h2>
+<p>The following are candidates for elevating the insights above into "judgments that can be adopted or refuted," filled in according to the conclusion schema in <a href="../insight_field_standard.en.html">insight_field_standard.md</a>. Note: these are all <strong>conclusion candidates</strong>; most <code>main_sources</code> still need to be replaced with repository-internal structured note paths, and cross-source verification has not been completed — they may not be directly adopted in the final report (see <code>docs/project_principles.md</code> rule 4: a single source may not be directly elevated to a conclusion).</p>
+<pre><code class="language-yaml"># conclusion-01
+conclusion: For tasks with an objectively scorable held-out set where prompts are reused, automatic prompt optimization can only produce comparable, rollback-able gains under eval + trace + version constraints; without an eval it is equivalent to stylistic rewriting.
+scope: Tasks with a held-out set, classifiable failures, and reused prompts; excludes one-off creative or exploratory tasks.
+evidence_strength: B
+main_sources: To be filled (DSPy / GEPA / Pydantic GEPA / Promptim documentation; structured notes not yet complete).
+counterexample_or_limit: Creative writing, exploratory brainstorming, or one-off ad hoc tasks may not be worth building a full eval pipeline.
+supersedes_or_conflicts: Conflicts with the claim that &quot;automatic optimization delivers gains by default.&quot;
+
+# conclusion-02
+conclusion: GEPA is more accurately positioned as trace-aware reflective prompt evolution (execution traces + natural-language reflection + Pareto selection), not as an &quot;RL replacement.&quot;
+scope: Agent, tool-use, and structured-output tasks with interpretable intermediate processes or judge explanations.
+evidence_strength: D
+main_sources: To be filled (GEPA arXiv / repo / DSPy GEPA docs; paper note not yet written).
+counterexample_or_limit: When there is no interpretable intermediate process or judge quality is poor, trace-aware methods may only amplify noise; currently only social-media + documentation leads, no structured deep-read completed.
+
+# conclusion-03
+conclusion: DSPy should be positioned in this project as a prompt-as-program / LM program framework, not merely a prompt optimizer.
+scope: Multi-step / multi-module tasks, or tasks requiring long-term maintenance or model switching.
+evidence_strength: B
+main_sources: To be filled (DSPy arXiv / docs; Drew Breunig writeup).
+counterexample_or_limit: Using the program framework for single-turn simple tasks may be over-engineering; the positioning judgment comes primarily from author leads and documentation, not empirical effect evidence.
+
+# conclusion-04
+conclusion: The prerequisites for releasing engineered automatic prompt optimization are prompt versioning/diff/owner/rollback and &quot;prompt vs. context as separate variables&quot;; without these two, metric changes cannot be attributed and failures cannot be rolled back.
+scope: Scenarios where prompts affect production systems, agent tool calls, safety monitoring, or cost.
+evidence_strength: B
+main_sources: To be filled (LangSmith / Langfuse / Humanloop / Promptfoo documentation; LangChain context engineering / 12-factor agents).
+counterexample_or_limit: Offline personal tasks can simplify the process, but the original prompt and candidates should still be saved.
+
+# conclusion-05
+conclusion: Social media and vendor materials can only serve as a discovery layer (source discovery / adoption signal / process fields) and cannot directly support performance or effectiveness conclusions.
+scope: All performance claims originating from X / media reposts / vendor benchmarks.
+evidence_strength: B
+main_sources: This Twitter candidate batch; exclusion list; source_collection_plan evidence boundary.
+counterexample_or_limit: Author posts can provide method explanations and limitations, but still require tracing back to the paper / official materials.
+</code></pre>
+<h2 id="helpful-method-candidates">Helpful Method Candidates</h2>
+<h3 id="method-01-metric-trace-constrained-prompt-iteration">method-01: Metric + Trace Constrained Prompt Iteration</h3>
+<pre><code class="language-yaml">name: metric_trace_constrained_prompt_iteration
+insight_supported: tw-insight-01, tw-insight-02
+problem: Automatic prompt rewriting easily degrades into non-comparable stylistic rewriting.
+recommended_when: The task has clear inputs and outputs, 20+ samples can be constructed, failures can be classified, and the prompt will be reused.
+not_recommended_when: One-off creative tasks, no scorer, no failure samples, or unable to bear additional inference cost.
+required_inputs: baseline prompt, dataset_version, metric, failure_samples, constraints, cost_budget, rollback_prompt.
+implementation_steps: Freeze baseline; run development set; label failure types; generate 3–5 candidates; offline scoring; human review of diff; publish only candidates that pass the gate.
+evaluation_metrics: task score, format error rate, critical failure rate, cost_delta, latency_delta, hidden_sample_score.
+expected_benefit: Turns prompt rewriting from subjective editing into a comparable experiment.
+cost_and_latency: At minimum adds candidate generation and multiple eval costs; suitable for high-reuse prompts.
+risks: Overfitting the development set; judge gaming; prompt length inflation; ignoring safety boundaries.
+misuse_or_anti_pattern: Asking the model to &quot;optimize this prompt&quot; without an eval.
+rollback_plan: Save parent prompt, candidate prompt, diff, adoption rationale, and rollback_target.
+evidence: GEPA, Pydantic GEPA, Promptim, Google Vertex AI Prompt Optimizer, PromptWizard.
+next_experiment: scalar-only rewrite vs trace-aware rewrite.
+</code></pre>
+<h3 id="method-02-prompt-release-gate">method-02: Prompt Release Gate</h3>
+<pre><code class="language-yaml">name: prompt_release_gate
+insight_supported: tw-insight-04, tw-insight-08
+problem: After automatically generating candidate prompts, online behavior becomes unauditable without versioning, review, and rollback.
+recommended_when: The prompt affects production systems, agent tool calls, safety monitoring, customer output, or cost.
+not_recommended_when: Personal one-off experiments; though saving the original prompt is still recommended.
+required_inputs: prompt_id, parent_id, diff, dataset_version, evaluator_version, metric_delta, reviewer, environment, rollback_target.
+implementation_steps: candidate tag -&gt; offline eval -&gt; risk checklist -&gt; reviewer approval -&gt; staging -&gt; production tag -&gt; monitor -&gt; rollback.
+evaluation_metrics: release pass/fail, regression count, rollback time, owner coverage, trace coverage.
+expected_benefit: Reduces the risk of prompt drift and non-rollback-able failures.
+cost_and_latency: Adds release process cost, but reduces incident investigation cost.
+risks: An overly heavy process may lead to excessive governance of low-value prompts.
+misuse_or_anti_pattern: Treating prompts as temporary text and directly overwriting the production version.
+rollback_plan: Every production prompt retains a parent and the last stable version.
+evidence: LangSmith manage prompts, Langfuse prompt management, Promptfoo, Humanloop, OpenAI/Google docs.
+next_experiment: Generate a release record for a prompt optimization demo and verify that it is re-auditable.
+</code></pre>
+<h3 id="method-03-prompt-context-variable-audit">method-03: Prompt / Context Variable Audit</h3>
+<pre><code class="language-yaml">name: prompt_context_variable_audit
+insight_supported: tw-insight-05
+problem: Teams often misdiagnose retrieval, memory, tool policy, or schema problems as prompt problems.
+recommended_when: RAG, agent, tool-use, multi-turn, or long-context task failures.
+not_recommended_when: Single-turn pure text classification with a fixed context.
+required_inputs: failure_samples, prompt, retrieved_context, tool_outputs, memory_state, schema, model_parameters.
+implementation_steps: Label failure owner for each failure sample; change only one variable layer at a time; multi-factor changes must be labeled as multi-factor observations.
+evaluation_metrics: owner_distribution, fix_success_by_layer, regression_by_layer, cost_delta.
+expected_benefit: Reduces spurious causality, improves input quality for subsequent prompt optimizers.
+cost_and_latency: Requires human or LLM-assisted labeling of failure attribution.
+risks: Failure owner labeling may be subjective; reviewer spot-checks are needed.
+misuse_or_anti_pattern: Changing the system prompt whenever a failure is observed.
+rollback_plan: Each layer's change gets an independent commit or independent prompt/context version.
+evidence: LangChain context engineering, 12-factor agents, Anthropic context engineering, Twitter/X context signals.
+next_experiment: Label failure owners on 20 agent failure samples, then compare prompt-only fix vs owner-guided fix.
+</code></pre>
+<h3 id="method-04-prompt-as-program-spec">method-04: Prompt-as-Program Spec</h3>
+<pre><code class="language-yaml">name: prompt_as_program_spec
+insight_supported: tw-insight-03
+problem: Multi-step tasks pile logic into a long system prompt, making model switching, failure localization, and version diff difficult.
+recommended_when: Multi-step / multi-module tasks where the prompt will be maintained long-term, requires model switching, or will be handed off.
+not_recommended_when: Single-turn simple Q&amp;A or one-off low-value tasks where structure would be over-engineering.
+required_inputs: task input/output field definitions, scorer, list of variable components (instruction / examples / module composition), target model.
+implementation_steps: Write out signature (input/output fields) → define metric and split → mark optimizable components → decide whether to write by hand or compile with DSPy/Promptim → freeze example and instruction versions.
+evaluation_metrics: migration cost after model switching, failure localization time, version diff readability, primary task metric.
+risks: Structural abstraction itself has a learning and maintenance cost; errors in signature/metric definitions propagate through the entire pipeline.
+misuse_or_anti_pattern: Force-fitting a simple task into the program framework; or switching frameworks without defining a metric.
+rollback_plan: Keep the original monolithic prompt as a baseline; can revert to the unstructured version at any time.
+evidence: DSPy paper/docs; Drew Breunig writeup (B, engineering maintainability lead, not an effect conclusion).
+cost_and_latency: One-time upfront structuring cost; reduces long-term maintenance and model-switching cost.
+expected_benefit: Prompt becomes maintainable, model-switchable, and re-evaluable.
+next_experiment: Choose a multi-step task and compare pure template vs structured spec in terms of maintainability for model switching and version diff.
+</code></pre>
+<h3 id="method-05-social-signal-triage">method-05: Social Signal Triage</h3>
+<pre><code class="language-yaml">name: social_signal_triage
+insight_supported: tw-insight-06
+problem: Social-media leads can easily be treated as evidence of method effectiveness, contaminating conclusions.
+recommended_when: Processing leads from X / social media / media reposts and determining their evidential role.
+not_recommended_when: Already have primary sources in the form of papers / official documentation / code; social-media triage is not needed.
+required_inputs: social-media lead URL, author or institution, whether it points to a primary source.
+implementation_steps: Tag each lead primary_author / official_release / practitioner_case / media_repost / marketing / unrelated → only the first three categories enter a source card → all performance claims are sent back to primary sources → reposts and marketing count only as propagation signals.
+evaluation_metrics: traceability rate of leads entering source cards, proportion mistakenly treated as evidence (target: 0).
+risks: Tag judgment is subjective; author accounts may also oversimplify, still requiring tracing back to the original.
+misuse_or_anti_pattern: Ranking method effectiveness by post popularity / retweet count.
+rollback_plan: If a tag is wrong, downgrade to weak social signal and re-trace.
+evidence: This Twitter candidate batch and exclusion list; source_collection_plan evidence boundary (B).
+cost_and_latency: Human or LLM-assisted tagging only; low cost.
+expected_benefit: Reduces social media from &quot;pseudo-evidence&quot; to the discovery layer, preventing popularity from contaminating conclusions.
+next_experiment: No experiment needed; enforce social-media usage annotations in the evidence level section of the final report.
+</code></pre>
+<h3 id="method-06-vendor-optimizer-evidence-filter">method-06: Vendor Optimizer Evidence Filter</h3>
+<pre><code class="language-yaml">name: vendor_optimizer_evidence_filter
+insight_supported: tw-insight-08
+problem: A vendor optimizer's claimed improvement percentage may be biased by task/metric/presentation selection; accepting it directly misleads conclusions.
+recommended_when: Evaluating productized prompt optimizer sources (Pydantic / Google / Microsoft / Salesforce / OpenAI, etc.).
+not_recommended_when: Already have a reproducible experiment or paper providing a complete setup.
+required_inputs: vendor documentation/blog, the claimed metrics, whether dataset / metric / baseline / cost / rollback are disclosed.
+implementation_steps: Fill an evidence checklist for each source (dataset, metric, baseline, candidate generation, selection, cost, failure cases, versioning, rollback) → extract process fields into helpful methods → downgrade numeric claims lacking eval or rollback to leads.
+evaluation_metrics: checklist field completeness, number of marketing numbers downgraded, number of transferable process fields.
+risks: Some official documentation gives only process without experiments and may be mistaken for strong evidence; &quot;process credible&quot; vs &quot;numbers credible&quot; must be distinguished.
+misuse_or_anti_pattern: Directly citing vendor improvement percentages as the expected gains for this project.
+rollback_plan: If a disclosure later proves inaccurate, downgrade the source from engineering practice to a propagation signal.
+evidence: Pydantic GEPA, Vertex AI, PromptWizard, Promptomatix, OpenAI/Google docs (B, process fields).
+cost_and_latency: Documentation review cost only.
+expected_benefit: Transfer only credible processes; filter out unverifiable numbers.
+next_experiment: Audit 5 tool sources using the same checklist and filter out fields that can support helpful methods.
+</code></pre>
+<blockquote>
+<p>Method reference note: the trace-aware editing in <code>tw-insight-02</code> has been merged into <code>method-01</code> (whose <code>insight_supported</code> covers both tw-insight-01/02); no separate card is created. The <code>safety_prompt_optimizer_gate</code> for <code>tw-insight-07</code> has only D-level evidence; a complete card will be added after deep-reading the DSPy AI control source. It is intentionally left as a placeholder to avoid fabricating steps on weak evidence.</p>
+</blockquote>
+<h2 id="anti-patterns-and-limits">Anti-patterns And Limits</h2>
+<table>
+<thead>
+<tr>
+<th>anti_pattern</th>
+<th>why_harmful</th>
+<th>trigger_condition</th>
+<th>instead_do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Writing a popular X thread as a research conclusion</td>
+<td>Social-media popularity cannot prove method effectiveness and may repeat the same source.</td>
+<td>Ranking methods by post popularity / retweet count without tracing back to the primary source.</td>
+<td>Use only as source discovery or adoption signal; trace conclusions back to papers/code/experiments.</td>
+</tr>
+<tr>
+<td>Asking the model to "optimize the prompt" without an eval</td>
+<td>You only get text that looks more like a prompt; there is no way to judge whether it improved.</td>
+<td>Invoking an optimizer with no held-out set, no scorer, and no failure samples.</td>
+<td>First freeze samples, metrics, failure types, and cost budget.</td>
+</tr>
+<tr>
+<td>Describing GEPA as an "RL replacement"</td>
+<td>Oversimplification ignores trace, reflection, candidate selection, and task boundaries.</td>
+<td>Summarizing GEPA in a single social-media sentence without reading its experimental setup and task boundaries.</td>
+<td>Write it as reflective prompt evolution and trace back to the specific experimental setup.</td>
+</tr>
+<tr>
+<td>Changing prompt, context, model, and evaluator simultaneously</td>
+<td>Metric changes cannot be attributed, making it easy to form spurious conclusions.</td>
+<td>Comparing metrics after changing multiple variable layers in a single round.</td>
+<td>Change only one layer at a time; multi-factor changes are recorded only as observations.</td>
+</tr>
+<tr>
+<td>Accepting vendor improvement percentages</td>
+<td>Task selection, metrics, and presentation may be biased toward the product narrative.</td>
+<td>Citing vendor benchmark numbers without disclosure of dataset / metric / baseline.</td>
+<td>Trust process fields; downgrade numeric claims with undisclosed eval.</td>
+</tr>
+<tr>
+<td>Optimizing only average score without examining critical failures</td>
+<td>Automatic optimization may sacrifice safety boundaries, format stability, or specific minority scenarios.</td>
+<td>Optimization target is set to average score only, without a regression / critical failure set.</td>
+<td>Record a critical failure set, regression set, and rollback gate.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="validation-demo-candidates">Validation / Demo Candidates</h2>
+<table>
+<thead>
+<tr>
+<th>candidate</th>
+<th>insight/method being validated</th>
+<th>minimum design</th>
+<th>success criteria</th>
+<th>current status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>demo-trace-aware-vs-score-only</td>
+<td><code>tw-insight-02</code>, <code>method-01</code></td>
+<td>Choose a small structured-output or tool-use task; under the same candidate budget, compare prompt rewrites given only the score vs given a failure trace.</td>
+<td>trace-aware eliminates at least one failure type and hidden sample performance does not degrade; cost is recorded.</td>
+<td>Pending entry into experiment_plan</td>
+</tr>
+<tr>
+<td>demo-prompt-release-record</td>
+<td><code>tw-insight-04</code>, <code>method-02</code></td>
+<td>Complete a release record for an existing prompt optimization run: parent, diff, metric, cost, review, rollback.</td>
+<td>A second reviewer can re-audit the adoption rationale and locate the rollback point.</td>
+<td>Can serve as a documentation demo first</td>
+</tr>
+<tr>
+<td>demo-variable-owner-audit</td>
+<td><code>tw-insight-05</code>, <code>method-03</code></td>
+<td>Label failure owners on 20 agent/RAG failure samples, then change only the most dominant variable layer.</td>
+<td>Able to distinguish prompt issues from context/retrieval/tool issues; avoids multi-variable conclusions.</td>
+<td>Pending data selection</td>
+</tr>
+</tbody>
+</table>
+<h2 id="recommendations-for-the-final-report">Recommendations for the Final Report</h2>
+<p>What should enter the final report first is not "everyone on Twitter is discussing GEPA/DSPy," but the following more reusable judgments:</p>
+<ol>
+<li>Automatic prompt optimization must be eval-first; otherwise it is just rewriting.</li>
+<li>Trace-aware feedback is a key mechanism candidate for prompt evolution and is worth validating with a minimum experiment.</li>
+<li>Prompt-as-program and prompt versioning are the infrastructure for engineered prompt optimizers.</li>
+<li>Context engineering and prompt optimization must track separate variables; otherwise attribution is impossible.</li>
+<li>Social media and vendor materials provide only leads or process fields and cannot directly support performance conclusions.</li>
+</ol>
+<p>These 5 judgments have been formalized in the "Conclusion Candidates" section of this page using the conclusion schema (including scope, evidence_strength, and counterexample_or_limit). Before entering the final report, the following must be completed: ① replace <code>main_sources</code> from external primary sources with repository-internal structured note paths; ② complete cross-source verification and either upgrade D-level judgments or label them as pending validation.</p>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/source_batches/twitter_web_insight_cards_20260609.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="../analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#insight-candidates">Insight Candidates</a>
+<a class="lv2" href="#detailed-cards">Detailed Cards</a>
+<a class="lv3" href="#tw-insight-01-eval-first-automatic-optimization">tw-insight-01: Eval-first Automatic Optimization</a>
+<a class="lv3" href="#tw-insight-02-trace-aware-prompt-evolution">tw-insight-02: Trace-aware Prompt Evolution</a>
+<a class="lv3" href="#tw-insight-03-positioning-prompt-as-program">tw-insight-03: Positioning Prompt-as-Program</a>
+<a class="lv3" href="#tw-insight-04-prompt-versioning-is-the-release-gate-for-automatic-optimization">tw-insight-04: Prompt Versioning Is the Release Gate for Automatic Optimization</a>
+<a class="lv3" href="#tw-insight-05-prompt-and-context-as-separate-variables">tw-insight-05: Prompt and Context as Separate Variables</a>
+<a class="lv3" href="#tw-insight-06-social-media-popularity-is-not-evidence">tw-insight-06: Social-Media Popularity Is Not Evidence</a>
+<a class="lv3" href="#tw-insight-07-special-metrics-for-safetycontrol-optimizers">tw-insight-07: Special Metrics for Safety/Control Optimizers</a>
+<a class="lv3" href="#tw-insight-08-trust-process-fields-not-numbers-from-vendor-optimizers">tw-insight-08: Trust Process Fields, Not Numbers, from Vendor Optimizers</a>
+<a class="lv2" href="#conclusion-candidates">Conclusion Candidates</a>
+<a class="lv2" href="#helpful-method-candidates">Helpful Method Candidates</a>
+<a class="lv3" href="#method-01-metric-trace-constrained-prompt-iteration">method-01: Metric + Trace Constrained Prompt Iteration</a>
+<a class="lv3" href="#method-02-prompt-release-gate">method-02: Prompt Release Gate</a>
+<a class="lv3" href="#method-03-prompt-context-variable-audit">method-03: Prompt / Context Variable Audit</a>
+<a class="lv3" href="#method-04-prompt-as-program-spec">method-04: Prompt-as-Program Spec</a>
+<a class="lv3" href="#method-05-social-signal-triage">method-05: Social Signal Triage</a>
+<a class="lv3" href="#method-06-vendor-optimizer-evidence-filter">method-06: Vendor Optimizer Evidence Filter</a>
+<a class="lv2" href="#anti-patterns-and-limits">Anti-patterns And Limits</a>
+<a class="lv2" href="#validation-demo-candidates">Validation / Demo Candidates</a>
+<a class="lv2" href="#recommendations-for-the-final-report">Recommendations for the Final Report</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

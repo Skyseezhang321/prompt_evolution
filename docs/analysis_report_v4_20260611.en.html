@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt Optimization & Self-Evolution: Cross-Channel Synthesis Report v4</title>
+  <style>
+    :root {
+      --bg: #f5f7f5;
+      --paper: #ffffff;
+      --ink: #202329;
+      --muted: #626b74;
+      --line: #d8ded8;
+      --soft: #edf1ed;
+      --teal: #257d72;
+      --blue: #2d67ad;
+      --amber: #af6b08;
+      --rose: #b44a5c;
+      --violet: #665bb4;
+      --green: #4f7e33;
+      --slate: #46525f;
+      --shadow: 0 14px 34px rgba(29, 35, 40, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--blue); text-underline-offset: 3px; }
+
+    .page { max-width: 1180px; margin: 0 auto; padding: 28px 24px 72px; }
+
+    header, section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    header { overflow: hidden; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.28fr 0.72fr;
+      gap: 30px;
+      padding: 38px;
+      border-top: 6px solid var(--teal);
+    }
+
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1 { margin-bottom: 16px; font-size: 33px; line-height: 1.18; font-weight: 760; }
+    h2 { margin-bottom: 14px; font-size: 24px; line-height: 1.3; }
+    h3 { margin-bottom: 9px; font-size: 18px; line-height: 1.4; }
+    h4 { margin-bottom: 6px; font-size: 14px; color: var(--muted); font-weight: 720; letter-spacing: .02em; }
+
+    .lead { max-width: 780px; color: #3f464e; font-size: 18px; line-height: 1.75; }
+
+    .meta-grid { display: grid; gap: 10px; align-content: start; }
+    .meta { padding: 13px 14px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); }
+    .meta strong { display: block; margin-bottom: 3px; color: var(--muted); font-size: 13px; }
+    .meta span { display: block; font-weight: 640; line-height: 1.5; }
+
+    nav {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 16px 38px 22px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfa;
+    }
+    nav a {
+      display: inline-flex; align-items: center; min-height: 34px;
+      padding: 5px 11px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; color: var(--ink); font-size: 14px; text-decoration: none;
+    }
+    nav a:hover { border-color: var(--teal); color: var(--teal); }
+    nav a.to-advisor { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 650; }
+    nav a.to-advisor:hover { background: #1c655c; border-color: #1c655c; color: #fff; }
+
+    section { margin-top: 22px; padding: 30px; }
+    .section-intro { max-width: 940px; color: var(--muted); }
+
+    .part-label {
+      display: inline-block; margin-bottom: 6px; padding: 2px 10px;
+      border-radius: 999px; background: var(--soft); border: 1px solid var(--line);
+      color: var(--slate); font-size: 13px; font-weight: 700;
+    }
+
+    .grid { display: grid; gap: 18px; margin-top: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .insight {
+      padding: 20px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-top: 4px solid var(--teal);
+    }
+    .insight.blue { border-top-color: var(--blue); }
+    .insight.amber { border-top-color: var(--amber); }
+    .insight.rose { border-top-color: var(--rose); }
+    .insight.violet { border-top-color: var(--violet); }
+    .insight.green { border-top-color: var(--green); }
+    .insight.slate { border-top-color: var(--slate); }
+
+    .insight .badge-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .id-badge { font-size: 13px; font-weight: 760; color: var(--slate); }
+
+    .tag {
+      display: inline-flex; align-items: center; min-height: 24px;
+      padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px;
+      background: var(--soft); color: #3d444b; font-size: 12px; font-weight: 650;
+    }
+    .tag.a { background: #e8f3ee; border-color: #b8d9cb; color: #17614f; }
+    .tag.b { background: #e9f0fb; border-color: #b9caeb; color: #214f95; }
+    .tag.d { background: #f1eef8; border-color: #cfc6e8; color: #4f3f8f; }
+    .tag.pre { background: #fbe8ed; border-color: #e6b6c2; color: #96364c; }
+    .tag.new { background: #fff3df; border-color: #ecc98f; color: #7a5208; }
+
+    .hook { font-weight: 600; color: #2a2f36; }
+
+    .block { margin-top: 14px; }
+    .block h4 .em { color: var(--ink); }
+
+    .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+    .code {
+      margin: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px;
+      background: #fbfcfa; color: #2a2f36;
+      font-family: "Cascadia Code", "Consolas", "SFMono-Regular", monospace;
+      font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word;
+    }
+    .code.bad { border-left: 3px solid var(--rose); }
+    .code.good { border-left: 3px solid var(--green); }
+    .code .cmt { color: var(--rose); }
+
+    .stat { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
+    .stat .num {
+      flex: 1; min-width: 150px; padding: 10px 12px;
+      border: 1px solid var(--line); border-radius: 6px; background: #fff;
+    }
+    .stat .num b { display: block; font-size: 23px; line-height: 1.1; font-weight: 770; color: var(--ink); }
+    .stat .num small { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+
+    .howto { margin: 6px 0 0; padding-left: 18px; }
+    .howto li { margin-bottom: 4px; }
+
+    .src { margin-top: 8px; color: var(--muted); font-size: 12.5px; }
+    .limit { margin-top: 10px; padding: 9px 12px; border-left: 3px solid var(--amber); background: #fff8ea; border-radius: 6px; font-size: 13.5px; color: #5a4a2a; }
+    .corro { margin-top: 10px; padding: 9px 12px; border-left: 3px solid var(--teal); background: #eef6f3; border-radius: 6px; font-size: 13px; color: #234b44; }
+    .corro b { color: var(--teal); }
+
+    .callout { margin-top: 18px; padding: 16px 18px; border-left: 4px solid var(--blue); border-radius: var(--radius); background: #eef4fc; }
+
+    .matrix { width: 100%; border: 1px solid var(--line); border-collapse: collapse; border-radius: var(--radius); overflow: hidden; margin-top: 16px; }
+    .matrix th, .matrix td { padding: 11px 13px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-size: 13.5px; }
+    .matrix th { background: #eef1ed; color: #3d444b; font-weight: 720; }
+    .matrix tr:last-child td { border-bottom: 0; }
+    .matrix code { font-size: 12px; }
+    .matrix td.hi { background: #e8f3ee; font-weight: 700; }
+
+    /* four-layer overview */
+    .layerbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+    .layerbar .lb {
+      padding: 14px 15px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-top: 4px solid var(--teal); font-size: 13.5px;
+    }
+    .layerbar .lb b { display: block; margin-bottom: 4px; font-size: 15px; }
+    .layerbar .lb small { color: var(--muted); }
+    .layerbar .lb.l2 { border-top-color: var(--blue); }
+    .layerbar .lb.l3 { border-top-color: var(--amber); }
+    .layerbar .lb.l4 { border-top-color: var(--rose); }
+
+    /* decision guide */
+    .flow { margin: 10px 0 0; padding-left: 22px; counter-reset: step; }
+    .flow li { margin-bottom: 9px; }
+    .flow li b { color: var(--ink); }
+
+    /* evidence pyramid */
+    .pyramid { display: flex; flex-direction: column; align-items: center; gap: 7px; margin: 18px 0 6px; }
+    .pyramid .lvl {
+      color: #fff; border-radius: 6px; padding: 11px 16px; text-align: center;
+      font-weight: 650; font-size: 14px; line-height: 1.4; box-shadow: var(--shadow);
+    }
+    .pyramid .lvl small { display: block; font-weight: 500; font-size: 12px; opacity: .92; }
+
+    /* channel cards */
+    .chan {
+      padding: 22px; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; border-left: 6px solid var(--blue);
+    }
+    .chan.gh { border-left-color: var(--green); }
+    .chan.web { border-left-color: var(--amber); }
+    .chan.tw { border-left-color: var(--blue); }
+    .chan.zh { border-left-color: var(--rose); }
+    .chan.arx { border-left-color: var(--teal); }
+    .chan h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+    .chan .role { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+    .chan .field { margin-top: 13px; }
+    .chan .field h4 { margin-bottom: 4px; }
+    .chan ul { margin: 4px 0 0; padding-left: 18px; }
+    .chan li { margin-bottom: 4px; font-size: 14px; }
+
+    .source-list { columns: 2; column-gap: 34px; padding-left: 18px; }
+    .source-list li { break-inside: avoid; margin-bottom: 8px; }
+
+    /* mind map */
+    .mapwrap { margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; overflow-x: auto; }
+    .mapwrap svg { min-width: 760px; }
+
+    footer { margin-top: 22px; padding: 18px 4px 0; color: var(--muted); font-size: 13.5px; }
+
+    @media (max-width: 920px) {
+      .hero, .grid.two { grid-template-columns: 1fr; }
+      .ba { grid-template-columns: 1fr; }
+      .source-list { columns: 1; }
+      .layerbar { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 14px 12px 42px; }
+      .hero, nav, section { padding: 22px; }
+      h1 { font-size: 26px; }
+      .matrix { display: block; overflow-x: auto; }
+      .layerbar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="hero">
+        <div>
+          <h1>Prompt Optimization & Self-Evolution: Cross-Channel Synthesis Report v4</h1>
+          <p class="lead">This edition upgrades v3's "single-layer structure of 12 insights" into a <strong>four-layer knowledge system</strong>: <b>method map</b> (what methods exist in this field, and how should I choose) → <b>workflow insights</b> (what discipline to keep when you actually optimize, expanded from 12 to 14) → <b>engineering implementation</b> (how to operate optimization in production) → <b>pitfalls & boundaries</b> (how not to be fooled by hype, legacy frameworks, or yourself). Every layer grows directly out of the latest deep-dive output from five channels (arXiv / GitHub / other platforms / Twitter/X / Zhihu).</p>
+          <div class="badge-row" style="margin-top:12px">
+            <span class="tag new">Method map & selection guide</span>
+            <span class="tag a">14 insights (+2 new additions)</span>
+            <span class="tag b">Engineering implementation layer</span>
+            <span class="tag d">12 pitfall clarifications</span>
+            <span class="tag pre">Scope boundaries + frontier gaps</span>
+          </div>
+          <div class="layerbar">
+            <div class="lb"><b>① Method map</b><small>Seven-method evolution lineage, six-method side-by-side comparison, selection guide, 7 method clusters</small></div>
+            <div class="lb l2"><b>③ Workflow insights</b><small>14 disciplines, organized by the action order of one optimization run (A–G)</small></div>
+            <div class="lb l3"><b>④ Engineering implementation</b><small>Five-tuple, tool maturity tiering, research→tool mapping, release gate</small></div>
+            <div class="lb l4"><b>⑥⑨ Pitfalls & boundaries</b><small>12 misreading clarifications, scope declaration, frontier gaps</small></div>
+          </div>
+        </div>
+        <div class="meta-grid">
+          <div class="meta">
+            <strong>One-sentence bottom line</strong>
+            <span>Automatically optimizing prompts is not "letting the model fix the prompt," but a set of engineering discipline: "first judge whether it's worth it → choose the right method and components → turn failures into editable evidence → multiple candidates + validation-set filtering → operate with versioning and rollback."</span>
+          </div>
+          <div class="meta">
+            <strong>How to read the evidence here</strong>
+            <span>A = paper/official documentation/source code with structured notes; B = engineering practice that recurs across multiple sources; C = this project's experiments (none yet); D = synthesized inference/leads. Paper numbers = hold under that paper's setting, not necessarily on your task; prompts/dialogues marked "(illustrative)" are fictional for explanation.</span>
+          </div>
+          <div class="meta">
+            <strong>This project's validation status</strong>
+            <span>As of 2026-06-11: 37 paper deep-read notes, 4 GitHub repo source audits. All 14 insights are "not yet reproduced and validated in this project"; some non-arXiv channel candidates are still pending; 2026 new preprints (recent-preprint) can only be relied upon after independent reproduction.</span>
+          </div>
+        </div>
+      </div>
+      <nav aria-label="Page navigation">
+        <a class="to-advisor" href="../advisor/advisor.html?lang=en">💬 Advisor Home</a>
+        <a href="analysis_report_v4_20260611.html">中文</a>
+        <a href="#summary">⓪ Executive summary</a>
+        <a href="#bigmap">🗺 Panoramic mind map</a>
+        <a href="#map">① Method map</a>
+        <a href="#pyramid">② Evidence pyramid</a>
+        <a href="#partA">A Is it worth it</a>
+        <a href="#partB">B Learn from failure</a>
+        <a href="#partC">C Don't be fooled</a>
+        <a href="#partD">D What to change</a>
+        <a href="#partE">E Memory/multi-agent</a>
+        <a href="#partF">F Secondhand</a>
+        <a href="#partG">G New additions</a>
+        <a href="#engineering">④ Engineering implementation</a>
+        <a href="#methods">⑤ Reusable methods</a>
+        <a href="#myths">⑥ Pitfall clarifications</a>
+        <a href="#risks">⑦ Anti-patterns/risks</a>
+        <a href="#channels">⑧ Per-channel quick view</a>
+        <a href="#coverage">⑨ Boundaries & gaps</a>
+        <a href="#roadmap">⑩ First validation batch</a>
+        <a href="#sources">⑪ Evidence index</a>
+      </nav>
+    </header>
+
+    <section>
+      <div class="callout">
+        <strong>What changed versus v3:</strong> v3's "6 groups of 12" framework was fixed in the v2 (2026-06-09) era; since then, continuous deep-dives across the channels have produced whole layers of content that framework can't hold. v4's changes: <b>①</b> Added "executive summary" and "method map" (seven-method evolution lineage, six-method side-by-side comparison, selection guide, 7 method clusters) — answering what v3 didn't: "where do methods come from, how do they relate, and which should I pick"; <b>②</b> Insights expanded from 12 to 14 (13 zero-cost structural transformation, 14 versioning the optimizer/judge too), with <b>the meaning of legacy numbers 01–12 unchanged</b> (the reader handbook, conversational assistant, and unified catalog all depend on this numbering), and evidence upgraded for 4 legacy insights (03 +SPEAR code-tool diagnosis, 06 promoted to a proactive hygiene metric, 07 +MIPROv2 triage rule, 11 +time dimension); <b>③</b> Added the "engineering implementation" layer (five-tuple, tool maturity tiering, research→tool implementation mapping, release gate and ledger) and 12 pitfall clarifications; <b>④</b> The coverage section was upgraded into an explicit declaration of "scope boundaries + frontier gaps," and the evidence index gained a repo↔paper cross-reference table. <a href="./analysis_report_v3_20260610.html">v3</a>, <a href="./analysis_report_v2_20260609.html">v2</a> and <a href="./analysis_report_v1_20260608.html">v1</a> are kept for comparison and rollback.
+      </div>
+    </section>
+
+    <!-- ⓪ EXECUTIVE SUMMARY -->
+    <section id="summary">
+      <h2>⓪ Executive summary</h2>
+      <p class="section-intro">The report's main judgments in one page. Each can be traced to an evidence chain in the body; see the masthead notes for evidence levels.</p>
+      <div class="block">
+        <h4>Overall judgment</h4>
+        <p>As of 2026-06, the field of automatic prompt optimization (APO) has converged from "find a smarter rewriting algorithm" to "build an auditable optimization engineering practice": the real classification axis on the method side is the <b>information density of the feedback signal</b> (scalar → critique → full trace), and the entry ticket on the engineering side is the <b>five-piece kit</b> (prompt + dataset + metric + trace + constraints). Algorithm and infrastructure are both indispensable — papers provide the mechanism and the numbers, while running in production relies on versioning, traces, validation-set isolation, and rollback.</p>
+      </div>
+      <div class="block">
+        <h4>The five most important actionable judgments</h4>
+        <ol class="howto">
+          <li><b>Do a checkup before optimizing.</b> Under some settings, 49% of optimization runs are worse than zero-shot (Coin Flip, 72 runs, Haiku 4.5); the only task that yields positive returns for all 6 methods is the structured JSON output task. If the headroom doesn't exceed the noise floor, don't spend the money. <span class="tag a">A</span></li>
+          <li><b>With a dev set, optimize examples first, not instructions.</b> MIPROv2's triage conclusion: for most tasks, optimizing bootstrapped demonstrations works better than optimizing the instruction, and joint optimization is best in 5 of 7 tasks; instruction optimization is decisive only on tasks "with hidden conditional rules." <span class="tag a">A</span></li>
+          <li><b>Feedback information density determines sample efficiency.</b> From scalar (APE/OPRO) to failure critique (ProTeGi/TextGrad) to full execution trace (GEPA), the information extracted per rollout keeps rising — GEPA used about 3,936 rollouts to surpass GRPO (RL) which used 24,000 rollouts. Choose a method by looking first at what signal your system can produce. <span class="tag a">A</span></li>
+          <li><b>Zero-cost structural transformation is the new control baseline.</b> Repeating the entire prompt verbatim once wins significantly in 47/70 cases across 7 models in non-reasoning mode, with 0 significant losses — any search-based optimization gain should first answer "can it beat this zero-intelligence transformation?" <span class="tag a">A</span><span class="tag pre">recent</span></li>
+          <li><b>No five-piece kit, no optimization loop.</b> The optimizer's input is <code>prompt + dataset + metric + trace + constraints</code>, not a piece of text to be polished; without an eval, so-called optimization is just stylistic rewriting. This is the same conclusion that four engineering channels converged on independently. <span class="tag b">B</span></li>
+        </ol>
+      </div>
+      <div class="block">
+        <h4>Biggest risks</h4>
+        <p>Prompt-bloat-style overfitting (left unchecked, TextGrad bloats the prompt to 14.7× length, with 86% covertly altering the task definition), reward hacking (the optimizer reaches the evaluator), memory contamination (unfiltered history causes cross-task negative transfer), vendor number hallucination (task/metric/presentation biased toward the narrative), and <b>cross-model fragility</b> — the same method configuration that wins across the board on Haiku falls below zero-shot in 14 of 24 means when moved to Nova Lite.</p>
+      </div>
+      <div class="block">
+        <h4>Honest disclosure</h4>
+        <p>This project has no C-level (this project's experiments) evidence yet; all conclusions are at the literature and source-code level. The GitHub channel's canonical optimizer repos (gepa / PromptWizard / promptomatix and 5 others) are registered as <b>not yet audited</b>; all 21 insight cards from the Twitter channel are pending trace-chain backfill; the Zhihu channel is positioned as a leads layer. All 44 numbered cards across the three social/secondhand channels have been verified card-by-card (2026-06-12): <b>no viewpoint conflicts with the main line</b>, and content not promoted into the main line is collected in the <a href="./platform_insights_supplement_20260612.en.html">Other-Platform Content Supplement</a> and the verification block at the end of ⑧. See <a href="#coverage">⑨ Boundaries & gaps</a>.</p>
+      </div>
+    </section>
+
+    <!-- BIG MIND MAP -->
+    <section id="bigmap">
+      <h2>Panoramic mind map: see the whole v4 argument in one picture</h2>
+      <p class="section-intro">Starting from the root node on the left: the <strong>evidence base (5 channels)</strong> supports a four-layer knowledge system — <strong>method map</strong> (how to choose), <strong>14 workflow insights A–G</strong> (how to do it), <strong>engineering implementation</strong> (how to operate), <strong>pitfalls & boundaries</strong> (how not to be fooled) — finally landing in reusable methods and the first validation batch. The mind map is a fully self-contained SVG generated by <code>scripts/build_v4_mindmap.py</code> — after a structural change, rerun the script to regenerate it (fixing v3's leftover problem of "the layout script was never committed, so it couldn't be regenerated"); the editable Mermaid source is at <a href="./prompt_evolution_mindmap_20260610.en.html">prompt_evolution_mindmap</a>.</p>
+      <div class="mapwrap">
+<!-- V4MINDMAP:BEGIN -->
+<svg viewBox="0 0 1190 1547" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Prompt optimization & self-evolution v4 panoramic mind map" font-family="Microsoft YaHei, PingFang SC, Segoe UI, Arial, sans-serif" style="width:100%;height:auto;display:block">
+<rect x="0" y="0" width="1190" height="1547" fill="#ffffff"/>
+<text x="18" y="36" font-size="21" font-weight="760" fill="#202329">Prompt Optimization & Self-Evolution · v4 Panoramic Mind Map (four-layer knowledge system)</text>
+<text x="18" y="62" font-size="13.5" fill="#626b74">One-sentence thesis: automatic prompt optimization is the engineering discipline of "first judge whether it's worth it → choose the right method and components → turn failures into editable evidence → multiple candidates + validation-set filtering → operate with versioning and rollback," not letting the model polish it once.</text>
+<path d="M232,830.5 C247,830.5 247,236.0 262,236.0" fill="none" stroke="#2d67ad" stroke-width="2" opacity="0.55"/>
+<path d="M232,830.5 C247,830.5 247,461.5 262,461.5" fill="none" stroke="#257d72" stroke-width="2" opacity="0.55"/>
+<path d="M232,830.5 C247,830.5 247,728.0 262,728.0" fill="none" stroke="#665bb4" stroke-width="2" opacity="0.55"/>
+<path d="M232,830.5 C247,830.5 247,953.5 262,953.5" fill="none" stroke="#af6b08" stroke-width="2" opacity="0.55"/>
+<path d="M232,830.5 C247,830.5 247,1117.5 262,1117.5" fill="none" stroke="#b44a5c" stroke-width="2" opacity="0.55"/>
+<path d="M232,830.5 C247,830.5 247,1302.0 262,1302.0" fill="none" stroke="#4f7e33" stroke-width="2" opacity="0.55"/>
+<path d="M232,830.5 C247,830.5 247,1466.0 262,1466.0" fill="none" stroke="#46525f" stroke-width="2" opacity="0.55"/>
+<path d="M512,236.0 C527,236.0 527,154.0 542,154.0" fill="none" stroke="#2d67ad" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,236.0 C527,236.0 527,195.0 542,195.0" fill="none" stroke="#2d67ad" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,236.0 C527,236.0 527,236.0 542,236.0" fill="none" stroke="#2d67ad" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,236.0 C527,236.0 527,277.0 542,277.0" fill="none" stroke="#2d67ad" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,236.0 C527,236.0 527,318.0 542,318.0" fill="none" stroke="#2d67ad" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,461.5 C527,461.5 527,359.0 542,359.0" fill="none" stroke="#257d72" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,461.5 C527,461.5 527,400.0 542,400.0" fill="none" stroke="#257d72" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,461.5 C527,461.5 527,441.0 542,441.0" fill="none" stroke="#257d72" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,461.5 C527,461.5 527,482.0 542,482.0" fill="none" stroke="#257d72" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,461.5 C527,461.5 527,523.0 542,523.0" fill="none" stroke="#257d72" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,461.5 C527,461.5 527,564.0 542,564.0" fill="none" stroke="#257d72" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,605.0 542,605.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,646.0 542,646.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,687.0 542,687.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,728.0 542,728.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,769.0 542,769.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,810.0 542,810.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,728.0 C527,728.0 527,851.0 542,851.0" fill="none" stroke="#665bb4" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,953.5 C527,953.5 527,892.0 542,892.0" fill="none" stroke="#af6b08" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,953.5 C527,953.5 527,933.0 542,933.0" fill="none" stroke="#af6b08" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,953.5 C527,953.5 527,974.0 542,974.0" fill="none" stroke="#af6b08" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,953.5 C527,953.5 527,1015.0 542,1015.0" fill="none" stroke="#af6b08" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1117.5 C527,1117.5 527,1056.0 542,1056.0" fill="none" stroke="#b44a5c" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1117.5 C527,1117.5 527,1097.0 542,1097.0" fill="none" stroke="#b44a5c" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1117.5 C527,1117.5 527,1138.0 542,1138.0" fill="none" stroke="#b44a5c" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1117.5 C527,1117.5 527,1179.0 542,1179.0" fill="none" stroke="#b44a5c" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1302.0 C527,1302.0 527,1220.0 542,1220.0" fill="none" stroke="#4f7e33" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1302.0 C527,1302.0 527,1261.0 542,1261.0" fill="none" stroke="#4f7e33" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1302.0 C527,1302.0 527,1302.0 542,1302.0" fill="none" stroke="#4f7e33" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1302.0 C527,1302.0 527,1343.0 542,1343.0" fill="none" stroke="#4f7e33" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1302.0 C527,1302.0 527,1384.0 542,1384.0" fill="none" stroke="#4f7e33" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1466.0 C527,1466.0 527,1425.0 542,1425.0" fill="none" stroke="#46525f" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1466.0 C527,1466.0 527,1466.0 542,1466.0" fill="none" stroke="#46525f" stroke-width="1.4" opacity="0.42"/>
+<path d="M512,1466.0 C527,1466.0 527,1507.0 542,1507.0" fill="none" stroke="#46525f" stroke-width="1.4" opacity="0.42"/>
+<rect x="18" y="782.5" width="214" height="96" rx="10" fill="#202329"/>
+<text x="125.0" y="810.5" text-anchor="middle" font-size="16" font-weight="760" fill="#ffffff">Prompt Optimization</text>
+<text x="125.0" y="832.5" text-anchor="middle" font-size="16" font-weight="760" fill="#ffffff">& Self-Evolution</text>
+<text x="125.0" y="856.5" text-anchor="middle" font-size="11.5" fill="#cdd3da">v4 · four-layer knowledge system</text>
+<rect x="262" y="219.0" width="250" height="34" rx="7" fill="#2d67ad"/>
+<text x="387.0" y="240.5" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Evidence base · 5 channels</text>
+<rect x="262" y="444.5" width="250" height="34" rx="7" fill="#257d72"/>
+<text x="387.0" y="466.0" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Layer 1 · Method map (how to choose)</text>
+<rect x="262" y="711.0" width="250" height="34" rx="7" fill="#665bb4"/>
+<text x="387.0" y="732.5" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Layer 2 · 14 workflow insights (how to do it)</text>
+<rect x="262" y="936.5" width="250" height="34" rx="7" fill="#af6b08"/>
+<text x="387.0" y="958.0" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Layer 3 · Engineering implementation (how to operate)</text>
+<rect x="262" y="1100.5" width="250" height="34" rx="7" fill="#b44a5c"/>
+<text x="387.0" y="1122.0" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Layer 4 · Pitfalls & boundaries (how not to be fooled)</text>
+<rect x="262" y="1285.0" width="250" height="34" rx="7" fill="#4f7e33"/>
+<text x="387.0" y="1306.5" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Reusable methods (HM)</text>
+<rect x="262" y="1449.0" width="250" height="34" rx="7" fill="#46525f"/>
+<text x="387.0" y="1470.5" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">First minimal validation batch P0–P2</text>
+<rect x="542" y="139.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="139.0" width="4" height="30" rx="2" fill="#2d67ad"/>
+<text x="556" y="158.5" font-size="12.5" fill="#2a2f36">arXiv · A: method mechanisms + effect numbers (39 deep-read notes)</text>
+<rect x="542" y="180.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="180.0" width="4" height="30" rx="2" fill="#2d67ad"/>
+<text x="556" y="199.5" font-size="12.5" fill="#2a2f36">GitHub · B: engineering structure / governance (core4 audited, 5 canonical repos pending)</text>
+<rect x="542" y="221.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="221.0" width="4" height="30" rx="2" fill="#2d67ad"/>
+<text x="556" y="240.5" font-size="12.5" fill="#2a2f36">Other platforms · B: production tool loop / governance is the precondition</text>
+<rect x="542" y="262.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="262.0" width="4" height="30" rx="2" fill="#2d67ad"/>
+<text x="556" y="281.5" font-size="12.5" fill="#2a2f36">Twitter/X · B*: adoption signal / research→tool mapping (trace pending)</text>
+<rect x="542" y="303.0" width="630" height="30" rx="6" fill="#e9f0fb" stroke="#2d67ad" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="303.0" width="4" height="30" rx="2" fill="#2d67ad"/>
+<text x="556" y="322.5" font-size="12.5" fill="#2a2f36">Zhihu · D: community understanding / concentration of pitfalls (leads, not evidence)</text>
+<rect x="542" y="344.0" width="630" height="30" rx="6" fill="#e8f3ee" stroke="#257d72" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="344.0" width="4" height="30" rx="2" fill="#257d72"/>
+<text x="556" y="363.5" font-size="12.5" fill="#2a2f36">Seven-method main line: APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA</text>
+<rect x="542" y="385.0" width="630" height="30" rx="6" fill="#e8f3ee" stroke="#257d72" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="385.0" width="4" height="30" rx="2" fill="#257d72"/>
+<text x="556" y="404.5" font-size="12.5" fill="#2a2f36">Hidden thread 1: feedback info density scalar→critique→trace (sets sample efficiency)</text>
+<rect x="542" y="426.0" width="630" height="30" rx="6" fill="#e8f3ee" stroke="#257d72" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="426.0" width="4" height="30" rx="2" fill="#257d72"/>
+<text x="556" y="445.5" font-size="12.5" fill="#2a2f36">Hidden thread 2: optimization target rises single instruction→instruction+examples→multi-module program</text>
+<rect x="542" y="467.0" width="630" height="30" rx="6" fill="#e8f3ee" stroke="#257d72" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="467.0" width="4" height="30" rx="2" fill="#257d72"/>
+<text x="556" y="486.5" font-size="12.5" fill="#2a2f36">Hidden thread 3: search structure blind sampling→beam→MCTS→Pareto pool (independent dimension)</text>
+<rect x="542" y="508.0" width="630" height="30" rx="6" fill="#e8f3ee" stroke="#257d72" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="508.0" width="4" height="30" rx="2" fill="#257d72"/>
+<text x="556" y="527.5" font-size="12.5" fill="#2a2f36">Six methods side-by-side: only structured tasks win across the board; cross-model fragile (Haiku→Nova collapse)</text>
+<rect x="542" y="549.0" width="630" height="30" rx="6" fill="#e8f3ee" stroke="#257d72" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="549.0" width="4" height="30" rx="2" fill="#257d72"/>
+<text x="556" y="568.5" font-size="12.5" fill="#2a2f36">Six selection questions + 7 method clusters; if you can't beat the APE/OPRO floor, don't bring in complex methods</text>
+<rect x="542" y="590.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="590.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="609.5" font-size="12.5" fill="#2a2f36">A Is it worth it: 01 headroom checkup · 02 pick objectively-scorable tasks</text>
+<rect x="542" y="631.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="631.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="650.5" font-size="12.5" fill="#2a2f36">B Learn from failure: 03 turn failures into editable evidence · 04 list root-cause hypotheses first</text>
+<rect x="542" y="672.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="672.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="691.5" font-size="12.5" fill="#2a2f36">C Don't be fooled: 05 multiple candidates + validation set · 06 hygiene gate against bloat</text>
+<rect x="542" y="713.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="713.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="732.5" font-size="12.5" fill="#2a2f36">D What to change: 07 examples first · 08 label the component · 09 tool schema</text>
+<rect x="542" y="754.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="754.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="773.5" font-size="12.5" fill="#2a2f36">E Memory/multi-agent: 10 filter memory · 11 credit assignment</text>
+<rect x="542" y="795.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="795.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="814.5" font-size="12.5" fill="#2a2f36">F Secondhand: 12 social media / secondhand = leads, not evidence</text>
+<rect x="542" y="836.0" width="630" height="30" rx="6" fill="#eceaf6" stroke="#665bb4" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="836.0" width="4" height="30" rx="2" fill="#665bb4"/>
+<text x="556" y="855.5" font-size="12.5" fill="#2a2f36">G New additions: 13 zero-cost structural transformation · 14 version the optimizer/judge</text>
+<rect x="542" y="877.0" width="630" height="30" rx="6" fill="#fbf0dc" stroke="#af6b08" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="877.0" width="4" height="30" rx="2" fill="#af6b08"/>
+<text x="556" y="896.5" font-size="12.5" fill="#2a2f36">Five-piece kit: prompt + dataset + metric + trace + constraints</text>
+<rect x="542" y="918.0" width="630" height="30" rx="6" fill="#fbf0dc" stroke="#af6b08" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="918.0" width="4" height="30" rx="2" fill="#af6b08"/>
+<text x="556" y="937.5" font-size="12.5" fill="#2a2f36">Three tool stages: Promptfoo → Langfuse/LangSmith → OPIK/Arize</text>
+<rect x="542" y="959.0" width="630" height="30" rx="6" fill="#fbf0dc" stroke="#af6b08" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="959.0" width="4" height="30" rx="2" fill="#af6b08"/>
+<text x="556" y="978.5" font-size="12.5" fill="#2a2f36">Research→tool mapping: GEPA / DSPy / versioning / productized APO</text>
+<rect x="542" y="1000.0" width="630" height="30" rx="6" fill="#fbf0dc" stroke="#af6b08" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1000.0" width="4" height="30" rx="2" fill="#af6b08"/>
+<text x="556" y="1019.5" font-size="12.5" fill="#2a2f36">Release gate & ledger: frozen evaluator · rollback point · log optimizer/judge</text>
+<rect x="542" y="1041.0" width="630" height="30" rx="6" fill="#fbe8ed" stroke="#b44a5c" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1041.0" width="4" height="30" rx="2" fill="#b44a5c"/>
+<text x="556" y="1060.5" font-size="12.5" fill="#2a2f36">12 pitfalls: GEPA≠replacing RL · DSPy≠auto-rewrite · gradient is a metaphor…</text>
+<rect x="542" y="1082.0" width="630" height="30" rx="6" fill="#fbe8ed" stroke="#b44a5c" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1082.0" width="4" height="30" rx="2" fill="#b44a5c"/>
+<text x="556" y="1101.5" font-size="12.5" fill="#2a2f36">9 anti-patterns: reward hacking · unbounded memory · only watching the average…</text>
+<rect x="542" y="1123.0" width="630" height="30" rx="6" fill="#fbe8ed" stroke="#b44a5c" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1123.0" width="4" height="30" rx="2" fill="#b44a5c"/>
+<text x="556" y="1142.5" font-size="12.5" fill="#2a2f36">Deliberate boundaries: soft prompt / multimodal / full context systems out of scope</text>
+<rect x="542" y="1164.0" width="630" height="30" rx="6" fill="#fbe8ed" stroke="#b44a5c" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1164.0" width="4" height="30" rx="2" fill="#b44a5c"/>
+<text x="556" y="1183.5" font-size="12.5" fill="#2a2f36">Frontier gaps: bi-level (top priority) · online · constrained</text>
+<rect x="542" y="1205.0" width="630" height="30" rx="6" fill="#eaf1e3" stroke="#4f7e33" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1205.0" width="4" height="30" rx="2" fill="#4f7e33"/>
+<text x="556" y="1224.5" font-size="12.5" fill="#2a2f36">HM-01 checkup gate (+insight 13 zero-cost control)</text>
+<rect x="542" y="1246.0" width="630" height="30" rx="6" fill="#eaf1e3" stroke="#4f7e33" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1246.0" width="4" height="30" rx="2" fill="#4f7e33"/>
+<text x="556" y="1265.5" font-size="12.5" fill="#2a2f36">HM-02 Trace-First critique rewrite (use code to aggregate when failures are many)</text>
+<rect x="542" y="1287.0" width="630" height="30" rx="6" fill="#eaf1e3" stroke="#4f7e33" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1287.0" width="4" height="30" rx="2" fill="#4f7e33"/>
+<text x="556" y="1306.5" font-size="12.5" fill="#2a2f36">HM-03 exemplar optimization baseline (MIPROv2 triage rule)</text>
+<rect x="542" y="1328.0" width="630" height="30" rx="6" fill="#eaf1e3" stroke="#4f7e33" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1328.0" width="4" height="30" rx="2" fill="#4f7e33"/>
+<text x="556" y="1347.5" font-size="12.5" fill="#2a2f36">HM-04 artifact ledger (optimizer / judge logged too)</text>
+<rect x="542" y="1369.0" width="630" height="30" rx="6" fill="#eaf1e3" stroke="#4f7e33" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1369.0" width="4" height="30" rx="2" fill="#4f7e33"/>
+<text x="556" y="1388.5" font-size="12.5" fill="#2a2f36">HM-05 candidate Context-First diagnosis + lead triage (I-12)</text>
+<rect x="542" y="1410.0" width="630" height="30" rx="6" fill="#eceef1" stroke="#46525f" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1410.0" width="4" height="30" rx="2" fill="#46525f"/>
+<text x="556" y="1429.5" font-size="12.5" fill="#2a2f36">P0: zero-cost three-arm A/B · pre-optimization checkup · examples vs instructions</text>
+<rect x="542" y="1451.0" width="630" height="30" rx="6" fill="#eceef1" stroke="#46525f" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1451.0" width="4" height="30" rx="2" fill="#46525f"/>
+<text x="556" y="1470.5" font-size="12.5" fill="#2a2f36">P1: root-cause hypothesis rewrite · hygiene gate</text>
+<rect x="542" y="1492.0" width="630" height="30" rx="6" fill="#eceef1" stroke="#46525f" stroke-width="1" stroke-opacity="0.5"/>
+<rect x="542" y="1492.0" width="4" height="30" rx="2" fill="#46525f"/>
+<text x="556" y="1511.5" font-size="12.5" fill="#2a2f36">P2: tool schema · filtered memory</text>
+</svg>
+<!-- V4MINDMAP:END -->
+      </div>
+    </section>
+
+    <!-- ① METHOD MAP -->
+    <section id="map">
+      <h2>① Method map: seven-method evolution, side-by-side comparison, and how to choose</h2>
+      <p class="section-intro">v3 only told you "what discipline to keep," without answering "what methods exist in this field, how they relate, and which I should pick." This section fills that in: first see how the seven-method main line evolves step by step, then look at the only numbers that can be fairly compared side by side, and finally get a selection guide. Full narrative at <a href="./apo_seven_methods_primer_20260611.en.html">APO seven-method main-line primer</a> and <a href="./classic_optimizer_methods_comparison_20260610.en.html">classic six-method side-by-side comparison</a>.</p>
+
+      <div class="block">
+        <h4>Seven-method evolution lineage (baseline anchors, not a leaderboard)</h4>
+        <table class="matrix" aria-label="Seven-method evolution lineage">
+          <thead><tr><th>Method</th><th>Year</th><th>Feedback signal</th><th>Optimization target</th><th>Signal family</th><th>Gap left (filled by whom)</th></tr></thead>
+          <tbody>
+            <tr><td><b>APE</b></td><td>2022</td><td>Scalar score on a small training set</td><td>Single instruction</td><td>Scalar</td><td>Doesn't use failure information, search is nearly blind → ProTeGi</td></tr>
+            <tr><td><b>ProTeGi</b></td><td>2023</td><td>Natural-language critique of failure samples</td><td>Single prompt</td><td>critique</td><td>Peaks in ~3 steps then overfits; critique can mislead → TextGrad / VISTA</td></tr>
+            <tr><td><b>OPRO</b></td><td>2023</td><td>Ascending trajectory of historical (prompt, score)</td><td>Single instruction</td><td>Scalar</td><td>Doesn't know why it fails; the best prompt is highly model-specific → critique/trace thread</td></tr>
+            <tr><td><b>DSPy</b></td><td>2023</td><td>metric pass/fail (trace used to filter demos)</td><td>Multi-module program, mainly demonstrations</td><td>Scalar (with trace filtering)</td><td>No automatic optimization at the instruction layer → MIPROv2</td></tr>
+            <tr><td><b>TextGrad</b></td><td>2024</td><td>Textual critique back-propagated node by node</td><td>Any text variable</td><td>critique</td><td>"Gradient" is a metaphor, not a real gradient; costly and unreliable once constraints pile up → GEPA / TextReg</td></tr>
+            <tr><td><b>MIPROv2</b></td><td>2024</td><td>metric + Bayesian surrogate model</td><td>Per-module instruction × demo combinations</td><td>Scalar</td><td>Can't infer hidden rules, only picks within a fixed candidate set → GEPA</td></tr>
+            <tr><td><b>GEPA</b></td><td>2025</td><td>Reflection on the full execution/evaluation trace</td><td>Multi-module prompt pool (Pareto front)</td><td>trace</td><td>Still below GRPO on AIME-2025; advantage depends on feedback quality</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>Three hidden threads:</strong> ① <b>Feedback information density determines sample efficiency</b> — scalar → critique → trace, the information extracted per rollout keeps rising, directly matching GEPA's claim of up to 35× fewer rollouts than GRPO; when evaluating a method, classify it into the three layers "scalar / critique / trace," don't lump it together as "an LLM rewriting prompts." ② <b>Raising the optimization target's dimension depends on program abstraction</b> — from single instruction to instruction+demonstration to multi-module system, DSPy's signature/module/compile abstraction is the foundation, and both MIPROv2 and GEPA grow on top of it; any result must be recorded together with the program structure and optimization strategy to be reproducible. ③ <b>Search structure is an evolution dimension independent of the feedback signal</b> (added 2026-06-12) — blind sampling → beam → MCTS planning → Pareto candidate pool; PromptAgent's equal-exploration ablation (MCTS 0.754 &gt; Greedy 0.698 ≈ Beam 0.697 &gt; MC 0.635) and GEPA's "Pareto selection is the main contribution" ablation cross-validate across papers, so when comparing optimizers you should put the exploration candidate count on its own budget axis and ablate search structure and feedback signal separately. The main-line ordering is chronological; mechanically the critique thread and the program thread merge into GEPA on two tracks — see the structural basis in <a href="./apo_seven_methods_primer_20260611.en.html">the seven-method primer's "why this main line"</a>.
+        </div>
+      </div>
+
+      <div class="block">
+        <h4>Side-by-side comparison: the only numbers that can be fairly compared (Coin Flip same framework, LLM-judge 0–100)</h4>
+        <table class="matrix" aria-label="Six-method side-by-side comparison">
+          <thead><tr><th>Claude Haiku 4.5</th><th>Zero-Shot</th><th>APE</th><th>OPRO</th><th>EvoPrompt</th><th>PromptBreeder</th><th>DSPy-style</th><th>PROSE</th></tr></thead>
+          <tbody>
+            <tr><td><b>HelpSteer2 (structured JSON)</b></td><td>68.0</td><td>69.3</td><td>73.8</td><td class="hi">74.8</td><td>74.6</td><td>69.8</td><td>74.4</td></tr>
+            <tr><td><b>Other three tasks (Feedback-Bench / WildBench / XSum)</b></td><td colspan="7">Average gain is negative or near-zero; the 6 methods' differences are not statistically significant</td></tr>
+          </tbody>
+        </table>
+        <ul class="howto" style="margin-top:10px">
+          <li><b>In the whole table, only on HelpSteer2 does every optimizer beat zero-shot</b> — again confirming "only structured, objectively-scorable tasks have stable headroom" (insight 02).</li>
+          <li><b>Cross-model fragility</b>: moving the same framework to Amazon Nova Lite, 14 of 24 method×task means fall below zero-shot; the 6/6 sweep on HelpSteer2 with Haiku collapses to 1/6. "Effective on model X" cannot be assumed to transfer.</li>
+          <li><b>PROSE is a negative result</b>: adding risk terms to the fitness (mean+Sharpe+DRO) yields no measurable robustness advantage — the instability comes from upstream (headroom coupled to the task), not from the selection signal being insufficiently clever.</li>
+          <li><b>Raw scores cannot be compared across papers</b> (task, model, and era all differ); any "X beats Y" claim must be bound to the same model + task + budget.</li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h4>Selection guide: answer six questions before choosing a method</h4>
+        <ol class="flow">
+          <li><b>Do you have a held-out set and a scorer?</b> No → don't choose a method yet, go assemble the five-piece kit (<a href="#engineering">④ Engineering implementation</a>); without an eval, any "optimization" is just stylistic rewriting.</li>
+          <li><b>Did you pass the headroom checkup?</b> Run the checkup with HM-01 (insight 01); if headroom doesn't exceed the noise floor → stop. While you're at it, first test the <b>zero-cost structural transformation</b> (insight 13) as a control baseline.</li>
+          <li><b>Do you have a dev set?</b> First run the exemplar optimization baseline (HM-03): for most tasks it's more effective than changing the instruction (MIPROv2 / Teach Better).</li>
+          <li><b>Does the task have "hidden conditional rules that a few examples can't express"?</b> Yes → only then is instruction optimization worth doing (MIPROv2 triage conclusion); otherwise examples + light instruction tweaks are enough.</li>
+          <li><b>Can your system produce an interpretable trace (agent / tools / multi-module)?</b> Yes → reflection-style methods (GEPA family) have an information-density advantage; if you can only give a scalar score → the advantage narrows, so honestly use APE/OPRO-style search.</li>
+          <li><b>Can the complex method beat the floor baseline?</b> Any new method's control group must include at least APE (propose-then-select) and OPRO (scalar trajectory); if it can't beat them, it isn't worth introducing.</li>
+        </ol>
+      </div>
+
+      <div class="block">
+        <h4>The full picture: 7 method clusters (taxonomy)</h4>
+        <table class="matrix" aria-label="Method clusters">
+          <thead><tr><th>Cluster</th><th>Representative methods</th><th>One-liner</th></tr></thead>
+          <tbody>
+            <tr><td>① Classic APO and baseline anchors</td><td>APE → ProTeGi → OPRO → EvoPrompt → PromptBreeder</td><td>Generate-and-select and early search paradigms, the floor control for any experiment</td></tr>
+            <tr><td>② Textual gradient and reflection-style optimization</td><td>ProTeGi → TextGrad → CriSPO → Modular PO → TextReg → VISTA</td><td>Rewriting driven by natural-language critique; "gradient" is a metaphor and must be paired with root-cause hypotheses and regularization</td></tr>
+            <tr><td>③ Evolutionary, self-referential, and memory-based self-evolution</td><td>PromptBreeder → GEPA → MemAPO → SePO → Prompt Codebooks</td><td>Population + reflection + memory; only filtered memory is useful</td></tr>
+            <tr><td>④ Prompt-as-Program and framework tooling</td><td>DSPy → AutoPDL → Promptomatix → promptolution</td><td>Raise the prompt's dimension into a compilable program object</td></tr>
+            <tr><td>⑤ Agent / multi-agent / tool-chain optimization</td><td>AutoPDL → SPEAR → MASPO → MAPRO → JTPRO</td><td>Optimization target extends to patterns, tool schemas, and multi-agent credit</td></tr>
+            <tr><td>⑥ Preference, judge, and governance</td><td>PrefPO → LLM Prompt Duel → prompt-opt jailbreaking research</td><td>Low-label signals, judge hygiene, and safety boundaries</td></tr>
+            <tr><td>⑦ Applied APO and empirical studies</td><td>KG Construction → AutoMedPrompt → ArchEHR-QA → APRIL</td><td>Domain evidence: returns depend on schema complexity and task structure</td></tr>
+          </tbody>
+        </table>
+        <p class="src">The full 7-cluster matrix and per-paper mapping is at <a href="./arxiv_top80_taxonomy.en.html">arXiv top80 taxonomy</a>; the external completeness check (against 3 surveys, conclusion: no whole-block omission within the declared scope) is at <a href="./arxiv_taxonomy_completeness_check_20260610.md">taxonomy completeness check</a>; the time-slice synthesis of the 25 papers from 2025/2026 — why the output of the last two years is no longer "new method names" but diagnosis / target dimension-raising / self-evolution / hygiene — is at <a href="./arxiv_2025_2026_frontier_synthesis_20260612.en.html">arXiv 2025/2026 frontier synthesis</a>.</p>
+      </div>
+    </section>
+
+    <!-- ② EVIDENCE PYRAMID -->
+    <section id="pyramid">
+      <h2>② Cross-channel evidence pyramid: how the evidence stacks up</h2>
+      <p class="section-intro">The five channels are not parallel "information sources" but <strong>evidence layers of different strength and different responsibility</strong>. The lower you go, the closer to first-hand mechanism evidence (arXiv); the higher you go, the more it leans toward propagation signal (Zhihu). The more an insight can be independently supported by multiple layers, the more it deserves to be relied upon; any single layer, especially the upper ones (social media / secondhand), is insufficient on its own to support a strong conclusion.</p>
+
+      <div class="pyramid">
+        <div class="lvl" style="background:var(--rose); width:46%">Zhihu · D (leads)<small>Chinese-community understanding, concentration of pitfalls, problem framing — discovers only, doesn't prove</small></div>
+        <div class="lvl" style="background:var(--blue); width:60%">Twitter/X · B* (to be verified)<small>Adoption signal, research→tool implementation mapping, de-hyping boundaries — trace chain pending</small></div>
+        <div class="lvl" style="background:var(--amber); width:74%">Other platforms / web_search · B<small>Production tool loop (intake→version→rollback→observability), governance is the precondition</small></div>
+        <div class="lvl" style="background:var(--green); width:87%">GitHub source code · B (partly D)<small>Engineering structure, frozen evaluator, artifact ledger, compare-first rewrite</small></div>
+        <div class="lvl" style="background:var(--teal); width:100%">arXiv papers · A<small>Method mechanisms, ablations, effect numbers under each paper's setting (the foundation layer, strongest and most traceable)</small></div>
+      </div>
+
+      <table class="matrix" aria-label="Cross-channel evidence matrix">
+        <thead><tr><th>Channel</th><th>Level</th><th>What it can prove</th><th>What it can't prove</th><th>Core files</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>arXiv papers</b></td><td><span class="tag a">A</span></td>
+            <td>Method mechanisms, ablations, effect numbers under each paper's setting; method classification and evolution lineage (the foundation of this edition's entire ① layer).</td>
+            <td>Paper numbers don't equal holding on your task; 2026 new preprints need independent reproduction.</td>
+            <td><a href="./apo_seven_methods_primer_20260611.en.html">seven-method primer</a> · <a href="./arxiv_deep_reading_batch3_synthesis.en.html">deep_reading_batch3</a> · <a href="./arxiv_2025_2026_frontier_synthesis_20260612.en.html">2025/2026 frontier synthesis</a> · <a href="./arxiv_top80_taxonomy.en.html">taxonomy</a></td>
+          </tr>
+          <tr>
+            <td><b>GitHub source code</b></td><td><span class="tag b">B</span> <span class="tag d">partly D</span></td>
+            <td>Engineering structure and governance: frozen evaluator/data isolation, artifact ledger, compare-first rewrite, bounded memory lifecycle (the source-code-level evidence for this edition's ④).</td>
+            <td>Can't independently prove that a given optimizer stably improves scores (limited recall + selection bias of core4-only audit).</td>
+            <td><a href="./github_repo_channel_synthesis_20260609.en.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.en.html">insight_cards</a></td>
+          </tr>
+          <tr>
+            <td><b>Other platforms / web_search</b></td><td><span class="tag b">B</span></td>
+            <td>Production engineering loop map (Arize / Promptfoo / Langfuse / OPIK / LangSmith): optimization must be bound to dataset→version→rollback→observability; governance is the precondition, not an afterthought.</td>
+            <td>Vendor improvement percentages can't be transferred directly, only the workflow fields can; secondhand reposts count only as pointers.</td>
+            <td><a href="./source_batches/web_search_platform_insight_cards_20260609.en.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.en.html">analysis</a></td>
+          </tr>
+          <tr>
+            <td><b>Twitter/X</b></td><td><span class="tag b">B*</span> <span class="tag pre">to be verified</span></td>
+            <td>Adoption signal and the "research method → tool integration" implementation mapping (the main source of this edition's ④ mapping table); the most common misreading boundaries.</td>
+            <td>Social-media buzz ≠ effectiveness; the 21 candidate cards' main_sources still point to external URLs, all pending.</td>
+            <td><a href="./source_batches/twitter_web_insight_cards_20260609.en.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.en.html">analysis</a></td>
+          </tr>
+          <tr>
+            <td><b>Zhihu</b></td><td><span class="tag d">D</span> <span class="tag">leads</span></td>
+            <td>Chinese-community understanding and concentration of pitfalls (the main source of this edition's ⑥ pitfall list); reframing the research question as engineering concerns.</td>
+            <td>Doesn't do effect proof, doesn't replace a baseline; ZH-L1→D means "discovery, not proof."</td>
+            <td><a href="./source_batches/zhihu_insight_cards_20260609.en.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.en.html">three_layer</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>How to read the pyramid:</strong> treat arXiv as "mechanism and numbers," GitHub as "what it looks like in code," other platforms as "how to land governance in production," Twitter as "what the industry is using and where the misreadings are," and Zhihu as "how the Chinese community understands it." Only when an insight is independently supported by arXiv (A) + at least one engineering channel (B) is it treated as a stronger candidate in this report; anything appearing only in the top two layers is uniformly labeled as a lead.
+      </div>
+    </section>
+
+    <!-- ③ PART A -->
+    <section id="partA">
+      <span class="part-label">③ Workflow insights Part A (14-item backbone · numbering aligns with unified catalog I-01..12, with 13/14 new in this edition)</span>
+      <h2>Before you act: is this task worth optimizing?</h2>
+      <p class="section-intro">The most easily skipped — and most money-saving — step: before spending money running an optimizer, first confirm whether there is room to improve, and whether the task type lets you see the effect clearly.</p>
+      <div class="grid two">
+
+        <div class="insight">
+          <div class="badge-row"><span class="id-badge">Insight 01</span><span class="tag a">Evidence A</span></div>
+          <h3>Confirm there is room to improve before paying to run an optimizer</h3>
+          <p class="hook">Automatic optimization is not a sure win — under some settings it has nearly a one-in-two chance of making the prompt worse than zero-shot.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <div class="ba">
+              <pre class="code">Ticket three-way classification, first prompt:
+"Classify the ticket into: complaint/inquiry/refund"
+Tested on 30 samples: 82% accuracy</pre>
+              <pre class="code bad">Optimizer runs 6 rounds → a longer, "professional" new prompt
+dev: 87% ↑ (looks like it went up)
+<span class="cmt">100-sample test set: 79% ↓ lower than the original</span>
+those 5 points were picked from small-sample noise</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>49%</b><small>Coin Flip: 49% of 72 optimization runs are below zero-shot (Haiku 4.5)</small></div>
+              <div class="num"><b>~3 steps</b><small>ProTeGi: peaks in about 3 steps, after which it mostly overfits the training set</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-coin-flip-2026.html">coin-flip-2026</a> (recent-preprint), <a href="./paper_notes/paper-protegi-2023.html">protegi-2023</a>; for the controlled counterexample that "adding a risk term to the selection signal can't save it," see <a href="./paper_notes/paper-prose-2026.html">prose-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ol class="howto">
+              <li>Run zero-shot + a hand-written baseline, recording a score for each.</li>
+              <li>Generate 10–20 candidates and score them with the same batch of 20 held-out samples.</li>
+              <li>Look at headroom (best candidate − zero-shot) and noise floor (jitter between candidates).</li>
+              <li>If headroom doesn't exceed the noise floor → stop, don't optimize.</li>
+            </ol>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> web_search's WHM-01 "Optimizer Intake Checklist" and the Ask HN "AI evals half-baked" pain-point signal, Twitter tw-insight-01 "have a test set and scorer first," and Zhihu ZHI-01 "shift from tricks to eval-driven" all point independently to the same upfront discipline.</div>
+          <div class="limit">Boundary: tasks whose combinatorial structure can only be discovered through multi-round search will be underestimated by this checkup; the threshold must be recalibrated by sample size and scorer.</div>
+        </div>
+
+        <div class="insight blue">
+          <div class="badge-row"><span class="id-badge">Insight 02</span><span class="tag b">Evidence A/B</span></div>
+          <h3>For the first batch, pick tasks that "can be objectively scored"</h3>
+          <p class="hook">Task type determines whether you can see clearly whether optimization helped. With open-ended writing, even after optimizing you can't tell whether it truly got better or the judge's taste changed.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <div class="ba">
+              <pre class="code bad">Task A: summarize a ticket into one sentence
+Can only rely on another model as a judge
+The judge's taste changes daily → score changes can't be attributed</pre>
+              <pre class="code good">Task B: extract into {intent, entities, urgency} JSON
+Missed urgency → that field's F1 column drops directly
+Failures break down into missed/mislabeled/bad-format/over-inferred</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>+6.8</b><small>Coin Flip: the only task where all 6 methods beat zero-shot is the structured JSON task HelpSteer2</small></div>
+              <div class="num"><b>+16% → ~1%</b><small>KG extraction: triple F1 +16% on the same dataset, only about 1% when the dataset changes</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-coin-flip-2026.html">coin-flip-2026</a>, <a href="./paper_notes/paper-apo-kg-construction-2025.html">apo-kg-construction-2025</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>For the first validation batch pick: information extraction (JSON), text classification, tool calling.</li>
+              <li>Don't use open-ended generation as your first testbed for now — causality is hardest to see clearly.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> maps to unified catalog I-11; Twitter conclusion-01/02 list "has a held-out set, classifiable failures, an interpretable intermediate process" as preconditions for a method to hold; web_search WPI also stresses that subjective writing tasks must first define a rubric, otherwise the metric is unstable.</div>
+          <div class="limit">Boundary: open-ended generation matters greatly, it's just not suitable as the "causally clear" first validation batch.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART B -->
+    <section id="partB">
+      <span class="part-label">③ Workflow insights Part B</span>
+      <h2>How to learn something from failure</h2>
+      <p class="section-intro">A score tells you "it broke"; a textual diagnosis and root-cause hypothesis tell you "where to fix." This is the real fuel of prompt improvement. Terminology reminder: the so-called "textual gradient" is only an engineering metaphor, not a mathematical gradient — this report uniformly understands it as "feedback-driven rewriting."</p>
+      <div class="grid two">
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">Insight 03</span><span class="tag a">Evidence A</span><span class="tag new">Evidence upgrade</span></div>
+          <h3>Turn failure samples into "editable evidence," not just a score</h3>
+          <p class="hook">That accuracy number gives you nothing to grab onto; a specific failure diagnosis points directly at what the prompt should add.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <pre class="code">Ticket: "I want to return the item and complain about service"
+Model extracts intent: complaint (missed refund)
+
+Record only the score → this one = wrong (a red X, no lead)
+Record as evidence → "When a ticket contains both an 'action request'
+            and 'emotion,' the model only catches the emotion and
+            misses the action" ← tells you directly which rule to add</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>+15.3% / up to +31%</b><small>ProTeGi: generating textual feedback from failure samples then rewriting, versus the original prompt</small></div>
+              <div class="num"><b>0.760 vs 0.110</b><small>SPEAR: giving the optimizer Python tools for error analysis, kappa on hard tasks far exceeds TextGrad</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-protegi-2023.html">protegi-2023</a>, <a href="./paper_notes/paper-spear-2026.html">spear-2026</a> (recent-preprint: error analysis can use code tools rather than relying solely on long context), <a href="./paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">textual-gradients-flawed-metaphor-2025</a> ("gradient" is a metaphor, not a real gradient)</p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>For each failure case record: prediction, gold, error_type, critique, candidate_id.</li>
+              <li>First organize 20 failures into a "failure type table," then let the optimizer change only based on this table.</li>
+              <li>When failure samples are many (&gt;100), consider running the analysis in code (pandas/groupby to aggregate error types) rather than stuffing everything into context — SPEAR shows long-context aggregation is unreliable.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> GitHub's compare-first rewrite (linshenkx/prompt-optimizer source) preserves failure evidence and diffs; Twitter tw-insight-02 "let the optimizer read the failure process, not just the final score"; web_search WHM-03 and Zhihu HM-ZH-02 both require layered diagnosis by failure owner.</div>
+          <div class="limit">Boundary: critique carries judge bias and must be bound to samples and metrics, never treated as true causality. The Flawed-Metaphor warning: textual feedback gains often come from formatting and meta-instructions, even prevalence hacking — treat critique as a lead, not as truth.</div>
+        </div>
+
+        <div class="insight rose">
+          <div class="badge-row"><span class="id-badge">Insight 04</span><span class="tag a">Evidence A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>List "failure root-cause hypotheses" first, then change the prompt</h3>
+          <p class="hook">The most common way reflection-style optimizers crash is guessing the wrong direction at the start, then growing more confident while editing in that wrong direction.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <pre class="code">urgency misjudged 30% of the time. Don't directly "let the model fix it"; list hypotheses first:
+ A missing decision criteria  → candidate A: add urgency decision rules
+ B missing boundary examples  → candidate B: add 2 "looks urgent but isn't" examples
+ C neutral-word misjudgment   → candidate C: state that "ASAP/right away" alone doesn't constitute urgency
+All three candidates validated on a minibatch; use whichever actually pulls the 30% back</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>23.81% → 13.50% → 87.57%</b><small>VISTA: GEPA actually drops to 13.50% on a flawed seed; after decoupling "hypothesis generation/rewriting" it recovers to 87.57%</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-vista-reflection-dark-2026.html">vista-reflection-dark-2026</a>, <a href="./paper_notes/paper-llm-prompt-optimizers-2024.html">llm-prompt-optimizers-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>For the same batch of failures, force the generation of 2–3 mutually exclusive root-cause hypotheses (missing rule / missing example / format conflict).</li>
+              <li>Generate one candidate per hypothesis and score each separately; the run record stores failure_hypothesis, not just critique.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> this item is currently supported mainly by a single layer, arXiv (VISTA), with no independent evidence from engineering channels yet — it belongs to the "mechanism clear, awaiting engineering and this project's validation" category and is listed under P1.</div>
+          <div class="limit">Boundary: open-ended writing tasks have fuzzy root causes, and multi-hypothesis validation may cost more than it returns.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART C -->
+    <section id="partC">
+      <span class="part-label">③ Workflow insights Part C</span>
+      <h2>Don't let the model fool you: candidate selection and anti-bloat</h2>
+      <p class="section-intro">LLM candidates have extreme variance. How you "select" and how you prevent "getting longer and longer" are the two gates that keep pseudo-improvements out.</p>
+      <div class="grid two">
+
+        <div class="insight violet">
+          <div class="badge-row"><span class="id-badge">Insight 05</span><span class="tag a">Evidence A</span></div>
+          <h3>Don't adopt the first version; generate several and select with a validation set</h3>
+          <p class="hook">"How you select candidates" is as important as "how you generate candidates." Hand the selection power to the validation set, don't let the model self-assess "this is my best version."</p>
+          <div class="block">
+            <h4>An example (illustrative): a candidate ledger</h4>
+            <pre class="code">Cand  dev-score  format-err  length  select?
+C1   0.86   0%    1.0x   ✔candidate
+C2   0.88   6%    1.2x   ✗reject (format errors rose)
+C3   0.87   0%    2.4x   ✗reject (too long, suspected overfitting)
+C5   0.86   0%    1.0x   ✔candidate
+Don't just pick the highest dev C2, but select across three dimensions; best-seen is never directly overwritten</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>0.85 / 0.67 / 0.88</b><small>ProTeGi: beam selection clearly beats greedy on Jailbreak/Liar/Sarcasm; bandit &gt; uniform selection</small></div>
+              <div class="num"><b>+12.44 vs +6.05</b><small>GEPA ablation: the Pareto candidate pool itself is the main contribution, clearly beating greedy selection</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-protegi-2023.html">protegi-2023</a>, <a href="./paper_notes/paper-gepa-2026.html">gepa-2026</a>, <a href="./paper_notes/paper-promptbreeder-2023.html">promptbreeder-2023</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>Each round store seed/candidates/scores/selection_policy/rejected_reason/best_seen/rollback_point.</li>
+              <li>Generate 5 candidates and select Pareto candidates across three dimensions: dev score + format errors + length.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> GitHub insight cards list the candidate ledger as a reusable structure (→ HM-04); Twitter method-01 "generate and select candidates under metric+trace constraints" contrasts scalar-only with trace-aware feedback — the industry version of the same principle.</div>
+          <div class="limit">Boundary: the larger the search budget, the easier it is to overfit dev, so validation/test layering must be there as a backstop.</div>
+        </div>
+
+        <div class="insight green">
+          <div class="badge-row"><span class="id-badge">Insight 06</span><span class="tag a">Evidence A</span><span class="tag new">Evidence upgrade</span></div>
+          <h3>Prompt hygiene is a proactive optimization metric: getting longer and more complex is often overfitting, not progress</h3>
+          <p class="hook">Longer after optimization, more rules, looking more professional — very likely patching the training samples. Hygiene shouldn't only be an after-the-fact check; it should enter the selection function.</p>
+          <div class="block">
+            <h4>An example (illustrative): "pseudo-rules" the optimizer adds</h4>
+            <pre class="code bad">- If "invoice" is mentioned and a number appears, intent is always refund   <span class="cmt">← a patch for one sample</span>
+- If "manager/complaint" appears, urgency is always high      <span class="cmt">← a local edge case as a global rule</span>
+- More than two exclamation marks → lean high                 <span class="cmt">← fitting annotator habits</span>
+dev +5, stress test set −8</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>14.7x / 86%</b><small>PrefPO: left unchecked, TextGrad bloats to 14.7× length, 86% covertly altering the task itself (PrefPO only 37%)</small></div>
+              <div class="num"><b>+10.0 / +9.9</b><small>TextReg: adding length+scope regularization to control bloat actually scores higher than TextGrad</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-prefpo-2026.html">prefpo-2026</a>, <a href="./paper_notes/paper-textreg-2026.html">textreg-2026</a>, <a href="./paper_notes/paper-causal-edit-level-2026.html">causal-edit-level-2026</a> (all recent-preprint; the last shows meta-instructions and complexification are negatively associated with math/multi-hop tasks — different tasks respond to edit directions heterogeneously)</p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>Write hygiene into candidate selection: length_ratio, repetition, edit_family, dev_test_gap, OOD/stress_delta enter the Pareto together with the dev score.</li>
+              <li>If a candidate gets longer, it must explain which failure samples each new rule is bound to and pass the stress test, otherwise reject it.</li>
+              <li>Overfitting is not only the dev-test gap: rules narrowing (scope shrinkage) and representation bloat are equally signals (TextReg's formalization).</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> the anti-pattern tables of GitHub and web_search both single out "only watching the average rise" (which can mask schema drift, minority-class regression, safety degradation, cost bloat); web_search also lists "trusting vendor improvement of X%" as a same-source risk. From a survey perspective, this thread is the empirical version of "constrained optimization."</div>
+          <div class="limit">Boundary: some complex tasks genuinely need clearer constraints — the standard is "necessary, traceable, not overfitting," not "short."</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART D -->
+    <section id="partD">
+      <span class="part-label">③ Workflow insights Part D</span>
+      <h2>What exactly to change (not just that prompt)</h2>
+      <p class="section-intro">In real systems failure may come from examples, the prompting pattern, or the tool description — label clearly which component you are changing first, otherwise you can't attribute.</p>
+      <div class="grid two">
+
+        <div class="insight">
+          <div class="badge-row"><span class="id-badge">Insight 07</span><span class="tag a">Evidence A</span><span class="tag new">Evidence upgrade</span></div>
+          <h3>With a dev set, choosing "the examples shown to the model" is often more effective than changing the instruction</h3>
+          <p class="hook">People instinctively change the instruction wording, yet overlook the often-more-effective variable — which examples to show the model. This item has been upgraded from single-paper support to multi-paper independent support.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <pre class="code good">Leave the instruction unchanged, only swap 3 hand-picked examples (covering error-prone boundaries):
+ Ex1 action+emotion coexist: want to return and also complain → intent:[refund,complaint]
+ Ex2 looks urgent but isn't: check it for me when convenient → urgency: low
+ Ex3 multi-entity: change the address for orders 123 and 456 → entities:[123,456]
+Often yields more than racking your brain to rewrite the instruction</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>+12.63</b><small>Teach Better: without changing the instruction, optimizing only examples reaches 72.92 (PaLM 2 / BBH)</small></div>
+              <div class="num"><b>5/7</b><small>MIPROv2: joint optimization is best in 5 of 7 tasks; triage conclusion — for most tasks demo optimization &gt; instruction optimization</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-teach-better-show-smarter-2024.html">teach-better-show-smarter-2024</a>, <a href="./paper_notes/paper-miprov2-2024.html">miprov2-2024</a>, <a href="./paper_notes/paper-erm-memory-2024.html">erm-memory-2024</a> (exemplar factory); for evidence that instruction and demo are complementary see <a href="./paper_notes/paper-textgrad-2024.html">textgrad-2024</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>Compare at least no-example / random-example / optimized-example / instruction+optimized.</li>
+              <li>Fix the instruction and search 3 examples from the candidate pool to see held-out performance.</li>
+              <li>Triage rule: only when the task contains "hidden conditional rules that a few examples can't express" is instruction optimization decisive (the MIPROv2 HotPotQA Conditional case).</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> maps to unified catalog I-05 / HM-03, supported by multiple arXiv papers (Teach Better, MIPROv2, ERM, DistillPrompt); listed in the P0 first validation batch precisely to prevent mis-recording exemplar gains as instruction gains.</div>
+          <div class="limit">Boundary: when context is tight, the example distribution is skewed, or examples may leak the answer, it can harm generalization.</div>
+        </div>
+
+        <div class="insight blue">
+          <div class="badge-row"><span class="id-badge">Insight 08</span><span class="tag b">Evidence A/B</span></div>
+          <h3>Label clearly which "component" you are changing first</h3>
+          <p class="hook">Failure may come from examples, the prompting pattern, the tool schema, the agent role, memory, or the judge — not just the system prompt.</p>
+          <div class="block">
+            <h4>An example (illustrative): an artifact manifest</h4>
+            <pre class="code">task_prompt        v3   [mutable]
+examples           v2   [mutable]
+prompting_pattern  Zero-Shot [mutable]  ← the real bug is often here: should use CoT/ReAct but used Zero-Shot
+tool_schema        v1   [mutable]
+evaluator          v1   [FROZEN]  ← the judge may not be changed (anti-cheating)
+safety_rules       v1   [FROZEN]  ← safety/permissions don't enter the search space</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>6.5% → 74.0%</b><small>AutoPDL: just switching the prompting pattern correctly (not rewriting wording), FEVER jumps +67.5pp</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-autopdl-2025.html">autopdl-2025</a>, <a href="./paper_notes/paper-jtpro-2026.html">jtpro-2026</a>, <a href="./paper_notes/paper-prompt-codebooks-2026.html">prompt-codebooks-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>Each optimization generates an artifact manifest, breaking out each component and labeling mutable/frozen.</li>
+              <li>The judge, test set, and safety rules must be frozen — the bottom line for preventing reward hacking.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> this is the most thickly cross-channel-supported item — GitHub's frozen evaluator/data isolation (karpathy/autoresearch) and 12-factor-agents' context engineering, web_search's WHM-02 version ledger, Twitter method-04 prompt_as_program_spec, and Zhihu ZHI-06 "declare mutable / frozen first" all point independently to the same structure.</div>
+          <div class="limit">Boundary: a simple one-off task doesn't need a full manifest; only research/production-grade does.</div>
+        </div>
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">Insight 09</span><span class="tag a">Evidence A</span><span class="tag pre">recent-preprint</span></div>
+          <h3>When tool calls go wrong, what to change is usually the "tool description," not the agent instruction</h3>
+          <p class="hook">Failures often come from the tool description and parameter semantics themselves; changing the agent's system prompt over and over is useless.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <div class="ba">
+              <pre class="code bad">Change the agent instruction (ineffective):
+"Please fill in the amount correctly"
+→ the model still doesn't know the unit, passes amount: 99.5</pre>
+              <pre class="code good">Change the tool schema (effective):
+amount: integer
+// unit "cents," 99 yuan should be filled as 9900, decimals not accepted</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>51.27% → 64.46%</b><small>JTPRO: jointly optimizing the global instruction + per-tool schema, o3-mini overall success rate (ToolACE 1000 tools)</small></div>
+              <div class="num"><b>right pick ≠ success</b><small>ETID: tools are selected accurately but the success rate is low; the bottleneck is slot-filling, not selection</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-jtpro-2026.html">jtpro-2026</a></p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>Break tool eval into three metrics recorded separately: Tool Selection / Slot Filling / Overall Success.</li>
+              <li>Test "change only the global instruction / change only the schema / joint" separately to see which layer is the bottleneck.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> the Vertex AI "use placeholder_to_content to lock prompt sections" SO Q&A registered by web_search is exactly the concrete implementation of "distinguishing mutable/frozen sections" in a production tool, echoing the frozen/mutable boundary.</div>
+          <div class="limit">Boundary: when an external API schema can't be changed, use a wrapper doc or retrieval context to carry local rules.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART E -->
+    <section id="partE">
+      <span class="part-label">③ Workflow insights Part E</span>
+      <h2>Memory and multi-agent: more ≠ better</h2>
+      <p class="section-intro">Adding memory or adding agents always sounds good, but unfiltered memory contaminates optimization, and wholesale rewriting makes you unable to attribute.</p>
+      <div class="grid two">
+
+        <div class="insight slate">
+          <div class="badge-row"><span class="id-badge">Insight 10</span><span class="tag b">Evidence A/B</span></div>
+          <h3>Only "filtered memory" is useful</h3>
+          <p class="hook">Piling up history without filtering causes cross-task negative transfer, and it's more expensive too.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <div class="ba">
+              <pre class="code bad">Unbounded memory: stuff all historical conversations into context
+→ wrongly apply product line A's refund rule to a product line B ticket</pre>
+              <pre class="code good">Filtered memory: each entry carries metadata
+ content / source_task / applicability
+ quality_score / retrieval_reason / forget_after
+Only take 3–5 verified entries whose applicability conditions match</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>70.7% vs 63.6% | $0.31 vs $0.70</b><small>MemAPO: dual memory (success templates + error patterns) is better than TextGrad and cheaper</small></div>
+              <div class="num"><b>step 7: 68.6 vs step 13: 58.5</b><small>ERM: filtered memory converges nearly twice as fast; raw memory yields no gain</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-memapo-2026.html">memapo-2026</a> (recent-preprint), <a href="./paper_notes/paper-erm-memory-2024.html">erm-memory-2024</a>; for discrete codebooks as a more compact memory form see <a href="./paper_notes/paper-prompt-codebooks-2026.html">prompt-codebooks-2026</a> (HotpotQA prompt 14.1× shorter)</p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>The memory schema includes success_template/error_pattern, source_task, applicability, quality, forget_reason.</li>
+              <li>Don't stuff in historical conversations; only retrieve 3–5 verified entries matching the current task.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> GitHub's ECC memory hooks (four lifecycle trigger points: session-start / pre-compact / session-end / tool-observation) make bounded memory into a structural reference; Zhihu ZHI-06 and the community pitfall "self-evolution = record everything" confirm it from the opposite side.</div>
+          <div class="limit">Boundary: in non-stationary/safety-sensitive tasks, a forgetting policy and opt-out matter more than "remembering more."</div>
+        </div>
+
+        <div class="insight rose">
+          <div class="badge-row"><span class="id-badge">Insight 11</span><span class="tag a">Evidence A</span><span class="tag pre">recent-preprint</span><span class="tag new">Evidence upgrade</span></div>
+          <h3>When multi-agent goes wrong, find "who, and in which round" is responsible first; don't rewrite the whole thing</h3>
+          <p class="hook">The core difficulty is not adding more agents but credit assignment — and it has two dimensions: structure (which role) and time (which round).</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <pre class="code">extract → complete → reply, the final reply is wrong. Look at the trace:
+ agent_1 extract  local_valid ✗  ← urgency was lost right here
+ agent_2 complete local_valid ✓  (based on wrong input = local_pass_global_fail)
+ agent_3 reply    local_valid ✓
+Root cause is in agent_1; change only agent_1, leave the other two alone</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>55.13 → 64.63</b><small>Temporal/Structural Credit: credit-guided on MedMCQA (+9.50); indiscriminately updating all rounds actually drops the score</small></div>
+              <div class="num"><b>70.39 vs 65.31</b><small>MASPO: joint optimization averages better than the sequential baseline; specifically collects "local success, global failure" mismatch samples</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-temporal-structural-credit-mas-2026.html">temporal-structural-credit-mas-2026</a> (temporal round × structural role dual-axis decomposition + alternating updates), <a href="./paper_notes/paper-maspo-2026.html">maspo-2026</a>, <a href="./paper_notes/paper-mapro-2025.html">mapro-2025</a> (propagate credit along the topology)</p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>The trace stores role_id/<b>round_id</b>/local_validity/successor_utility/global_outcome — both the time and structure dimensions are needed.</li>
+              <li>Mark the role/round that first introduced the error and change only that block; when coupling is weak, do a coupling test first.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> this item is supported mainly by a single layer, arXiv (MASPO / MAPRO / Temporal-Structural Credit), with the three papers complementary and non-contradictory (topology / mismatch detection / temporal-structural decomposition), and no independent engineering-channel evidence yet; it shares the same governance idea as insight 08's "label the responsible component first, then change locally."</div>
+          <div class="limit">Boundary: when agent interaction is very weak, the cost of joint optimization may not be worth it — test coupling first, then decide.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART F -->
+    <section id="partF">
+      <span class="part-label">③ Workflow insights Part F</span>
+      <h2>How to treat "secondhand" methods</h2>
+      <p class="section-intro">Buzz only indicates propagation, not effectiveness. Secondhand propagation amplifies conclusions and drops boundaries and versions. This item caps off the channel discipline of the layers above; the full pitfall list is at <a href="#myths">⑥ Pitfall clarifications</a>.</p>
+      <div class="grid">
+        <div class="insight green">
+          <div class="badge-row"><span class="id-badge">Insight 12</span><span class="tag b">Evidence B</span></div>
+          <h3>Social media and secondhand articles are "leads," not "evidence"</h3>
+          <p class="hook">A method being reposted repeatedly only shows it's hot, not that it's effective.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <div class="ba">
+              <pre class="code bad">Viral: "GEPA crushes RL with 35× fewer rollouts!"
+As evidence → directly believe "GEPA can replace RL"</pre>
+              <pre class="code good">As a lead → go to the original paper and find:
+GEPA is reflection-style prompt evolution (execution trace + Pareto selection),
+not an RL system at all; still below GRPO on AIME-2025;
+"replacing RL" is a slogan simplified by propagation</pre>
+            </div>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>When you read a trick, first extract six fields: dataset / metric / baseline / model / cost / failure_cases.</li>
+              <li>If any field is missing, downgrade it to a "lead"; before it enters a conclusion you must trace it to the paper / official documentation / code / this project's experiments.</li>
+            </ul>
+          </div>
+          <p class="src">Source: <a href="./source_batches/twitter_web_analysis_20260608.en.html">twitter_web_analysis_20260608</a>, <a href="./source_batches/web_search_platform_analysis_20260608.en.html">web_search_platform_analysis_20260608</a></p>
+          <div class="corro"><b>Cross-channel corroboration (this item is jointly raised by the social/secondhand channels):</b> Twitter makes it into method-05 social_signal_triage (six category labels) and method-06 vendor_optimizer_evidence_filter; web_search makes it into WHM-04 source triage; Zhihu makes it into the net-new addition HM-ZH-03 "first-source promotion gate." Three channels independently converge on the same gate.</div>
+          <div class="limit">Boundary: a high-quality engineering blog that comes with code, data, and a reproducible experiment can be upgraded to stronger evidence — look at the details, not the platform.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART G (NEW) -->
+    <section id="partG">
+      <span class="part-label">③ Workflow insights Part G · new in this edition</span>
+      <h2>Beyond search: zero-cost transformation and "the optimizer itself"</h2>
+      <p class="section-intro">v3's 12 insights were all built around the "search/optimization loop." This round of deep-dives across channels exposed two blind spots outside the loop: one is a <b>deterministic structural transformation that uses no search</b> (cheaper than all search methods, yet often skipped as a control), and the other is <b>the optimizer and judge themselves, treated as thin air inside the loop</b>.</p>
+      <div class="grid two">
+
+        <div class="insight amber">
+          <div class="badge-row"><span class="id-badge">Insight 13</span><span class="tag a">Evidence A</span><span class="tag pre">recent-preprint</span><span class="tag new">new in this edition</span></div>
+          <h3>Before paying to search, first try the zero-cost deterministic structural transformation</h3>
+          <p class="hook">A fixed transformation that changes no semantics — repeating the entire prompt verbatim — wins 47 and loses 0 across 7 models in non-reasoning mode; while search-based optimization has nearly a one-in-two chance of being worse than zero-shot.</p>
+          <div class="block">
+            <h4>An example (real task, paper numbers)</h4>
+            <pre class="code">Transformation: &lt;QUERY&gt;  →  &lt;QUERY&gt;&lt;QUERY&gt; (verbatim repeat, no wording change)
+
+NameIndex (pick the 25th of 50 names):
+Gemini 2.0 Flash-Lite  21.33% → <span class="cmt">97.33%</span>
+Mechanism: under causal attention, early prompt tokens can't see later ones;
+after repetition, every token in the second pass can attend to the full first pass</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>47/70 wins 0 losses</b><small>Non-reasoning mode, 7 models × 10 configs, McNemar p&lt;0.1; the Padding control is ineffective → the gain comes from the repetition itself</small></div>
+              <div class="num"><b>5/28</b><small>Once step-by-step reasoning is on it's basically ineffective (reasoning models already often restate the question on their own)</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-prompt-repetition-2025.html">prompt-repetition-2025</a> (Google Research; doesn't increase output length or latency, the repetition happens in the parallelizable prefill stage)</p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>On non-reasoning, low-latency production paths (classification/extraction/short QA/routing), first test repetition ×2; for long-context indexing tasks try ×3.</li>
+              <li>Add it to the <b>cheap baseline transformation set</b>: any APO method's reported gain in this project should first answer "can it beat this zero-intelligence transformation?"</li>
+              <li>Prefer it in scenarios where information order is uncontrollable (concatenated retrieval results, form transcription) — order sensitivity is exactly what it fixes.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> currently single-layer arXiv (recent-preprint); the mechanism (causal attention order sensitivity) cross-validates with the section-local edit direction of Modular Prompt Optimization. The contrasting reading with Coin Flip: the searched wording is model-specific and fragile, while the deterministic structural transformation loses 0 across 7 models — "structure" may be more transferable than "wording" (the two settings differ, so this comparison is an inference).</div>
+          <div class="limit">Boundary: basically ineffective in reasoning mode; with per-token billing the input cost is ×2; repeating only a part (e.g., only the question) yields no gain; blindly doubling an ultra-long context drives up prefill cost; it was tested on an early-2025 generation of models, and newer models may have internalized the restating behavior — which is exactly what this project's P0 three-arm A/B is meant to calibrate.</div>
+        </div>
+
+        <div class="insight slate">
+          <div class="badge-row"><span class="id-badge">Insight 14</span><span class="tag b">Evidence A/B</span><span class="tag new">new in this edition</span></div>
+          <h3>The optimizer and judge themselves are also components that must be versioned and can be optimized</h3>
+          <p class="hook">The "prompt you use to change prompts" and the "prompt that scores" also determine the result — don't version them and the experiment isn't reproducible; never examine them and they become a hidden ceiling.</p>
+          <div class="block">
+            <h4>An example (illustrative)</h4>
+            <pre class="code bad">The run record only stored task_prompt v3
+optimizer_prompt / judge_prompt have no version number
+→ three months later "the same config" can't reproduce the same result
+→ is the score change the doing of the task prompt or did the judge's taste change? Can't attribute</pre>
+          </div>
+          <div class="block">
+            <h4>What the papers say</h4>
+            <div class="stat">
+              <div class="num"><b>71.89 → 76.38</b><small>SePO: pre-train and self-evolve the prompt agent's system prompt; removing self-improvement drops back to 74.94</small></div>
+              <div class="num"><b>the only self-reference</b><small>PromptBreeder: the only one of the six methods that evolves the mutation prompt too (hyper-mutation)</small></div>
+            </div>
+            <p class="src">Source: <a href="./paper_notes/paper-sepo-2026.html">sepo-2026</a> (recent-preprint), <a href="./paper_notes/paper-promptbreeder-2023.html">promptbreeder-2023</a>; judge versioning is web_search WPI-10 (B-level)</p>
+          </div>
+          <div class="block">
+            <h4>What you should do</h4>
+            <ul class="howto">
+              <li>Give optimizer_prompt, judge_prompt, and meta_prompt each a version number, and make them required fields in the experiment record.</li>
+              <li>The judge used for evaluation, like the test set, is frozen by default; to change it, go through an independent review and recalibration, and after the change all old scores are invalidated and rerun.</li>
+              <li>Want to optimize the judge/optimizer itself? Do it on the dev set, physically isolated from the evaluation pipeline.</li>
+            </ul>
+          </div>
+          <div class="corro"><b>Cross-channel corroboration:</b> web_search WPI-10 "the judge prompt should also be versioned, evaluated, and optimized"; GitHub autoresearch's ledger binds the optimizer config to results (GHI-05); arXiv batch1 conclusion C-03 "the optimizer itself is an artifact that must be versioned." Three layers point independently to the same governance object.</div>
+          <div class="limit">Boundary: "optimizing the judge" and "frozen evaluator anti-cheating" don't conflict — what is frozen is the <b>evaluation pipeline's</b> judge, what is optimized is the <b>development-time auxiliary</b> judge; the two must be physically separated, mixing them is reward hacking (see the anti-pattern table).</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ④ ENGINEERING -->
+    <section id="engineering">
+      <h2>④ Engineering implementation: the loop from paper to production</h2>
+      <p class="section-intro">v3 scattered the tools across the per-channel quick view in passing. This layer merges the output of three engineering channels — web_search, Twitter, and GitHub — into an actionable implementation map: first assemble the five-piece kit, then choose tools by project maturity, and finally make release and rollback into gates.</p>
+
+      <div class="callout">
+        <strong>Entry ticket (five-piece kit):</strong> the optimizer's input is <code>prompt + dataset + metric + trace + constraints</code>, not a piece of text to be polished. Without an eval, so-called "automatic optimization" is just stylistic rewriting — this is the same conclusion that four channels converged on independently: web_search (WPI-01), Twitter (conclusion-01), Zhihu (ZHI-01), GitHub (GHI-04).
+      </div>
+
+      <div class="block">
+        <h4>Tool selection tiered by project maturity (don't start with a heavy platform)</h4>
+        <table class="matrix" aria-label="Tool maturity tiering">
+          <thead><tr><th>Stage</th><th>What state you're in</th><th>What to use</th><th>What it solves</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Stage 1 · Getting started</b></td>
+              <td>No stable eval yet, prompt changes go by feel</td>
+              <td>Promptfoo (CLI eval gate) + Hugging Face cookbook (method discovery and runnable examples)</td>
+              <td>First have a lightweight gate for "does each change pass the line"; config files go into Git for version control</td>
+            </tr>
+            <tr>
+              <td><b>Stage 2 · Iterating</b></td>
+              <td>You have an eval and start multi-version, multi-person prompt editing</td>
+              <td>Langfuse (prompt version + trace linking) / LangSmith + Promptim (prompt commit, staging/production) / Humanloop (prompt as config)</td>
+              <td>Version, diff, owner, environment, rollback — online regressions can be traced to the specific change</td>
+            </tr>
+            <tr>
+              <td><b>Stage 3 · Operating</b></td>
+              <td>Optimization is now routine and needs an optimizer + observability loop</td>
+              <td>OPIK (agent optimizer SDK, G-Eval, OptimizationResult) / Arize Phoenix (a template loop of data→evaluate→optimize→compare); on the Weaviate side, draw a clear variable boundary between context engineering and prompt optimization</td>
+              <td>Optimization trial history, judge versioning, observability, and side-by-side experiments</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="src">Basis: web_search WPI-09 "match tool choice by stage" and the eight-tool five-dimension benchmark (positioning/optimization target/feedback signal/version rollback/project value), full table at <a href="./source_batches/web_search_platform_analysis_20260608.en.html">web_search_platform_analysis</a>. Teams that already have live traffic and multi-person collaboration can introduce a governance platform earlier.</p>
+      </div>
+
+      <div class="block">
+        <h4>Research → tool implementation mapping (which paper methods the industry has already turned into products)</h4>
+        <table class="matrix" aria-label="Research to tool mapping">
+          <thead><tr><th>Research direction</th><th>Representative paper/framework</th><th>Implemented tools/vendors</th><th>What to trust</th></tr></thead>
+          <tbody>
+            <tr><td>Reflection-style prompt evolution</td><td>GEPA</td><td>Pydantic AI/Evals, DSPy GEPA, LangSmith (OpenTelemetry tracing)</td><td>B*: adoption signal, effect must go back to the original paper and this project's experiments</td></tr>
+            <tr><td>Prompt-as-Program</td><td>DSPy / MIPROv2</td><td>LangChain Promptim, Scale3 DSPyground</td><td>B: framework positioning is clear, the optimization layer (demo vs instruction) must be stated clearly</td></tr>
+            <tr><td>Prompt versioning and release</td><td>(synthesized engineering practice)</td><td>LangSmith Prompt Hub, Langfuse, Promptfoo, Humanloop, OpenAI Prompt Optimizer</td><td>B: the workflow fields can be copied directly</td></tr>
+            <tr><td>Productized APO</td><td>(multi-paper synthesis)</td><td>Google Vertex AI Prompt Optimizer (placeholder_to_content section locking), Microsoft PromptWizard, Salesforce Promptomatix, AWS Bedrock optimization/migration tools</td><td>B/D: adopt the workflow, <b>not the improvement percentages</b></td></tr>
+            <tr><td>Memory and self-evolving agents</td><td>MemAPO / SePO</td><td>Hermes Agent, Manus, OpenClaw (Chinese-community leads)</td><td>D: leads layer, must be verified against mutable/frozen declarations</td></tr>
+          </tbody>
+        </table>
+        <p class="src">Basis: the "research→tool integration" mapping of the Twitter channel's 21 source cards (trace chain pending, see ⑨) and Zhihu tool-practice leads; the source audit of the canonical optimizer repos is still in the second-round backlog (see the ⑪ repo↔paper cross-reference table).</p>
+      </div>
+
+      <div class="block">
+        <h4>Release gate and ledger: make "rollback-able" into structure, not a slogan</h4>
+        <div class="ba">
+          <pre class="code good">Release flow (Twitter method-02 / web WHM-02 synthesis):
+candidate → offline eval (frozen test set)
+→ risk checklist (format/safety/cost regression)
+→ approval → staging → production
+→ keep rollback_target, roll back in one step anytime</pre>
+          <pre class="code good">Candidate ledger minimal fields (GitHub autoresearch results.tsv
++ web WHM-02 synthesis):
+candidate_id / parent / diff+reason
+artifact_versions (incl. optimizer_prompt, judge_prompt)
+score / format_error / cost / status
+  (accepted | rejected | rolled_back | needs_more_data)
+rollback_target</pre>
+        </div>
+        <ul class="howto" style="margin-top:10px">
+          <li><b>Source-code-level example of a frozen evaluator</b>: karpathy/autoresearch annotates the evaluation function directly in <code>prepare.py</code> as "DO NOT CHANGE — this is the fixed metric" — the principle is written into code, not documentation (GHI-04).</li>
+          <li><b>The memory lifecycle needs trigger points</b>: affaan-m/ecc's memory hooks define four hooks — session-start / pre-compact / session-end / tool-observation — so memory writing, compaction, and forgetting each have a clear timing, rather than unbounded appending (GHI-09/10).</li>
+          <li><b>Calibration samples must be proactively adversarial</b>: linshenkx/prompt-optimizer's calibration set deliberately includes overfit-trigger samples and schema-drift-trigger samples — used to test whether the optimization process itself can be fooled (GHI-03).</li>
+          <li><b>"Has tests" ≠ "method effective"</b>: tests may only cover installation/format/config; auditability and effectiveness claims must be recorded separately (GHI-11, already in the anti-pattern table).</li>
+        </ul>
+      </div>
+
+      <div class="callout">
+        <strong>The division of labor between arXiv and engineering channels (not a contradiction):</strong> the papers say "we found a better optimization algorithm," the engineering channels say "no matter how good the algorithm, without loop infrastructure it can't run." A prompt optimized in a paper ≠ a prompt that can ship — if the optimization gain isn't backed by versioning, traces, and validation-set isolation, it gets consumed by unauditability and rollback difficulty. Both layers are needed.
+      </div>
+    </section>
+
+    <!-- ⑤ METHODS -->
+    <section id="methods">
+      <h2>⑤ Reusable methods: 4 unified methods + 1 promotion candidate</h2>
+      <p class="section-intro">All channels' method cards are normalized into the 4 helpful methods of the <a href="./insight_method_catalog_20260609.en.html">unified catalog</a>; based on web_search channel evidence, this edition lists "Context-First Diagnosis" as a promotion candidate for a 5th method (pending inclusion in the unified catalog).</p>
+      <table class="matrix" aria-label="Reusable methods">
+        <thead><tr><th>Method</th><th>Problem solved</th><th>Key steps (minimal fields)</th><th>Same-source method cards per channel</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>HM-01</b><br>Pre-Optimization Gate</td>
+            <td>Avoid wasting optimizer cost on tasks with no headroom.</td>
+            <td>Run zero-shot + hand-written baseline → generate 10–20 candidates → evaluate with the same scorer → compute best_gain / score_spread / format_error / cost → stop if it doesn't exceed the noise threshold. <b>Addition in this edition:</b> the checkup also runs insight 13's zero-cost transformation as a control baseline.</td>
+            <td>web WHM-01; Twitter tw-insight-01; Zhihu HM-ZH-01; arXiv coin-flip.</td>
+          </tr>
+          <tr>
+            <td><b>HM-02</b><br>Trace-First Critique Rewrite</td>
+            <td>Letting the LLM change the prompt directly is unauditable and prone to misjudging the root cause.</td>
+            <td>Generate error_type/critique from failure samples → 2–3 failure hypotheses → one candidate per hypothesis → select via validation → record diff/reason/rollback point. When failure samples are many, aggregate with code tools (SPEAR).</td>
+            <td>GitHub compare-first rewrite; Twitter method-01; web WHM-03; Zhihu HM-ZH-02; arXiv ProTeGi/VISTA/SPEAR.</td>
+          </tr>
+          <tr>
+            <td><b>HM-03</b><br>Exemplar Optimization Baseline</td>
+            <td>Prevent overestimating the value of instruction rewriting.</td>
+            <td>Fix the instruction → compare no-example / random / optimized → then compare instruction+optimized → report generalization only on hidden/test. Triage: only when the task contains hidden conditional rules should you prioritize changing the instruction (MIPROv2).</td>
+            <td>arXiv Teach Better / MIPROv2 / ERM / DistillPrompt (no independent engineering-channel evidence yet, listed in P0).</td>
+          </tr>
+          <tr>
+            <td><b>HM-04</b><br>Prompt Artifact Ledger</td>
+            <td>Mixing changes to prompt/examples/tool schema/context/evaluator causes non-attribution and non-rollback.</td>
+            <td>Version each artifact + label mutable/frozen → record score/failure/cost/accept-reject reason per candidate → save a rollback point. <b>Addition in this edition:</b> optimizer_prompt and judge_prompt are also logged (insight 14).</td>
+            <td>GitHub frozen evaluator/artifact + results.tsv; web WHM-02 version ledger; Twitter method-02/04; Zhihu ZHI-06.</td>
+          </tr>
+          <tr>
+            <td><b>HM-05 (promotion candidate)</b><br>Context-First Diagnosis</td>
+            <td>Misjudging a retrieval/memory/tool/history problem as a prompt problem, and mis-recording "the context got better" as "the optimizer worked."</td>
+            <td>Failure samples carry a full trace → attribute to one of seven owner classes: instruction/retrieval/memory/tool/history/schema/judge → change only one at a time → failures coming from context don't count toward prompt optimization gains.</td>
+            <td>web WHM-03 (full card); Twitter method-03 prompt_context_variable_audit; Zhihu ZHI-04; 12-factor-agents (GHI-08). <b>Status: pending inclusion in the unified catalog.</b></td>
+          </tr>
+          <tr>
+            <td><b>Lead triage</b><br>Source Evidence Triage (I-12)</td>
+            <td>Keep social/secondhand buzz out of conclusions.</td>
+            <td>Extract the six fields dataset/metric/baseline/model/cost/failure → downgrade to a pointer if any is missing → trace to the first source before it enters a conclusion.</td>
+            <td>Twitter method-05/06; web WHM-04; Zhihu HM-ZH-03 (net-new promotion gate).</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src">The full YAML fields (required_inputs / evaluation_metrics / misuse_or_anti_pattern / rollback_plan / next_experiment) are at <a href="./insight_method_catalog_20260609.en.html">insight_method_catalog_20260609.md</a>; field definitions follow <a href="./insight_field_standard.en.html">insight_field_standard.md</a>.</p>
+    </section>
+
+    <!-- ⑥ MYTHS -->
+    <section id="myths">
+      <h2>⑥ Pitfall clarifications: the 12 most common misreadings</h2>
+      <p class="section-intro">The unique value of the Zhihu and Twitter channels is not proving anything, but exposing "how people are currently misunderstanding it." Here the pitfalls converged from both channels are merged and deduplicated into 12 — each recurs repeatedly in real propagation.</p>
+      <table class="matrix" aria-label="Pitfall clarifications">
+        <thead><tr><th>#</th><th>Misreading</th><th>The actual situation</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>"GEPA comprehensively surpasses / replaces RL"</td><td>GEPA is reflection-style prompt evolution (trace + Pareto), not an RL system; still below GRPO on AIME-2025; the advantage depends on feedback quality, and narrows when evaluation can only give a scalar.</td><td>Zhihu ZHI-02 / Twitter conclusion-02 / arXiv A-level</td></tr>
+          <tr><td>2</td><td>"DSPy is an auto-prompt-rewriting tool"</td><td>DSPy is a programming framework (signature/module/metric all defined by hand); the 2023 version optimizes demonstrations, and automatic instruction optimization waits until MIPROv2.</td><td>Zhihu ZHI-03 / arXiv dspy/miprov2</td></tr>
+          <tr><td>3</td><td>"textual gradient = gradient descent"</td><td>It's an engineering metaphor: not additive, not composable, and wrong labels often don't hurt the result; gains often come from formatting and meta-instructions, even prevalence hacking.</td><td>arXiv Flawed-Metaphor (2025-12)</td></tr>
+          <tr><td>4</td><td>"just let the model optimize the prompt"</td><td>Without a held-out set and scorer, you only get "text that looks more like a prompt," and can't tell whether it got better or worse.</td><td>Twitter conclusion-01 / all channels</td></tr>
+          <tr><td>5</td><td>"longer and more professional after optimization = better"</td><td>Mostly patches for training samples; left unchecked, TextGrad's prompt is 14.7× long and 86% covertly alters the task definition.</td><td>arXiv PrefPO/TextReg (insight 06)</td></tr>
+          <tr><td>6</td><td>"context engineering = writing a longer prompt"</td><td>It's the per-variable engineering of retrieval/memory/tool-output/history compression; prompt optimization is only a strict subset of it.</td><td>Zhihu ZHI-04 / Context Engineering survey</td></tr>
+          <tr><td>7</td><td>"self-evolution = record everything"</td><td>Unfiltered memory causes cross-task negative transfer and is more expensive; every memory entry needs a source, applicability scope, validation, and a forgetting policy.</td><td>arXiv ERM/MemAPO / Zhihu / GitHub ECC</td></tr>
+          <tr><td>8</td><td>"more reposts / more stars = effective method"</td><td>Buzz only indicates propagation; when multiple secondhand sources point to the same paper, the evidence strength is determined by the original paper.</td><td>all channels (insight 12)</td></tr>
+          <tr><td>9</td><td>"vendor improvement percentages / demo screenshots = evidence"</td><td>Task, metric, and presentation may all be biased toward the product narrative; adopt only the workflow fields, and downgrade the numbers by default.</td><td>web WPI-07 / Twitter conclusion-05</td></tr>
+          <tr><td>10</td><td>"repo has tests = effective method"</td><td>Tests may only cover installation/format/config; "auditable" and "effective" are two claims, recorded separately.</td><td>GitHub GHI-11</td></tr>
+          <tr><td>11</td><td>"prompt tricks are universal across models"</td><td>The key phrases OPRO searches out are highly model-specific; the 6/6 sweep configuration on Haiku collapses to 1/6 on Nova Lite.</td><td>arXiv OPRO / coin-flip (① method map)</td></tr>
+          <tr><td>12</td><td>"changing several variables at once is faster"</td><td>Changing prompt/context/model/evaluator simultaneously → metric changes can't be attributed, forming pseudo-conclusions; change only one layer at a time.</td><td>all channels / the same discipline as CLAUDE.md</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ⑦ RISKS -->
+    <section id="risks">
+      <h2>⑦ Anti-pattern and risk governance (cross-channel merge)</h2>
+      <p class="section-intro">Merging and deduplicating each of the five channels' anti-pattern tables, organized as "why dangerous → trigger condition → corresponding defense." This is the checklist that keeps pseudo-improvements, contamination, and attribution difficulty out the door.</p>
+      <table class="matrix" aria-label="Merged anti-patterns">
+        <thead><tr><th>Anti-pattern</th><th>Why dangerous</th><th>Trigger condition</th><th>Corresponding defense</th><th>Evidence channels</th></tr></thead>
+        <tbody>
+          <tr><td>Letting the model directly "optimize the prompt"</td><td>No goal, no eval, no rollback; the output is just polishing or random rewriting.</td><td>Calling the optimizer without a held-out set/scorer/failure samples.</td><td>HM-01, HM-02</td><td>arXiv·GitHub·web·Twitter·Zhihu</td></tr>
+          <tr><td>Only watching the average rise</td><td>Masks schema drift, minority-class regression, safety degradation, cost bloat.</td><td>The optimization objective only sets the average, with no regression/critical failure set.</td><td>Layered metrics + stress split</td><td>arXiv·GitHub·web·Twitter</td></tr>
+          <tr><td>The prompt keeps getting longer</td><td>Mostly training-sample patches and rule conflicts (overfitting).</td><td>Candidate length increases beyond the threshold with no sample binding.</td><td>hygiene gate (insight 06)</td><td>arXiv·GitHub·web</td></tr>
+          <tr><td>Allowing the optimizer to change the evaluator / test</td><td>Direct reward hacking.</td><td>The scorer/test set enters the mutable search space; the dev-time judge and the evaluation judge are mixed.</td><td>frozen evaluator/data + physical isolation (insight 14)</td><td>GitHub (autoresearch audit)·web WPI-10</td></tr>
+          <tr><td>Unbounded appending of raw memory</td><td>Inherits bad feedback, privacy leakage, cross-task contamination.</td><td>Stuffing whole historical conversations into context.</td><td>filtered memory + lifecycle hooks</td><td>arXiv (ERM/MemAPO)·GitHub (ECC)·Zhihu</td></tr>
+          <tr><td>Using social-media buzz / vendor percentages as evidence</td><td>Buzz only indicates propagation; vendor numbers have task/metric/presentation biased toward the narrative.</td><td>Ranking methods by repost count / citing improvement numbers with no dataset disclosure.</td><td>source triage (I-12)</td><td>Twitter·web·Zhihu</td></tr>
+          <tr><td>Treating "has tests" as "method effective"</td><td>Tests often only cover installation/format/config; auditable ≠ effective.</td><td>Using "the repo has CI/tests" to endorse a method's effect.</td><td>Register the test entry and the effect claim separately</td><td>GitHub (GHI-11)</td></tr>
+          <tr><td>Rewriting all multi-agents together</td><td>Can't tell which role/round caused the change.</td><td>Indiscriminately updating all agents/rounds after a failure.</td><td>credit ledger (insight 11, incl. time dimension)</td><td>arXiv (MASPO/MAPRO/T-S Credit)·Twitter</td></tr>
+          <tr><td>Changing only the system prompt for tool calls</td><td>Tool schema/slot errors can't be fixed.</td><td>Repeatedly changing the agent instruction on tool-use failure.</td><td>schema joint optimization (insight 09)</td><td>arXiv (JTPRO)·web (Vertex section locking)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ⑧ CHANNELS -->
+    <section id="channels">
+      <h2>⑧ Per-channel quick view: what each channel most recently converged on</h2>
+      <p class="section-intro">The five channels unfold by the same template: role positioning, conclusions (with level), what this edition newly absorbed, coverage and gaps, trace chain. Each channel's detailed output has been pulled up into ① (method map, mainly from arXiv), ④ (engineering implementation, mainly from web/Twitter/GitHub), and ⑥ (pitfalls, mainly from Zhihu/Twitter). At the end of this section is a new <b>card-by-card verification</b> of all 44 cards across the three social/secondhand channels (2026-06-12): whether each card entered the main line, stopped at corroboration, or was not absorbed — one table makes it clear.</p>
+      <div class="grid">
+
+        <div class="chan arx">
+          <h3>arXiv paper channel <span class="tag a">A-level foundation</span></h3>
+          <p class="role">Role positioning: provides method mechanisms, ablations, and effect numbers; it is the first-hand evidence base for the 14 insights and the entire ① method-map layer.</p>
+          <div class="field"><h4>Conclusions</h4>
+            <ul>
+              <li>The baseline backbone is closed and written up: APE → ProTeGi → OPRO → DSPy → TextGrad → MIPROv2 → GEPA (<a href="./apo_seven_methods_primer_20260611.en.html">seven-method primer</a>); evolutionary branches and controlled counterexamples are separately at <a href="./classic_optimizer_methods_comparison_20260610.en.html">six-method side-by-side comparison</a>.</li>
+              <li>The three feedback-signal layers (scalar/critique/trace) are the real method classification axis; "textual gradient" is a metaphor (C-06), and one-shot rewrite is a weak baseline.</li>
+              <li>prompt bloat / dev overfitting / judge hacking / memory pollution are the main risks of self-evolution.</li>
+              <li>The taxonomy was externally checked against 3 surveys: no whole-block omission within the declared scope; frontier gaps see ⑨.</li>
+            </ul>
+          </div>
+          <div class="field"><h4>Newly absorbed in this edition (5 papers later than or not adopted by v3)</h4><ul><li>prompt-repetition-2025 (→ insight 13), SePO (→ insight 14), SPEAR (→ insight 03 upgrade), Flawed-Metaphor (→ terminology and boundaries), Temporal-Structural Credit (→ insight 11 time dimension).</li></ul></div>
+          <div class="field"><h4>Coverage and gaps</h4><ul><li>39 deep-read notes (incl. 3 surveys; GrIPS / PromptAgent added 2026-06-12); earlier anchors AutoPrompt / RLPrompt still missing; bi-level/thought-driven directed search yet to run; 2026 new preprints uniformly labeled recent-preprint.</li></ul></div>
+          <div class="field"><h4>Trace chain</h4><ul><li>Each note contains the local PDF/text SHA256, main-result numbers, ablations, failure cases, and a minimal validation plan. Core entries <a href="./arxiv_deep_reading_batch3_synthesis.en.html">deep_reading_batch3</a>, <a href="./arxiv_2025_2026_frontier_synthesis_20260612.en.html">2025/2026 frontier synthesis (25-paper time slice)</a>, <a href="./arxiv_top80_taxonomy.en.html">taxonomy</a>, <a href="./literature_map.en.html">literature map (full paper_notes directory)</a>.</li></ul></div>
+        </div>
+
+        <div class="chan gh">
+          <h3>GitHub source-code channel <span class="tag b">B (partly D)</span></h3>
+          <p class="role">Role positioning: provides "what self-evolution looks like in code" — engineering structure and governance, not effect proof. This edition lists all 12 GHI items (v3 showed only 4).</p>
+          <div class="field"><h4>Conclusions GHI-01..12 (grouped by repo)</h4>
+            <ul>
+              <li><b>linshenkx/prompt-optimizer:</b> ① the three-stage compare/synthesis/rewrite is more auditable than direct rewriting; ② structured payload and JSON contract are boundary-control tools; ③ calibration samples must proactively counter overfitting and schema drift.</li>
+              <li><b>karpathy/autoresearch:</b> ④ the self-evolution loop must freeze evaluator/data/harness (source-code-level "DO NOT CHANGE"); ⑤ candidate changes need a ledger of commit+metric+resource+status; ⑥ retaining candidates explicitly accounts for complexity and failure-handling cost.</li>
+              <li><b>humanlayer/12-factor-agents:</b> ⑦ the prompt is a first-class code asset, not outsourced to a framework black box; ⑧ the optimization boundary should extend to context packaging (RAG/history/tools/memory/output schema).</li>
+              <li><b>affaan-m/ecc:</b> ⑨ memory must have boundaries (local-first/length cap/opt-out); ⑩ experience accumulation must save a full artifact chain of scenario/trace/verifier result/playbook.</li>
+              <li><b>core4 synthesis:</b> ⑪ "has tests" only indicates auditability ≠ method effective; ⑫ the GitHub channel is better suited to proving engineering structure — "direct optimizer effect evidence is scarce" is caused by limited recall + core4-only selection bias (C-06 downgrade annotation).</li>
+            </ul>
+          </div>
+          <div class="field"><h4>Coverage and known bias</h4><ul><li>Discovery is only an 8-query smoke test (240→85→6, no GITHUB_TOKEN); the 5 canonical optimizer repos are <strong>registered but not yet audited</strong> (second-round backlog, see the ⑪ cross-reference table); the real drift and rollback in issues/PR/release not yet mined.</li></ul></div>
+          <div class="field"><h4>Trace chain</h4><ul><li>Fixed-commit clone + machine scan + manual audit notes. Core entries <a href="./github_repo_channel_synthesis_20260609.en.html">channel_synthesis</a>, <a href="./github_repo_insight_cards_20260608.en.html">insight_cards</a>, <a href="./github_repo_source_audit_workflow_20260608.en.html">audit_workflow</a>.</li></ul></div>
+        </div>
+
+        <div class="chan web">
+          <h3>Other platforms / web_search channel <span class="tag b">B</span></h3>
+          <p class="role">Role positioning: provides the production engineering loop map and observability governance evidence — not "who is stronger," but "how to operate optimization." This edition pulls this channel's whole layer up into ④ Engineering implementation.</p>
+          <div class="field"><h4>Conclusions WPI-01..10 (compressed)</h4>
+            <ul>
+              <li>Intake must check dataset/metric/baseline/constraints (01); the version ledger binds trace/eval/cost/rollback point (02); trial history and rejected candidates are learning material (03).</li>
+              <li>Cookbook-first beats secondhand summaries (04); prompt management/observability is a governance layer, not effect evidence (05); validate context and prompt as separate variables (06).</li>
+              <li>Vendor benchmarks: adopt the workflow not the numbers (07); secondhand posts count only as a propagation map (08); match tools by stage (09); <b>the judge prompt must also be versioned, evaluated, and optimized (10 → insight 14)</b>.</li>
+            </ul>
+          </div>
+          <div class="field"><h4>Methods</h4><ul><li>WHM-01 Intake Checklist → HM-01; WHM-02 Version Ledger → HM-04; <b>WHM-03 Context-First Diagnosis → this edition's promotion candidate HM-05</b>; WHM-04 Source Triage → I-12.</li></ul></div>
+          <div class="field"><h4>Coverage and gaps</h4><ul><li>web_search 465 / HN ~24 / SE 1 / RSS 1 / reddit·dev.to 0 / x_api not run; about half of the community batch is GEPA reposts + Show HN releases; <strong>real failure cases / incident retrospectives are below the coverage-matrix requirement</strong> (should be ≥5 sources).</li></ul></div>
+          <div class="field"><h4>Trace chain</h4><ul><li>3 net-new (AWS Bedrock, Vertex placeholder_to_content, Ask HN evals pain points); the L1–L4 → A/B/C/D conversion table is built. Core entries <a href="./source_batches/web_search_platform_insight_cards_20260609.en.html">insight_cards</a>, <a href="./source_batches/web_search_platform_analysis_20260608.en.html">analysis</a>.</li></ul></div>
+        </div>
+
+        <div class="chan tw">
+          <h3>Twitter/X channel <span class="tag b">B* (to be verified)</span></h3>
+          <p class="role">Role positioning: adoption signal and the "research method → tool integration" implementation mapping (already pulled up into ④'s mapping table), plus social-media misreading boundaries — it is source discovery / adoption index, not effect evidence.</p>
+          <div class="field"><h4>Insights and conclusions (tw-insight-01..08 / conclusion-01..05 key points)</h4>
+            <ul>
+              <li>Have a test set and scorer first, then talk about auto-changing the prompt (tw-01); let the optimizer read the failure process, not just the score (tw-02); write the task as a program then compile it (tw-03); the prompt should be comparable/auditable/rollback-able like code (tw-04).</li>
+              <li>For prompt optimization in safety-monitoring scenarios, look at the audit budget and monitor failure, not just the average (tw-07, D-level, pending deep-read).</li>
+              <li>conclusion-05: all performance claims from X / media reposts / vendor benchmarks are downgraded by default.</li>
+            </ul>
+          </div>
+          <div class="field"><h4>Coverage and status</h4><ul><li>120 candidates closed out: 21 source cards / ~34 excluded-downgraded / ~60 deduplicated repost clusters; <strong>all pending</strong> — main_sources are still external URLs and must be backfilled with in-repo paths before entering the final report (the GEPA paper note is written, paving the way for the upgrade; DSPy/MIPRO/versioning notes pending).</li></ul></div>
+          <div class="field"><h4>Trace chain</h4><ul><li>Stable sources already backfilled: Pydantic GEPA, LangChain Promptim, Microsoft PromptWizard, Scale3 DSPyground, Salesforce Promptomatix. Core entries <a href="./source_batches/twitter_web_insight_cards_20260609.en.html">insight_cards</a>, <a href="./source_batches/twitter_web_analysis_20260608.en.html">analysis</a>.</li></ul></div>
+        </div>
+
+        <div class="chan zh">
+          <h3>Zhihu channel <span class="tag d">D (leads)</span></h3>
+          <p class="role">Role positioning: Chinese-community understanding, concentration of pitfalls (already pulled up as the main source of the ⑥ pitfall list), and framing of engineering problems — a leads layer, doesn't do effect proof.</p>
+          <div class="field"><h4>Insights (ZHI-01..08 key points)</h4>
+            <ul>
+              <li>Prompt optimization shifts from "tricks" to "eval-driven iteration" (01, B); GEPA's core is trace-aware reflection (02, B); agent self-evolution must declare mutable/frozen first (06, B).</li>
+              <li>Chinese sources suit the explanation and pitfall layers, not effect proof (07, D); general tricks divorced from eval are an anti-pattern to be down-weighted (08, D).</li>
+              <li>Local tool leads: Coze workflow-ified optimizers, OPIK, the memory and skill practices of Hermes/Manus — worth deep-reading only after filtering by the ZHI-05 standard (must expose the three field classes: eval inputs / candidate changes / run results).</li>
+            </ul>
+          </div>
+          <div class="field"><h4>Evidence convergence and trace chain</h4><ul><li>Of 99 candidates, most are ZH-L1→D (discovery not proof); only those cross-referenced with the GEPA / MemAPO / SePO repo notes rise to B; the Safety/Eval/Observability directions have only ~2 candidates, judged weakly covered. Core entries <a href="./source_batches/zhihu_insight_cards_20260609.en.html">insight_cards</a>, <a href="./source_batches/zhihu_three_layer_analysis_20260608.en.html">three_layer</a>.</li></ul></div>
+        </div>
+
+      </div>
+
+      <div class="block" id="channel-audit">
+        <h4>Three-channel card-by-card verification (2026-06-12): where did all the social/secondhand content go</h4>
+        <p>Addressing the question of "whether the report uses almost only arXiv," all <b>44 numbered cards</b> across the three channels — Zhihu, Twitter/X, web_search — were checked card-by-card against the 14 insights and 12 pitfalls. Result: <b>not a single card conflicts with a main-line conclusion</b>; the main line adopts 25 cards (plus 1 as ⑤'s promotion candidate WHM-03), with 17 used only for cross-channel corroboration, and only 1 (tw-insight-07) merely mentioned in passing in this section's breakdown and not absorbed at the insight layer.</p>
+        <table class="matrix" aria-label="Three-channel card-by-card adoption status">
+          <thead><tr><th>Channel</th><th>Numbered cards</th><th>Adopted in main line</th><th>Corroboration only</th><th>Not absorbed</th><th>Representative content not in the main line</th></tr></thead>
+          <tbody>
+            <tr><td><b>Zhihu</b></td><td>11</td><td>5</td><td>6</td><td>0</td><td>DSPy/GEPA misreading sample library (the pitfall table cites only the conclusion), the tool-article filtering field checklist, local tool leads (Coze / Hermes / Manus)</td></tr>
+            <tr><td><b>Twitter/X</b></td><td>19</td><td>13</td><td>5</td><td>1</td><td>The safety optimization gate (tw-insight-07), the field version of seven-layer failure attribution (method-03, pending inclusion in the unified catalog)</td></tr>
+            <tr><td><b>web_search</b></td><td>14</td><td>7 + 1 candidate</td><td>6</td><td>0</td><td>The full nine-tool five-dimension benchmark table (④ only took the three-stage conclusion), trial-history minimal fields, the "adopt only the workflow" four fields for vendor material</td></tr>
+          </tbody>
+        </table>
+        <ul class="howto" style="margin-top:10px">
+          <li><b>High adoption rate + zero conflict shows the channel convergence is real:</b> about 60% of cards enter the main line and all the rest point the same direction — the social/secondhand channels and the literature layer point <b>independently</b> to the same set of disciplines, which is exactly the precondition for ② evidence pyramid's "multi-layer cross-corroboration" to hold. Conversely, claims unique to a single channel with no echo from other layers (such as tw-insight-07) all happen to stop at the lead position — the grading mechanism is working as designed.</li>
+          <li><b>Most content not in the main line is "granularity mismatch," not "insufficient quality":</b> this report carries principles and conclusions; field-level operational details (candidate-ledger fields, seven-layer failure attribution, source quick-filter matrix, vendor-material four workflow fields) don't fit at the report's granularity. This part is collected by topic into the supplement — copy it directly when running experiments or building the loop.</li>
+          <li><b>The only content vacuum the verification exposed is the Safety/Eval dimension:</b> tw-insight-07 "safety-monitoring prompts can't only optimize the average" (audit budget / monitor failure / safety regression, D-level) is the only one of the 44 cards whose idea is absorbed by no insight or method; the Zhihu channel's Safety direction also has only about 2 candidates — weakly covered across channels simultaneously, already listed under ⑨'s collection gaps.</li>
+        </ul>
+        <p class="src">The card-by-card details (each card's claim, level, adoption status, unique information point) and the five-topic organization (full tool-benchmark table / research→tool mapping / field-level details / misreading sample library / tension points) are at <a href="./platform_insights_supplement_20260612.en.html">Other-Platform Content Supplement</a>. The GitHub channel, already heavily absorbed by ④, is out of that supplement's scope.</p>
+      </div>
+    </section>
+
+    <!-- ⑨ COVERAGE & FRONTIER -->
+    <section id="coverage">
+      <h2>⑨ Coverage, scope boundaries, and frontier gaps</h2>
+      <p class="section-intro">This section splits "what we haven't covered" into three categories: <b>collection gaps</b> (want to cover but haven't yet), <b>deliberate boundaries</b> (choose not to do), and <b>frontier gaps</b> (newly emerging directions in the field for which we don't yet have a slot). This avoids readers misreading "organized" as "fully covered."</p>
+
+      <div class="grid two">
+        <div class="insight amber">
+          <h3>Collection gap · GitHub: limited recall + selection bias</h3>
+          <ul class="howto">
+            <li>Discovery is only an 8-query smoke test (240→85→6, no token); "few direct optimizers" has been downgraded to a limited conclusion (C-06).</li>
+            <li>The canonical optimizers gepa / PromptWizard / promptomatix / AutoPrompt / dspyground are <b>not yet audited</b> (second-round backlog, cross-reference table at ⑪).</li>
+            <li>Issues/PR/discussions/release not mined — real drift, rollbacks, and incidents are all there.</li>
+          </ul>
+        </div>
+        <div class="insight amber">
+          <h3>Collection gap · failure cases and trace chains</h3>
+          <ul class="howto">
+            <li>Real failure cases / incident retrospectives are <b>below the coverage-matrix requirement</b> (should be ≥5 sources); reddit / dev.to 0 hits, x_api not run — the failure-story dimension from English-language practitioners is not collected.</li>
+            <li>The Twitter 21 cards' main_sources still point to external URLs, <b>all pending</b>; in-repo trace paths must be backfilled before entering the final report.</li>
+            <li>Of the Zhihu 99 candidates, most stop at ZH-L1 (D); this project has no C-level experimental evidence yet, and none of the 14 insights have been reproduced in this project.</li>
+            <li>The Safety / Eval / Observability dimensions are <b>weakly covered across channels</b>: the idea of tw-insight-07 "safety-monitoring prompts can't only optimize the average" (D) is not absorbed by the 14 insights, and the Zhihu channel has only about 2 candidates in this direction — the 44-card verification in ⑧ confirms this is the only content vacuum, listed as a follow-up special task.</li>
+          </ul>
+        </div>
+        <div class="insight blue">
+          <h3>Deliberate boundaries: what we choose not to do</h3>
+          <ul class="howto">
+            <li><b>soft / continuous prompt tuning</b> (prefix/embedding level) — focusing on discrete natural-language prompts, explicitly excluded by the scoring rules.</li>
+            <li><b>multimodal</b> (text-to-image/video, VLM prompt optimization) — both surveys list it as a direction, but this project explicitly doesn't do it.</li>
+            <li><b>full context-engineering systems</b> (RAG architecture, retriever optimization, multi-agent communication protocols) — treated as boundary material; but "context compression" and "intelligent context assembly," being isomorphic to prompt optimization, are registered in the backlog.</li>
+            <li>These are scope choices, not omissions — per the <a href="./arxiv_taxonomy_completeness_check_20260610.md">taxonomy completeness check</a> (against 3 surveys).</li>
+          </ul>
+        </div>
+        <div class="insight rose">
+          <h3>Frontier gaps: directions the field has but we don't yet have a slot for</h3>
+          <ul class="howto">
+            <li><b>bi-level / thought-driven prompt optimization (the reasoning-model o1/R1 era)</b> — the only "adjacent whole block that is entirely absent": none of the 25 empirical papers from 2025/2026 in the library touch it, and only the APE survey names it conceptually (see the gap count in the <a href="./arxiv_2025_2026_frontier_synthesis_20260612.en.html">2025/2026 frontier synthesis</a>), <b>the top priority for the next directed arXiv search</b>.</li>
+            <li>task-agnostic / online optimization (no Dval, intent drift, non-stationary) — related to the self-evolution main line, worth a directed search.</li>
+            <li>constrained optimization — this report's hygiene theme (insight 06) is its empirical version, with the theoretical shell yet to be filled.</li>
+            <li>multi-task / negative transfer — discussed jointly with memory filtering (insight 10).</li>
+            <li>lighter sub-mechanisms within clusters (learned scoring, token-level editing, bandit filtering, MoE routing) — known to exist, deliberately not gone into deeply, only a pointer left.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑩ ROADMAP -->
+    <section id="roadmap">
+      <h2>⑩ Putting these to use: the first minimal validation batch</h2>
+      <p class="section-intro">The few items this project should validate hands-on first — low cost, interpretable errors, strong cross-channel support. The detailed design is at <a href="./experiment_plan.en.html">experiment plan</a>, under the same criteria as the unified catalog's P0–P2; this edition adds the "zero-cost transformation three-arm A/B" as the cheapest P0.</p>
+      <table class="matrix" aria-label="First validation batch">
+        <thead><tr><th>Priority</th><th>What to validate</th><th>Corresponding insight</th><th>Minimal task</th><th>Output regardless of success or failure</th></tr></thead>
+        <tbody>
+          <tr><td>P0</td><td><b>Zero-cost transformation three-arm A/B (baseline / repetition×2 / padding)</b></td><td>13</td><td>50–100-sample small eval set (classification or multiple choice)</td><td>Establish a zero-intelligence control baseline; calibrate whether the 2026-generation model has internalized restating behavior</td></tr>
+          <tr><td>P0</td><td>Pre-optimization checkup (headroom / noise floor)</td><td>01, 02</td><td>100–300 JSON extractions</td><td>Judge whether there's optimization room, calibrate the noise floor</td></tr>
+          <tr><td>P0</td><td>Exemplar optimization vs instruction optimization</td><td>07</td><td>The same extraction task</td><td>Prevent mis-recording exemplar gains as instruction gains</td></tr>
+          <tr><td>P1</td><td>Direct rewrite vs root-cause hypothesis rewrite</td><td>03, 04</td><td>Extraction/classification with clear failures</td><td>Judge whether root-cause hypotheses improve held-out performance</td></tr>
+          <tr><td>P1</td><td>Performance only vs adding a hygiene gate</td><td>06</td><td>The same candidate pool</td><td>Judge whether the anti-bloat gate reduces pseudo-improvements</td></tr>
+          <tr><td>P2</td><td>Tool schema optimization</td><td>09</td><td>20–50 similar tools</td><td>Judge whether changing the schema beats changing only the global instruction</td></tr>
+          <tr><td>P2</td><td>Filtered memory vs raw memory</td><td>10</td><td>Two similar + one heterogeneous task</td><td>Judge whether memory lowers cost or brings negative transfer</td></tr>
+        </tbody>
+      </table>
+      <p class="src">Insight 14 (optimizer/judge versioning) doesn't need a separate experiment — just add the optimizer_prompt / judge_prompt version fields to the run-record schema to land it, taking effect alongside any P0 experiment.</p>
+      <div class="callout">
+        <strong>Four takeaways for the reader:</strong> ① before optimizing, first ask "is it worth it," don't spend money if headroom doesn't exceed the noise floor, and while you're at it first test the zero-cost structural transformation as a baseline; ② choose a method by what feedback signal your system can produce (scalar / critique / trace), and with a dev set optimize examples first, not instructions; ③ the essence of changing a prompt is "evidence → hypothesis → multiple candidates → validation-set filtering → rollback-able," not letting the model polish; ④ longer, more, and more complex are not good by default — first prove it brought no overfitting, contamination, or attribution difficulty.
+      </div>
+    </section>
+
+    <!-- ⑪ SOURCES -->
+    <section id="sources">
+      <h2>⑪ Evidence index and trace chain</h2>
+      <p class="section-intro">This page is a visual synthesis; for the full argument see the source documents at each layer, then trace layer by layer back to the paper/source-code originals.</p>
+
+      <h4 style="margin-top:6px">Method-map layer (sources for the ① layer new in this edition)</h4>
+      <ul class="source-list">
+        <li><a href="./apo_seven_methods_primer_20260611.en.html">APO seven-method main-line primer (evolution lineage)</a></li>
+        <li><a href="./classic_optimizer_methods_comparison_20260610.en.html">Classic six-method side-by-side comparison (same-framework numbers)</a></li>
+        <li><a href="./arxiv_top80_taxonomy.en.html">7 method clusters taxonomy</a></li>
+        <li><a href="./arxiv_taxonomy_completeness_check_20260610.md">Taxonomy external completeness check (against 3 surveys)</a></li>
+      </ul>
+
+      <h4 style="margin-top:12px">Synthesis and intermediate layer</h4>
+      <ul class="source-list">
+        <li><a href="./insight_handbook_20260609.en.html">Reader-facing insight handbook (full 14 insights, incl. Part G)</a></li>
+        <li><a href="./insight_method_catalog_20260609.en.html">Insight / Conclusion / Method candidate list (structured)</a></li>
+        <li><a href="./insight_field_standard.en.html">Field-definition specification (A/B/C/D levels and per-type schema)</a></li>
+        <li><a href="./final_report_outline.en.html">Final report structure</a></li>
+        <li><a href="./experiment_plan.en.html">Experiment plan (P0–P2)</a></li>
+        <li><a href="./prompt_evolution_mindmap_20260610.en.html">Panoramic mind map Mermaid source (updated to the v4 structure: group G and insights 13/14)</a></li>
+      </ul>
+
+      <h4 style="margin-top:12px">Per-channel organization</h4>
+      <ul class="source-list">
+        <li>arXiv: <a href="./arxiv_deep_reading_batch3_synthesis.en.html">deep_reading_batch3</a> · <a href="./arxiv_2025_2026_frontier_synthesis_20260612.en.html">2025/2026 frontier synthesis</a> · <a href="./arxiv_top80_taxonomy.en.html">taxonomy</a> · <a href="./literature_map.en.html">literature map (full paper_notes directory)</a> (39 papers)</li>
+        <li>GitHub: <a href="./github_repo_channel_synthesis_20260609.en.html">channel_synthesis</a> · <a href="./github_repo_insight_cards_20260608.en.html">insight_cards</a> · <a href="./github_repo_source_audit_workflow_20260608.en.html">audit_workflow</a></li>
+        <li>Other platforms: <a href="./source_batches/web_search_platform_insight_cards_20260609.en.html">insight_cards</a> · <a href="./source_batches/web_search_platform_analysis_20260608.en.html">analysis</a></li>
+        <li>Twitter/X: <a href="./source_batches/twitter_web_insight_cards_20260609.en.html">insight_cards</a> · <a href="./source_batches/twitter_web_analysis_20260608.en.html">analysis</a></li>
+        <li>Zhihu: <a href="./source_batches/zhihu_insight_cards_20260609.en.html">insight_cards</a> · <a href="./source_batches/zhihu_three_layer_analysis_20260608.en.html">three_layer</a></li>
+        <li>Cross-channel supplement: <a href="./platform_insights_supplement_20260612.en.html">Other-Platform Content Supplement</a> (three-channel 44-card card-by-card adoption status + five-topic organization: full tool-benchmark table / implementation mapping / field-level details / misreading sample library / tension points)</li>
+        <li>Source master ledger: <a href="./source_inventory.md">source_inventory</a> · <a href="./industry_practices.md">industry_practices</a></li>
+      </ul>
+
+      <h4 style="margin-top:12px">repo ↔ paper cross-reference table (cross-source corroboration management)</h4>
+      <table class="matrix" aria-label="repo paper cross-reference">
+        <thead><tr><th>Repo</th><th>Associated paper</th><th>Paper deep-read</th><th>Source audit</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>gepa-ai/gepa</td><td>GEPA (2507.19457)</td><td>✅ A-level note</td><td>⏳ pending</td><td>L4 corroboration candidate, <b>highest re-audit priority</b></td></tr>
+          <tr><td>microsoft/PromptWizard</td><td>PromptWizard (2405.18369)</td><td>❌ not written</td><td>⏳ pending</td><td>Write the paper note first, then audit the code</td></tr>
+          <tr><td>SalesforceAIResearch/promptomatix</td><td>Promptomatix (2507.14241)</td><td>❌ skimmed</td><td>⏳ pending</td><td>Deep-read the paper first</td></tr>
+          <tr><td>Eladlev/AutoPrompt</td><td>Intent-based Prompt Calibration (2402.03099)</td><td>❌ candidate</td><td>⏳ pending</td><td>Distinguish naming from LangChain Promptim</td></tr>
+          <tr><td>Scale3-Labs/dspyground</td><td>(GEPA harness, no standalone paper)</td><td>—</td><td>⏳ pending</td><td>Agent optimizer engineering case</td></tr>
+          <tr><td>linshenkx/prompt-optimizer · karpathy/autoresearch · humanlayer/12-factor-agents · affaan-m/ecc</td><td>(no corresponding paper)</td><td>—</td><td>✅ audited (fixed commit)</td><td>Upgrade the evidence via this project's experiments</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin-top:12px">Historical versions (comparison / rollback)</h4>
+      <ul class="source-list">
+        <li><a href="./analysis_report_v3_20260610.html">v3 report (12 insights + mind map + pyramid + per-channel quick view, frozen)</a></li>
+        <li><a href="./analysis_report_v2_20260609.html">v2 report (organized by insight, arXiv-centric)</a></li>
+        <li><a href="./analysis_report_v1_20260608.html">v1 report (organized by channel, the earliest version)</a></li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>Report v4 current positioning: building on v3's 12 insights and evidence pyramid, upgraded into a four-layer synthesis of "method map → workflow insights (14) → engineering implementation → pitfalls & boundaries." Insight numbers 01–12 stay aligned with the unified catalog I-01..12, and 13/14 are new in this edition (unified catalog I-13/I-14, reader handbook Part G, the advisor knowledge base, and the panoramic mind map's group G were all synced on 2026-06-11). All prompts/dialogues marked "(illustrative)" are fictional for explanation, not this project's experimental data; paper numbers are results under each paper's setting, not this project's reproduction; recent-preprint conclusions and the pending candidates of non-arXiv channels can only be relied upon after independent reproduction / trace backfill. Experiments are used to validate, demonstrate, and calibrate this experience, not as the project main line itself. Update time: 2026-06-12 (⑧ added the three-channel 44-card card-by-card verification and the supplement entry; the body conclusions and insight numbering are unchanged).</p>
+    </footer>
+  </div>
+</body>
+</html>

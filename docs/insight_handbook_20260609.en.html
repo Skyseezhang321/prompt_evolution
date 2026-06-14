@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Optimization and Self-Evolution: A Reader-Facing Insight Handbook · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">Prompt Optimization and Self-Evolution: A Reader-Facing Insight Handbook</span><a class="back lang" href="insight_handbook_20260609.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="prompt-optimization-and-self-evolution-a-reader-facing-insight-handbook">Prompt Optimization and Self-Evolution: A Reader-Facing Insight Handbook</h1>
+<p>Date: 2026-06-09</p>
+<h2 id="who-this-handbook-is-for">Who this handbook is for</h2>
+<p>You understand AI tools, you can write prompts, and you may have some academic training — but you're not a researcher in the niche field of prompt optimization. There's a lot being said about "automatic prompt optimization," "prompt self-evolution," and "context engineering," and it's a mix of truth and hype. This handbook aims to help you build a way of thinking that lets you <strong>judge what's real for yourself and get hands-on directly</strong>.</p>
+<p>It is a companion to the repository's other document, the <a href="insight_method_catalog_20260609.en.html">Insight / Conclusion / Helpful Method candidate catalog</a>: that one is a structured intermediate layer for researchers (YAML fields, evidence levels); this one is for readers — <strong>every insight is explained through a single example you can actually follow</strong>. Both draw on the same batch of paper notes and source-code audits, and reach the same conclusions; they only differ in how they're written.</p>
+<h2 id="how-to-read-the-evidence-in-this-handbook">How to read the "evidence" in this handbook</h2>
+<p>To avoid overstating things, every insight tags three items:</p>
+<ul>
+<li><strong>Paper evidence strength</strong>: <code>A</code> (corroborated by multiple papers or with ablations) / <code>B</code> (a single paper or engineering practice). This means "holds under the paper's setup," not "guaranteed to hold on your task."</li>
+<li><strong>Whether this project has verified it</strong>: As of 2026-06-09, <strong>all are "No"</strong>. This project hasn't run reproduction experiments yet, so no improvement percentage from any paper can be written as "we have already proven it."</li>
+<li><strong>The <code>recent-preprint</code> tag</strong>: Conclusions from new 2026 arXiv preprints still need independent reproduction; when you see this tag, discount accordingly.</li>
+</ul>
+<p>In addition, <strong>every prompt, number, and dialogue in this handbook marked "illustrative" is fabricated to make a concept clear — it is not real experimental data</strong>. Real data appears only in the "What the papers say" sections, and each is accompanied by a source file.</p>
+<h2 id="the-one-sentence-conclusion">The one-sentence conclusion</h2>
+<p>If you remember only one sentence: <strong>automatic prompt optimization is not a matter of "having the model fix up the prompt"; it is a piece of engineering discipline — "first decide whether it's worth optimizing → turn failures into editable evidence → generate multiple candidates and filter them with a validation set → record versions and rollback points." Without the discipline, "optimization" is often just rewriting, and sometimes a regression.</strong></p>
+<p>The 14 insights below unfold in the order you'll actually encounter them (13 and 14 are Part G, added on 2026-06-11 alongside main report v4; the numbering and content of 01–12 are unchanged).</p>
+<hr>
+<h2 id="part-a-before-you-start-is-this-task-worth-optimizing">Part A. Before you start: is this task worth optimizing?</h2>
+<h3 id="insight-01-confirm-theres-headroom-before-you-spend-money-running-an-optimizer">Insight 01 · Confirm there's headroom before you spend money running an optimizer</h3>
+<blockquote>
+<p>Maps to catalog I-01 | Paper evidence strength A | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: Automatic prompt optimization isn't a sure bet. Under some setups, it has nearly a one-in-two chance of making your prompt <strong>worse than doing nothing at all (zero-shot)</strong>.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+You want to sort customer support tickets into three categories: "complaint / inquiry / refund." The first version of the prompt is plain:</p>
+<pre><code>Sort the ticket below into: complaint, inquiry, refund. Ticket: {text}
+</code></pre>
+<p>A test on 30 samples gives 82% accuracy. You bring in an automatic optimizer; it runs for 6 rounds and produces a new prompt that's long and "professional" (with a pile of boundary rules added). Dev rises to 87% and you're happy — <strong>but on an unseen test set of 100 tickets, it drops to 79%, lower than that original one-liner</strong>. Those 5 points were "picked up" by the optimizer from noise in the 30 small samples; they're not real skill.</p>
+<p><strong>What the papers say</strong>
+- <em>Prompt Optimization Is a Coin Flip</em> (2026, <code>recent-preprint</code>): on Claude Haiku 4.5, <strong>49% of 72 optimization runs were below zero-shot</strong>; on free-text tasks (XSum, WildBench), the best improvement was only +0.6, +0.7, falling within measurement noise. The only sure bet was a task like HelpSteer2 with <strong>strict JSON/rubric output</strong>, where all six methods beat zero-shot (highest +6.8). Source: <a href="paper_notes/paper-coin-flip-2026.html">paper-coin-flip-2026.md</a>
+- ProTeGi (2023) admits it itself: the learning curve <strong>peaks at roughly step 3</strong>, after which it tends to overfit the training data. Source: <a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a></p>
+<p><strong>What you should do</strong> (before spending on an optimizer, do a 5-minute checkup first)
+1. Run zero-shot and your hand-written baseline, recording one score for each.
+2. Hand-write or have the model generate 10–20 candidate prompts.
+3. Score all candidates with <strong>the same batch of 20 held-out samples</strong>.
+4. Look at two numbers: <strong>how much the best candidate beats zero-shot</strong> (headroom), and <strong>how much candidate scores fluctuate</strong> (noise floor).
+5. If the "maximum improvement" doesn't even exceed the "magnitude of fluctuation" — <strong>stop</strong>. This task most likely has no room for optimization, and what you optimized is just noise.</p>
+<p><strong>Boundary</strong>: For some tasks the gains depend on combinatorial structure that only multi-round search can discover, and a simple checkup will <strong>underestimate</strong> them; the threshold must be recalibrated to your sample size and scorer, and cannot be rigidly carried across tasks.</p>
+<hr>
+<h3 id="insight-02-for-your-first-batch-to-validate-pick-tasks-that-can-be-scored-objectively">Insight 02 · For your first batch to validate, pick tasks that "can be scored objectively"</h3>
+<blockquote>
+<p>Maps to catalog I-11 | Paper evidence strength A/B | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: Even for the same act of optimizing a prompt, <strong>the task type determines whether you can see clearly whether the optimization helped</strong>. For open-ended writing tasks, even after optimizing, you can't tell whether things genuinely got better or whether the judge's taste changed.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+Two tasks sit in front of you:</p>
+<ul>
+<li>Task A: "Summarize the ticket in one sentence." The summaries from both candidate prompts "read fine," and you can only rely on another model acting as a judge to score them — but the judge prefers something longer today and shorter tomorrow, so you have no idea whether the score change comes from the prompt or from the judge.</li>
+<li>Task B: "Extract the ticket into JSON of <code>{intent, entities, urgency}</code>." A candidate misses the <code>urgency</code> field, and you can <strong>pinpoint it at a glance</strong>: field F1 dropped in the urgency column, the JSON is still valid, and the problem lies in the urgency-determination rule.</li>
+</ul>
+<p>Task B lets you break failures down into "field missed / label wrong / format broken / over-inference," and each category maps to a specific change in the prompt. So pick B, not A, for the first batch of validation.</p>
+<p><strong>What the papers say</strong>
+- <em>Coin Flip</em> (2026, <code>recent-preprint</code>): the only thing that made all methods beat zero-shot was a task like HelpSteer2 with <strong>structured JSON/rubric output</strong> (+6.8); free-text tasks were all in the noise. Source: <a href="paper_notes/paper-coin-flip-2026.html">paper-coin-flip-2026.md</a>
+- <em>APO for KG Construction</em> (2025): on structured triple extraction, same-dataset optimization can reach <strong>triple F1 +16%</strong>; but switching datasets leaves only <strong>about 1%</strong> — gains on structured tasks are clear, yet cross-domain transfer still needs separate testing. Source: <a href="paper_notes/paper-apo-kg-construction-2025.html">paper-apo-kg-construction-2025.md</a></p>
+<p><strong>What you should do</strong>
+- For your first minimal validation, pick: information extraction (JSON schema), text classification, tool calling — scoring is objective and errors are decomposable.
+- For now, don't use open-ended generation (writing, summarization, dialogue) as your first testbed; its causality is the hardest to see clearly.</p>
+<p><strong>Boundary</strong>: Open-ended generation tasks matter; they're just not suitable as the first batch of validation where "causality is clear." Expand to them once methods on structured tasks are working.</p>
+<hr>
+<h2 id="part-b-how-to-learn-something-from-failures">Part B. How to learn something from failures</h2>
+<h3 id="insight-03-turn-failure-samples-into-editable-evidence-dont-just-record-a-single-score">Insight 03 · Turn failure samples into "editable evidence" — don't just record a single score</h3>
+<blockquote>
+<p>Maps to catalog I-02 | Paper evidence strength A | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: A score only tells you "it broke"; it doesn't tell you "what to fix." What actually drives prompt improvement is a <strong>written diagnosis</strong> of failure samples, not that accuracy number.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+Ticket: "I want to return the item and also complain about your support staff's attitude." The model extracts <code>intent: complaint</code> and misses <code>refund</code>.</p>
+<ul>
+<li><strong>Recording only a score</strong>: this case = wrong. The information you get is a red cross, with no way to start.</li>
+<li><strong>Recording it as editable evidence</strong>: write a diagnosis — "<strong>when a single ticket contains both an 'action request' and an 'emotional expression,' the model tends to catch only the emotion (complaint) and miss the action (refund)</strong>." This sentence tells you directly what the prompt needs to add: explicitly require that "a single ticket can have multiple intents, and action-type and emotion-type must be judged separately."</li>
+</ul>
+<p>The latter is a "textual gradient / critique" — but note, it's a <strong>clue to the direction of rewriting</strong>, not a gradient in the mathematical sense; don't treat it as a precise causal explanation.</p>
+<p><strong>What the papers say</strong>
+- ProTeGi (2023): using failure samples to generate a natural-language "gradient" and then edit the prompt is <strong>15.3% higher on average than the original prompt, with up to a 31% improvement</strong>. Source: <a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>
+- The counter-evidence is just as strong: in the ProTeGi paper, <strong>letting AutoGPT "give itself feedback and revise itself" for 6 rounds actually made the starting prompt worse</strong> — showing that "letting an agent revise itself" does not equal effective optimization. Source: <a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>
+- The point that "textual gradients are actually a flawed metaphor" is argued in a dedicated paper. Source: <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025.md</a></p>
+<p><strong>What you should do</strong>
+For every eval case, record at least five items: <code>prediction</code>, <code>gold</code>, <code>error_type</code> (failure type), <code>critique</code> (a one-sentence diagnosis), <code>candidate_prompt_id</code> (the ID of this rewrite). First organize 20 failure samples into a "failure-type table," then have the optimizer revise the prompt <strong>based only on this table</strong>.</p>
+<p><strong>Boundary</strong>: A critique carries the judge's bias and must be bound to specific samples and metrics; you cannot write a one-sentence diagnosis into your conclusions as "true causality."</p>
+<hr>
+<h3 id="insight-04-list-root-cause-hypotheses-for-the-failure-first-then-revise-the-prompt">Insight 04 · List "root-cause hypotheses for the failure" first, then revise the prompt</h3>
+<blockquote>
+<p>Maps to catalog I-03 | Paper evidence strength A | Verified by this project: No (<code>recent-preprint</code> evidence)</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: The most common way a reflective optimizer crashes is not insufficient information, but that <strong>it guesses the wrong direction at the very start, and then grows more confident as it revises further down that wrong direction</strong>.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+An extraction task gets <code>urgency</code> wrong on 30% of samples.</p>
+<ul>
+<li><strong>Telling the model to revise directly</strong>: "Please optimize this prompt to make urgency more accurate" → the model adds a line, "Please judge urgency carefully." Useless, because it never figured out why it was wrong.</li>
+<li><strong>List root-cause hypotheses first, with a separate version for each hypothesis</strong>:</li>
+<li>Hypothesis A: the schema doesn't clearly define the criteria for "urgent" → candidate A adds the determination rules.</li>
+<li>Hypothesis B: missing boundary examples → candidate B adds 2 examples of "looks urgent but actually isn't."</li>
+<li>Hypothesis C: the model treats neutral words like "ASAP" and "right away" all as urgent → candidate C makes clear these words alone don't constitute urgency.</li>
+</ul>
+<p>All three candidates are validated on a minibatch; whoever genuinely pulls back that 30% gets adopted.</p>
+<p>The key move is to <strong>split "guessing the cause" and "revising the prompt" into two steps</strong>, rather than letting the same reflector hand you the final answer in one go.</p>
+<p><strong>What the papers say</strong>
+- VISTA / <em>Reflection in the Dark</em> (2026, <code>recent-preprint</code>): on a flawed GSM8K seed prompt, GEPA's performance <strong>dropped from 23.81% to 13.50%</strong> — because the true root cause never entered its hypothesis space; after VISTA decoupled "hypothesis generation" from "prompt rewriting," it <strong>recovered to 87.57%</strong>. Source: <a href="paper_notes/paper-vista-reflection-dark-2026.html">paper-vista-reflection-dark-2026.md</a>
+- <em>Are LLMs Good Prompt Optimizers?</em> (2024): likewise points out that an LLM's reflection doesn't necessarily identify the true root cause of an error. Source: <a href="paper_notes/paper-llm-prompt-optimizers-2024.html">paper-llm-prompt-optimizers-2024.md</a></p>
+<p><strong>What you should do</strong>
+For the same batch of failure samples, force the generation of <strong>2–3 mutually exclusive root-cause hypotheses</strong> (three typical kinds: missing rules, missing context/examples, format or definition conflict), generate one candidate prompt per hypothesis, and score each separately. The run log should store <code>failure_hypothesis</code>, not just <code>critique</code> — this is how you tell apart "didn't think of the cause" and "the rewrite failed."</p>
+<p><strong>Boundary</strong>: For open-ended writing tasks the root-cause boundary is blurry, and the cost of multi-hypothesis validation may exceed the benefit; this approach is better suited to structured/classification tasks with clear failure types.</p>
+<hr>
+<h2 id="part-c-dont-let-the-model-fool-you-candidate-selection-and-anti-bloat">Part C. Don't let the model fool you: candidate selection and anti-bloat</h2>
+<h3 id="insight-05-dont-adopt-the-models-first-version-generate-several-more-and-pick-with-a-validation-set">Insight 05 · Don't adopt the model's first version — generate several more and pick with a validation set</h3>
+<blockquote>
+<p>Maps to catalog I-04 | Paper evidence strength A | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: The candidate prompts an LLM generates have <strong>enormous variance</strong>. "How you select candidates" matters as much as "how you generate candidates" — even more. Hand the choice to a validation set, rather than letting the model self-assess "this version of mine is best."</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+The optimizer gives you 5 rewritten versions. The common mistake is to just use the 1st one (or the one the model says it "recommends"). The right approach is to run all 5 on 20 held-out samples and keep a ledger:</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Dev score</th>
+<th>Format error rate</th>
+<th>Prompt length</th>
+<th>Keep?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td>0.86</td>
+<td>0%</td>
+<td>1.0x</td>
+<td>Candidate</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>0.88</td>
+<td>6%</td>
+<td>1.2x</td>
+<td>Reject (format errors rose)</td>
+</tr>
+<tr>
+<td>C3</td>
+<td>0.87</td>
+<td>0%</td>
+<td>2.4x</td>
+<td>Reject (too long, suspected overfitting)</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>0.84</td>
+<td>0%</td>
+<td>1.1x</td>
+<td>Reject (worse than C1)</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>0.86</td>
+<td>0%</td>
+<td>1.0x</td>
+<td>Candidate</td>
+</tr>
+</tbody>
+</table>
+<p>Rather than just taking C2 with the highest dev score, you pick by weighing three dimensions — dev score, format, and length — together. This is the plain version of "Pareto selection." At the same time, always keep a <code>best-seen</code> (the best seen so far); it won't be directly overwritten by any new candidate, and you can roll back to it anytime.</p>
+<p><strong>What the papers say</strong>
+- ProTeGi (2023): beam-search selection (Beam scores <strong>0.85 / 0.67 / 0.88</strong> on Jailbreak/Liar/Sarcasm) is clearly better than no iteration and greedy; using a bandit (UCB, etc.) for candidate selection is also clearly better than uniform random selection. Source: <a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>
+- This structure recurs across methods like GEPA, PromptBreeder, EvoPrompt, SePO, and MASPO (archive / evolutionary search / Pareto / bandit). Source: <a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a>, <a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023.md</a></p>
+<p><strong>What you should do</strong>
+Save at least the following each round: <code>seed</code> (starting point), <code>candidates</code> (candidate pool), <code>scores</code>, <code>selection_policy</code> (what you select by), <code>rejected_reason</code> (why rejected), <code>best_seen</code>, <code>rollback_point</code>. Generate 5 candidates and select Pareto candidates by the three dimensions of dev score + format error + length.</p>
+<p><strong>Boundary</strong>: The larger the search budget, the easier it is to overfit on dev — you must have a validation/test stratification as a backstop.</p>
+<hr>
+<h3 id="insight-06-a-prompt-getting-longer-and-more-complex-is-often-overfitting-not-progress">Insight 06 · A prompt getting longer and more complex is often overfitting, not progress</h3>
+<blockquote>
+<p>Maps to catalog I-07 | Paper evidence strength A | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: An optimized prompt that's longer, has more rules, and looks more "professional" is <strong>very likely a danger sign</strong> — it's patching the training samples rather than genuinely getting stronger.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+Before optimization (2 lines):</p>
+<pre><code>Extract the ticket into {intent, entities, urgency}. urgency takes high/medium/low.
+</code></pre>
+<p>After optimization (the optimizer added a pile of rules, excerpted):</p>
+<pre><code>Extract the ticket into {intent, entities, urgency}. urgency takes high/medium/low.
+- If the ticket mentions &quot;invoice&quot; and contains a number, intent must be refund.   ← a patch from one training sample
+- If &quot;manager&quot; or &quot;complaint&quot; appears, set urgency to high.          ← writing a local special case as a global rule
+- Note: if the user uses more than two exclamation marks, lean high.            ← fitting the annotator's habit
+(... and 9 more similar rules)
+</code></pre>
+<p>Dev rose 5 points, but these rules are all "pseudo-patterns" reverse-engineered from individual training samples. Switched to a stress-test set (OOD), it drops 8 points. <strong>The criterion is not "shorter is better," but "whether each added rule can map to a class of real failure and pass a stress test."</strong></p>
+<p><strong>What the papers say</strong>
+- PrefPO (2026, <code>recent-preprint</code>): left unconstrained, TextGrad inflated the prompt to <strong>14.7x length</strong> on IFEval-Hard; worse, <strong>86% of the time it was "prompt hacking"</strong> (covertly rewriting the task itself), whereas constrained PrefPO was only 37%. Source: <a href="paper_notes/paper-prefpo-2026.html">paper-prefpo-2026.md</a>
+- TextReg (2026, <code>recent-preprint</code>): after adding a "regularization gradient" to control length and rule scope, it beat TextGrad by <strong>+10.0 / +9.9</strong> on Tracking Shuffled Objects — reining in bloat actually does better. Source: <a href="paper_notes/paper-textreg-2026.html">paper-textreg-2026.md</a>
+- Edit-Level causal analysis (2026, <code>recent-preprint</code>): adding a meta-instruction is <strong>negatively correlated (-0.103)</strong> with performance on math tasks, and adding a clarity constraint is also negatively correlated (-0.083) on logic tasks. Source: <a href="paper_notes/paper-causal-edit-level-2026.html">paper-causal-edit-level-2026.md</a></p>
+<p><strong>What you should do</strong>
+During candidate selection, record these "hygiene metrics": <code>prompt_length_ratio</code> (length ratio relative to the seed), <code>repetition_ratio</code>, <code>edit_family</code> (which class of edit this is), <code>dev_test_gap</code>, <code>OOD/stress_delta</code>. <strong>If a candidate exceeds the length threshold, it must explain which failure samples each added rule is bound to, and pass a stress test</strong>; otherwise reject it — even if its dev score is higher.</p>
+<p><strong>Boundary</strong>: Some complex tasks genuinely need more explicit constraints; the criterion is not "short," but "necessary, traceable, not overfitting."</p>
+<hr>
+<h2 id="part-d-what-exactly-should-you-change-not-just-that-prompt">Part D. What exactly should you change (not just that prompt)</h2>
+<h3 id="insight-07-when-you-have-a-dev-set-selecting-the-examples-shown-to-the-model-is-often-more-effective-than-revising-the-instruction">Insight 07 · When you have a dev set, selecting "the examples shown to the model" is often more effective than revising the instruction</h3>
+<blockquote>
+<p>Maps to catalog I-05 | Paper evidence strength A | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: People instinctively revise the wording of the instruction, yet overlook a variable that's often more effective — <strong>which examples you show the model</strong>. And if you already have a labeled dev set, you're actually holding the raw material for optimizing examples, but you only use it for scoring.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+Keep the instruction fixed and only swap the few-shot examples from "3 picked at random" to "3 carefully chosen to cover exactly the error-prone boundaries":</p>
+<pre><code>(instruction unchanged) Extract the ticket into {intent, entities, urgency}.
+
+Example 1 (covers &quot;action + emotion coexisting&quot;):
+  Ticket: want to return the item and also complain about support → {intent:[refund, complaint], ...}
+Example 2 (covers &quot;looks urgent but actually isn't&quot;):
+  Ticket: take a look when convenient → {urgency: low, ...}
+Example 3 (covers &quot;multiple entities&quot;):
+  Ticket: orders 123 and 456 both need an address change → {entities:[123,456], ...}
+</code></pre>
+<p>This step alone often yields more than racking your brain to rewrite the instruction — because examples directly demonstrate the "decision boundary" and the "output format," which are easier for the model to follow than abstract rules.</p>
+<p><strong>What the papers say</strong>
+- <em>Teach Better or Show Smarter?</em> (2024): on PaLM 2 + BBH, <strong>not optimizing the instruction and optimizing only the examples</strong> reached 72.92 (+12.63 over baseline); on Gemini 1.0 Pro, <strong>optimizing examples (75.77) beat ProTeGi, which optimizes only the instruction (65.91)</strong>; and <strong>3 carefully selected examples &gt; all examples</strong> — quantity does not equal quality. Source: <a href="paper_notes/paper-teach-better-show-smarter-2024.html">paper-teach-better-show-smarter-2024.md</a></p>
+<p><strong>What you should do</strong>
+For every optimization experiment, compare at least four groups: <code>no-example</code>, <code>random-example</code>, <code>optimized-example</code>, <code>instruction + optimized-example</code>. Fix the instruction, search the candidate pool for 3 examples, and see whether held-out performance beats instruction-only. Store <code>exemplar_source</code>, <code>selector</code>, <code>k</code> in the run log.</p>
+<p><strong>Boundary</strong>: When context is very tight, the example distribution is skewed, or examples might leak sensitive information/answers, optimizing examples can harm generalization — in that case fall back to no-example or random-example.</p>
+<hr>
+<h3 id="insight-08-what-you-need-to-change-may-not-be-that-prompt-first-mark-clearly-which-component-youre-changing">Insight 08 · What you need to change may not be "that prompt" — first mark clearly which component you're changing</h3>
+<blockquote>
+<p>Maps to catalog I-06 | Paper evidence strength A/B | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: In a real system, failure can come from examples, retrieval context, tool descriptions, the agent role, memory, or the judge — <strong>not just that system prompt</strong>. Calling the whole context window "the prompt" and changing it all together leaves you forever unable to attribute.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+Your extraction agent keeps making errors. Before you touch the system prompt, first break this run into a "component manifest" and mark which can be changed and which are frozen:</p>
+<pre><code>artifact manifest (illustrative)
+  task_prompt        v3    [mutable]   ← the task instruction
+  examples           v2    [mutable]   ← few-shot examples
+  prompting_pattern  Zero-Shot [mutable]  ← whether to use Zero-Shot or CoT/ReAct
+  tool_schema        v1    [mutable]   ← tool/field descriptions
+  context_packaging  v1    [mutable]   ← how the context is assembled
+  evaluator          v1    [FROZEN]    ← the judge may not be changed (anti-cheating)
+  safety_rules       v1    [FROZEN]    ← safety/permissions stay out of the search space
+  selection_policy   pareto
+</code></pre>
+<p>Often you'll find that the real bug isn't in the wording of <code>task_prompt</code>, but in <code>prompting_pattern</code> (using Zero-Shot when CoT was called for) or <code>tool_schema</code>. Locate the component first, and only then can your conclusion clearly state "where the change came from."</p>
+<p><strong>What the papers say</strong>
+- AutoPDL (2025): <strong>just switching the prompting pattern to the right one</strong> (rather than rewriting the instruction wording) took Granite 13B Instruct V2 <strong>from 6.5% to 74.0% (+67.5 percentage points)</strong> on FEVER; but the same optimization rejected the ReWOO pattern on MBPP+ (because it can't use execution feedback) — showing that "which component to change" depends heavily on the task. Source: <a href="paper_notes/paper-autopdl-2025.html">paper-autopdl-2025.md</a>
+- JTPRO (2026), Prompt Codebooks (2026), and others further extend the optimizable objects to tool schema, codebook, and routing. Source: <a href="paper_notes/paper-jtpro-2026.html">paper-jtpro-2026.md</a>, <a href="paper_notes/paper-prompt-codebooks-2026.html">paper-prompt-codebooks-2026.md</a></p>
+<p><strong>What you should do</strong>
+Generate an artifact manifest for every optimization, breaking out at least <code>task_prompt</code>, <code>examples</code>, <code>prompting_pattern</code>, <code>tool_schema</code>, <code>context_packaging</code>, <code>evaluator</code>, <code>selection_policy</code>, and clearly mark <code>mutable / frozen</code>. <strong>The judge, the test set, and safety rules must be frozen</strong> — this is the bottom line against reward hacking.</p>
+<p><strong>Boundary</strong>: A simple one-off task doesn't need a full manifest; but research-grade and production-grade optimization do.</p>
+<hr>
+<h3 id="insight-09-when-tool-calls-go-wrong-what-needs-changing-is-often-the-tool-description-not-the-agent-instruction">Insight 09 · When tool calls go wrong, what needs changing is often the "tool description," not the agent instruction</h3>
+<blockquote>
+<p>Maps to catalog I-10 | Paper evidence strength A | Verified by this project: No (<code>recent-preprint</code> evidence)</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: When an agent calls a tool incorrectly, most people go change the agent's system prompt. But the failure often comes from <strong>the tool description and parameter semantics themselves</strong> — no matter how many times you revise the agent instruction, it won't help.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+The agent repeatedly calls the refund tool in the wrong format: it passes <code>amount: 99.5</code>, but the backend wants "cents."</p>
+<ul>
+<li><strong>Changing the agent instruction (ineffective)</strong>: adding "Please fill in the amount correctly" to the system prompt — the model still doesn't know the unit.</li>
+<li><strong>Changing the tool schema (effective)</strong>:</li>
+</ul>
+<pre><code>Tool schema before optimization:
+  amount: number  // refund amount
+
+Tool schema after optimization:
+  amount: integer  // refund amount, in &quot;cents&quot;; e.g., 99 yuan should be entered as 9900; decimals not accepted
+</code></pre>
+<p>Tool-call failures should be viewed in three layers: <strong>picking the wrong tool</strong> (Tool Selection), <strong>filling in the wrong parameter</strong> (Slot Filling), and <strong>whether it succeeds overall</strong> (Overall Success). Often the tool is picked correctly and the error is in the slot — in which case you should change the schema, not the agent instruction.</p>
+<p><strong>What the papers say</strong>
+- JTPRO (2026, <code>recent-preprint</code>): under ToolACE's 1000-tool setup, <strong>jointly optimizing "the global instruction + each tool's schema" raised o3-mini's overall success rate from 51.27% to 64.46% (+13.19)</strong>; on GPT-4o mini, OSR +20.30. In the diagnosis, the ETID dataset <strong>picks tools very accurately but has a low overall success rate, and the bottleneck is precisely slot-filling</strong>. Source: <a href="paper_notes/paper-jtpro-2026.html">paper-jtpro-2026.md</a></p>
+<p><strong>What you should do</strong>
+Tool eval must be broken into three separately recorded metrics: <strong>Tool Selection Accuracy / Slot Filling Accuracy / Overall Success Rate</strong>. For a batch of similar tools, construct a tool-call eval, and test "changing only the global instruction / changing only the schema / changing both jointly" separately to see which layer the bottleneck is actually in.</p>
+<p><strong>Boundary</strong>: When an external API's schema can't be changed, you can use wrapper documentation or retrieval context to carry these local rules.</p>
+<hr>
+<h2 id="part-e-memory-and-multi-agent-more-better">Part E. Memory and multi-agent: more ≠ better</h2>
+<h3 id="insight-10-remembering-more-history-doesnt-make-you-smarter-only-filtered-memory-is-useful">Insight 10 · Remembering more history doesn't make you smarter — only "filtered memory" is useful</h3>
+<blockquote>
+<p>Maps to catalog I-08 | Paper evidence strength A/B | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: Adding "memory" to a system always sounds good, but <strong>piling up history without filtering will contaminate optimization, cause cross-task negative transfer</strong>, and cost more too.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+- <strong>Unbounded memory (wrong)</strong>: cramming every past conversation and every piece of feedback into the context all at once. The result: the model wrongly applies the refund rules it learned from "product line A" to tickets from "product line B."
+- <strong>Filtered memory (right)</strong>: store only a small number of entries with metadata:</p>
+<pre><code>memory entry (illustrative)
+  type: success_template          # success template or error_pattern
+  content: &quot;when action + emotion coexist, extract two intents separately&quot;
+  source_task: ticket extraction - product line A
+  applicability: intent-extraction tasks only
+  quality_score: 0.9
+  retrieval_reason: the current task contains multiple intents
+  forget_after: 2026-12-31         # can expire
+</code></pre>
+<p>At retrieval time, take only 3–5 memories that are <strong>validated and whose applicability conditions match the current task</strong>, rather than dumping all history in.</p>
+<p><strong>What the papers say</strong>
+- MemAPO (2026, <code>recent-preprint</code>): <strong>average performance 70.7%, better than TextGrad's 63.6%, and cheaper too — average cost $0.31 vs $0.70</strong>; after splitting memory into a dual memory of "success templates + error patterns," AQuA-RAT rose from 61.7 to 82.5. Source: <a href="paper_notes/paper-memapo-2026.html">paper-memapo-2026.md</a>
+- ERM (2024): <strong>raw feedback memory yields no gain; only filtering + selective forgetting brings an increase</strong>; ERM with memory reached 68.6 on LIAR at step 7, whereas ProTeGi only reached 58.5 at step 13 — <strong>nearly twice the speed</strong>. Source: <a href="paper_notes/paper-erm-memory-2024.html">paper-erm-memory-2024.md</a></p>
+<p><strong>What you should do</strong>
+The memory schema should include at least: <code>success_template</code> / <code>error_pattern</code>, <code>source_task</code>, <code>applicability_condition</code>, <code>retrieval_reason</code>, <code>quality_score</code>, <code>forget_reason</code>. <strong>Don't cram in raw conversation history</strong>; retrieve only 3–5 entries that are validated and match the current task.</p>
+<p><strong>Boundary</strong>: In highly non-stationary tasks and safety-sensitive tasks, past experience can expire quickly or leak privacy — in that case, a forgetting policy and opt-out matter more than "remembering more."</p>
+<hr>
+<h3 id="insight-11-when-a-multi-agent-system-goes-wrong-first-find-whose-fault-it-is-dont-rewrite-the-whole-system-together">Insight 11 · When a multi-agent system goes wrong, first find "whose fault it is" — don't rewrite the whole system together</h3>
+<blockquote>
+<p>Maps to catalog I-09 | Paper evidence strength A | Verified by this project: No (<code>recent-preprint</code> evidence)</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: The core difficulty of a multi-agent system isn't "adding more agents," but <strong>credit assignment</strong> — an agent can look completely correct locally yet cause the whole system to fail.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+A three-stage pipeline: <code>extraction agent → completion agent → reply agent</code>. The final reply is wrong.</p>
+<ul>
+<li><strong>The wrong approach</strong>: rewrite all three agents' prompts together. As a result, you don't know which step's change took effect, and it'll go wrong again next time.</li>
+<li><strong>The right approach</strong>: look at the trace and annotate, for each step, "locally correct / globally correct":</li>
+</ul>
+<pre><code>trace (illustrative)
+  agent_1 extraction   local_valid=✗  ← the urgency field was lost right here
+  agent_2 completion   local_valid=✓  (but based on wrong input, local_pass_global_fail)
+  agent_3 reply        local_valid=✓  (same as above)
+  global_outcome=✗
+</code></pre>
+<p>The root cause is in agent_1. <strong>Change only agent_1's prompt</strong>; leave the other two alone.</p>
+<p><strong>What the papers say</strong>
+- MASPO (2026, <code>recent-preprint</code>): under joint optimization, an average of <strong>70.39, beating the sequential baseline 65.31</strong>. Source: <a href="paper_notes/paper-maspo-2026.html">paper-maspo-2026.md</a>
+- Temporal/Structural Credit (2026, <code>recent-preprint</code>): on MedMCQA, credit-guided raised the LLaMA3-8B debate baseline <strong>from 55.13 to 64.63 (+9.50)</strong>; and <strong>indiscriminately updating the prompts of all rounds actually loses points</strong> — you must update only the low-credit roles/rounds. Source: <a href="paper_notes/paper-temporal-structural-credit-mas-2026.html">paper-temporal-structural-credit-mas-2026.md</a>
+- MAPRO (2025): models multi-agent prompt optimization as MAP inference on a graph, propagating credit along the topology. Source: <a href="paper_notes/paper-mapro-2025.html">paper-mapro-2025.md</a></p>
+<p><strong>What you should do</strong>
+In the trace, save <code>role_id</code>, <code>round_id</code>, <code>local_validity</code>, <code>successor_utility</code>, <code>global_outcome</code>, and flag <code>local_pass_global_fail</code> samples. For a failed trace, mark which role/round <strong>first</strong> introduced the error, and allow the optimizer to change only that part. If the agents are weakly coupled, run a coupling test first; don't rush into joint optimization.</p>
+<p><strong>Boundary</strong>: If agent interaction is weak, the cost of joint optimization may not be worth it — measure the coupling strength first, then decide.</p>
+<hr>
+<h2 id="part-f-how-to-treat-methods-youve-heard-about">Part F. How to treat "methods you've heard about"</h2>
+<h3 id="insight-12-social-media-and-second-hand-articles-are-clues-not-evidence">Insight 12 · Social media and second-hand articles are "clues," not "evidence"</h3>
+<blockquote>
+<p>Maps to catalog I-12 | Paper evidence strength B | Verified by this project: No</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: A method being reshared again and again on Twitter/X, Zhihu, or Medium <strong>only shows it's hot, not that it's effective</strong>. Second-hand propagation amplifies conclusions and drops boundaries and version information.</p>
+<p><strong>What it actually looks like (illustrative)</strong>
+You come across a viral post: "GEPA crushes reinforcement learning (RL) with 35x fewer rollouts!"</p>
+<ul>
+<li><strong>Treating it as evidence (wrong)</strong>: because it's reshared a lot and stated with such certainty, you directly believe "GEPA can replace RL."</li>
+<li><strong>Treating it as a clue (right)</strong>: you go read the original paper and find that GEPA is actually <strong>reflective prompt evolution</strong> — relying on natural-language reflection generated from execution traces + Pareto-frontier selection, <strong>and is not an RL system at all</strong>. "Replacing RL" is a slogan simplified during propagation.</li>
+</ul>
+<p><strong>What the papers/materials say</strong>
+- This project's Twitter/X batch analysis recorded this classic misreading: GEPA is repeatedly framed on social media as "an RL replacement / 35x fewer rollouts," but its mechanism is reflection over execution traces, not policy gradients. Source: <a href="source_batches/twitter_web_analysis_20260608.en.html">twitter_web_analysis_20260608.md</a></p>
+<p><strong>What you should do</strong>
+When you read about a technique, first extract six fields: <code>dataset</code>, <code>metric</code>, <code>baseline</code>, <code>model</code>, <code>cost</code>, <code>failure_cases</code>. <strong>If any one is missing, downgrade it to a "clue"</strong> — it can only serve as a pointer to "go check a primary source," and cannot enter your conclusions. Before it enters your conclusions, it must be traced back to a paper, official documentation, code, or this project's own experiments.</p>
+<p><strong>Boundary</strong>: A high-quality engineering blog can be upgraded to stronger evidence if it <strong>comes with code, data, and reproducible experiments</strong> — what matters is whether it gives verifiable details, not which platform it's posted on.</p>
+<hr>
+<h2 id="part-g-beyond-search-zero-cost-transforms-and-the-optimizer-itself-new-in-this-version">Part G. Beyond search: zero-cost transforms and the "optimizer itself" (new in this version)</h2>
+<p>The 12 insights above are all built around the "search/optimization loop." This part adds two blind spots outside the loop: one is a <strong>deterministic structural transform that uses no search</strong> (a baseline cheaper than all search methods, yet often skipped), and the other is the <strong>optimizer and judge themselves</strong>, treated as thin air inside the loop.</p>
+<h3 id="insight-13-before-paying-for-search-try-the-zero-cost-deterministic-structural-transform-first">Insight 13 · Before paying for search, try the zero-cost deterministic structural transform first</h3>
+<blockquote>
+<p>Maps to catalog I-13 | Paper evidence strength A | Verified by this project: No (<code>recent-preprint</code> evidence)</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: There's a free transform that changes no semantics and uses no search — <strong>repeating the entire prompt verbatim</strong> — which goes 47-0 across 7 models in non-reasoning mode; whereas search-style optimization (Insight 01) has nearly a one-in-two chance of being worse than zero-shot.</p>
+<p><strong>What it actually looks like (real task, paper numbers)</strong></p>
+<pre><code>Transform: &lt;QUERY&gt;  →  &lt;QUERY&gt;&lt;QUERY&gt; (verbatim repetition, no wording changes)
+
+NameIndex (pick the 25th of 50 names):
+Gemini 2.0 Flash-Lite  21.33% → 97.33%
+</code></pre>
+<p>Mechanism: under causal attention, tokens in the early part of the prompt <strong>cannot see</strong> the later content (the different performance in multiple-choice depending on "whether the question comes before or after the options" is this very symptom); after repetition, each token in the second pass can attend to the complete first pass, which amounts to giving the prompt one free internal pass of "full attention." The repetition happens during the parallelizable prefill stage, so it <strong>adds no output length or latency</strong>.</p>
+<p><strong>What the papers say</strong>
+- <em>Prompt Repetition Improves Non-Reasoning LLMs</em> (Google Research, 2025-12, <code>recent-preprint</code>): with reasoning off, across 7 models × 10 benchmark configurations, <strong>47/70 significant wins, 0 significant losses</strong> (McNemar p&lt;0.1); <strong>the Padding control (padding the prompt to equal length with periods) gives no improvement</strong> — the gain comes from "repetition" itself, not from "becoming longer"; with step-by-step reasoning on, it's basically ineffective (<strong>5 wins, 1 loss, 22 ties out of 28 groups</strong>), since reasoning models already often restate the question on their own. Source: <a href="paper_notes/paper-prompt-repetition-2025.html">paper-prompt-repetition-2025.md</a>
+- A contrastive reading: Coin Flip shows that the wording found by search is model-specific and fragile (Insight 01), whereas this deterministic structural transform goes 0-loss across 7 models — "structure" may be more transferable than "wording" (the two have different settings, so this comparison is an inference).</p>
+<p><strong>What you should do</strong>
+1. For non-reasoning, low-latency production paths (classification / extraction / short QA / routing), test repetition ×2 first; for long-context indexing tasks, try ×3.
+2. Include it in your <strong>cheap baseline transform set</strong>: for any gain reported by an automatic optimization method, first answer "can it beat this zero-intelligence transform?" (run it together while doing the Insight 01 checkup).
+3. Prefer it for scenarios where the order of in-context information is uncontrollable (concatenating retrieval results, form transcription) — order sensitivity is exactly what it fixes.</p>
+<p><strong>Boundary</strong>: It's basically ineffective in reasoning mode (and even shows 1 significant drop); under per-token billing, <strong>input cost ×2</strong>; repeating only a part (e.g., only the question) gives no gain; blindly doubling an ultra-long context will drive up prefill cost or even make it infeasible; the models tested were all an early-2025 generation, and newer models may already have internalized restating behavior — which is exactly what this project's P0 three-arm A/B (baseline / repetition ×2 / padding) is meant to calibrate.</p>
+<hr>
+<h3 id="insight-14-the-optimizer-and-judge-themselves-are-also-components-to-version-and-optimize">Insight 14 · The optimizer and judge themselves are also components to version and optimize</h3>
+<blockquote>
+<p>Maps to catalog I-14 | Paper evidence strength A/B | Verified by this project: No (the SePO numbers are <code>recent-preprint</code>)</p>
+</blockquote>
+<p><strong>Counter-intuitive point</strong>: The two prompts in your optimization system that are questioned least are "<strong>the prompt responsible for revising the prompt</strong>" (the optimizer) and "<strong>the prompt responsible for scoring</strong>" (the judge). They also decide the result — if you don't version them, the experiment isn't reproducible; if you never examine them, they're a hidden ceiling.</p>
+<p><strong>What it actually looks like (illustrative)</strong></p>
+<pre><code>The run log stored only task_prompt v3
+optimizer_prompt / judge_prompt have no version number
+→ three months later, &quot;the same configuration&quot; doesn't reproduce the same result
+→ is the score change to the credit of the task prompt, or did the judge's taste change? Cannot attribute
+</code></pre>
+<p><strong>What the papers say</strong>
+- SePO (2026, <code>recent-preprint</code>): bringing the prompt agent's own system prompt into the evolution process and pre-training it across multiple tasks raised the five-task average <strong>from Manual-CoT's 71.89 to 76.38</strong>; ablating self-improvement <strong>drops it back to 74.94</strong>; whereas with the optimizer fixed, TextGrad (70.39) and MetaSPO (71.32) average even below Manual-CoT — and the paper attributes this precisely to "the optimizer itself being fixed." Source: <a href="paper_notes/paper-sepo-2026.html">paper-sepo-2026.md</a>
+- PromptBreeder (2023): the only one of the classic six methods that <strong>evolves the mutation prompt as well</strong> (hyper-mutation) is an early form of this line of thinking. Source: <a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023.md</a>
+- Cross-corroboration from engineering channels: web_search WPI-10 "the judge prompt should also be versioned, evaluated, and optimized" (grade B), and GitHub autoresearch's ledger binds the optimizer config to the result (GHI-05). Source: <a href="source_batches/web_search_platform_insight_cards_20260609.en.html">web_search_platform_insight_cards_20260609.md</a>, <a href="github_repo_insight_cards_20260608.en.html">github_repo_insight_cards_20260608.md</a></p>
+<p><strong>What you should do</strong>
+1. Give <code>optimizer_prompt</code>, <code>judge_prompt</code>, and <code>meta_prompt</code> each a version number, and list them as required fields in the experiment run log (this one needs no separate experiment; it takes effect alongside any P0 experiment).
+2. The judge used for evaluation, like the test set, is <strong>frozen by default</strong>; changing it requires a separate review and recalibration, and after the change all old scores become invalid and must be re-run.
+3. Want to optimize the judge / optimizer itself? Do it on the <strong>dev set</strong>, and keep it <strong>physically isolated</strong> from the evaluation pipeline.</p>
+<p><strong>Boundary</strong>: "Optimizing the judge" does not conflict with Insight 08's "frozen evaluator anti-cheating" — what's frozen is the judge of the <strong>evaluation pipeline</strong>, and what's optimized is a <strong>dev-time auxiliary</strong> judge; the two must be physically separated, and mixing them is reward hacking. The optimizer prompt getting stronger depends on the training tasks and the scorer; behaviors not covered by the metrics won't automatically become safer.</p>
+<hr>
+<h2 id="putting-these-to-use-the-first-batch-of-minimal-validation">Putting these to use: the first batch of minimal validation</h2>
+<p>Of the 14 insights above, the ones most worth this project <strong>verifying hands-on first</strong> (low cost, interpretable errors, strong cross-channel support) are these:</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>What to validate</th>
+<th>Maps to insight</th>
+<th>Minimal task</th>
+<th>Produces regardless of success or failure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>Pre-optimization checkup (headroom/noise floor)</td>
+<td>01, 02, 13 (baseline reference)</td>
+<td>100–300 JSON extractions</td>
+<td>Judge whether there's optimization room and calibrate the noise floor; run the Insight 13 zero-cost transform alongside as a baseline reference</td>
+</tr>
+<tr>
+<td>P0</td>
+<td>Example optimization vs instruction optimization</td>
+<td>07</td>
+<td>The same extraction task</td>
+<td>Avoid mis-recording an example's gain as the instruction's gain</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Direct rewriting vs root-cause-hypothesis rewriting</td>
+<td>03, 04</td>
+<td>Extraction/classification with clear failures</td>
+<td>Judge whether root-cause hypotheses genuinely improve held-out performance</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Performance-only vs adding a hygiene gate</td>
+<td>06</td>
+<td>The same candidate pool</td>
+<td>Judge whether the anti-bloat gate reduces spurious gains</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Tool-schema optimization</td>
+<td>09</td>
+<td>20–50 similar tools</td>
+<td>Judge whether changing the schema beats changing only the global instruction</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Filtered memory vs raw memory</td>
+<td>10</td>
+<td>Two similar tasks + one heterogeneous task</td>
+<td>Judge whether memory lowers cost, or brings negative transfer</td>
+</tr>
+</tbody>
+</table>
+<p>For detailed experiment design, see the <a href="experiment_plan.en.html">experiment plan</a>; for the structured evidence card of each insight, see the <a href="insight_method_catalog_20260609.en.html">Insight / Method candidate catalog</a>.</p>
+<h2 id="three-takeaways-for-the-reader">Three takeaways for the reader</h2>
+<ol>
+<li><strong>Before "optimizing," ask "is it worth it"</strong>: if headroom doesn't exceed the noise floor, don't spend money (Insight 01).</li>
+<li><strong>The essence of revising a prompt is "evidence → hypothesis → multiple candidates → validation-set filtering → rollback-able,"</strong> not "having the model polish it up" (Insights 03–06).</li>
+<li><strong>Longer, more, and more complex are not good by default</strong>: a longer prompt, more memory, and more agents all need to first prove they don't bring overfitting, contamination, or attribution difficulty (Insights 06, 08, 10, 11).</li>
+</ol>
+<hr>
+<p><em>All examples marked "illustrative" in this handbook are fabricated for explanation, not this project's experimental data; the paper numbers are results under each paper's setup, not this project's reproduction; <code>recent-preprint</code> conclusions can only be trusted after independent reproduction. The entry points for tracing evidence are in the file links within each "What the papers say" section.</em></p>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/insight_handbook_20260609.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#who-this-handbook-is-for">Who this handbook is for</a>
+<a class="lv2" href="#how-to-read-the-evidence-in-this-handbook">How to read the "evidence" in this handbook</a>
+<a class="lv2" href="#the-one-sentence-conclusion">The one-sentence conclusion</a>
+<a class="lv2" href="#part-a-before-you-start-is-this-task-worth-optimizing">Part A. Before you start: is this task worth optimizing?</a>
+<a class="lv3" href="#insight-01-confirm-theres-headroom-before-you-spend-money-running-an-optimizer">Insight 01 · Confirm there's headroom before you spend money running an optimizer</a>
+<a class="lv3" href="#insight-02-for-your-first-batch-to-validate-pick-tasks-that-can-be-scored-objectively">Insight 02 · For your first batch to validate, pick tasks that "can be scored objectively"</a>
+<a class="lv2" href="#part-b-how-to-learn-something-from-failures">Part B. How to learn something from failures</a>
+<a class="lv3" href="#insight-03-turn-failure-samples-into-editable-evidence-dont-just-record-a-single-score">Insight 03 · Turn failure samples into "editable evidence" — don't just record a single score</a>
+<a class="lv3" href="#insight-04-list-root-cause-hypotheses-for-the-failure-first-then-revise-the-prompt">Insight 04 · List "root-cause hypotheses for the failure" first, then revise the prompt</a>
+<a class="lv2" href="#part-c-dont-let-the-model-fool-you-candidate-selection-and-anti-bloat">Part C. Don't let the model fool you: candidate selection and anti-bloat</a>
+<a class="lv3" href="#insight-05-dont-adopt-the-models-first-version-generate-several-more-and-pick-with-a-validation-set">Insight 05 · Don't adopt the model's first version — generate several more and pick with a validation set</a>
+<a class="lv3" href="#insight-06-a-prompt-getting-longer-and-more-complex-is-often-overfitting-not-progress">Insight 06 · A prompt getting longer and more complex is often overfitting, not progress</a>
+<a class="lv2" href="#part-d-what-exactly-should-you-change-not-just-that-prompt">Part D. What exactly should you change (not just that prompt)</a>
+<a class="lv3" href="#insight-07-when-you-have-a-dev-set-selecting-the-examples-shown-to-the-model-is-often-more-effective-than-revising-the-instruction">Insight 07 · When you have a dev set, selecting "the examples shown to the model" is often more effective than revising the instruction</a>
+<a class="lv3" href="#insight-08-what-you-need-to-change-may-not-be-that-prompt-first-mark-clearly-which-component-youre-changing">Insight 08 · What you need to change may not be "that prompt" — first mark clearly which component you're changing</a>
+<a class="lv3" href="#insight-09-when-tool-calls-go-wrong-what-needs-changing-is-often-the-tool-description-not-the-agent-instruction">Insight 09 · When tool calls go wrong, what needs changing is often the "tool description," not the agent instruction</a>
+<a class="lv2" href="#part-e-memory-and-multi-agent-more-better">Part E. Memory and multi-agent: more ≠ better</a>
+<a class="lv3" href="#insight-10-remembering-more-history-doesnt-make-you-smarter-only-filtered-memory-is-useful">Insight 10 · Remembering more history doesn't make you smarter — only "filtered memory" is useful</a>
+<a class="lv3" href="#insight-11-when-a-multi-agent-system-goes-wrong-first-find-whose-fault-it-is-dont-rewrite-the-whole-system-together">Insight 11 · When a multi-agent system goes wrong, first find "whose fault it is" — don't rewrite the whole system together</a>
+<a class="lv2" href="#part-f-how-to-treat-methods-youve-heard-about">Part F. How to treat "methods you've heard about"</a>
+<a class="lv3" href="#insight-12-social-media-and-second-hand-articles-are-clues-not-evidence">Insight 12 · Social media and second-hand articles are "clues," not "evidence"</a>
+<a class="lv2" href="#part-g-beyond-search-zero-cost-transforms-and-the-optimizer-itself-new-in-this-version">Part G. Beyond search: zero-cost transforms and the "optimizer itself" (new in this version)</a>
+<a class="lv3" href="#insight-13-before-paying-for-search-try-the-zero-cost-deterministic-structural-transform-first">Insight 13 · Before paying for search, try the zero-cost deterministic structural transform first</a>
+<a class="lv3" href="#insight-14-the-optimizer-and-judge-themselves-are-also-components-to-version-and-optimize">Insight 14 · The optimizer and judge themselves are also components to version and optimize</a>
+<a class="lv2" href="#putting-these-to-use-the-first-batch-of-minimal-validation">Putting these to use: the first batch of minimal validation</a>
+<a class="lv2" href="#three-takeaways-for-the-reader">Three takeaways for the reader</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

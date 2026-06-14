@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zhihu Source Batch: Insight &amp; Method Cards · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="../analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#a84055">Zhihu Channel</span><span class="doctitle">Zhihu Source Batch: Insight &amp; Method Cards</span><a class="back lang" href="zhihu_insight_cards_20260609.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="zhihu-source-batch-insight-method-cards">Zhihu Source Batch: Insight &amp; Method Cards</h1>
+<p>Updated: 2026-06-10</p>
+<p>Related document: <a href="zhihu_three_layer_analysis_20260608.en.html">Zhihu Source Candidate Three-Layer Analysis</a></p>
+<p>2026-06-10 revision: (1) <code>evidence_strength</code> converged from ZH-L1..L4 to the standard A/B/C/D (see the Evidence Boundary section), and <code>main_sources</code> added to each card; (2) added [ZHI ↔ Cross-channel catalog cross-reference] to prevent double-counting; (3) the [Key Traceability Targets] table is now linked to source_ids already registered in the repository and to existing structured notes. Note: Registering candidates into <code>source_inventory.md</code> and adding <code>CHANGELOG.md</code> entries were omitted this time because those files are being concurrently edited by other channels; they will be added once those files are clean.</p>
+<p>Raw artifacts:</p>
+<ul>
+<li><code>artifacts/source_search/source_candidates_20260608_132914.jsonl</code></li>
+<li><code>artifacts/source_search/source_candidates_20260608_132914.md</code></li>
+</ul>
+<h2 id="document-goal">Document Goal</h2>
+<p>This document rewrites the Zhihu batch from a "source summary" into material closer to the final report: insights, conclusions, helpful methods, anti-patterns, and minimum validation candidates.</p>
+<p>The primary value of the Zhihu batch is not to prove that a particular prompt optimizer works, but to observe how the Chinese-language community understands, disseminates, misinterprets, and uses prompt optimization, GEPA, DSPy, context engineering, and agent self-evolution. When incorporated into the final report, Zhihu material should contribute primarily to problem awareness, lay-language articulation, anti-patterns, and deep-read leads; performance, benefit, and applicability boundary claims must be backed by evidence from papers, official documentation, code, or this project's own experiments.</p>
+<h2 id="evidence-boundary">Evidence Boundary</h2>
+<p>This batch is based on titles and summaries returned by Brave Search. Direct access to some Zhihu links returned 403 errors, so current evidence levels are low.</p>
+<p><strong><code>evidence_strength</code> uses the standard A/B/C/D scale throughout</strong> (definitions in <a href="../insight_field_standard.en.html">insight_field_standard.md</a>, Section 4). The ZH-L1..L4 scale previously used for the Zhihu channel indicates only "traceability progress," not an independent evidence-strength scale; it is mapped to the standard grades as shown below. The <code>evidence_strength</code> field in each card follows the mapped A/B/C/D values; ZH-Lx values are no longer used.</p>
+<table>
+<thead>
+<tr>
+<th>Traceability Progress (ZH-Lx)</th>
+<th>Meaning</th>
+<th>Maps to evidence_strength</th>
+<th>Current Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZH-L1</td>
+<td>Based only on search titles, summaries, URLs, and topic clustering</td>
+<td>D</td>
+<td>Discovering Chinese-community problem awareness, dissemination framing, and traceability candidates</td>
+</tr>
+<tr>
+<td>ZH-L2</td>
+<td>Full text read; local snapshot path, SHA256, and structured summary recorded</td>
+<td>D (single secondary source; still does not prove effectiveness)</td>
+<td>May be written up as an industry note</td>
+</tr>
+<tr>
+<td>ZH-L3</td>
+<td>Traced back to the original paper, official documentation, code, or a runnable example</td>
+<td>B (can reach A when a primary source has a structured note)</td>
+<td>Can support method background and evidence chains</td>
+</tr>
+<tr>
+<td>ZH-L4</td>
+<td>Corroborated by another channel or by this project's own experiments</td>
+<td>A</td>
+<td>May enter the core conclusions of the final report</td>
+</tr>
+</tbody>
+</table>
+<p>Batch note: most cards in this batch remain at ZH-L1 (i.e., evidence_strength D); a few that can already point to structured notes committed in the repository (e.g., GEPA, MemAPO/SePO) are graded B. Each card's <code>main_sources</code> lists the in-repository files or source_ids currently traceable; until traceability is complete, any claim involving "surpasses RL," "large improvement," "self-evolving," or "production-ready" must not be written into the core conclusions of the final report.</p>
+<h2 id="quick-conclusions">Quick Conclusions</h2>
+<ol>
+<li>Zhihu candidates show that the Chinese-language community has shifted prompt optimization from a "prompt-tip" problem to an engineering problem of "samples, scorer, candidates, iteration" — but many articles still lack evaluation fields.</li>
+<li>GEPA is frequently disseminated as "stronger than RL." A more defensible insight is: for tasks with execution traces, natural-language reflection may provide denser rewrite signals than a single scalar score.</li>
+<li>The key point of DSPy/MIPRO is not "automatically writing prompts" but turning instruction, examples, metric, and optimizer into composable, evaluable program components.</li>
+<li>Context engineering is very prominent in Zhihu material, indicating that many real-world failures are not prompt-wording problems but problems with retrieval, memory, tool output, history compression, or output schema.</li>
+<li>Tool-experience articles can help discover user needs and the domestic tool ecosystem, but only articles that expose dataset, metric, diff, cost, failure, and rollback deserve entry into the evidence chain.</li>
+<li>Agent self-evolution directions are attracting a lot of attention, but the optimization target must first be defined: task prompt, system prompt, skill, tool description, memory, and workflow policy must not be conflated.</li>
+</ol>
+<h2 id="plain-language-summary-for-general-users">Plain-Language Summary for General Users</h2>
+<table>
+<thead>
+<tr>
+<th>Specific Insight</th>
+<th>What a General User Can Do</th>
+<th>Why It Helps</th>
+<th>Evidence Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Don't start by asking AI to "help me optimize this prompt."</td>
+<td>First write 10–20 test samples and failure examples, then ask AI to revise the prompt based on those samples.</td>
+<td>Without samples and scoring criteria, optimization is just rephrasing.</td>
+<td>Zhihu material exposes pain points; effectiveness requires experimental validation.</td>
+</tr>
+<tr>
+<td>When the model fails, first identify the failure type.</td>
+<td>Categorize failures as: misunderstood task, missing context, format drift, tool error, excessive refusal, factual error.</td>
+<td>Only by knowing where it went wrong can you decide whether to fix the prompt, context, or tool.</td>
+<td>Suggested by context engineering and agent articles together.</td>
+</tr>
+<tr>
+<td>Don't interpret GEPA-style methods as a universal RL replacement.</td>
+<td>For tasks with traces, compare <code>score-only rewrite</code> against <code>trace + critique rewrite</code>.</td>
+<td>Trace reflection can explain the cause of failure and may reduce blind search.</td>
+<td>Must be referred back to the GEPA paper and validated in this project.</td>
+</tr>
+<tr>
+<td>DSPy/MIPRO is not a prompt-template library.</td>
+<td>Write the task as a signature, examples, and metric, then let the optimizer search.</td>
+<td>prompt, examples, and evaluation function become versioned components.</td>
+<td>Zhihu can serve as a terminology entry point; evidence goes back to DSPy/MIPRO.</td>
+</tr>
+<tr>
+<td>For agent/RAG scenarios, inspect the context first, then adjust the system prompt.</td>
+<td>Log retrieval, memory, tool result, history, schema, and prompt separately.</td>
+<td>Many failures stem from the model seeing the wrong information, not from insufficiently elegant instructions.</td>
+<td>Needs reinforcement from other platforms and engineering source code.</td>
+</tr>
+<tr>
+<td>When reading tool articles, look for evaluation fields, not demo screenshots.</td>
+<td>Extract only: dataset, metric, baseline, candidate diff, cost, failure, rollback.</td>
+<td>These fields determine whether a tool can form a reviewable closed loop.</td>
+<td>Articles without evaluation fields are treated only as tool leads.</td>
+</tr>
+<tr>
+<td>Self-evolution is not "let the system memorize everything."</td>
+<td>For every memory/skill entry, record its source, applicable scope, validation result, and how to disable it.</td>
+<td>Unbounded memory pollutes subsequent tasks and creates unauditable drift.</td>
+<td>Requires support from project source code, issues, or experiments.</td>
+</tr>
+<tr>
+<td>Downgrade generic prompt tips.</td>
+<td>Retain a tip only when it can be mapped to samples, metrics, failure patterns, or verifiable actions.</td>
+<td>Prevents "experience rules of thumb" from being written up as research conclusions.</td>
+<td>Most generic-tip articles in the current batch do not enter the core evidence chain.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="insight-card-overview">Insight Card Overview</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>Candidate Insight</th>
+<th>Main Source Cluster</th>
+<th>evidence_strength (traceability progress / path to supplementary evidence)</th>
+<th>Minimum Validation Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZHI-01</td>
+<td>Prompt optimization has shifted from a tips problem to eval-driven iteration.</td>
+<td>APO/APE/OPRO/EvoPrompt/PRewrite Chinese-language analyses</td>
+<td>B (coin-flip / ProTeGi notes already exist; tracing the APO lineage can upgrade to A)</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-02</td>
+<td>The transferable insight from GEPA is trace-aware reflection, not "comprehensively surpassing RL."</td>
+<td>GEPA / reflective prompt evolution articles</td>
+<td>B (GEPA note already supports this)</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-03</td>
+<td>DSPy/MIPRO should be framed as prompt-as-program, not an automatic prompt generator.</td>
+<td>DSPy / MIPRO / Prompt-compilation articles</td>
+<td>D (DSPy/MIPRO paper note pending; inventory already registered)</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-04</td>
+<td>Context engineering expands the optimization target from a single prompt to everything the model can see.</td>
+<td>Context Engineering / agent context / RAG context</td>
+<td>D (context engineering engineering material pending note)</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-05</td>
+<td>The selection criterion for tool articles is whether they support a reviewable evaluation closed loop.</td>
+<td>OPIK / Prompt Optimizer / PromptPilot / Coze</td>
+<td>D (official tool documentation pending note)</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>ZHI-06</td>
+<td>Agent self-evolution must first define which objects are mutable and which are frozen.</td>
+<td>Hermes / Manus / Skill / agent self-evolution</td>
+<td>B (MemAPO / SePO notes already support this)</td>
+<td>high</td>
+</tr>
+<tr>
+<td>ZHI-07</td>
+<td>Chinese-language sources are suited for distilling user language and misconceptions, not for directly supporting performance conclusions.</td>
+<td>Entire batch combined</td>
+<td>D (channel-level methodological judgment)</td>
+<td>medium</td>
+</tr>
+<tr>
+<td>ZHI-08</td>
+<td>Generic prompt tips are an anti-pattern lead unless they can be integrated into eval and version management.</td>
+<td>Generic prompt engineering articles</td>
+<td>D (determined after integration with catalog I-07/I-12)</td>
+<td>medium</td>
+</tr>
+</tbody>
+</table>
+<h2 id="zhi-cross-channel-catalog-cross-reference-preventing-double-counting">ZHI ↔ Cross-Channel Catalog Cross-Reference (Preventing Double-Counting)</h2>
+<p>The Zhihu ZHI cards and the researcher-oriented <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> I- / HM- identifiers are two separate namespaces. When merging into the final report's cross-channel insight pool, duplicates must be removed according to the table below to avoid counting a Chinese-language dissemination of the same insight as an independent insight. <code>Relationship</code> values: <code>duplicate</code> (same insight), <code>extension</code> (supplements an existing insight's boundary/language/cases), <code>new</code> (not yet in the catalog).</p>
+<table>
+<thead>
+<tr>
+<th>Zhihu Entry</th>
+<th>Corresponding Catalog</th>
+<th>Relationship</th>
+<th>Net Increment from Zhihu Channel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZHI-01</td>
+<td>I-01, I-02, I-11</td>
+<td>duplicate</td>
+<td>User language for the "find a universal template" pain point in the Chinese-language community</td>
+</tr>
+<tr>
+<td>ZHI-02</td>
+<td>I-02</td>
+<td>extension</td>
+<td>Dissemination framing of the "surpasses RL" headline being misread</td>
+</tr>
+<tr>
+<td>ZHI-03</td>
+<td>I-06 (incl. I-05)</td>
+<td>duplicate</td>
+<td>Simplified misreading of "automatically writes prompts"</td>
+</tr>
+<tr>
+<td>ZHI-04</td>
+<td>I-06</td>
+<td>duplicate</td>
+<td>Discussion density of context engineering in Chinese-language circles</td>
+</tr>
+<tr>
+<td>ZHI-05</td>
+<td>I-12, I-04, HM-04</td>
+<td>duplicate</td>
+<td>Sample of marketing language in tool-experience posts</td>
+</tr>
+<tr>
+<td>ZHI-06</td>
+<td>I-08, I-06</td>
+<td>extension</td>
+<td>Chinese-language narrative of "mutable objects not disaggregated" in agent self-evolution</td>
+</tr>
+<tr>
+<td>ZHI-07</td>
+<td>I-12</td>
+<td>duplicate</td>
+<td>Channel-level corroboration (Chinese secondary sources = leads, not performance conclusions)</td>
+</tr>
+<tr>
+<td>ZHI-08</td>
+<td>I-07, I-12</td>
+<td>extension</td>
+<td>User pain-point expression for downgrading generic tips</td>
+</tr>
+<tr>
+<td>HM-ZH-01</td>
+<td>HM-01</td>
+<td>duplicate</td>
+<td>—</td>
+</tr>
+<tr>
+<td>HM-ZH-02</td>
+<td>HM-02</td>
+<td>duplicate</td>
+<td>—</td>
+</tr>
+<tr>
+<td>HM-ZH-03</td>
+<td>(none)</td>
+<td>new</td>
+<td>Primary-source promotion gate for secondary posts — not yet in the catalog</td>
+</tr>
+</tbody>
+</table>
+<p>Conclusion: the Zhihu channel overlaps heavily with the catalog; the vast majority are <code>duplicate</code>/<code>extension</code>. The only net-new reusable method is <strong>HM-ZH-03 (primary-source promotion gate)</strong>. In the final report, ZHI-01 through ZHI-08 should be cited as "Chinese-language dissemination / misconception / user-language" supplementary material for the corresponding I- insights, and should not be counted as independent entries.</p>
+<h2 id="detailed-insight-cards">Detailed Insight Cards</h2>
+<h3 id="zhi-01-prompt-optimization-has-shifted-to-eval-driven-iteration">ZHI-01: Prompt optimization has shifted to eval-driven iteration</h3>
+<ul>
+<li>insight: Zhihu material repeatedly groups APE, APO, OPRO, EvoPrompt, PRewrite, and PromptBreeder together, indicating that the discussion focus is shifting from "write a good prompt" to "generate candidates, evaluate candidates, select candidates, then iterate."</li>
+<li>user_facing_one_liner: Don't optimize a single sentence — optimize a process that includes test samples.</li>
+<li>phenomenon: Chinese-language articles extensively introduce automatic prompt engineering, prompt search, reflective rewriting, and evolutionary candidate generation, but frequently name only the algorithm and omit dataset, metric, and validation split.</li>
+<li>mechanism: A prompt is a discrete text program. Without samples, a scorer, and a candidate ledger, an optimizer cannot distinguish genuine improvement from style variation or lucky coincidence.</li>
+<li>actionable_rule: For any prompt optimization material, first extract <code>task</code>, <code>baseline prompt</code>, <code>test cases</code>, <code>metric</code>, <code>candidate generation</code>, <code>selection rule</code>, <code>rollback</code>.</li>
+<li>helpful_method: Eval-first prompt optimization intake.</li>
+<li>exact_action_to_try: Take an existing prompt, pair it with 20 test samples, run the baseline, then ask the model to provide a rewrite rationale and diff based only on failing samples.</li>
+<li>before_after_example: Before: "Help me optimize this customer-service prompt." After: "On 20 customer-service samples, the baseline has 6 format errors and 3 cases of excessive refusal — please revise only the output format and refusal boundary, and retain a rollback version."</li>
+<li>counterexample_or_limit: One-off creative writing, tone polishing, or exploratory brainstorming may not require a full eval closed loop.</li>
+<li>evidence_strength: B (traceability progress ZH-L1, but the mechanism is already supported by structured notes). Can upgrade to A when corroborated with more arXiv/GitHub/other-platform material.</li>
+<li>main_sources: <a href="../paper_notes/paper-coin-flip-2026.html">paper-coin-flip-2026.md</a>, <a href="../paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>, <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-01, I-02).</li>
+<li>validation_or_demo: Compare one-shot rewrite vs. eval-first rewrite on held-out samples, format drift rate, manual review time, and cost.</li>
+</ul>
+<h3 id="zhi-02-the-core-of-gepa-is-not-replacing-rl-but-trace-aware-reflection">ZHI-02: The core of GEPA is not "replacing RL" but trace-aware reflection</h3>
+<ul>
+<li>insight: Zhihu articles about GEPA are often headlined as "surpasses RL" or "stronger than reinforcement learning," but for this project the more valuable takeaway is the mechanistic explanation of trace-aware reflection.</li>
+<li>user_facing_one_liner: For tasks with an execution trace, don't look only at the final score — have the model read the failure trace before revising.</li>
+<li>phenomenon: GEPA is used to connect prompt evolution, DSPy, agent traces, and natural-language reflection; it has high dissemination volume, but secondary articles easily overstate conclusions.</li>
+<li>mechanism: A scalar reward only tells the optimizer whether performance was good or bad; a trace and critique can tell the optimizer where it went wrong, which component to fix, and which behaviors must not be broken.</li>
+<li>actionable_rule: In the report, avoid writing "GEPA is comprehensively superior to RL"; instead write "on certain tasks with trace feedback, language reflection may provide higher-density optimization signals."</li>
+<li>helpful_method: Trace-first agent prompt diagnosis.</li>
+<li>exact_action_to_try: For the same batch of failing tasks, generate prompt diffs using only the final score and using the full trace separately; compare whether the changes are smaller, more auditable, and more stable on held-out cases.</li>
+<li>before_after_example: Before: "Score is low — rewrite the prompt." After: "Step 3 tool-call parameters were wrong and history compression dropped the user's location constraint; therefore only fix the tool instruction and the history summary rubric."</li>
+<li>counterexample_or_limit: When there is no clear trace, evaluation is very noisy, the task is very short, or the output requires only simple format fixes, trace reflection may not be cost-effective.</li>
+<li>evidence_strength: B (traceability progress ZH-L1; GEPA structured note already supports this mechanism). Can upgrade to A after replication in this project.</li>
+<li>main_sources: <a href="../paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a>, <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-02).</li>
+<li>validation_or_demo: Construct two groups — <code>score-only rewrite</code> vs. <code>trace + critique rewrite</code> — and record sample efficiency, change size, cost, and failure-type migration.</li>
+</ul>
+<h3 id="zhi-03-dspymipro-should-be-explained-as-prompt-as-program">ZHI-03: DSPy/MIPRO should be explained as prompt-as-program</h3>
+<ul>
+<li>insight: Zhihu DSPy/MIPRO material is well suited to helping Chinese-language readers understand that "a prompt is not just text but a combination of signature, examples, metric, and optimizer."</li>
+<li>user_facing_one_liner: Manage prompts as program components, not as a chat-template collection.</li>
+<li>phenomenon: Chinese-language material tends to simplify DSPy/MIPRO as "automatically generating prompts," but higher-quality material usually mentions signature, training examples, metric, optimizer, and the compilation process.</li>
+<li>mechanism: DSPy makes the task interface, examples, and scoring function explicit so the optimizer can search over instructions and few-shot examples.</li>
+<li>actionable_rule: When citing DSPy/MIPRO, you must simultaneously state what is being optimized and what the scoring function is; showing only the optimized prompt is not sufficient.</li>
+<li>helpful_method: Prompt-as-program conversion checklist.</li>
+<li>exact_action_to_try: Rewrite a chat template into five parts: <code>input fields</code>, <code>output schema</code>, <code>examples</code>, <code>metric</code>, <code>optimizer budget</code>.</li>
+<li>before_after_example: Before: "You are a professional classifier. Please classify." After: "signature: <code>text -&gt; label, rationale</code>; metric: label accuracy + JSON validity; examples: 16; optimizer: allowed to change instruction and examples only."</li>
+<li>counterexample_or_limit: If the task has no stable metric, or if samples are too few to distinguish candidates, DSPy/MIPRO can only serve as an organizational framework and cannot automatically guarantee improvement.</li>
+<li>evidence_strength: D (traceability progress ZH-L1; DSPy/MIPRO only registered in inventory — structured paper note pending).</li>
+<li>main_sources: <a href="../source_inventory.md">source_inventory.md</a> (<code>paper-dspy-2023</code>, <code>paper-miprov2-2024</code>), <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-06).</li>
+<li>validation_or_demo: On the same classification task, compare "hand-written template rewrite" vs. "signature + metric + optimizer" workflow on review cost, format error rate, and held-out performance.</li>
+</ul>
+<h3 id="zhi-04-context-engineering-is-a-boundary-expansion-of-prompt-optimization">ZHI-04: Context engineering is a boundary expansion of prompt optimization</h3>
+<ul>
+<li>insight: Context engineering is densely discussed in Zhihu candidates, indicating that real-world engineering has already expanded the optimization target from system prompt to retrieval, memory, tool result, history compression, and schema.</li>
+<li>user_facing_one_liner: When the model gives a wrong answer, first look at what it saw, then look at how you instructed it.</li>
+<li>phenomenon: Many articles revolve around context engineering, agent context, Manus experiences, RAG, and tool context — topics no longer limited to prompt wording.</li>
+<li>mechanism: LLM output is governed by its visible context. If retrieval is wrong, tool return format is messy, memory is polluted, or history summaries drop constraints, simply changing the system prompt only masks the problem.</li>
+<li>actionable_rule: Optimization records for RAG/agent tasks must decompose <code>prompt</code>, <code>retrieval</code>, <code>memory</code>, <code>tool output</code>, <code>history</code>, <code>output schema</code> separately.</li>
+<li>helpful_method: Trace-first agent prompt diagnosis.</li>
+<li>exact_action_to_try: For every failure, fill in a context fault table — annotate which context component caused the failure before deciding whether to change the prompt.</li>
+<li>before_after_example: Before: "Make the model follow user constraints more strictly." After: "Retrieved document 2 is outdated and the history summary dropped the user's region restriction — fix the retrieval filter and summary rubric first."</li>
+<li>counterexample_or_limit: For pure text rewriting, short Q&amp;A, or tasks with no external context, the problem may still be primarily instruction quality.</li>
+<li>evidence_strength: D (traceability progress ZH-L1; requires context engineering engineering material to be structured before supplementary evidence can be added).</li>
+<li>main_sources: <a href="../source_inventory.md">source_inventory.md</a> (<code>paper-context-engineering-2025</code>, <code>practice-anthropic-context-engineering</code>, <code>practice-langchain-agent-context-engineering</code>), <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-06).</li>
+<li>validation_or_demo: On a RAG task, compare <code>prompt-only fix</code> vs. <code>context-first fix</code> on correctness, attribution clarity, and second-order regression.</li>
+</ul>
+<h3 id="zhi-05-tool-articles-must-be-filtered-by-evaluation-fields">ZHI-05: Tool articles must be filtered by evaluation fields</h3>
+<ul>
+<li>insight: Zhihu tool-experience articles can surface product requirements but cannot prove a tool works based on demo screenshots. Only material that includes dataset, metric, baseline, trial history, failure, and rollback has research value.</li>
+<li>user_facing_one_liner: When reading a tool article, don't ask "does it work?" — first ask "how was that measured?"</li>
+<li>phenomenon: Candidates such as OPIK, Prompt Optimizer, PromptPilot, and Coze indicate strong demand for tooling, but at the summary level they frequently lack reproducible configurations.</li>
+<li>mechanism: If a prompt optimizer tool does not record candidates, scores, costs, failure samples, and rollback points, users cannot determine whether the optimization generalizes, nor can they post-mortem misuse.</li>
+<li>actionable_rule: Before a tool source enters the list, it must provide at least 3 categories of fields: evaluation input, candidate changes, run results.</li>
+<li>helpful_method: Primary-source promotion gate for posts.</li>
+<li>exact_action_to_try: When reading a tool article, fill in one extraction table only: <code>dataset</code>, <code>metric</code>, <code>baseline</code>, <code>optimized object</code>, <code>diff</code>, <code>cost</code>, <code>failure</code>, <code>rollback</code>.</li>
+<li>before_after_example: Before: "This tool can optimize a prompt in one click." After: "The tool uses 50 validation data points and records trial history, but does not show held-out results — it can therefore be treated only as medium evidence."</li>
+<li>counterexample_or_limit: Product introductions can be used to discover the ecosystem and user language; they need not be discarded entirely, but they cannot enter the effectiveness evidence chain.</li>
+<li>evidence_strength: D (traceability progress ZH-L1; requires official tool documentation or local run logs to be structured before supplementary evidence can be added).</li>
+<li>main_sources: <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-12, HM-04), <a href="../source_inventory.md">source_inventory.md</a> (<code>practice-opik-optimizer-overview</code>, <code>practice-promptfoo-optimization</code>).</li>
+<li>validation_or_demo: Sample 10 tool articles and use the field table to determine which can enter <code>source_inventory.md</code> and which serve only as leads.</li>
+</ul>
+<h3 id="zhi-06-agent-self-evolution-must-first-define-mutable-objects">ZHI-06: Agent self-evolution must first define mutable objects</h3>
+<ul>
+<li>insight: Zhihu agent self-evolution material attracts high interest, but "self-evolution" may refer to changes in task prompt, system prompt, skill, tool description, memory, workflow policy, or evaluator. Without disaggregating these, no verifiable conclusion can be formed.</li>
+<li>user_facing_one_liner: A self-evolving system must first declare what it can change and what it cannot change.</li>
+<li>phenomenon: Articles about Hermes, Manus, Skill, and agent context often discuss memory, reflection, tool calls, system prompts, and workflow policies all together.</li>
+<li>mechanism: Different objects carry different risks and require different validation approaches. Changing a task prompt affects local behavior; changing a system prompt affects global boundaries; changing memory can cause long-term pollution; changing the evaluator manufactures false improvements.</li>
+<li>actionable_rule: Self-evolution experiments must freeze the evaluator, data, and safety boundaries, and allow only one mutable object into the search.</li>
+<li>helpful_method: Mutable-object declaration for self-evolution.</li>
+<li>exact_action_to_try: For each self-evolution experiment, write <code>mutable_object</code>, <code>frozen_objects</code>, <code>promotion_rule</code>, <code>rollback_plan</code>.</li>
+<li>before_after_example: Before: "The agent will self-improve from experience." After: "This round allows only adding one skill instruction; it does not allow changing the grader, tools, system safety policy, or eval cases."</li>
+<li>counterexample_or_limit: Early-stage exploration may collect failure patterns broadly first, but variables must be disaggregated before entering experiments or conclusions.</li>
+<li>evidence_strength: B (traceability progress ZH-L1; MemAPO/SePO structured notes already support the "mutable-object disaggregation" mechanism). Can upgrade to A after verifying Hermes project source code, issues, and run traces.</li>
+<li>main_sources: <a href="../paper_notes/paper-memapo-2026.html">paper-memapo-2026.md</a>, <a href="../paper_notes/paper-sepo-2026.html">paper-sepo-2026.md</a>, <a href="../industry_notes/practice-zhihu-hermes-agent-2026.md">practice-zhihu-hermes-agent-2026.md</a>, <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-08).</li>
+<li>validation_or_demo: Compare "allow multiple objects to change simultaneously" vs. "allow only skill description changes" on metric attribution, rollback difficulty, and safety regression.</li>
+</ul>
+<h3 id="zhi-07-chinese-language-sources-are-better-suited-as-an-explanation-layer-and-misconception-layer">ZHI-07: Chinese-language sources are better suited as an explanation layer and misconception layer</h3>
+<ul>
+<li>insight: In the final report, Zhihu material is best suited to the role of "how ordinary users understand this" and "what the common misconceptions are," rather than serving as strong evidence.</li>
+<li>user_facing_one_liner: Chinese-language articles help you understand the problem; proving effectiveness requires going back to primary sources.</li>
+<li>phenomenon: The Chinese-language community disseminates GEPA, DSPy, context engineering, and agent self-evolution rapidly, which can reveal problems users care about and how they accept new terminology.</li>
+<li>mechanism: Secondary-source interpretations compress details and tend to amplify headline claims. They excel at explanation but are poor at preserving experimental setup, negative examples, and applicability boundaries.</li>
+<li>actionable_rule: The final report may cite Zhihu as "dissemination observations" and "misconception reminders," but core conclusions require A/B/C-level evidence.</li>
+<li>helpful_method: Primary-source promotion gate for posts.</li>
+<li>exact_action_to_try: Bind every Zhihu candidate to a <code>primary_source_needed</code> field; do not write it into core conclusions until the primary source has been traced.</li>
+<li>before_after_example: Before: "A Zhihu article says GEPA outperforms RL." After: "The Chinese-language community commonly disseminates this; the final judgment goes back to the GEPA paper's task setup, baseline, and budget."</li>
+<li>counterexample_or_limit: A small number of long-form Zhihu posts may contain original engineering practice, code, or real evaluations; in those cases they may be upgraded to ZH-L2 following the industry note template.</li>
+<li>evidence_strength: D (traceability progress ZH-L1; this is a channel-level methodological judgment, which itself corresponds to catalog I-12).</li>
+<li>main_sources: <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-12).</li>
+<li>validation_or_demo: Deep-read 10–15 highly relevant Zhihu full-text posts and annotate which are original practice, which are restatements of primary material, and which are generalized headlines.</li>
+</ul>
+<h3 id="zhi-08-generic-prompt-tips-that-are-detached-from-eval-are-an-anti-pattern-to-be-downgraded">ZHI-08: Generic prompt tips that are detached from eval are an anti-pattern to be downgraded</h3>
+<ul>
+<li>insight: Generic prompt-tip articles can illustrate user pain points, but if they cannot be mapped to tasks, samples, metrics, or failure types, they should not enter core research conclusions.</li>
+<li>user_facing_one_liner: Don't collect universal templates — collect changes that can be tested.</li>
+<li>phenomenon: The candidates still include a small number of prompt engineering tips, prompt guide, and template-style articles; these typically lack automated optimization, failure cases, and evaluation processes.</li>
+<li>mechanism: General tips easily fail across different tasks, models, and contexts; without versioning and metrics, users mistake subjective satisfaction for stable gains.</li>
+<li>actionable_rule: A generic tip is retained only when it meets at least one of the following: it can serve as a baseline, it constitutes a failure type, it can be converted into an eval case, it explains an anti-pattern.</li>
+<li>helpful_method: Prompt-tip downgrade rule.</li>
+<li>exact_action_to_try: Rewrite each piece of advice in a tip article as a testable assertion; anything that cannot be rewritten is downgraded.</li>
+<li>before_after_example: Before: "Prompts should be specific." After: "In an information-extraction task, the output schema must include a handling rule for missing fields; otherwise JSON validity drops."</li>
+<li>counterexample_or_limit: Introductory educational content may be retained in background material, but should not occupy core space in the final report.</li>
+<li>evidence_strength: D (traceability progress ZH-L1; determined after integration with catalog I-07/I-12).</li>
+<li>main_sources: <a href="../insight_method_catalog_20260609.en.html">insight_method_catalog</a> (I-07, I-12).</li>
+<li>validation_or_demo: Extract 20 recommendations from generic-tip articles and count how many can be converted into measurable eval cases.</li>
+</ul>
+<h2 id="helpful-methods-candidates">Helpful Methods Candidates</h2>
+<h3 id="hm-zh-01-eval-first-prompt-optimization-intake">HM-ZH-01: Eval-first prompt optimization intake</h3>
+<pre><code class="language-yaml">name: Eval-first prompt optimization intake
+insight_supported: ZHI-01, ZHI-05, ZHI-08
+problem: Users often ask directly for prompt optimization without samples, metrics, failure types, or rollback points.
+recommended_when: The task will run repeatedly and at least 10–50 representative samples can be collected.
+not_recommended_when: One-off creative writing, exploratory brainstorming, open-ended expression with no stable evaluation criteria.
+required_inputs: baseline prompt, task definition, eval samples, rubric or metric, current failures, target model, cost budget.
+implementation_steps: 1. Write out the task and success criteria; 2. Collect samples and failure examples; 3. Run the baseline; 4. Cluster by failure type; 5. Generate candidate prompts targeting only the main failure types; 6. Select using a validation set; 7. Record diff, cost, failures, and rollback point.
+evaluation_metrics: task score, JSON or schema validity, refusal boundary, held-out score, judge disagreement, cost, latency.
+expected_benefit: Turns subjective rewriting into a reviewable iteration loop; reduces prompt selection by gut feeling.
+cost_and_latency: Requires preparing samples and at least one baseline eval; short-term cost is higher than one-shot rewrite.
+risks: Too few samples leads to overfitting; an ambiguous rubric induces judge bias.
+misuse_or_anti_pattern: Picking the highest-scoring prompt on training samples only, ignoring held-out results and failure examples.
+rollback_plan: Retain the baseline prompt, candidate diffs, acceptance rationale, and rejection rationale; after release, rollback to the baseline or the previous stable version is possible.
+evidence: Zhihu batch provides ZH-L1 problem leads; cross-validation with GitHub optimizer ledger, Promptfoo/OPIK/Humanloop official documentation, and similar resources is needed.
+next_experiment: Compare one-shot rewrite vs. eval-first rewrite on held-out performance, format error rate, and review time.
+</code></pre>
+<h3 id="hm-zh-02-trace-first-agent-prompt-diagnosis">HM-ZH-02: Trace-first agent prompt diagnosis</h3>
+<pre><code class="language-yaml">name: Trace-first agent prompt diagnosis
+insight_supported: ZHI-02, ZHI-04, ZHI-06
+problem: Agent/RAG failures are often misattributed to poorly written prompts when the actual cause may be context, tools, memory, or history compression.
+recommended_when: The task involves multi-step reasoning, tool calls, RAG, memory, long conversations, or agent handoffs.
+not_recommended_when: Single-turn short-text tasks, or simple classification tasks with no recordable execution trace.
+required_inputs: failed traces, retrieved context, tool calls and outputs, conversation history, prompt versions, expected output schema, evaluator result.
+implementation_steps: 1. Save the failed trace; 2. Annotate the step where failure occurred; 3. Classify as prompt/context/tool/memory/schema/evaluator problem; 4. Freeze unrelated components; 5. Change only the most likely causal object; 6. Re-test using the same trace and held-out cases.
+evaluation_metrics: task success, step-level failure rate, tool error rate, retrieval relevance, schema validity, prompt diff size, rollback difficulty.
+expected_benefit: Reduces the probability of blindly changing the system prompt; aligns the optimization target with the root cause of failure.
+cost_and_latency: Requires trace logging and manual or LLM-assisted attribution; initial process is slower than directly editing the prompt.
+risks: Very long traces increase cost; LLM attribution may explain coincidental events as stable causes.
+misuse_or_anti_pattern: Changing prompt, retrieval, tool schema, and memory all at once, making attribution impossible.
+rollback_plan: Each round publishes only one object's change and retains the previous prompt/context/tool policy version.
+evidence: Zhihu batch provides ZH-L1 leads; GEPA, LangChain context engineering, GitHub agent harness material, and this project's experiments can provide reinforcement.
+next_experiment: Compare score-only rewrite vs. trace-first diagnosis on RAG/agent tasks for sample efficiency and second-order regression.
+</code></pre>
+<h3 id="hm-zh-03-primary-source-promotion-gate-for-posts">HM-ZH-03: Primary-source promotion gate for posts</h3>
+<pre><code class="language-yaml">name: Primary-source promotion gate for posts
+insight_supported: ZHI-05, ZHI-07, ZHI-08
+problem: Secondary posts tend to compress paper, tool, or project claims into headlines, causing evidence strength to be overestimated.
+recommended_when: Processing Zhihu, Twitter/X, Medium, Substack, blog, tool-promotion, and forum material.
+not_recommended_when: Already an original paper, official documentation, fixed-commit source code, or this project's own run logs.
+required_inputs: post URL, title, summary, claimed method, claimed result, linked primary source, reproducibility fields.
+implementation_steps: 1. Extract the article's claims; 2. Mark whether dataset, metric, baseline, cost, and failure are present; 3. Search for the primary source; 4. If not found, keep at lead level; 5. Once found, write the industry note or paper note; 6. Annotate evidence level in the final report.
+evaluation_metrics: promoted source ratio, claims with primary source, claims downgraded, unsupported performance claims removed.
+expected_benefit: Prevents dissemination popularity from being treated as evidence of method effectiveness.
+cost_and_latency: Requires additional traceability time; may reduce short-term material volume.
+risks: Being overly conservative may miss original practice articles.
+misuse_or_anti_pattern: Writing a post as a conclusion because it is clearly written or has many likes.
+rollback_plan: Retain source_id and evidence level for every conclusion; if supplementary evidence cannot be provided, demote from conclusion to hypothesis or observation.
+evidence: The Zhihu batch directly demonstrates this problem; other platforms and Twitter/X batches exhibit the same dissemination noise.
+next_experiment: Sample 30 posts and measure the proportion that enter the core evidence chain after passing through the promotion gate, along with reasons for demotion.
+</code></pre>
+<h2 id="anti-patterns-and-downgrade-rules">Anti-Patterns and Downgrade Rules</h2>
+<table>
+<thead>
+<tr>
+<th>anti-pattern</th>
+<th>Why It Is Dangerous</th>
+<th>Handling Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"There are many Zhihu articles, so the conclusion is strong."</td>
+<td>Volume indicates dissemination popularity, not experimental reproducibility.</td>
+<td>Use only as problem awareness; conclusions must be traced back to primary evidence.</td>
+</tr>
+<tr>
+<td>"GEPA comprehensively surpasses RL."</td>
+<td>Ignores differences in task, budget, baseline, rollout, and feedback signal.</td>
+<td>Rewrite as a pending-verification mechanistic insight; do not write as a universal conclusion.</td>
+</tr>
+<tr>
+<td>"The tool can display an optimized prompt, so the tool is effective."</td>
+<td>Demo screenshots cannot prove generalization, stability, or cost-benefit.</td>
+<td>Upgrade evidence only when evaluation fields are complete.</td>
+</tr>
+<tr>
+<td>"Context engineering means writing a longer prompt."</td>
+<td>Misidentifies retrieval, memory, tool output, and history compression as instruction content to be stuffed in.</td>
+<td>Disaggregate context components and record each separately.</td>
+</tr>
+<tr>
+<td>"Self-evolution means accumulating more and more memory."</td>
+<td>Unbounded memory pollutes subsequent tasks and is difficult to roll back.</td>
+<td>Every memory/skill entry must have a source, applicable scope, validation result, and disable method.</td>
+</tr>
+<tr>
+<td>"Prompt tips are universally applicable across tasks."</td>
+<td>Different models, tasks, and contexts can invalidate tips.</td>
+<td>Only tips that can be converted into eval cases enter core material.</td>
+</tr>
+<tr>
+<td>"Changing multiple variables at once is faster."</td>
+<td>Impossible to determine whether improvement came from prompt, context, examples, or evaluator.</td>
+<td>Research experiments change only one variable at a time; note mixed variables when necessary.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="key-traceability-targets">Key Traceability Targets</h2>
+<p>The table below connects each traceability target to the source_ids already registered in <code>docs/source_inventory.md</code> and (where they already exist) the structured notes in <code>docs/paper_notes/</code>, turning ZHI cards from "should be traced" to "already pointing to specific in-repository primary sources."</p>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Leads Obtained from Zhihu</th>
+<th>In-Repository Primary Sources (source_id / note path)</th>
+<th>Current Traceability Status</th>
+<th>Role in Final Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA</td>
+<td>Reflective prompt evolution, trace feedback, comparison with RL</td>
+<td><code>paper-gepa-2025</code>; note <a href="../paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a></td>
+<td>Structured note exists (B)</td>
+<td>Core insight and validation candidate</td>
+</tr>
+<tr>
+<td>DSPy / MIPRO</td>
+<td>prompt-as-program, signature, optimizer, metric</td>
+<td><code>paper-dspy-2023</code>, <code>paper-miprov2-2024</code> (registered in inventory; paper note pending)</td>
+<td>Inventory only (D)</td>
+<td>Helpful method background</td>
+</tr>
+<tr>
+<td>APO / ProTeGi / OPRO / EvoPrompt</td>
+<td>Index of automated prompt engineering methods</td>
+<td><code>paper-protegi-2023</code> (note <a href="../paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a>), <code>paper-evoprompt-2023</code> (note <a href="../paper_notes/paper-evoprompt-2024.html">paper-evoprompt-2024.md</a>), <code>paper-ape-2022</code>, <code>paper-opro-2023</code>, <code>paper-prewrite-2024</code></td>
+<td>ProTeGi/EvoPrompt notes exist (B); others registered only (D)</td>
+<td>Method taxonomy</td>
+</tr>
+<tr>
+<td>Context engineering</td>
+<td>Boundary expansion from prompt to context/workflow</td>
+<td><code>paper-context-engineering-2025</code>, <code>practice-anthropic-context-engineering</code>, <code>practice-langchain-agent-context-engineering</code></td>
+<td>Inventory only (D)</td>
+<td>Engineering conclusions and anti-patterns</td>
+</tr>
+<tr>
+<td>Hermes / Manus / Skill self-evolution</td>
+<td>Agent experience accumulation, skill, memory, and self-evolution</td>
+<td><code>practice-zhihu-hermes-agent-2026</code> (note <a href="../industry_notes/practice-zhihu-hermes-agent-2026.md">practice-zhihu-hermes-agent-2026.md</a>), <code>paper-memapo-2026</code>, <code>paper-sepo-2026</code></td>
+<td>Hermes note weak + MemAPO/SePO notes (B)</td>
+<td>Self-evolution variable disaggregation leads</td>
+</tr>
+<tr>
+<td>OPIK / Prompt Optimizer / PromptPilot / Coze</td>
+<td>Tooling demand, domestic ecosystem, product workflows</td>
+<td><code>practice-opik-optimizer-overview</code>, <code>practice-promptfoo-optimization</code>, <code>repo-linshenkx-prompt-optimizer</code></td>
+<td>Official docs / source code registered; notes pending (D)</td>
+<td>Industry tool map</td>
+</tr>
+</tbody>
+</table>
+<h2 id="minimum-validation-candidates">Minimum Validation Candidates</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>Insight/Method to Validate</th>
+<th>Minimum Experiment Design</th>
+<th>Key Metrics</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V-ZH-01</td>
+<td>ZHI-01 / HM-ZH-01</td>
+<td>Compare one-shot rewrite vs. eval-first rewrite on the same task.</td>
+<td>held-out score, format error rate, manual review time, cost</td>
+<td>Can be prioritized as a demonstration experiment for the final report.</td>
+</tr>
+<tr>
+<td>V-ZH-02</td>
+<td>ZHI-02 / HM-ZH-02</td>
+<td>Compare score-only rewrite vs. trace-first diagnosis on the same batch of agent/RAG failure samples.</td>
+<td>sample efficiency, failure-type migration, second-order regression, diff size</td>
+<td>Requires trace logging to be set up first.</td>
+</tr>
+<tr>
+<td>V-ZH-03</td>
+<td>ZHI-04 / HM-ZH-02</td>
+<td>Apply prompt-only fix and context-first fix separately to a RAG task.</td>
+<td>answer correctness, retrieval relevance, schema validity</td>
+<td>Validates whether context-first is more attributable.</td>
+</tr>
+<tr>
+<td>V-ZH-04</td>
+<td>ZHI-05 / HM-ZH-03</td>
+<td>Apply the primary-source promotion gate to 30 posts.</td>
+<td>promotion rate, demotion reasons, missing field distribution</td>
+<td>Can serve as a material-organization quality check.</td>
+</tr>
+<tr>
+<td>V-ZH-05</td>
+<td>ZHI-08</td>
+<td>Convert 20 generic prompt tips into eval cases and count the convertible proportion.</td>
+<td>testable proportion, reasons for non-conversion, redundancy</td>
+<td>Used to decide the share of generic tips in the final report.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="follow-up-processing-recommendations">Follow-Up Processing Recommendations</h2>
+<ol>
+<li>Deep-read 10–15 highly relevant Zhihu full-text posts; if login is required or the original text may expire, save snapshots to <code>local_sources/raw/</code> and record the SHA256.</li>
+<li>Add a <code>primary_source_needed</code> field to each Zhihu article; prioritize tracing back GEPA, DSPy/MIPRO, APO/ProTeGi, context engineering, and Hermes/agent self-evolution.</li>
+<li>Articles for which dataset, metric, baseline, failure, and rollback can be filled in should be written up as individual industry notes following <code>docs/industry_notes/template.md</code>.</li>
+<li>The final report should not be presented as a "list of Zhihu articles"; instead, the ZHI cards in this document should be merged into the cross-channel insight pool.</li>
+<li>ZH-L1 judgments in the current document cannot stand alone as conclusions; they may only serve as observations, hypotheses, or user-facing explanations.</li>
+</ol>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/source_batches/zhihu_insight_cards_20260609.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="../analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#document-goal">Document Goal</a>
+<a class="lv2" href="#evidence-boundary">Evidence Boundary</a>
+<a class="lv2" href="#quick-conclusions">Quick Conclusions</a>
+<a class="lv2" href="#plain-language-summary-for-general-users">Plain-Language Summary for General Users</a>
+<a class="lv2" href="#insight-card-overview">Insight Card Overview</a>
+<a class="lv2" href="#zhi-cross-channel-catalog-cross-reference-preventing-double-counting">ZHI ↔ Cross-Channel Catalog Cross-Reference (Preventing Double-Counting)</a>
+<a class="lv2" href="#detailed-insight-cards">Detailed Insight Cards</a>
+<a class="lv3" href="#zhi-01-prompt-optimization-has-shifted-to-eval-driven-iteration">ZHI-01: Prompt optimization has shifted to eval-driven iteration</a>
+<a class="lv3" href="#zhi-02-the-core-of-gepa-is-not-replacing-rl-but-trace-aware-reflection">ZHI-02: The core of GEPA is not "replacing RL" but trace-aware reflection</a>
+<a class="lv3" href="#zhi-03-dspymipro-should-be-explained-as-prompt-as-program">ZHI-03: DSPy/MIPRO should be explained as prompt-as-program</a>
+<a class="lv3" href="#zhi-04-context-engineering-is-a-boundary-expansion-of-prompt-optimization">ZHI-04: Context engineering is a boundary expansion of prompt optimization</a>
+<a class="lv3" href="#zhi-05-tool-articles-must-be-filtered-by-evaluation-fields">ZHI-05: Tool articles must be filtered by evaluation fields</a>
+<a class="lv3" href="#zhi-06-agent-self-evolution-must-first-define-mutable-objects">ZHI-06: Agent self-evolution must first define mutable objects</a>
+<a class="lv3" href="#zhi-07-chinese-language-sources-are-better-suited-as-an-explanation-layer-and-misconception-layer">ZHI-07: Chinese-language sources are better suited as an explanation layer and misconception layer</a>
+<a class="lv3" href="#zhi-08-generic-prompt-tips-that-are-detached-from-eval-are-an-anti-pattern-to-be-downgraded">ZHI-08: Generic prompt tips that are detached from eval are an anti-pattern to be downgraded</a>
+<a class="lv2" href="#helpful-methods-candidates">Helpful Methods Candidates</a>
+<a class="lv3" href="#hm-zh-01-eval-first-prompt-optimization-intake">HM-ZH-01: Eval-first prompt optimization intake</a>
+<a class="lv3" href="#hm-zh-02-trace-first-agent-prompt-diagnosis">HM-ZH-02: Trace-first agent prompt diagnosis</a>
+<a class="lv3" href="#hm-zh-03-primary-source-promotion-gate-for-posts">HM-ZH-03: Primary-source promotion gate for posts</a>
+<a class="lv2" href="#anti-patterns-and-downgrade-rules">Anti-Patterns and Downgrade Rules</a>
+<a class="lv2" href="#key-traceability-targets">Key Traceability Targets</a>
+<a class="lv2" href="#minimum-validation-candidates">Minimum Validation Candidates</a>
+<a class="lv2" href="#follow-up-processing-recommendations">Follow-Up Processing Recommendations</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

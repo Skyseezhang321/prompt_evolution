@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structured Analysis of Other-Platform Candidate Sources · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html?lang=en">💬 Advisor Home</a><a class="back" href="../analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#94660f">Other Platforms</span><span class="doctitle">Structured Analysis of Other-Platform Candidate Sources</span><a class="back lang" href="web_search_platform_analysis_20260608.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="structured-analysis-of-other-platform-candidate-sources">Structured Analysis of Other-Platform Candidate Sources</h1>
+<p>Updated: 2026-06-09</p>
+<p>Associated batch: <code>docs/source_batches/web_search_parallel_brief_20260608.md</code></p>
+<p>Raw artifacts:</p>
+<ul>
+<li><code>artifacts/source_search/source_candidates_20260608_134132.jsonl</code></li>
+<li><code>artifacts/source_search/source_candidates_20260608_134132.md</code></li>
+</ul>
+<p>2026-06-09 supplement: Added <a href="web_search_platform_insight_cards_20260609.en.html">Other Platforms Insight / Method Cards</a>, which converts the source cards on this page into insights, helpful methods, anti-patterns, and validation candidates that can be used directly in the final report. This page retains source tiering and the evidence index; the new cards document handles insight-first expression.</p>
+<h2 id="analysis-objectives">Analysis Objectives</h2>
+<p>This round addresses only quick triage and an engineering-practice map for the "other platforms" batch — not a deep-read of all 465 candidates. The goal is to compress high + medium candidates into 30–50 trackable source cards and to clarify which sources can enter <code>source_inventory.md</code> and which should remain as leads or be excluded.</p>
+<p>Success criteria:</p>
+<ul>
+<li>Official / semi-official sources take priority for inclusion; they should support subsequent industry-practice organization.</li>
+<li>Medium / Substack entries are retained only if they contain datasets, metrics, optimizer configurations, costs, failure examples, or production workflows.</li>
+<li>Produce a tool and engineering-practice map covering DSPy / GEPA, OPIK, Arize / Phoenix, Promptfoo, Langfuse, Humanloop, LangChain / LangSmith, Hugging Face, and Weaviate.</li>
+<li>Clarify the boundaries among prompt optimization, prompt management, eval / governance, and context engineering to avoid conflating them into a single experimental variable.</li>
+</ul>
+<h2 id="quick-triage-method">Quick Triage Method</h2>
+<ol>
+<li>Filter candidates from the artifact by <code>relevance in {high, medium}</code>.</li>
+<li>First identify official / semi-official sources by domain name, then determine from the abstract whether reproducible details are present.</li>
+<li>Deduplicate repeated paths to the same page — e.g., the Hugging Face cookbook's <code>/dspy_gepa</code> vs. <code>/en/dspy_gepa</code>.</li>
+<li>Treat paper pages only as index and traceability entry points; formal conclusions still go back to arXiv, code, or structured paper notes.</li>
+<li>Grade Medium / Substack entries by "does it include experimental configuration or reproducible details?" — do not treat popularity as a proxy for evidence strength.</li>
+</ol>
+<h2 id="batch-observations">Batch Observations</h2>
+<ul>
+<li>High candidates are heavily dominated by secondary interpretations of GEPA / DSPy: title relevance is high, but so is duplication.</li>
+<li>Most official / semi-official sources fall in the medium band — e.g., Langfuse, Humanloop, LangChain context engineering, Arize / Phoenix cookbooks — so reading only high-ranked results is insufficient.</li>
+<li><code>huggingface.co</code> serves simultaneously as a paper index, cookbook host, blog, post/Space platform, and more in this batch; evidence levels must be distinguished accordingly.</li>
+<li>Promptfoo has relatively few hits in this batch, but is already registered in <code>source_inventory.md</code>, and its official optimization docs are a key source for eval-backed prompt optimization; it should be included in the tool map.</li>
+<li>OPIK hits in this batch come primarily via Medium, but the official Comet / Opik docs provide more direct optimizer SDK documentation and should replace the Medium articles as the indexed source.</li>
+</ul>
+<h2 id="specific-insight-candidates-for-general-users">Specific Insight Candidates for General Users</h2>
+<p>The value of the other-platforms batch is not the number of platforms covered, but the distillation of engineering actions that every platform repeatedly emphasizes into actionable methods. The table below lists candidates only; they require verification against official documentation, code, or project reproduction experiments before entering any final conclusion.</p>
+<p>A more complete card-format version is available in <a href="web_search_platform_insight_cards_20260609.en.html">Other Platforms Insight / Method Cards</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Specific insight</th>
+<th>Actionable step for users</th>
+<th>Primary source cluster</th>
+<th>Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cookbooks are closer to reproducible evidence than blog summaries.</td>
+<td>Prioritize notebooks / cookbooks that include dataset, train/val/test splits, metric, baseline, and cost.</td>
+<td>Hugging Face DSPy GEPA cookbook, HF cross-encoder blog.</td>
+<td>Cookbook results still require re-running in this project; conclusions cannot be transplanted directly.</td>
+</tr>
+<tr>
+<td>The input to a prompt optimizer should not be the prompt alone — it must also include a dataset and a metric.</td>
+<td>Before using any optimizer, prepare samples and a scoring function; if no metric exists, do only manual rewriting.</td>
+<td>Promptfoo, Promptim, OPIK, Arize, Vertex.</td>
+<td>Subjective writing tasks require a rubric to be defined first, otherwise the metric will be unstable.</td>
+</tr>
+<tr>
+<td>Prompt versions must be linkable to production traces.</td>
+<td>Record the prompt version, model, parameters, input, output, and evaluation score each time a result is generated.</td>
+<td>Langfuse, Humanloop, LangSmith, Arize.</td>
+<td>Logging only the prompt text is insufficient; without traces, production regressions cannot be explained.</td>
+</tr>
+<tr>
+<td>In RAG / agent scenarios, distinguish first whether the issue is a prompt problem or a context problem.</td>
+<td>Log and test retrieval, memory, tool output, message history, and system prompt separately.</td>
+<td>Weaviate, LangChain context engineering, 12-factor agents.</td>
+<td>Mixing everything into a single change makes conclusions non-attributable.</td>
+</tr>
+<tr>
+<td>A lightweight CLI eval gate is appropriate for early-stage projects.</td>
+<td>Write 20–50 assertions in a config file to prevent prompt updates from breaking format and safety boundaries.</td>
+<td>Promptfoo, Langfuse + Promptfoo integration.</td>
+<td>Cannot replace real user data and manual review.</td>
+</tr>
+<tr>
+<td>Examining a platform's trial history is more valuable than looking only at the best prompt.</td>
+<td>Retain all candidates, scores, failures, costs, and rejection reasons.</td>
+<td>OPIK OptimizationResult, Arize experiments, LangSmith commits.</td>
+<td>Platform UI visualizations are not evidence; artifacts must still be exported or recorded locally.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="source-cards">Source Cards</h2>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>Source</th>
+<th>topic</th>
+<th>Reproducible / governance detail</th>
+<th>evidence_level</th>
+<th>next_action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>candidate-web-search-3fff45e9ad / candidate-web-search-2b359786bc</td>
+<td>Hugging Face cookbook: DSPy GEPA</td>
+<td>DSPy / GEPA</td>
+<td>NuminaMath-1.5, train/val/test split, main LM / reflection LM, metric, GEPA optimizer, baseline/optimized accuracy</td>
+<td>strong</td>
+<td><code>source_inventory</code>; can write an industry note later</td>
+</tr>
+<tr>
+<td>candidate-web-search-fafce18625</td>
+<td>Hugging Face blog: DSPy + cross encoders</td>
+<td>DSPy / MIPROv2 / evaluator</td>
+<td>cross-encoder evaluator, training/validation set roles, MIPROv2 optimization flow</td>
+<td>strong</td>
+<td><code>source_inventory</code>; can write an industry note later</td>
+</tr>
+<tr>
+<td>candidate-web-search-60e25bfbf5</td>
+<td>Hugging Face paper page: GEPA</td>
+<td>GEPA</td>
+<td>Paper entry point listing arXiv, project page, GitHub; comments confirm code released</td>
+<td>strong as index</td>
+<td><code>paper-gepa-2025</code> already exists; trace back to paper note</td>
+</tr>
+<tr>
+<td>candidate-web-search-3f32590760</td>
+<td>Hugging Face paper page: Promptomatix</td>
+<td>APO framework</td>
+<td>Paper entry point; abstract mentions synthetic training data, cost-aware objective, DSPy-powered compiler</td>
+<td>medium as index</td>
+<td>Add paper note or update existing paper list</td>
+</tr>
+<tr>
+<td>candidate-web-search-702c9d5270</td>
+<td>Hugging Face paper page: Prompt Distillation</td>
+<td>prompt distillation</td>
+<td>New-method lead; original paper setup needs verification</td>
+<td>medium as index</td>
+<td><code>trace_primary</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-bc8a4e80ef</td>
+<td>Hugging Face paper page: ProTeGi / APO</td>
+<td>textual gradient / beam search</td>
+<td>Overlaps with existing <code>paper-protegi-2023</code>; use as artifact traceability entry</td>
+<td>strong as index</td>
+<td>Do not re-index; point to existing paper</td>
+</tr>
+<tr>
+<td>candidate-web-search-f7f5d4221c</td>
+<td>Hugging Face paper page: PromptBreeder</td>
+<td>self-referential evolution</td>
+<td>Overlaps with existing <code>paper-promptbreeder-2023</code>; serves as dissemination entry point</td>
+<td>strong as index</td>
+<td>Do not re-index; point to existing paper</td>
+</tr>
+<tr>
+<td>candidate-web-search-e5e09ec827</td>
+<td>Hugging Face paper page: DSPy</td>
+<td>prompt-as-program</td>
+<td>Overlaps with existing <code>paper-dspy-2023</code>; useful for explaining the boundary between DSPy and its optimizers</td>
+<td>strong as index</td>
+<td>Do not re-index; point to existing paper</td>
+</tr>
+<tr>
+<td>candidate-web-search-f3d69fbafc</td>
+<td>Arize blog: GEPA vs Prompt Learning</td>
+<td>GEPA / Prompt Learning</td>
+<td>Vendor benchmark / comparison including HoVer pipeline, feedback prompt, component-level evaluation</td>
+<td>strong with vendor caveat</td>
+<td><code>source_inventory</code>; conclusions must be annotated as vendor perspective</td>
+</tr>
+<tr>
+<td>candidate-web-search-6846bc05f6 / candidate-web-search-9b750465c0 / candidate-web-search-5a8f04b16b</td>
+<td>Arize Phoenix cookbook: Prompt Optimization Techniques</td>
+<td>prompt optimization / experiment tracking</td>
+<td>jailbreak classification dataset, Phoenix prompt version, experiment, evaluator, few-shot / meta-prompt / prompt gradient / DSPy comparison</td>
+<td>strong</td>
+<td><code>source_inventory</code>; subsequent industry-practice organization</td>
+</tr>
+<tr>
+<td>candidate-web-search-abc9596063</td>
+<td>Arize Phoenix: LLM-as-a-Judge Prompt Optimization</td>
+<td>eval / judge optimization</td>
+<td>dataset, task, evaluators, few-shot / style / self-refinement / combined experiments</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-120ebfef7a / candidate-web-search-ca77f4c43c</td>
+<td>Arize AX Prompt Optimization / Prompt Learning</td>
+<td>prompt learning product</td>
+<td>initial prompt → outputs → evaluators → optimized prompt → iteration; prompt versions, rollback, train/test split</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>practice-opik-optimizer-overview</td>
+<td>Comet Opik Optimizer SDK docs</td>
+<td>OPIK / agent optimizer</td>
+<td><code>ChatPrompt</code>, dataset, metric, candidate generation, trial logging, OptimizationResult; MetaPrompt / HRPO / Few-shot Bayesian / Evolutionary / GEPA / Parameter</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>practice-opik-g-eval</td>
+<td>Comet Opik G-Eval docs</td>
+<td>eval / LLM-as-judge</td>
+<td>task introduction, criteria, score normalization, built-in judges for compliance / hallucination / agent tool correctness</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>practice-promptfoo-optimization</td>
+<td>Promptfoo Prompt Optimization docs</td>
+<td>eval-backed prompt optimization</td>
+<td>one prompt / provider pair, existing tests / assertions, baseline eval, candidate evaluation, validation split, overfitting-prevention recommendations</td>
+<td>strong</td>
+<td>Already in <code>source_inventory</code>; add to tool map</td>
+</tr>
+<tr>
+<td>candidate-web-search-83f48a4ac9</td>
+<td>LangChain blog: Promptim</td>
+<td>prompt optimization library</td>
+<td>initial prompt, dataset, custom evaluators, optional human feedback, LangSmith tracking</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-0ab6499c42</td>
+<td>LangChain blog: Exploring Prompt Optimization</td>
+<td>prompt optimization practice</td>
+<td>Prompt optimization problem framing and LangSmith / Promptim background</td>
+<td>medium</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>practice-langsmith-prompts</td>
+<td>LangSmith Manage prompts</td>
+<td>prompt versioning / rollback</td>
+<td>commits, environments, commit tags, staging / production, rollback, owners, webhooks</td>
+<td>strong</td>
+<td>Already in <code>source_inventory</code>; strengthen industry practice</td>
+</tr>
+<tr>
+<td>candidate-web-search-f23bbe1f6f</td>
+<td>LangChain docs: Context engineering in agents</td>
+<td>context engineering</td>
+<td>context sources, system prompt / messages / tools / model / response format, middleware, agent loop</td>
+<td>strong</td>
+<td><code>source_inventory</code>; use as boundary material</td>
+</tr>
+<tr>
+<td>candidate-web-search-e0a127e963</td>
+<td>LangChain Deep Agents context engineering</td>
+<td>deep agents / context</td>
+<td>input context, runtime context, context compression, subagent isolation, long-term memory</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-4b270adb6b / candidate-web-search-90db3f81bc</td>
+<td>Langfuse Prompt Management</td>
+<td>prompt versioning / runtime fetch</td>
+<td>centrally managed prompts, versions, labels, production fetch, caching, LangChain / Vercel integration</td>
+<td>strong</td>
+<td>Langfuse entry already exists; add supplemental analysis</td>
+</tr>
+<tr>
+<td>candidate-web-search-b96428088d</td>
+<td>Langfuse prompt management with tracing</td>
+<td>observability / prompt version</td>
+<td>prompt object passed to generation, trace links to prompt version and output quality</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-2de02790b2</td>
+<td>Langfuse + Promptfoo integration</td>
+<td>eval integration</td>
+<td>Promptfoo evals with Langfuse-managed prompts</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-1cb14f8ffa</td>
+<td>Humanloop Prompt Management docs</td>
+<td>prompt versioning / logs / datasets</td>
+<td>prompt version includes template, model, parameters, tools; logs can create datasets</td>
+<td>strong</td>
+<td>Humanloop entry already exists; add supplemental analysis</td>
+</tr>
+<tr>
+<td>practice-humanloop-evaluators</td>
+<td>Humanloop Evaluators docs</td>
+<td>eval / monitoring</td>
+<td>online monitoring, offline evaluation, datasets as test cases, logs, aggregated scores</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-cfe096ae9f / candidate-web-search-4ba15ccff9</td>
+<td>Weaviate DSPy Integration</td>
+<td>RAG / DSPy</td>
+<td>Weaviate + DSPy notebooks, RAG prompt optimization with MIPRO</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-88f9f4962c</td>
+<td>Weaviate blog: DSPy optimizers</td>
+<td>DSPy / RAG optimizer</td>
+<td>RAG trainset, metric, BootstrapFewShot, COPRO, MIPRO concepts</td>
+<td>strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-e72521ad82</td>
+<td>Weaviate Context Engineering</td>
+<td>context engineering</td>
+<td>context window as scarce resource, retrieval / memory / tool / prompt pillars, failure modes</td>
+<td>medium/strong</td>
+<td><code>source_inventory</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-f05d3224a4</td>
+<td>Hugging Face forum: custom prompt optimizer</td>
+<td>forum / practitioner pain</td>
+<td>search-based optimizer, extensibility, GEPA / MIPRO comparison; implementation unverified</td>
+<td>medium</td>
+<td>Use only as a pain-point lead</td>
+</tr>
+<tr>
+<td>candidate-web-search-2c09631cb9</td>
+<td>Substack: Reflective Prompt Evolution with DSPy</td>
+<td>GEPA / DSPy example</td>
+<td>Modular DSPy program, training examples, optimizer discussion; secondary interpretation</td>
+<td>medium</td>
+<td>Write industry note only if code details are present</td>
+</tr>
+<tr>
+<td>candidate-web-search-c6106120f6</td>
+<td>Substack: GEPA as RL alternative</td>
+<td>GEPA / optimizer decision tree</td>
+<td>optimizer decision tree, Rust-like code snippet, MIPRO / GEPA selection guidance; needs verification</td>
+<td>medium</td>
+<td><code>trace_primary</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-464e494060</td>
+<td>Medium: DSPy + MIPRO workflows</td>
+<td>MIPRO / production cadence</td>
+<td>Mentions validation data and offline / nightly optimization</td>
+<td>medium</td>
+<td>Use only as a practice lead</td>
+</tr>
+<tr>
+<td>candidate-web-search-a13145ee83</td>
+<td>Medium: DSPy and G-Eval Metrics</td>
+<td>MIPRO / judge metrics</td>
+<td>MIPROv2 parameters, bootstrapped demos, trials, cost-control snippets</td>
+<td>medium</td>
+<td>Industry note candidate; code needs verification</td>
+</tr>
+<tr>
+<td>candidate-web-search-3ac4e3d31a</td>
+<td>Medium: MIPROv2 topic modelling</td>
+<td>MIPRO</td>
+<td>num_trials, num_candidates, valset size, minibatch and other experimental configuration</td>
+<td>medium</td>
+<td>Industry note candidate; full text needs verification</td>
+</tr>
+<tr>
+<td>candidate-web-search-ba5e4c2706</td>
+<td>Medium: DSPy intro with cost log</td>
+<td>DSPy / MIPRO</td>
+<td>auto-run settings, projected LM calls, cost structure</td>
+<td>medium</td>
+<td>Use only as cost-recording lead</td>
+</tr>
+<tr>
+<td>candidate-web-search-fea16cafa5</td>
+<td>Substack: DSPy as compiler</td>
+<td>DSPy taxonomy</td>
+<td>Distinguishes DSPy as a compiler / programming model rather than a pure agent framework</td>
+<td>medium</td>
+<td>Terminology boundary lead</td>
+</tr>
+<tr>
+<td>candidate-web-search-2234e467eb</td>
+<td>Substack: production prompt optimization case</td>
+<td>MIPRO / real app</td>
+<td>Production prompt, golden dataset, BootstrapFewShot, MIPROv2 comparison</td>
+<td>medium</td>
+<td>Industry note candidate</td>
+</tr>
+<tr>
+<td>candidate-web-search-6df59d66fb</td>
+<td>LessWrong: Prompt Optimization Makes Misalignment Legible</td>
+<td>safety / eval</td>
+<td>AI safety scenario; paper and experimental setup need tracing</td>
+<td>medium</td>
+<td><code>trace_primary</code></td>
+</tr>
+<tr>
+<td>candidate-web-search-4188df1999</td>
+<td>LessWrong: prompt optimization for AI control</td>
+<td>safety / control</td>
+<td>Opinion on using DSPy as an AI control research tool; not an engineering conclusion</td>
+<td>medium/weak</td>
+<td>Use only as research-question lead</td>
+</tr>
+<tr>
+<td>GEPA Medium/Substack duplicates group</td>
+<td>Multiple GEPA paper digests</td>
+<td>GEPA dissemination</td>
+<td>Most restate "outperform RL / 35x fewer rollouts" without independent experiments</td>
+<td>weak</td>
+<td>Aggregate as a dissemination observation; do not cite individually</td>
+</tr>
+<tr>
+<td>Microsoft APO Medium group</td>
+<td>Multiple APO reposts</td>
+<td>APO / ProTeGi</td>
+<td>Should trace back to Microsoft / ACL / arXiv papers; do not accept Medium versions directly</td>
+<td>weak</td>
+<td><code>trace_primary</code> to <code>paper-protegi-2023</code></td>
+</tr>
+<tr>
+<td>tool-list Medium group</td>
+<td>Prompt management / optimization tool rankings</td>
+<td>tool landscape</td>
+<td>Mostly marketing or lists with no evaluation setup</td>
+<td>weak/reject</td>
+<td>Use only to discover official docs; do not enter the evidence chain</td>
+</tr>
+<tr>
+<td>generic prompt tips group</td>
+<td>Generic prompt tips</td>
+<td>prompt engineering</td>
+<td>No automated optimization, eval, failure examples, or governance mechanisms</td>
+<td>reject</td>
+<td>Exclude</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tool-and-engineering-practice-map">Tool and Engineering-Practice Map</h2>
+<table>
+<thead>
+<tr>
+<th>Tool / Ecosystem</th>
+<th>Role in this batch</th>
+<th>Optimization target</th>
+<th>Feedback signal</th>
+<th>Versioning / rollback</th>
+<th>Value to this project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DSPy / GEPA</td>
+<td>prompt-as-program + reflective optimizer</td>
+<td>Prompt / instructions / demos of DSPy modules</td>
+<td>task metric, textual feedback, trajectory reflection, Pareto frontier</td>
+<td>Requires external management via Git / LangSmith / Langfuse etc.</td>
+<td>Core candidate for a minimal experiment harness</td>
+</tr>
+<tr>
+<td>Hugging Face cookbook / blog / papers</td>
+<td>Cookbook and paper index</td>
+<td>Prompt programs, datasets, and optimizers in notebooks</td>
+<td>benchmark metric, train/val/test, paper claims</td>
+<td>Does not provide production rollback, but provides runnable examples</td>
+<td>Used for reproduction and tracing back to original papers / code</td>
+</tr>
+<tr>
+<td>Arize Phoenix / AX</td>
+<td>eval + prompt learning + observability</td>
+<td>Prompt version, prompt learning loop</td>
+<td>dataset, evaluator, experiment scores, trace feedback</td>
+<td>Prompt Hub / version / rollback / side-by-side experiments</td>
+<td>Engineering-loop reference: data, evaluation, optimization, comparison</td>
+</tr>
+<tr>
+<td>Promptfoo</td>
+<td>CLI eval-backed prompt optimization</td>
+<td>Single prompt / provider pair</td>
+<td>tests / assertions in eval config, LLM rubric, validation split</td>
+<td>Managed via config file / Git</td>
+<td>Best suited as a lightweight eval gate and overfitting guard</td>
+</tr>
+<tr>
+<td>Langfuse</td>
+<td>prompt management + experiments + tracing</td>
+<td>Prompt version, dataset experiment</td>
+<td>LLM-as-judge, code evaluator, dataset item, trace</td>
+<td>labels, production version, trace linking, cache control</td>
+<td>Supports prompt-variant tracking and production observability</td>
+</tr>
+<tr>
+<td>Humanloop</td>
+<td>prompt files + logs + datasets + evaluators</td>
+<td>Prompt template, model, parameters, tools</td>
+<td>online / offline evaluators, logs, datasets, human / AI / code judgments</td>
+<td>prompt file version, environment deploy</td>
+<td>Useful for extracting "prompt-as-config" record fields</td>
+</tr>
+<tr>
+<td>LangSmith / LangChain Promptim</td>
+<td>prompt commit + optimization library</td>
+<td>Prompt text, few-shot examples, LangGraph graph</td>
+<td>dataset, custom evaluators, optional human feedback</td>
+<td>commit tags, staging / production, rollback</td>
+<td>Distinguishes "prompt rewrite optimizer" from "application / graph-level optimization"</td>
+</tr>
+<tr>
+<td>OPIK</td>
+<td>agent optimizer SDK + eval platform</td>
+<td>Prompt, few-shot examples, parameters, tool schemas</td>
+<td>dataset, metric, optimization history, G-Eval / agent judges</td>
+<td>dashboard trial logging, OptimizationResult</td>
+<td>Covers HRPO / GEPA / tool optimization; fulfills OPIK requirement</td>
+</tr>
+<tr>
+<td>Weaviate</td>
+<td>RAG / context engineering + DSPy examples</td>
+<td>RAG prompt, retrieval / context organization</td>
+<td>RAG metric, LLM judge, retrieval quality</td>
+<td>Prompt versioning is not the primary focus</td>
+<td>Clarifies the boundary between context engineering and prompt optimization</td>
+</tr>
+</tbody>
+</table>
+<h2 id="conclusions-and-boundaries">Conclusions and Boundaries</h2>
+<h3 id="conclusions-that-can-be-treated-as-stable-observations">Conclusions That Can Be Treated as Stable Observations</h3>
+<ol>
+<li>All credible material on automated prompt optimization converges on the same closed loop: a dataset or real failure examples, a well-defined metric / evaluator, candidate generation, validation-set or held-out comparison, version records, and a rollback point.</li>
+<li>GEPA / DSPy is the core methodological lead in this batch, but the vast majority of Medium / Substack articles are merely disseminating Hugging Face paper pages, arXiv, or official DSPy / GEPA materials.</li>
+<li>Prompt management, observability, and eval platforms are not themselves prompt optimizers, but they are prerequisites for making automated optimization rollback-capable and reproducible.</li>
+<li>Context engineering should be treated as an adjacent research dimension. It optimizes the entire context fed into the model — tools, memory, retrieval, messages, and runtime state — and must not be conflated with single-prompt rewriting experiments under the same variable.</li>
+</ol>
+<h3 id="still-speculative-or-awaiting-verification">Still Speculative or Awaiting Verification</h3>
+<ul>
+<li>Whether the vendor benchmarks from Arize, OPIK, and others can transfer to this project's tasks requires re-running with the same data, models, and evaluators; vendor improvement figures cannot be cited directly as final conclusions.</li>
+<li>Whether the practice configurations in Medium / Substack are genuinely reproducible requires checking the full text, code repositories, or notebooks.</li>
+<li>Whether GEPA's advantages over MIPROv2 / GRPO apply to Chinese, agent workflows, or non-mathematical reasoning tasks still requires minimal-experiment verification.</li>
+</ul>
+<h2 id="recommended-indexing-actions">Recommended Indexing Actions</h2>
+<p>Suggested new or strengthened <code>source_inventory.md</code> entries:</p>
+<ul>
+<li>Hugging Face DSPy GEPA cookbook</li>
+<li>Hugging Face DSPy + cross-encoders blog</li>
+<li>Arize GEPA vs Prompt Learning blog</li>
+<li>Arize Phoenix Prompt Optimization Techniques cookbook</li>
+<li>Arize Phoenix LLM-as-a-Judge Prompt Optimization</li>
+<li>Arize AX Prompt Optimization / Prompt Learning</li>
+<li>LangChain Promptim</li>
+<li>LangChain Exploring Prompt Optimization</li>
+<li>LangChain agent context engineering</li>
+<li>Langfuse prompt tracing integration</li>
+<li>Humanloop evaluators</li>
+<li>Weaviate DSPy optimizers</li>
+<li>Weaviate context engineering</li>
+<li>OPIK Optimizer SDK overview</li>
+<li>OPIK G-Eval metrics</li>
+</ul>
+<p>Existing entries that need strengthening in the industry-practice section:</p>
+<ul>
+<li>Promptfoo Prompt Optimization</li>
+<li>LangSmith Manage prompts</li>
+<li>Langfuse Prompt Management / Prompt Experiments</li>
+<li>Humanloop Prompts / Evaluation</li>
+</ul>
+<h2 id="follow-up-work">Follow-up Work</h2>
+<ol>
+<li>From strong sources, prioritize writing 3–5 industry notes: DSPy GEPA cookbook, Promptfoo optimization, Arize Phoenix prompt optimization, OPIK optimizer overview, Langfuse prompt experiments.</li>
+<li>For medium candidates, select only 2–3 Medium / Substack articles with experimental configurations for deep reading, focusing on code, data, cost, and failure examples.</li>
+<li>Use the results of this batch to supplement the tool map in <code>docs/industry_practices.md</code>, so the final report does not cover only model-provider documentation.</li>
+<li>If proceeding to experiments, first update <code>docs/experiment_plan.md</code> to pin the optimizer, dataset, scorer, model, budget, and rollback point.</li>
+</ol>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/source_batches/web_search_platform_analysis_20260608.en.md</code> (2026-06-14 15:43 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="../analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#analysis-objectives">Analysis Objectives</a>
+<a class="lv2" href="#quick-triage-method">Quick Triage Method</a>
+<a class="lv2" href="#batch-observations">Batch Observations</a>
+<a class="lv2" href="#specific-insight-candidates-for-general-users">Specific Insight Candidates for General Users</a>
+<a class="lv2" href="#source-cards">Source Cards</a>
+<a class="lv2" href="#tool-and-engineering-practice-map">Tool and Engineering-Practice Map</a>
+<a class="lv2" href="#conclusions-and-boundaries">Conclusions and Boundaries</a>
+<a class="lv3" href="#conclusions-that-can-be-treated-as-stable-observations">Conclusions That Can Be Treated as Stable Observations</a>
+<a class="lv3" href="#still-speculative-or-awaiting-verification">Still Speculative or Awaiting Verification</a>
+<a class="lv2" href="#recommended-indexing-actions">Recommended Indexing Actions</a>
+<a class="lv2" href="#follow-up-work">Follow-up Work</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

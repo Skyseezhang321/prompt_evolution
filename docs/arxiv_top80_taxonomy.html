@@ -29,6 +29,7 @@ border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-
 .topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
 .topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
 .topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
 .topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
 .topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
 .topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
@@ -77,7 +78,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#176a5e">arXiv 渠道</span><span class="doctitle">arXiv top80 分类 taxonomy</span><span class="mark">Prompt Evolution · 研究档案</span></div>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 对话助手主页</a><a class="back" href="analysis_report_v3_20260610.html">← 返回综合论述报告 v3</a><span class="chip" style="background:#176a5e">arXiv 渠道</span><span class="doctitle">arXiv top80 分类 taxonomy</span><a class="back lang" href="arxiv_top80_taxonomy.en.html">EN</a><span class="mark">Prompt Evolution · 研究档案</span></div>
 <div class="wrap">
 <article class="content">
 <h1 id="arxiv-top80">arXiv Top80 分类综述与横向矩阵</h1>
@@ -381,7 +382,7 @@ border-radius:6px;background:var(--card);overflow-x:auto;}
 <li>如果要从论文分类进入洞见和经验总结，先读 <code>docs/arxiv_top80_insights.md</code>，其中把主要论文条目提炼成了可验证的 insight cards。</li>
 <li>如果要从 taxonomy 进入可执行工作流，先读 <code>docs/arxiv_top80_action_playbook.md</code>，其中把主要问题拆成了具体症状、解决方案和最小实验。</li>
 </ul>
-<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_top80_taxonomy.md</code> 自动生成（2026-06-12 16:20 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
+<div class="genfoot">本页由 <code>scripts/build_doc_html.py</code> 从源文件 <code>docs/arxiv_top80_taxonomy.md</code> 自动生成（2026-06-14 14:52 CST），请勿手改此 HTML；修改请改源 <code>.md</code> 后重跑脚本。可视化综合见 <a href="analysis_report_v3_20260610.html">综合论述报告 v3</a>。</div>
 </article>
 <aside class="toc"><h4>本页目录</h4><a class="lv2" href="#_1">分析框架</a>
 <a class="lv2" href="#1-apo">方法簇 1：经典 APO 与基线锚点</a>
