@@ -1,6 +1,6 @@
 # Prompt Evolution Research
 
-**English** | [简体中文](README.md)
+> 🌐 **语言 / Language**: [简体中文](README.md) · **English**
 
 This repository is for researching, summarizing, and (where necessary) validating work on "prompt optimization / prompt self-evolution." The core deliverables are effective insights, trustworthy conclusions, and reusable helpful methods; experiments mainly serve to validate key insights, demonstrate methods, and calibrate boundaries.
 

@@ -1,6 +1,6 @@
 # Prompt Evolution Research
 
-[English](README.en.md) | **简体中文**
+> 🌐 **语言 / Language**: **简体中文** · [English](README.en.md)
 
 本仓库用于调研、总结和必要验证「prompt 优化提升 / prompt 自进化」相关研究。核心产出是有效 insights、可信 conclusion 和可复用 helpful methods；实验主要用于验证关键洞见、演示方法和校准边界。
 
