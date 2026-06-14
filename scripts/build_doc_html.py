@@ -322,7 +322,7 @@ def render_one(relpath, label, title, lang, stamp):
     color = LABEL_COLOR.get(label, "#46525f")
     depth = relpath.count("/")
     cn_relpath = relpath[:-6] + ".md" if lang == "en" else relpath  # strip ".en.md"
-    advisor = rel_to_advisor(relpath)
+    advisor = rel_to_advisor(relpath) + ("?lang=en" if lang == "en" else "")
 
     mermaid_js = ""
     if has_mermaid:
