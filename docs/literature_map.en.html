@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Literature Map · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">Literature Map</span><a class="back lang" href="literature_map.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="literature-map">Literature Map</h1>
+<p>Last updated: 2026-06-12</p>
+<p>Status: Full directory of paper_notes. The main table below covers all 39 completed deep-read notes (each row links to the arXiv source and the in-repo note). A separate candidate list of registered-but-not-yet-deep-read papers is appended. New sources should first be registered and categorized per the <a href="source_collection_plan.md">Source Collection Plan</a> before deciding whether to proceed to a deep-read note; for full processing status see the <a href="source_inventory.md">Source Inventory</a>.</p>
+<p>Inclusion criteria: Priority is given to papers or frameworks that directly address automatic prompt optimization, prompt evolution, self-improving/self-evolving prompts, prompt-as-program, context engineering, or eval-driven prompt iteration.</p>
+<p>Scope note: The main table is organized by "deep-read note written," including two types of special entries outside the two main threads, each annotated in the positioning column — reference baseline entries (e.g., Prompt Repetition: a zero-cost structural transform, not an APO method itself, serving as the comparison floor before any optimizer reports gains) and internal baselines (PROSE: the coin-flip authors' own reference implementation, not an independent publication).</p>
+<h2 id="quick-lineage">Quick Lineage</h2>
+<blockquote>
+<p>For detailed per-method coverage of the seven main-thread methods (APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA), see <a href="apo_seven_methods_primer_20260611.en.html">APO Seven-Method Main Thread Primer</a>; all numbers are aligned with the individual deep-read notes.</p>
+</blockquote>
+<ol>
+<li>Early automatic prompt generation: treating instructions as searchable programs.</li>
+<li>Textual gradients and black-box search: generating natural-language critique from error feedback, then editing the prompt.</li>
+<li>Evolutionary and self-referential optimization: co-evolving the task prompt and the mutation/optimizer prompt.</li>
+<li>Programmatic prompt systems: DSPy abstracts the LM pipeline as a compilable program, optimizing prompts and demonstrations via a metric.</li>
+<li>Reflective evolution: methods such as GEPA use execution trajectories for natural-language diagnosis and Pareto search.</li>
+<li>Memory and self-evolution: MemAPO, SePO, and similar methods incorporate successful experiences, failure patterns, and the optimizer's own prompt into long-term improvement.</li>
+<li>Context engineering: the object of study expands from the prompt string to the overall context including retrieval, memory, tools, and agent workflows.</li>
+</ol>
+<h2 id="current-frontier-focus">Current Frontier Focus</h2>
+<p>As of 2026-06-12, priority follow-up directions:</p>
+<ul>
+<li>Reflective prompt evolution: methods such as GEPA use full execution trajectories as natural-language feedback, rewriting prompts via reflection and Pareto/evolutionary search.</li>
+<li>Memory-based self-evolution: methods such as MemAPO distill successful strategies and failure patterns into reusable memory, with the goal of reducing the cost of starting optimization from scratch each time.</li>
+<li>Optimizer self-evolution: methods such as SePO begin to include the prompt agent's own system prompt as an optimization target.</li>
+<li>Multi-agent / system-level optimization: directions such as MASPO and AutoPDL extend the optimization target from a single prompt to agent configurations or multi-agent prompts.</li>
+<li>Modular prompt optimization: decomposing the prompt into locally editable, constraint-protected structures to reduce drift and unbounded-growth risk.</li>
+<li>Context engineering: both industry and academia are advancing the problem from "write a good prompt" toward "control what context the model sees at each step."</li>
+<li>Confirmed coverage gaps: bi-level / thought-driven (prompt optimization in the era of o1/R1-style reasoning models) is entirely absent and is the highest-priority targeted search direction; task-agnostic/online and constrained optimization are also only indirectly addressed. Criteria and lists are in the <a href="arxiv_taxonomy_completeness_check_20260610.md">Taxonomy External Completeness Audit</a>.</li>
+</ul>
+<h2 id="full-deep-read-note-directory-39-papers">Full Deep-Read Note Directory (39 Papers)</h2>
+<p>All evidence grades are at the paper level (method + results deep-read, not reproduced conclusions from this project); each entry includes a local PDF/text SHA256, main result figures, ablations, failure cases, and a minimal verification plan. Batch attribution and integrated assessment are in <a href="arxiv_deep_reading_batch3_synthesis.en.html">Batch 3 Synthesis</a>; the time-slice synthesis for the 25 papers from 2025/2026 (four turns + two tensions + gap inventory) is in <a href="arxiv_2025_2026_frontier_synthesis_20260612.en.html">arXiv 2025/2026 Frontier Deep-Read Synthesis</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Paper</th>
+<th>One-line positioning</th>
+<th>Deep-read note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2022</td>
+<td><a href="https://arxiv.org/abs/2203.07281">GrIPS</a></td>
+<td>Historical anchor (v1 predates APE): gradient-free phrase-level edit search, no LLM generator; semantically incoherent edits still improve scores.</td>
+<td><a href="paper_notes/paper-grips-2022.html">paper-grips-2022</a></td>
+</tr>
+<tr>
+<td>2022</td>
+<td><a href="https://arxiv.org/abs/2211.01910">APE</a></td>
+<td>Starting point of two-stage black-box search (propose + select), establishing "instruction as searchable program"; the LLM-as-generator lineage begins here.</td>
+<td><a href="paper_notes/paper-ape-2022.html">paper-ape-2022</a></td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2305.03495">ProTeGi</a></td>
+<td>Compresses failure examples into natural-language critique, beam search + data selection; classic textual critique baseline.</td>
+<td><a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023</a></td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2309.03409">OPRO</a></td>
+<td>LLM-as-optimizer: uses a "history of candidates + scores" trajectory to generate entirely new instructions.</td>
+<td><a href="paper_notes/paper-opro-2023.html">paper-opro-2023</a></td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2309.16797">PromptBreeder</a></td>
+<td>Co-evolves the task prompt and mutation prompt simultaneously; the classic starting point of self-referential optimization.</td>
+<td><a href="paper_notes/paper-promptbreeder-2023.html">paper-promptbreeder-2023</a></td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2310.03714">DSPy</a></td>
+<td>Writes the LM pipeline as a declarative program and compiles it; prompt engineering shifts toward compilable AI programs.</td>
+<td><a href="paper_notes/paper-dspy-2023.html">paper-dspy-2023</a></td>
+</tr>
+<tr>
+<td>2023</td>
+<td><a href="https://arxiv.org/abs/2310.16427">PromptAgent</a></td>
+<td>Models prompt optimization as MDP + MCTS planning; tree search beats beam/greedy at equal exploration budget, adding a "search structure" dimension to the lineage.</td>
+<td><a href="paper_notes/paper-promptagent-2023.html">paper-promptagent-2023</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2309.08532">EvoPrompt</a></td>
+<td>Translates classical GA/DE evolutionary operators into natural-language operators executable by an LLM.</td>
+<td><a href="paper_notes/paper-evoprompt-2024.html">paper-evoprompt-2024</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2406.07496">TextGrad</a></td>
+<td>Abstracts textual feedback as a "textual gradient" that can be back-propagated through a computation graph, generalizing to arbitrary text variables.</td>
+<td><a href="paper_notes/paper-textgrad-2024.html">paper-textgrad-2024</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPROv2</a></td>
+<td>Joint instruction + demonstration optimization and credit assignment for multi-stage LM programs.</td>
+<td><a href="paper_notes/paper-miprov2-2024.html">paper-miprov2-2024</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2410.02748">CriSPO</a></td>
+<td>Multi-dimensional critique-suggestion feedback for generation tasks, replacing a single aggregate score.</td>
+<td><a href="paper_notes/paper-crispo-2024.html">paper-crispo-2024</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2411.07446">ERM</a></td>
+<td>Historical feedback and error examples are filtered, retrieved, and selectively forgotten before being used for reflection.</td>
+<td><a href="paper_notes/paper-erm-memory-2024.html">paper-erm-memory-2024</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2402.02101">Are LLMs Good Prompt Optimizers?</a></td>
+<td>Counter-example: LLM reflection does not necessarily identify the true error causes for the target model.</td>
+<td><a href="paper_notes/paper-llm-prompt-optimizers-2024.html">paper-llm-prompt-optimizers-2024</a></td>
+</tr>
+<tr>
+<td>2024</td>
+<td><a href="https://arxiv.org/abs/2406.15708">Teach Better or Show Smarter?</a></td>
+<td>When a labeled dev set is available, exemplar selection often matters more than instruction rewriting.</td>
+<td><a href="paper_notes/paper-teach-better-show-smarter-2024.html">paper-teach-better-show-smarter-2024</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2502.16923">APO Survey</a></td>
+<td>Systematic survey organized around the optimization process anatomy (5 stages); external reference taxonomy for this project.</td>
+<td><a href="paper_notes/paper-apo-survey-2025.html">paper-apo-survey-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2502.11560">APE Survey</a></td>
+<td>Unified optimization-perspective framework (variable × objective × method), naming underexplored frontiers.</td>
+<td><a href="paper_notes/paper-ape-survey-2025.html">paper-ape-survey-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2507.13334">Context Engineering Survey</a></td>
+<td>Positions context engineering as a superset of prompt engineering; confirms the scope boundary of this project.</td>
+<td><a href="paper_notes/paper-context-engineering-2025.html">paper-context-engineering-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2506.00400">Scaling Textual Gradients</a></td>
+<td>Full-batch textual gradients hit a context wall; TSGD-M uses high-scoring historical prompts as momentum sampling.</td>
+<td><a href="paper_notes/paper-scaling-textual-gradients-2025.html">paper-scaling-textual-gradients-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2512.13598">Textual Gradients are a Flawed Metaphor</a></td>
+<td>Deflates the textual gradient narrative: gains typically come from formatting, meta-instructions, and candidate discovery, not gradient-style learning.</td>
+<td><a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2506.19773">APO for KG Construction</a></td>
+<td>APO as a "robustness tool under complexity amplification": the more complex the schema and the longer the input, the larger the gains.</td>
+<td><a href="paper_notes/paper-apo-kg-construction-2025.html">paper-apo-kg-construction-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2504.04365">AutoPDL</a></td>
+<td>Treats prompting patterns themselves (Zero-Shot/CoT/ReAct/ReWOO, etc.) as search variables.</td>
+<td><a href="paper_notes/paper-autopdl-2025.html">paper-autopdl-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2508.18992">DistillPrompt</a></td>
+<td>First distills task principles from examples, then compresses them into an instruction; used as a reference against direct few-shot.</td>
+<td><a href="paper_notes/paper-distillprompt-2025.html">paper-distillprompt-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2510.07475">MAPRO</a></td>
+<td>Formalizes multi-agent prompt optimization as MAP inference with credit propagated along the topology.</td>
+<td><a href="paper_notes/paper-mapro-2025.html">paper-mapro-2025</a></td>
+</tr>
+<tr>
+<td>2025</td>
+<td><a href="https://arxiv.org/abs/2512.14982">Prompt Repetition</a></td>
+<td>Reference baseline (not an APO method): repeating the prompt once, 47/70 wins significantly vs. 0 losses in non-reasoning mode; the zero-cost structural transform comparison floor.</td>
+<td><a href="paper_notes/paper-prompt-repetition-2025.html">paper-prompt-repetition-2025</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA</a></td>
+<td>Execution-trajectory reflection + Pareto candidate retention; outperforms RL with fewer rollouts; currently the strongest baseline most worth reproducing.</td>
+<td><a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2510.04618">ACE</a></td>
+<td>Context-as-playbook incremental evolution (delta + deterministic merge) prevents context collapse and brevity bias; directly demarcates a paradigm boundary against GEPA-class candidates on agent/knowledge-intensive tasks.</td>
+<td><a href="paper_notes/paper-ace-2026.html">paper-ace-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2606.04465">SePO</a></td>
+<td>Includes the optimizer's own system prompt in the evolutionary loop; direct evidence for "optimizer/judge versioning."</td>
+<td><a href="paper_notes/paper-sepo-2026.html">paper-sepo-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2605.26275">SPEAR</a></td>
+<td>Optimizer writes Python for structured error analysis (confusion matrix/groupby); auto-rollback protects the performance floor.</td>
+<td><a href="paper_notes/paper-spear-2026.html">paper-spear-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2601.04055">Modular Prompt Optimization</a></td>
+<td>Fixed schema with per-section local textual gradients; the most direct rollback-friendly prompt optimization experiment design.</td>
+<td><a href="paper_notes/paper-modular-prompt-optimization-2026.html">paper-modular-prompt-optimization-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2603.19311">PrefPO</a></td>
+<td>Pairwise preference replaces absolute scores; incorporates prompt hygiene and prompt hacking into evaluation.</td>
+<td><a href="paper_notes/paper-prefpo-2026.html">paper-prefpo-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2605.21318">TextReg</a></td>
+<td>Regularization perspective on prompt overfitting: a regularization gradient is needed in addition to the task gradient.</td>
+<td><a href="paper_notes/paper-textreg-2026.html">paper-textreg-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2605.26655">Edit-Level Causal Analysis</a></td>
+<td>Causal analysis of edit families: complexification and meta-instructions may be harmful on math/multi-hop tasks.</td>
+<td><a href="paper_notes/paper-causal-edit-level-2026.html">paper-causal-edit-level-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2604.19821">JTPRO</a></td>
+<td>Optimization target for tool agents = joint context of global policy + per-tool schema + shared slot semantics.</td>
+<td><a href="paper_notes/paper-jtpro-2026.html">paper-jtpro-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2605.06623">MASPO</a></td>
+<td>Explicitly models the multi-agent "locally correct, globally wrong" problem; uses misalignment cases to drive joint optimization.</td>
+<td><a href="paper_notes/paper-maspo-2026.html">paper-maspo-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2603.21520">MemAPO</a></td>
+<td>Dual memory of successful templates and error patterns with cross-task retrieval and reuse; memory becomes an experiential asset for the optimizer.</td>
+<td><a href="paper_notes/paper-memapo-2026.html">paper-memapo-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2605.28360">Prompt Codebooks</a></td>
+<td>Prompt decomposed into reusable instinct codebooks, routed and assembled by input; reduces length and aids attribution.</td>
+<td><a href="paper_notes/paper-prompt-codebooks-2026.html">paper-prompt-codebooks-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2605.30227">Temporal/Structural Credit in MAS</a></td>
+<td>Multi-agent "who to update and at which round": only update roles or rounds with low credit.</td>
+<td><a href="paper_notes/paper-temporal-structural-credit-mas-2026.html">paper-temporal-structural-credit-mas-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2603.18388">VISTA / Reflection in the Dark</a></td>
+<td>Counter-example: when the root cause lies outside the hypothesis space, more reflection makes things worse; hypothesis generation and rewriting must be decoupled.</td>
+<td><a href="paper_notes/paper-vista-reflection-dark-2026.html">paper-vista-reflection-dark-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2604.14585">Prompt Optimization Is a Coin Flip</a></td>
+<td>Run headroom/noise-floor/coupling diagnostics before optimizing; in many compound AI settings, optimization underperforms zero-shot.</td>
+<td><a href="paper_notes/paper-coin-flip-2026.html">paper-coin-flip-2026</a></td>
+</tr>
+<tr>
+<td>2026</td>
+<td><a href="https://arxiv.org/abs/2604.14585">PROSE</a></td>
+<td>Internal baseline (not an independent publication): risk-aware evolutionary optimizer built by the coin-flip authors; conclusion is no measurable robustness advantage.</td>
+<td><a href="paper_notes/paper-prose-2026.html">paper-prose-2026</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="registered-candidates-not-yet-deep-read">Registered Candidates Not Yet Deep-Read</h2>
+<p>Aligned with the repo↔paper cross-reference table in main report v4; the full candidate pool is in the <a href="source_inventory.md">Source Inventory</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Paper/Project</th>
+<th>Registration status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://arxiv.org/abs/2405.18369">PromptWizard</a></td>
+<td>skimmed (repo side)</td>
+<td>microsoft/PromptWizard pending audit; write paper note first, then audit code.</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2507.14241">Promptomatix</a></td>
+<td>skimmed</td>
+<td>Low-barrier auto-optimization framework; deep-read paper first, then audit repo.</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2402.03099">Intent-based Prompt Calibration</a></td>
+<td>candidate</td>
+<td>Corresponding paper for Eladlev/AutoPrompt; note the naming distinction from LangChain Promptim.</td>
+</tr>
+<tr>
+<td><a href="https://aclanthology.org/2026.eacl-demo.21/">promptolution</a></td>
+<td>candidate</td>
+<td>Unified, modular, framework-agnostic prompt optimization tool (EACL demo).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="key-extraction-points-when-reading-papers">Key Extraction Points When Reading Papers</h2>
+<ul>
+<li>Optimization target: which of instruction, examples, system prompt, workflow, context, tool policy is modified.</li>
+<li>Search algorithm: how candidates are generated, how they are selected, whether an archive is used, whether a validation split is used.</li>
+<li>Feedback source: scores, human labels, LLM critique, execution trajectories, tool errors, cost.</li>
+<li>Anti-overfitting: how train/dev/test are split; whether cross-task or cross-model generalization is reported.</li>
+<li>Engineering cost: number of calls, tokens, latency, whether a strong optimizer model is required.</li>
+<li>Safety and governance: whether the optimizer's modifiable scope is constrained; whether rollback and human review are preserved.</li>
+<li>Failure cases: which tasks it fails on and why.</li>
+</ul>
+<h2 id="priority-reading-order">Priority Reading Order</h2>
+<ol>
+<li>Surveys: <code>2502.16923</code> and <code>2502.11560</code> — establish the global taxonomy first.</li>
+<li>Classic methods: APE, ProTeGi, OPRO, PromptBreeder.</li>
+<li>Engineering frameworks: DSPy, MIPROv2, promptolution, Promptomatix.</li>
+<li>Self-evolution focus: GEPA, MemAPO, SePO.</li>
+<li>Extended perspective: context engineering survey.</li>
+</ol>
+<h2 id="open-questions">Open Questions</h2>
+<ul>
+<li>Whether the gains from reflective prompt evolution come from better search or from the optimizer model's implicit task knowledge.</li>
+<li>Whether successful strategy libraries can truly generalize across tasks, or only transfer across closely related benchmarks.</li>
+<li>How to set an "immutable constitution" for prompt self-evolution while allowing local strategies to change flexibly.</li>
+<li>Whether LLM-as-judge scoring noise leads the optimizer to learn prompts that pander to the judge.</li>
+<li>How prompt versions can be tracked alongside production data distributions, model versions, and tool versions over long-running deployments.</li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/literature_map.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#quick-lineage">Quick Lineage</a>
+<a class="lv2" href="#current-frontier-focus">Current Frontier Focus</a>
+<a class="lv2" href="#full-deep-read-note-directory-39-papers">Full Deep-Read Note Directory (39 Papers)</a>
+<a class="lv2" href="#registered-candidates-not-yet-deep-read">Registered Candidates Not Yet Deep-Read</a>
+<a class="lv2" href="#key-extraction-points-when-reading-papers">Key Extraction Points When Reading Papers</a>
+<a class="lv2" href="#priority-reading-order">Priority Reading Order</a>
+<a class="lv2" href="#open-questions">Open Questions</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

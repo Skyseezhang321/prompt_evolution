@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub Channel Insight Synthesis: 2026-06-09 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4a742f">GitHub Channel</span><span class="doctitle">GitHub Channel Insight Synthesis: 2026-06-09</span><a class="back lang" href="github_repo_channel_synthesis_20260609.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="github-channel-insight-synthesis-2026-06-09">GitHub Channel Insight Synthesis: 2026-06-09</h1>
+<p>This document rewrites the GitHub channel output following the latest content-organization principles: priority is given to distilling effective insights, credible conclusions, reusable helpful methods, anti-patterns, and minimal validation approaches. The prior quick-triage, catalog, source audit, and evidence cards continue to serve as the evidence layer and are not recapped here as repository introductions.</p>
+<p>2026-06-10 addendum: Added the "Channel Coverage and Known Bias" and "repo ↔ paper Cross-Reference" sections, and made the boundaries on effectiveness-related conclusions explicit as restricted-recall + core4-only audit. Helpful methods section aligned with the unified catalog <code>insight_method_catalog_20260609.md</code> HM-* naming convention. This addendum only adds coverage boundaries and cross-references; existing insight / conclusion content is unchanged.</p>
+<h2 id="conclusion-overview">Conclusion Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Conclusion</th>
+<th>Current judgment</th>
+<th>Evidence level</th>
+<th>Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The GitHub channel is best suited to providing engineering structure and governance methods.</td>
+<td>Public repositories demonstrate how prompt/context/eval/versioning can be organized into code and processes.</td>
+<td>B/D</td>
+<td>Cannot directly prove that a given prompt optimizer delivers stable score gains.</td>
+</tr>
+<tr>
+<td>Strong direct evidence for prompt optimizers is scarce.</td>
+<td>Among core4, only <code>linshenkx/prompt-optimizer</code> is a direct prompt optimizer; its value lies primarily in compare/evaluation/rewrite engineering structure.</td>
+<td>B</td>
+<td>Constrained by a single low-recall discovery + core4-only audit; canonical optimizer repositories (gepa / PromptWizard / promptomatix, etc.) have not yet been audited. "Evidence scarce" cannot rule out insufficient coverage — see "Channel Coverage and Known Bias" below.</td>
+</tr>
+<tr>
+<td>The most important guardrail for self-evolution is freezing the evaluator/data.</td>
+<td><code>karpathy/autoresearch</code> provides a clear structure separating "mutable objects" from "frozen evaluator", which is transferable to a prompt-only optimizer.</td>
+<td>B/D</td>
+<td>It optimizes training code, not prompts; transfer still requires validation.</td>
+</tr>
+<tr>
+<td>The prompt optimization boundary should include context packaging.</td>
+<td><code>12-factor-agents</code> explicitly treats prompt, RAG, history, tool calls, memory, and output structure all as context engineering objects.</td>
+<td>B/D</td>
+<td>Engineering principles are not benchmark evidence.</td>
+</tr>
+<tr>
+<td>Memory must not be treated as an unbounded history cache.</td>
+<td>ECC's memory hooks and evaluator/RAG prototype are better used as structural references for bounded memory, trace, verifier, and playbook.</td>
+<td>D</td>
+<td>ECC's method effectiveness still requires runtime verification.</td>
+</tr>
+</tbody>
+</table>
+<p>Evidence level note: B here means open-source project documentation/source audit from a fixed commit; D means a pending-validation inference this project derived from source observation. These are not experimental conclusions of this project.</p>
+<h2 id="channel-coverage-and-known-bias">Channel Coverage and Known Bias</h2>
+<p>The current conclusions from this channel are built on one restricted search + core4 source audit. When using these conclusions, the following boundaries must be kept in mind to avoid misreading "insufficient coverage" as "this is all there is in the field."</p>
+<ul>
+<li><strong>Broad search not fully run (low recall)</strong>: The only discovery pass was a no-token smoke batch (<code>--query-limit 8 --max-pages 1 --per-page 30</code>, 240 → 85 deduplicated → 6 high-score), see <a href="github_repo_discovery.md">discovery document</a>. "Few repositories doing prompt optimization directly on GitHub" should be downgraded to "few hits under this restricted recall." A full broad search requires <code>GITHUB_TOKEN</code> and re-running along the core / peripheral dual-track suggested in the <a href="github_repo_triage_20260608.md">quick-triage document</a>.</li>
+<li><strong>Canonical optimizer repositories not yet audited (selection bias)</strong>: <code>gepa-ai/gepa</code>, <code>microsoft/PromptWizard</code>, <code>SalesforceAIResearch/promptomatix</code>, <code>Eladlev/AutoPrompt</code>, and <code>Scale3-Labs/dspyground</code> are registered in the <a href="source_inventory.md">source inventory</a> (backfilled via the Twitter/X channel), but none have entered clone/audit. The only true prompt optimizer in core4 is the product tool <code>linshenkx/prompt-optimizer</code>. Therefore, part of "direct effectiveness evidence is scarce" is caused by "not yet audited the right targets"; back-filling these takes higher priority than the remaining strict8 repositories.</li>
+<li><strong>Issues / PR / release notes not mined (failure case gap)</strong>: The <a href="github_repo_evidence_matrix_20260608.md">evidence matrix</a> identifies versioning / rollback / failure cases as the largest gap, but this channel has only scanned the source tree and docs — issues, PRs, discussions, and release notes have not been mined. Real drift, regressions, and incidents typically live there.</li>
+<li><strong>strict8 audited core4 only</strong>: The remaining 4 (<code>dair-ai/Prompt-Engineering-Guide</code>, <code>shanraisshan/claude-code-best-practice</code>, <code>f/prompts.chat</code>, <code>pathwaycom/llm-app</code>) are low-priority reference/asset-type repositories, <strong>intentionally deferred</strong>, and do not block channel conclusions.</li>
+</ul>
+<h2 id="repo-paper-cross-reference-cross-source-corroboration-candidates">repo ↔ paper Cross-Reference (Cross-Source Corroboration Candidates)</h2>
+<p><code>source_collection_plan.md</code> requires merging "papers and code repositories for the same method." The table below joins GitHub repositories with registered papers and marks the corroboration currently possible. Repositories marked <strong>pending audit</strong>: once source audit is complete, the corresponding paper insight can be upgraded from "paper claim" to "source-confirmed" (L4).</p>
+<table>
+<thead>
+<tr>
+<th>GitHub repository</th>
+<th>Corresponding paper / arXiv</th>
+<th>Paper note status</th>
+<th>Repository audit status</th>
+<th>Possible corroboration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gepa-ai/gepa</code></td>
+<td>GEPA (2507.19457)</td>
+<td>Deep-read <a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026</a> (A)</td>
+<td>Pending audit</td>
+<td>Use official implementation to verify whether paper's reflective evolution / Pareto selection is consistent with source → L4 candidate</td>
+</tr>
+<tr>
+<td><code>SalesforceAIResearch/promptomatix</code></td>
+<td>Promptomatix (2507.14241)</td>
+<td>Skimmed, not deep-read</td>
+<td>Pending audit</td>
+<td>First complete paper note + audit, verify DSPy dependency and synthetic data pipeline</td>
+</tr>
+<tr>
+<td><code>microsoft/PromptWizard</code></td>
+<td>PromptWizard (2405.18369)</td>
+<td>No note registered</td>
+<td>Pending audit</td>
+<td>Complete paper note + audit, verify joint instruction / example optimization</td>
+</tr>
+<tr>
+<td><code>Eladlev/AutoPrompt</code></td>
+<td>Intent-based Prompt Calibration (2402.03099)</td>
+<td>Candidate, not deep-read</td>
+<td>Pending audit</td>
+<td>Verify whether reproducible eval exists; note name disambiguation from LangChain Promptim</td>
+</tr>
+<tr>
+<td><code>Scale3-Labs/dspyground</code></td>
+<td>(No independent paper; GEPA harness)</td>
+<td>n/a</td>
+<td>Pending audit</td>
+<td>Engineering case for agent prompt optimizer</td>
+</tr>
+<tr>
+<td><code>linshenkx/prompt-optimizer</code></td>
+<td>(None; product tool)</td>
+<td>n/a</td>
+<td>Audited L2</td>
+<td>No paper to corroborate; upgrade via this project's smoke run / minimal experiment</td>
+</tr>
+<tr>
+<td><code>karpathy/autoresearch</code></td>
+<td>(None; self-evolution case)</td>
+<td>n/a</td>
+<td>Audited L2</td>
+<td>Structural reference; upgrade via this project's prompt-version reproduction</td>
+</tr>
+</tbody>
+</table>
+<h2 id="at-a-glance-insights">At-a-Glance Insights</h2>
+<table>
+<thead>
+<tr>
+<th>Insight</th>
+<th>One-sentence summary for general users</th>
+<th>Immediately actionable step</th>
+<th>Primary evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compare first, then rewrite.</td>
+<td>Don't directly ask the model to "optimize the prompt" — first ask it to explain why the baseline fails.</td>
+<td>Have the model output failure reasons and an evidence summary first, then have a second-step prompt rewrite based on that evidence.</td>
+<td><code>prompt-optimizer</code>'s structured compare / rewrite-from-evaluation structure.</td>
+</tr>
+<tr>
+<td>Don't let the optimizer alter the exam.</td>
+<td>Automatic optimization may only change the prompt, not the eval cases, grader, or success criteria.</td>
+<td>Make <code>candidate_prompt.md</code> the only mutable file; all other eval files are read-only.</td>
+<td><code>autoresearch</code>'s <code>program.md</code> / <code>prepare.py</code> isolation structure.</td>
+</tr>
+<tr>
+<td>The validation set needs adversarial counter-examples that could fool the optimizer.</td>
+<td>Evaluating on ordinary samples only allows the prompt to learn local patches.</td>
+<td>Add schema drift, overfitting trigger words, single-run-luck, and boundary-conservative samples.</td>
+<td><code>prompt-optimizer</code>'s structured compare calibration.</td>
+</tr>
+<tr>
+<td>The prompt is not the only optimization target.</td>
+<td>Many failures come from context organization, not from a poorly written system prompt.</td>
+<td>Record prompt, retrieval context, history compression, tool result format, and output schema simultaneously.</td>
+<td><code>12-factor-agents</code>'s context window principles.</td>
+</tr>
+<tr>
+<td>Every candidate prompt needs a ledger.</td>
+<td>Without a diff, scores, costs, and rejection reasons, there is no reusable experience.</td>
+<td>Record prompt diff, source, metrics, cost, failure cases, accept/reject decision, and rollback point.</td>
+<td><code>autoresearch</code>'s results ledger; ECC's trace/verifier artifact.</td>
+</tr>
+<tr>
+<td>Memory must be disableable and expirable.</td>
+<td>More memory is not always better — stale experience pollutes new tasks.</td>
+<td>Each memory entry records source, applicable scope, verification status, expiration policy, and opt-out.</td>
+<td>ECC memory-persistence hooks; arXiv memory-class papers can provide corroboration later.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="helpful-methods">Helpful Methods</h2>
+<h3 id="method-1-frozen-evaluator-prompt-loop">Method 1: Frozen Evaluator Prompt Loop</h3>
+<blockquote>
+<p>Unified catalog alignment: corresponds to <code>insight_method_catalog_20260609.md</code> HM-04 Prompt Artifact Ledger (ledger / isolation section) and the frozen-evaluator anti-pattern; this card is a concrete instantiation from the GitHub source perspective.</p>
+</blockquote>
+<pre><code class="language-yaml">name: Frozen Evaluator Prompt Loop
+insight_supported: evaluator / data / harness must be isolated from the optimizable prompt
+problem: automatic optimization can fabricate spurious gains by modifying scoring criteria, samples, or output parsing
+recommended_when: need to verify whether a prompt optimizer genuinely improves task performance
+not_recommended_when: task objective is not yet defined, or the scorer itself is still being explored
+required_inputs:
+  - baseline_prompt.md
+  - candidate_prompt.md
+  - eval_cases.jsonl
+  - frozen_grader.py or frozen_judge_prompt.md
+  - run_ledger.jsonl
+implementation_steps:
+  - freeze eval cases, grader, model, and parameters
+  - allow the optimizer to modify only candidate_prompt.md
+  - record prompt diff, score, cost, failure cases, and accept/reject reason each round
+  - use dev set for decisions; held-out set only for final confirmation
+evaluation_metrics:
+  - task_score
+  - format_error_rate
+  - regression_case_count
+  - prompt_length_delta
+  - cost_per_candidate
+risks:
+  - dev set overfitting
+  - judge bias
+  - prompt grows longer but becomes unmaintainable
+rollback_plan: retain baseline prompt and commit/hash for every accepted candidate
+evidence:
+  - repo-karpathy-autoresearch@228791fb499a
+  - docs/github_repo_insight_cards_20260608.md#GHI-04
+next_experiment: implement a prompt-only loop on a structured extraction or tool-call mini-task
+</code></pre>
+<h3 id="method-2-compare-first-rewrite">Method 2: Compare-First Rewrite</h3>
+<blockquote>
+<p>Unified catalog alignment: equivalent to <code>insight_method_catalog_20260609.md</code> HM-02 Trace-First Critique Rewrite; "compare-first" is its naming from the GitHub source perspective — HM-02 is the canonical name going forward.</p>
+</blockquote>
+<pre><code class="language-yaml">name: Compare-First Rewrite
+insight_supported: failure evidence is more auditable than direct rewriting
+problem: one-shot rewrite tends to merely expand, pander to the judge, or patch individual samples
+recommended_when: baseline outputs and failure cases are available and a systematic prompt improvement is needed
+not_recommended_when: no comparable outputs exist, or the task has no clear evaluation criteria
+required_inputs:
+  - baseline prompt
+  - baseline outputs
+  - target/candidate outputs
+  - rubric or schema contract
+  - rewrite prompt
+implementation_steps:
+  - run pairwise compare first, outputting failure types and evidence
+  - synthesis stage compresses multiple judgments into actionable revision suggestions
+  - rewrite stage consumes only the evidence summary, not the full raw context
+  - human review of prompt diff, then run eval
+evaluation_metrics:
+  - held_out_score_delta
+  - schema_drift_count
+  - rewrite_reason_coverage
+  - manual_review_time
+risks:
+  - compare judge overconfidence
+  - synthesis loses minority failure types
+  - rewrite overfits to current samples
+rollback_plan: save compare evidence, rewrite reason, and prompt diff
+evidence:
+  - repo-linshenkx-prompt-optimizer@d7cde6c2fc5c
+  - docs/github_repo_insight_cards_20260608.md#GHI-01
+next_experiment: compare direct rewrite vs. compare-first rewrite
+</code></pre>
+<h3 id="method-3-bounded-memory-and-trace-playbook">Method 3: Bounded Memory And Trace Playbook</h3>
+<blockquote>
+<p>Unified catalog alignment: <code>insight_method_catalog_20260609.md</code> has no corresponding HM yet; belongs to M5 memory / self-evolution stage methods. Name will be unified when a memory-class HM is added to the catalog.</p>
+</blockquote>
+<pre><code class="language-yaml">name: Bounded Memory And Trace Playbook
+insight_supported: memory must have boundaries; experience accumulation must be verifiable
+problem: unbounded history cache causes context pollution, inheritance of old errors, and cost inflation
+recommended_when: need a prompt optimizer or agent to reuse experience from historical failures
+not_recommended_when: task is short with no cross-round reuse value, or privacy boundaries are unclear
+required_inputs:
+  - scenario.json
+  - trace.jsonl
+  - verifier_result.json
+  - candidate_playbook.md
+  - memory_policy.md
+implementation_steps:
+  - save scenario, trace, candidate, and verifier decision each round
+  - write only verified experience into memory
+  - each memory entry carries source, applicable scope, expiration time, and opt-out
+  - periodically prune or downweight memory using adversarial samples
+evaluation_metrics:
+  - reused_memory_hit_rate
+  - stale_memory_error_count
+  - token_overhead
+  - rollback_count
+risks:
+  - writing a one-off workaround as general experience
+  - leaking sensitive context
+  - memory selector introduces hidden variables
+rollback_plan: support disabling memory and deleting experience entries by source_id
+evidence:
+  - repo-affaan-m-ecc@90dfd9505dc8
+  - docs/github_repo_insight_cards_20260608.md#GHI-09
+  - docs/github_repo_insight_cards_20260608.md#GHI-10
+next_experiment: compare no-memory, bounded-summary-memory, raw-history-memory
+</code></pre>
+<h2 id="anti-patterns">Anti-Patterns</h2>
+<table>
+<thead>
+<tr>
+<th>Anti-pattern</th>
+<th>Why it is dangerous</th>
+<th>Alternative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Treating star count or viral popularity as evidence strength.</td>
+<td>Popularity cannot prove a method is effective or that its eval is rigorous.</td>
+<td>Fix a commit, read the source/tests/examples, then assign an evidence level.</td>
+</tr>
+<tr>
+<td>Directly having an LLM rewrite the prompt.</td>
+<td>Tends to expand text, pander to the current samples, and cannot explain the rationale for changes.</td>
+<td>Compare-first rewrite; retain failure evidence and diff.</td>
+</tr>
+<tr>
+<td>Letting the optimizer change prompt, data, and grader simultaneously.</td>
+<td>Cannot attribute the source of gains; may also cause reward hacking.</td>
+<td>Freeze evaluator/data; change only the target object.</td>
+</tr>
+<tr>
+<td>Looking only at average score improvement.</td>
+<td>May mask schema drift, minority-class regression, safety degradation, and cost inflation.</td>
+<td>Record segmented metrics, format errors, failure cases, cost, and prompt hygiene.</td>
+</tr>
+<tr>
+<td>Treating memory as a long history cache.</td>
+<td>Old errors, stale strategies, and irrelevant context pollute new tasks.</td>
+<td>Bounded memory with source, scope, expiration, and a disable switch.</td>
+</tr>
+<tr>
+<td>Writing "has tests" as "method is effective."</td>
+<td>Tests may only cover installation, format, or configuration — not optimizer behavior.</td>
+<td>Distinguish auditable entry points, behavioral tests, and effectiveness verification.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="minimal-validation-candidates">Minimal Validation Candidates</h2>
+<p>Prioritize freezing 2 validation/demo runs; a full benchmark harness is not recommended first.</p>
+<table>
+<thead>
+<tr>
+<th>Validation</th>
+<th>Insight / method being validated</th>
+<th>Minimal setup</th>
+<th>Success criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frozen Evaluator Prompt Loop</td>
+<td>Method 1; GHI-04/GHI-05</td>
+<td>20–50 structured extraction or tool-call samples; fixed grader; only prompt changes</td>
+<td>Dev improvement not accompanied by held-out regression; format error rate does not worsen; ledger is complete</td>
+</tr>
+<tr>
+<td>Direct Rewrite vs Compare-First Rewrite</td>
+<td>Method 2; GHI-01/GHI-03</td>
+<td>Same baseline prompt, same failure samples, run direct rewrite and compare-first rewrite respectively</td>
+<td>Compare-first has better failure coverage, schema stability, or human review efficiency</td>
+</tr>
+<tr>
+<td>Markdown vs JSON Payload Judge</td>
+<td>GHI-02</td>
+<td>Same judge task, run with Markdown concatenation and JSON payload respectively</td>
+<td>JSON payload has lower parse failure rate and less wrapper/schema drift</td>
+</tr>
+<tr>
+<td>Bounded Memory Demo</td>
+<td>Method 3; GHI-09/GHI-10</td>
+<td>Three groups: no-memory / bounded summary / raw history</td>
+<td>Bounded memory reduces repeated errors without noticeably increasing stale-experience pollution</td>
+</tr>
+</tbody>
+</table>
+<h2 id="evidence-index">Evidence Index</h2>
+<ul>
+<li><a href="github_repo_triage_20260608.md">GitHub Repository Candidate Quick-Triage</a>: explains the noise, filtering, and time distribution of 85 raw candidates.</li>
+<li><a href="github_repo_analysis_overview_20260608.md">GitHub Repository Analysis Overview</a>: retains the first-round cross-sectional structure and repository type distribution.</li>
+<li><a href="github_repo_source_audit_workflow_20260608.en.html">GitHub Repository Source Audit Workflow</a>: describes the clone/audit/manual-audit workflow and evidence levels.</li>
+<li><a href="github_repo_insight_cards_20260608.en.html">GitHub Repository Candidate Insight Evidence Cards</a>: retains the detailed evidence cards for GHI-01 through GHI-12.</li>
+<li><a href="github_repo_evidence_matrix_20260608.md">GitHub Repository Evidence Matrix</a>: retains the first-round cross-sectional evidence matrix; no longer serves as the primary conclusion entry point.</li>
+<li><code>docs/github_repo_audit_notes/</code>: source audit drafts after core4 commit pinning.</li>
+</ul>
+<h2 id="final-report-writing-recommendations">Final Report Writing Recommendations</h2>
+<p>In the final report, the GitHub channel should not be written as "a certain repository proves prompt self-evolution is effective." A more defensible framing is:</p>
+<ul>
+<li>Conclusion: GitHub source code shows that production-grade systems focus more on eval, versioning, trace, context, and governance than on single-sentence prompt craftsmanship.</li>
+<li>Insight: Failure evidence, frozen evaluator, candidate ledger, and context packaging are the engineering foundations of prompt self-evolution.</li>
+<li>Helpful method: Recommend implementing Frozen Evaluator Prompt Loop and Compare-First Rewrite first.</li>
+<li>Boundary: These methods come from source-structure observation and need to be upgraded in evidence level through this project's minimal validation.</li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/github_repo_channel_synthesis_20260609.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#conclusion-overview">Conclusion Overview</a>
+<a class="lv2" href="#channel-coverage-and-known-bias">Channel Coverage and Known Bias</a>
+<a class="lv2" href="#repo-paper-cross-reference-cross-source-corroboration-candidates">repo ↔ paper Cross-Reference (Cross-Source Corroboration Candidates)</a>
+<a class="lv2" href="#at-a-glance-insights">At-a-Glance Insights</a>
+<a class="lv2" href="#helpful-methods">Helpful Methods</a>
+<a class="lv3" href="#method-1-frozen-evaluator-prompt-loop">Method 1: Frozen Evaluator Prompt Loop</a>
+<a class="lv3" href="#method-2-compare-first-rewrite">Method 2: Compare-First Rewrite</a>
+<a class="lv3" href="#method-3-bounded-memory-and-trace-playbook">Method 3: Bounded Memory And Trace Playbook</a>
+<a class="lv2" href="#anti-patterns">Anti-Patterns</a>
+<a class="lv2" href="#minimal-validation-candidates">Minimal Validation Candidates</a>
+<a class="lv2" href="#evidence-index">Evidence Index</a>
+<a class="lv2" href="#final-report-writing-recommendations">Final Report Writing Recommendations</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

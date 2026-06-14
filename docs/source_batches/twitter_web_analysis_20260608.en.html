@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitter/X Candidate Posts Analysis: 2026-06-08 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="../analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#2d5fa8">Twitter/X Channel</span><span class="doctitle">Twitter/X Candidate Posts Analysis: 2026-06-08</span><a class="back lang" href="twitter_web_analysis_20260608.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="twitterx-candidate-posts-analysis-2026-06-08">Twitter/X Candidate Posts Analysis: 2026-06-08</h1>
+<p>2026-06-09 addendum: Following the latest insight-first content organization principle, a detailed <a href="twitter_web_insight_cards_20260609.en.html">Twitter/X Social Media Lead Insight Cards</a> document has been added. This page retains the source cards, traceability table, and exclusion list; the new document is responsible for converting social media leads into insights, helpful methods, anti-patterns, and validation candidates.</p>
+<p>This page follows from the <a href="twitter_web_parallel_brief_20260608.md">Twitter/X Candidate Posts Parallel Analysis Brief</a> and is used to distill the 120 X/Twitter search candidates in <code>artifacts/source_search/source_candidates_20260608_133117.jsonl</code> into traceable leads.</p>
+<p>Analysis criteria:</p>
+<ul>
+<li>Quick triage is based on X/Twitter titles and snippet excerpts returned by Brave Search; full threads, engagement metrics, or retweet graphs were not fetched via the X API.</li>
+<li>X posts serve only as social media observations, author explanations, release announcements, or indexes to primary sources; method validity must be verified against papers, official documentation, code, blogs, demos, or reproducible experiments.</li>
+<li>The <code>evidence_level</code> on this page reflects the combined evidence strength of "the X lead together with any already-traced primary sources," not social media popularity.</li>
+</ul>
+<h2 id="1-overview">1. Overview</h2>
+<p>The center of gravity of the Twitter/X batch is GEPA, DSPy, and MIPRO. Among the highly relevant candidates, original authors or maintainers — Omar Khattab, Lakshya A Agrawal, Michael Ryan, Krista Opsahl-Ong, the DSPy official account, and others — repeatedly explain GEPA/MIPRO within the DSPy optimizer ecosystem rather than treating them as isolated prompt tricks. The key distinctions are:</p>
+<ul>
+<li>GEPA: reflective prompt evolution based on execution traces, natural-language reflection, text component mutation, and Pareto selection.</li>
+<li>MIPRO/MIPROv2: a DSPy optimizer that jointly optimizes instructions and few-shot demonstrations.</li>
+<li>DSPy: not a pure prompt optimizer, but a programming model that describes and compiles LM programs using signatures, modules, metrics, and optimizers.</li>
+</ul>
+<p>The added value of social media material is primarily "deployment leads," not new conclusions. The X batch connects paper methods to engineering contexts such as Pydantic AI/Evals, Salesforce Promptomatix, LangChain Promptim/AutoPrompt, Microsoft PromptWizard, Google Vertex AI Prompt Optimizer, Sentient ROMA, DSPyground, LangSmith prompt versioning, and AI safety/control. These sources warrant further deep-reading because they are more likely to contain datasets, metrics, evaluators, prompt diffs, costs, rollback points, and failure modes.</p>
+<p>At the same time, the X batch reveals significant noise: media reposts and paper-abstract threads repeatedly circulate GEPA conclusions; universal prompt templates such as "Lyra/4-D methodology" are weakly related to this project's eval-driven optimizer mainline; the <code>GEPA</code> namesake institutional account and JavaScript-disabled pages generate false recalls; some tool-promotion posts lack code, documentation, or evals and can only be excluded or retained as propagation signals.</p>
+<p>Preliminary conclusions:</p>
+<ol>
+<li>GEPA has become the central entry point for community discussion of prompt self-evolution in 2025–2026, but "reflective prompt evolution" must be separated from the oversimplification of "RL substitute."</li>
+<li>DSPy's spread on social media is often simplified to automatic prompt optimization; leads from the original authors suggest the more accurate positioning is prompt-as-program / LM program framework.</li>
+<li>On the engineering side, the most valuable thing is not the slogan of "auto-rewrite prompts," but building a closed loop around training/validation splits, metrics, traces, versioning, rollback, and human release gates.</li>
+</ol>
+<h2 id="11-social-media-leads-convertible-into-specific-insights">1.1 Social Media Leads Convertible into Specific Insights</h2>
+<p>This layer serves the final report: X/Twitter does not supply final evidence, but it can surface method entry points that "readers can grasp at a glance." Every item must be traced back to a paper, official documentation, code, or a reproducible experiment before entering the report. For detailed fields, method candidates, anti-patterns, and validation candidates, see <a href="twitter_web_insight_cards_20260609.en.html">Twitter/X Social Media Lead Insight Cards</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Specific insight convertible from social media lead</th>
+<th>How an everyday user should understand it</th>
+<th>Primary evidence to trace</th>
+<th>Current handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Letting the model write the prompt" does not mean letting it improvise freely; it means letting it revise prompts under metric and trace constraints.</td>
+<td>Define a test set and scorer first, then let the model propose candidates; automated optimization without eval is just sophisticated rewriting.</td>
+<td>DSPy / GEPA / Pydantic GEPA / Promptim documentation and experiment configurations.</td>
+<td>Candidate for an eval-first method card.</td>
+</tr>
+<tr>
+<td>The key to GEPA is not the "replace RL" slogan, but generating reflection from execution traces and retaining multiple candidates.</td>
+<td>If a task involves tool calls, compilation errors, or judge explanations, the optimizer should read that in-process information rather than looking only at the final score.</td>
+<td>GEPA paper, repo, DSPy GEPA docs.</td>
+<td>Candidate for trace-aware prompt evolution.</td>
+</tr>
+<tr>
+<td>Prompt-as-program makes prompts easier to maintain and to migrate across models.</td>
+<td>Express the task as a signature/module/metric rather than maintaining a large template in a chat window.</td>
+<td>DSPy paper/docs, Drew Breunig writeup.</td>
+<td>Engineering maintainability card — not an effectiveness conclusion.</td>
+</tr>
+<tr>
+<td>Prompt Hub diff/rollback is the infrastructure for prompt optimization.</td>
+<td>A new prompt should have commits, environments, owners, and rollback just like code.</td>
+<td>LangSmith manage prompts official documentation.</td>
+<td>Already included in industry practices and tool map.</td>
+</tr>
+<tr>
+<td>Context engineering and prompt optimization are not the same variable.</td>
+<td>Sometimes the right fix is retrieval, memory, or tool result format — not the system prompt.</td>
+<td>LangChain context engineering, 12-factor agents.</td>
+<td>Boundary card to prevent conflated causation in the final report.</td>
+</tr>
+<tr>
+<td>Social media popularity is not evidence.</td>
+<td>Multiple accounts retweeting the same paper shows strong propagation, not a more effective method.</td>
+<td>Must trace back to arXiv, official docs, repo, or project experiments.</td>
+<td>Retained as an evidence-grading note.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-source-cards">2. Source Cards</h2>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>X lead</th>
+<th>role</th>
+<th>topic</th>
+<th>claim_type</th>
+<th>linked_primary_source</th>
+<th>evidence_level</th>
+<th>project_value</th>
+<th>next_action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>candidate-twitter-web-647c2de10f</td>
+<td>Omar Khattab: GEPA / natural-language reflection</td>
+<td>framework_maintainer</td>
+<td>GEPA</td>
+<td>method_explanation</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a>, <a href="https://github.com/gepa-ai/gepa">GEPA repo</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>strong</td>
+<td>Original author/maintainer perspective; can anchor the definition of reflective prompt evolution</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-574ce9d0a1</td>
+<td>Lakshya A Agrawal: GEPA vs. GRPO rollout comparison</td>
+<td>paper_author</td>
+<td>GEPA</td>
+<td>benchmark_claim</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a></td>
+<td>strong</td>
+<td>Paper author explanation; useful for tracking rollout, task, and metric boundaries</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-038825c3e2</td>
+<td>Omar Khattab: GRPO / MIPRO / GEPA optimizer taxonomy</td>
+<td>framework_maintainer</td>
+<td>DSPy</td>
+<td>method_explanation</td>
+<td><a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a>, <a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a></td>
+<td>strong</td>
+<td>Usable optimizer taxonomy for the final report</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-37f35971f0</td>
+<td>Lakshya A Agrawal: GEPA as both prompt optimizer and text evolution engine</td>
+<td>paper_author</td>
+<td>GEPA</td>
+<td>method_explanation</td>
+<td><a href="https://github.com/gepa-ai/gepa">GEPA repo</a>, <a href="https://gepa-ai.github.io/gepa/tutorials/">GEPA tutorials</a></td>
+<td>medium</td>
+<td>Helps avoid reducing GEPA to a single-prompt rewrite</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-9dd8e21eb4</td>
+<td>Omar Khattab: DSPy is a programming model, not just a prompt optimizer</td>
+<td>framework_maintainer</td>
+<td>DSPy</td>
+<td>method_explanation</td>
+<td><a href="https://arxiv.org/abs/2310.03714">DSPy paper</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>strong</td>
+<td>Establishes DSPy's framework positioning within this project</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-08c641a574</td>
+<td>DSPy official: prompt optimization in AI safety/control</td>
+<td>framework_maintainer</td>
+<td>eval/governance</td>
+<td>benchmark_claim</td>
+<td><a href="https://www.greaterwrong.com/posts/bALBxf3yGGx4bvvem/prompt-optimization-can-enable-ai-control-research">Prompt optimization can enable AI control research</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>medium</td>
+<td>Directly relevant to safety, audit budget, and monitor eval</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-8c1041f057</td>
+<td>Simon Willison: Drew Breunig's DSPy talk/notes</td>
+<td>practitioner</td>
+<td>DSPy</td>
+<td>pointer_only</td>
+<td><a href="https://feeds.simonwillison.net/tags/drew-breunig/">Simon Willison tag feed</a>, <a href="https://www.dbreunig.com/2025/06/10/let-the-model-write-the-prompt.html">Drew Breunig writeup</a></td>
+<td>medium</td>
+<td>Clear engineering explanation; suitable as a practical lead, not paper evidence</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-740ad89298</td>
+<td>Drew Breunig: DSPy maintainability / DX</td>
+<td>practitioner</td>
+<td>DSPy</td>
+<td>opinion</td>
+<td><a href="https://www.dbreunig.com/2025/06/10/let-the-model-write-the-prompt.html">Drew Breunig writeup</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>medium</td>
+<td>Points to engineering benefits of prompt-as-program: maintainable, model-switchable, re-evaluable</td>
+<td>cite_as_social_signal</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-ce0558cf83</td>
+<td>Krista Opsahl-Ong: MIPRO / multi-stage LM pipelines interview</td>
+<td>paper_author</td>
+<td>MIPRO</td>
+<td>pointer_only</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a></td>
+<td>medium</td>
+<td>Author lead; useful for tracking MIPRO's positioning within DSPy</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-261ef92248</td>
+<td>Michael Ryan: MIPROv2 live in DSPy</td>
+<td>paper_author</td>
+<td>MIPRO</td>
+<td>release_announcement</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a></td>
+<td>strong</td>
+<td>Official/author lead for MIPROv2 entering the baseline candidate pool</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-fcffb2c37d</td>
+<td>Omar Khattab: MIPRO optimizer announcement</td>
+<td>framework_maintainer</td>
+<td>MIPRO</td>
+<td>release_announcement</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO paper</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>strong</td>
+<td>Used to explain how MIPRO optimizes multi-prompt LM programs</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-a62d1f4b3a</td>
+<td>Salesforce AI Research: Promptomatix release</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/SalesforceAIResearch/promptomatix">Promptomatix repo</a>, <a href="https://arxiv.org/abs/2507.14241">Promptomatix arXiv</a></td>
+<td>strong</td>
+<td>Productized/frameworked APO lead with paper and code</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-cc0ff6cc3b</td>
+<td>Pydantic: GEPA + Pydantic AI/Evals technical blog</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://pydantic.dev/articles/prompt-optimization-with-gepa">Pydantic GEPA article</a></td>
+<td>strong</td>
+<td>Explicitly covers eval harness, Agent.override, OpenTelemetry tracing, and other engineering fields</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-935f6f6975</td>
+<td>LangChain: AutoPrompt / prompt optimization framework</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/Eladlev/AutoPrompt">AutoPrompt repo</a>, <a href="https://www.langchain.com/blog/promptim">LangChain Promptim blog</a></td>
+<td>medium</td>
+<td>Third-party AutoPrompt vs. LangChain Promptim must be distinguished; retained as tool ecosystem lead</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-521ea71731</td>
+<td>Microsoft Research: PromptWizard open source</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/microsoft/PromptWizard">PromptWizard repo</a>, <a href="https://arxiv.org/abs/2405.18369">PromptWizard arXiv</a></td>
+<td>strong</td>
+<td>Engineering lead for self-evolving / feedback-driven prompt optimization</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-59897b3054</td>
+<td>Google Cloud Tech: Vertex AI Prompt Optimizer</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-optimizer">Vertex AI prompt optimizer docs</a>, <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/zero-shot-optimizer">zero-shot optimizer docs</a></td>
+<td>strong</td>
+<td>Official productized prompt optimizer; focus on sample prompts, custom metrics, optimization jobs</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-324fae724b</td>
+<td>Matt Farmer: pointer to OpenAI official Prompt Optimizer</td>
+<td>practitioner</td>
+<td>prompt optimizer tool</td>
+<td>pointer_only</td>
+<td><a href="https://platform.openai.com/docs/guides/prompt-optimizer/">OpenAI Prompt optimizer</a>, <a href="https://platform.openai.com/docs/guides/prompting">OpenAI prompting guide</a></td>
+<td>medium</td>
+<td>Weak X lead, but strong official documentation; already listed in the inventory as vendor practice</td>
+<td>cite_as_social_signal</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-2bab072fe3</td>
+<td>Sentient: ROMA V2 / GEPA+ component-wise prompt optimizer</td>
+<td>vendor</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/sentient-agi/ROMA">ROMA repo</a>, <a href="https://github.com/sentient-agi/ROMA/releases">ROMA releases</a></td>
+<td>medium</td>
+<td>Multi-agent prompt component optimization lead; GEPA+ implementation details need verification</td>
+<td>trace_primary</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-d918a51680</td>
+<td>Tom Dörr: agent prompt optimization with DSPy + GEPA / DSPyground</td>
+<td>practitioner</td>
+<td>prompt optimizer tool</td>
+<td>release_announcement</td>
+<td><a href="https://github.com/Scale3-Labs/dspyground">DSPyground repo</a></td>
+<td>medium</td>
+<td>Has tooling, sampling, metrics, and runs history; candidate for deep-reading as agent prompt optimizer practice</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-1a2f952871</td>
+<td>Cameron Wolfe: four types of automatic prompt optimization algorithms</td>
+<td>practitioner</td>
+<td>APO survey</td>
+<td>pointer_only</td>
+<td><a href="https://arxiv.org/abs/2502.16923">APO survey</a>, <a href="https://arxiv.org/abs/2305.03495">ProTeGi</a>, <a href="https://arxiv.org/abs/2211.01910">APE</a></td>
+<td>medium</td>
+<td>Suitable as a learning and propagation lead; not an empirical conclusion</td>
+<td>cite_as_social_signal</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-22b94ebaff</td>
+<td>Tim Rocktäschel: PromptBreeder release</td>
+<td>paper_author</td>
+<td>GEPA</td>
+<td>release_announcement</td>
+<td><a href="https://arxiv.org/abs/2309.16797">PromptBreeder arXiv</a></td>
+<td>strong</td>
+<td>Historical anchor for self-referential prompt evolution</td>
+<td>write_note</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-b22f5a7858</td>
+<td>LangChain: LangSmith Prompt Hub diff / rollback</td>
+<td>vendor</td>
+<td>eval/governance</td>
+<td>release_announcement</td>
+<td><a href="https://docs.langchain.com/langsmith/manage-prompts">LangSmith manage prompts</a></td>
+<td>strong</td>
+<td>Supplements engineering evidence for prompt versioning, diff, commit, and rollback</td>
+<td>source_inventory</td>
+</tr>
+<tr>
+<td>candidate-twitter-web-0330627d80</td>
+<td>Harrison Chase: definition of context engineering</td>
+<td>framework_maintainer</td>
+<td>context engineering</td>
+<td>method_explanation</td>
+<td><a href="https://www.langchain.com/blog/the-rise-of-context-engineering">LangChain context engineering blog</a>, <a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a></td>
+<td>medium</td>
+<td>Used to explain the boundary between prompt optimization and context engineering</td>
+<td>cite_as_social_signal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-x-primary-source-traceability-table">3. X → Primary Source Traceability Table</h2>
+<table>
+<thead>
+<tr>
+<th>X lead cluster</th>
+<th>Traced primary sources</th>
+<th>Current assessment</th>
+<th>Next action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA author/maintainer posts</td>
+<td><a href="https://arxiv.org/abs/2507.19457">GEPA arXiv</a>, <a href="https://github.com/gepa-ai/gepa">GEPA repo</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>Core strong evidence; X used only as author-explanation index</td>
+<td>Single GEPA paper note; verify tasks, rollout, cost, failure cases</td>
+</tr>
+<tr>
+<td>MIPRO/MIPROv2 posts</td>
+<td><a href="https://arxiv.org/abs/2406.11695">MIPRO arXiv</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md">DSPy optimizer docs</a></td>
+<td>Core baseline candidate</td>
+<td>Place alongside GEPA, ProTeGi, PromptBreeder in optimizer taxonomy</td>
+</tr>
+<tr>
+<td>DSPy programming model posts</td>
+<td><a href="https://arxiv.org/abs/2310.03714">DSPy arXiv</a>, <a href="https://dspy.ai/">DSPy docs</a></td>
+<td>Strong evidence for framework positioning</td>
+<td>Avoid reducing DSPy to a prompt optimizer in the report</td>
+</tr>
+<tr>
+<td>AI safety/control post</td>
+<td><a href="https://www.greaterwrong.com/posts/bALBxf3yGGx4bvvem/prompt-optimization-can-enable-ai-control-research">GreaterWrong article</a>, <a href="https://github.com/stanfordnlp/dspy/blob/main/docs/docs/api/optimizers/GEPA/overview.md">DSPy GEPA docs</a></td>
+<td>Medium evidence; task, audit budget, and baseline need verification</td>
+<td>Candidate for eval/governance deep-read</td>
+</tr>
+<tr>
+<td>Drew Breunig / Simon Willison posts</td>
+<td><a href="https://www.dbreunig.com/2025/06/10/let-the-model-write-the-prompt.html">Drew writeup</a>, <a href="https://feeds.simonwillison.net/tags/drew-breunig/">Simon tag feed</a></td>
+<td>High-quality engineering explanation, not methodological empirical evidence</td>
+<td>Extract maintainability, model switching, and metric-first practices</td>
+</tr>
+<tr>
+<td>Promptomatix post</td>
+<td><a href="https://github.com/SalesforceAIResearch/promptomatix">Promptomatix repo</a>, <a href="https://arxiv.org/abs/2507.14241">Promptomatix arXiv</a></td>
+<td>Strong evidence from paper + code</td>
+<td>Register in source_inventory; deep-read framework structure</td>
+</tr>
+<tr>
+<td>Pydantic GEPA post</td>
+<td><a href="https://pydantic.dev/articles/prompt-optimization-with-gepa">Pydantic article</a></td>
+<td>Strong evidence from official engineering practice</td>
+<td>Register in source_inventory; extract eval/tracing fields</td>
+</tr>
+<tr>
+<td>LangChain AutoPrompt / Promptim posts</td>
+<td><a href="https://github.com/Eladlev/AutoPrompt">AutoPrompt repo</a>, <a href="https://www.langchain.com/blog/promptim">LangChain Promptim blog</a></td>
+<td>Medium evidence from tool ecosystem; names need deduplication</td>
+<td>Record AutoPrompt and Promptim separately</td>
+</tr>
+<tr>
+<td>Microsoft PromptWizard post</td>
+<td><a href="https://github.com/microsoft/PromptWizard">PromptWizard repo</a>, <a href="https://arxiv.org/abs/2405.18369">PromptWizard arXiv</a></td>
+<td>Strong evidence from paper + code</td>
+<td>Register in source_inventory; assess whether to include in baseline</td>
+</tr>
+<tr>
+<td>Google Vertex AI Prompt Optimizer posts</td>
+<td><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-optimizer">Prompt optimizer docs</a>, <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/zero-shot-optimizer">zero-shot optimizer docs</a></td>
+<td>Strong evidence from official product</td>
+<td>Place alongside OpenAI/Promptfoo/Langfuse/Humanloop in governance practices</td>
+</tr>
+<tr>
+<td>OpenAI prompt optimizer pointer posts</td>
+<td><a href="https://platform.openai.com/docs/guides/prompt-optimizer/">OpenAI Prompt optimizer</a>, <a href="https://platform.openai.com/docs/guides/prompting">OpenAI prompting</a></td>
+<td>Strong evidence from official docs; weak X lead</td>
+<td>Already recorded in industry practices; continue verifying migration/deprecation boundaries</td>
+</tr>
+<tr>
+<td>Sentient ROMA V2 post</td>
+<td><a href="https://github.com/sentient-agi/ROMA">ROMA repo</a>, <a href="https://github.com/sentient-agi/ROMA/releases">ROMA releases</a></td>
+<td>Medium evidence; release mentions DSPy/GEPA support and known issues</td>
+<td>Deep-read implementation; avoid accepting marketing metrics at face value</td>
+</tr>
+<tr>
+<td>DSPyground post</td>
+<td><a href="https://github.com/Scale3-Labs/dspyground">DSPyground repo</a></td>
+<td>Medium evidence; README includes samples, metrics, runs history</td>
+<td>Register in source_inventory; can serve as agent prompt optimizer tool candidate</td>
+</tr>
+<tr>
+<td>Context engineering posts</td>
+<td><a href="https://www.langchain.com/blog/the-rise-of-context-engineering">LangChain context engineering blog</a>, <a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a></td>
+<td>Terminology boundary stronger than prompt optimization empirical evidence</td>
+<td>Use only in boundary chapter; do not mix into APO method evidence</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-exclusion-or-downgrade-list">4. Exclusion or Downgrade List</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Representative source_id / source</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pure propagation or paper-title reposts</td>
+<td><code>candidate-twitter-web-038d289afe</code>, <code>candidate-twitter-web-86303509b7</code>, <code>candidate-twitter-web-f96f4aab2f</code>, <code>candidate-twitter-web-64c577cd52</code>, <code>candidate-twitter-web-5f1f82953f</code>, <code>candidate-twitter-web-6a57dcc1b7</code></td>
+<td>Do not enter source cards; indicate only GEPA propagation volume</td>
+</tr>
+<tr>
+<td>Low-information community retellings</td>
+<td><code>candidate-twitter-web-0b215316d4</code>, <code>candidate-twitter-web-7df6342ce6</code>, <code>candidate-twitter-web-0b65ed5035</code>, <code>candidate-twitter-web-c16526919c</code>, <code>candidate-twitter-web-680bffcb76</code></td>
+<td>Downgrade to weak social signal unless an original experiment can be found</td>
+</tr>
+<tr>
+<td>Universal prompt templates / Lyra-type content</td>
+<td><code>candidate-twitter-web-674ff05fa3</code>, <code>candidate-twitter-web-0d8f610697</code>, <code>candidate-twitter-web-d2a97a41b9</code>, <code>candidate-twitter-web-e28fbc0eda</code>, <code>candidate-twitter-web-aaac36eaa9</code>, <code>candidate-twitter-web-78281d2d66</code>, <code>candidate-twitter-web-919bf6c092</code></td>
+<td>Exclude; weakly related to the eval-driven APO mainline</td>
+</tr>
+<tr>
+<td>Tool-promotion posts lacking code/eval</td>
+<td><code>candidate-twitter-web-ead206b784</code>, <code>candidate-twitter-web-672c970436</code>, <code>candidate-twitter-web-f3f4d98861</code>, <code>candidate-twitter-web-9dacebdebb</code></td>
+<td>Exclude or defer; reopen when a public repo becomes available</td>
+</tr>
+<tr>
+<td>JavaScript-disabled / unreadable-snippet duplicate pages</td>
+<td><code>candidate-twitter-web-4cc13224f0</code>, <code>candidate-twitter-web-b6bf34697e</code>, <code>candidate-twitter-web-7f94bda7d4</code>, <code>candidate-twitter-web-ed4277c26b</code>, <code>candidate-twitter-web-1ae1787848</code></td>
+<td>Restore only when the full post/thread can be verified</td>
+</tr>
+<tr>
+<td><code>GEPA</code> namesake false recalls</td>
+<td><code>candidate-twitter-web-4a225a5f5c</code>, <code>candidate-twitter-web-1a6a1db4d2</code>, <code>candidate-twitter-web-c815bfc2a7</code>, <code>candidate-twitter-web-b2d1f9c6c8</code></td>
+<td>Exclude</td>
+</tr>
+<tr>
+<td>General context engineering / agent hype with no prompt optimizer connection</td>
+<td><code>candidate-twitter-web-172c6e920f</code>, <code>candidate-twitter-web-98008fe94e</code>, <code>candidate-twitter-web-1e0dc10f30</code>, multiple low-relevance <code>meng shao</code> posts</td>
+<td>Use only as background in the context engineering chapter; do not include in APO core</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Candidate accounting (to prevent silent truncation): of the 120 candidates, §2 produced 21 source cards (covering high/medium entries traceable to primary sources); this section explicitly excludes/downgrades approximately 34 entries plus the <code>meng shao</code> and similar low-relevance clusters. The remaining approximately 60 entries are duplicate pages for the same arXiv paper or the same release, second-order reposts, or unreadable snippets; all are counted toward propagation volume and do not become individual cards. If a more granular per-entry accounting is needed later, return to the original artifact <code>artifacts/source_search/source_candidates_20260608_133117.jsonl</code> for verification.</p>
+</blockquote>
+<h2 id="5-next-actions">5. Next Actions</h2>
+<ol>
+<li>Prioritize writing paper notes for GEPA, MIPROv2, and PromptBreeder to establish the baseline chain for prompt evolution / prompt-as-program.</li>
+<li>Deep-read Pydantic GEPA, Promptomatix, DSPyground, PromptWizard, LangChain Promptim, and Google Vertex AI Prompt Optimizer as industry practices; extract datasets, metrics, traces, versioning, rollback, cost, and failure cases.</li>
+<li>Independently verify the DSPy AI safety/control lead: confirm benchmarks, audit budget, baseline, learned prompts, and limitations.</li>
+<li>Retain Sentient ROMA V2 only as an agent prompt optimizer lead; defer judgment on whether it enters formal evidence until after a code deep-read.</li>
+<li>In the final report, label the Twitter/X batch as a "social media propagation and primary source discovery layer"; do not treat X post counts or engagement volume as evidence strength.</li>
+<li>Verification status: as of this round of organization, the <code>next_action</code> fields (trace_primary / write_note / source_inventory) in the §2 source cards and all 7 P1 verification items in the <a href="twitter_web_parallel_brief_20260608.md">parallel analysis brief</a> are <strong>all pending</strong>; no paper notes have been written yet, so the <code>main_sources</code> fields in the insight cards temporarily reference external primary sources and will be replaced with in-repository file paths once structured notes are complete, at which point evidence levels will be upgraded from B/D or flagged as pending verification.</li>
+</ol>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/source_batches/twitter_web_analysis_20260608.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="../analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#1-overview">1. Overview</a>
+<a class="lv2" href="#11-social-media-leads-convertible-into-specific-insights">1.1 Social Media Leads Convertible into Specific Insights</a>
+<a class="lv2" href="#2-source-cards">2. Source Cards</a>
+<a class="lv2" href="#3-x-primary-source-traceability-table">3. X → Primary Source Traceability Table</a>
+<a class="lv2" href="#4-exclusion-or-downgrade-list">4. Exclusion or Downgrade List</a>
+<a class="lv2" href="#5-next-actions">5. Next Actions</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

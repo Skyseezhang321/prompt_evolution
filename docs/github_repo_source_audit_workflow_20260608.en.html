@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub Repository Source Audit Workflow: 2026-06-08 · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4a742f">GitHub Channel</span><span class="doctitle">GitHub Repository Source Audit Workflow: 2026-06-08</span><a class="back lang" href="github_repo_source_audit_workflow_20260608.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="github-repository-source-audit-workflow-2026-06-08">GitHub Repository Source Audit Workflow: 2026-06-08</h1>
+<p>This workflow addresses a core risk identified in the GitHub channel analysis: insights cannot be distilled solely from repository names, stars, READMEs, or second-hand summaries. All conclusions from the GitHub channel must first pin the source version, then pass through machine scan, manual audit, and where necessary, local execution verification.</p>
+<h2 id="current-objectives">Current Objectives</h2>
+<ul>
+<li>Pin the commit, README SHA256, license, and local path for key repositories.</li>
+<li>First record "what actually exists in the source code," then synthesize "what implications it has for prompt optimization / prompt self-evolution."</li>
+<li>Clearly distinguish among three types of statements: source observations, inferred structural transfers, and adoptable conclusions.</li>
+</ul>
+<h2 id="execution-commands">Execution Commands</h2>
+<p>The first round clones only 4 core repositories to avoid degrading evidence quality by deep-reading 8–10 repositories at once.</p>
+<pre><code class="language-powershell">python scripts/github_repo_clone.py --preset core4 --output-root local_sources\raw\github_repo_clones --manifest-prefix github_repo_clone_core4
+</code></pre>
+<p>The local clones are then machine-scanned to produce an ignored JSON audit result and a committable draft audit note.</p>
+<pre><code class="language-powershell">python scripts/github_repo_audit.py --clone-root local_sources\raw\github_repo_clones --audit-root local_sources\raw\github_repo_audits --notes-dir docs\github_repo_audit_notes --force-notes
+</code></pre>
+<p>Raw clones and JSON audits are stored under <code>local_sources/raw/</code> and are not committed to the repository; committable manual audit entry points are stored under <code>docs/github_repo_audit_notes/</code>.</p>
+<h2 id="round-1-pinned-repositories">Round 1 Pinned Repositories</h2>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>repository</th>
+<th>commit</th>
+<th>branch</th>
+<th>Round 1 audit entry</th>
+<th>Current assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>repo-linshenkx-prompt-optimizer</code></td>
+<td><code>linshenkx/prompt-optimizer</code></td>
+<td><code>d7cde6c2fc5c</code></td>
+<td><code>develop</code></td>
+<td><a href="github_repo_audit_notes/repo-linshenkx-prompt-optimizer.md">audit note</a></td>
+<td>Source evidence shows the compare evaluation, structured judge, rewrite-from-evaluation, calibration, and E2E test pipeline exist; cannot yet conclude "task performance improves after optimization."</td>
+</tr>
+<tr>
+<td><code>repo-karpathy-autoresearch</code></td>
+<td><code>karpathy/autoresearch</code></td>
+<td><code>228791fb499a</code></td>
+<td><code>master</code></td>
+<td><a href="github_repo_audit_notes/repo-karpathy-autoresearch.md">audit note</a></td>
+<td>Source evidence shows an autonomous experiment loop, fixed evaluator, result logging, and rollback rules; however the optimization target is training code, not prompts — any transfer to prompt self-evolution must be labeled as a structural reference.</td>
+</tr>
+<tr>
+<td><code>repo-humanlayer-12-factor-agents</code></td>
+<td><code>humanlayer/12-factor-agents</code></td>
+<td><code>d20c728368bf</code></td>
+<td><code>main</code></td>
+<td><a href="github_repo_audit_notes/repo-humanlayer-12-factor-agents.md">audit note</a></td>
+<td>Documentation and template evidence supports treating prompt/context as a first-class engineering object; this is a source of agent prompt/context design principles, not evidence of method effectiveness.</td>
+</tr>
+<tr>
+<td><code>repo-affaan-m-ecc</code></td>
+<td><code>affaan-m/ECC</code></td>
+<td><code>90dfd9505dc8</code></td>
+<td><code>main</code></td>
+<td><a href="github_repo_audit_notes/repo-affaan-m-ecc.md">audit note</a></td>
+<td>Implementation, test, and example traces support directions such as memory, verification loop, and harness governance; README claims are strong and the execution entry points and true method validity still require further verification.</td>
+</tr>
+</tbody>
+</table>
+<p>Round 1 clone manifest: <code>local_sources/raw/github_repo_clones/_manifests/github_repo_clone_core4_20260608T140910Z.md</code>.</p>
+<p>Round 1 audit manifest: <code>local_sources/raw/github_repo_audits/github_repo_audit_manifest_20260608T141030Z.md</code>.</p>
+<h2 id="round-2-pending-repositories-canonical-prompt-optimizers-not-yet-clonedaudited">Round 2 Pending Repositories (canonical prompt optimizers, not yet cloned/audited)</h2>
+<p>The repositories below are registered in <code>docs/source_inventory.md</code> (most back-filled via the Twitter/X channel) but have not yet entered the clone/audit pipeline. They are more directly decisive for the question "does the GitHub channel actually have effectiveness evidence" than the remaining documentation/asset-type repositories from strict8, and should be prioritized as the next clone/audit batch. The same approach applies: pin the commit, README SHA256, and license first, then perform the machine scan and manual audit.</p>
+<table>
+<thead>
+<tr>
+<th>source_id</th>
+<th>repository</th>
+<th>Associated paper / arXiv</th>
+<th>Priority</th>
+<th>Audit focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>repo-gepa-ai-gepa</code></td>
+<td><code>gepa-ai/gepa</code></td>
+<td>GEPA (2507.19457, deep-read as <code>paper-gepa-2026</code>)</td>
+<td>High</td>
+<td>Paper ↔ source cross-verification: whether reflective evolution, Pareto / validation selection, rollout, and cost are consistent with the paper (L4 candidate).</td>
+</tr>
+<tr>
+<td><code>repo-microsoft-promptwizard</code></td>
+<td><code>microsoft/PromptWizard</code></td>
+<td>PromptWizard (2405.18369, no note registered)</td>
+<td>High</td>
+<td>Joint instruction/example optimization, self-evolving refinement, API dependencies; add paper note first.</td>
+</tr>
+<tr>
+<td><code>repo-salesforce-promptomatix</code></td>
+<td><code>SalesforceAIResearch/promptomatix</code></td>
+<td>Promptomatix (2507.14241, skimmed)</td>
+<td>High</td>
+<td>DSPy dependency, synthetic data, feedback, CLI/API; deep-read the paper first.</td>
+</tr>
+<tr>
+<td><code>repo-eladlev-autoprompt</code></td>
+<td><code>Eladlev/AutoPrompt</code></td>
+<td>Intent-based Prompt Calibration (2402.03099, candidate)</td>
+<td>Medium</td>
+<td>Whether there is a reproducible eval; distinguish the name from LangChain Promptim to avoid confusion.</td>
+</tr>
+<tr>
+<td><code>repo-scale3-dspyground</code></td>
+<td><code>Scale3-Labs/dspyground</code></td>
+<td>No independent paper (GEPA harness)</td>
+<td>Medium</td>
+<td>samples / metrics / runs history, AI SDK agent porting — treat as an engineering case study of an agent prompt optimizer.</td>
+</tr>
+</tbody>
+</table>
+<p>These source_ids match those in <code>docs/source_inventory.md</code>; after auditing, back-fill the draft audit notes into <code>docs/github_repo_audit_notes/</code> and upgrade the evidence level according to the table below.</p>
+<h2 id="evidence-levels">Evidence Levels</h2>
+<p>Subsequent GitHub channel insights are handled according to the following thresholds:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Meaning</th>
+<th>What can be written</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L0</td>
+<td>Search results, stars, repo metadata, or repository-name associations</td>
+<td>Can only serve as candidate leads.</td>
+</tr>
+<tr>
+<td>L1</td>
+<td>README / docs read after pinning the commit</td>
+<td>Can write "the repository claims / documentation states."</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>Source code, configuration, test, or example paths located after pinning the commit</td>
+<td>Can write "source observation supports the existence of a mechanism."</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>Tests, examples, or minimal reproduction experiments runnable locally</td>
+<td>Can write "a certain behavior is reproducible under a given environment and settings."</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>Cross-repository, paper, or in-project experiment corroboration</td>
+<td>Can enter the final report as a strong-conclusion candidate.</td>
+</tr>
+</tbody>
+</table>
+<p>The current 4 repositories mostly reach only L2; <code>karpathy/autoresearch</code> has the clearest structural closed loop, but it still requires a prompt/context-version reproduction experiment within this project to be upgraded to L3/L4.</p>
+<h2 id="insight-distillation-rules">Insight Distillation Rules</h2>
+<ol>
+<li>Every insight must carry a source_id, commit, file path, and observation type.</li>
+<li>If an insight is transferred from a non-prompt task, the transfer boundary must be stated explicitly.</li>
+<li>Do not treat README performance claims, star counts, project popularity, or marketing copy as conclusions.</li>
+<li>Do not equate "eval/test code exists" directly with "the method is effective"; it only indicates the repository has an auditable structure.</li>
+<li>Questions that can be turned into experiments should be entered into <code>docs/experiment_plan.md</code> first, then scripts implemented or experiments run.</li>
+</ol>
+<h2 id="round-1-preliminary-conclusions">Round 1 Preliminary Conclusions</h2>
+<ul>
+<li>The GitHub channel is better suited to providing engineering structure, governance processes, and real code organization patterns; direct evidence proving that a prompt optimizer is effective is scarce.</li>
+<li>The most valuable combination at present is not copying a single repository wholesale, but extracting three types of mechanisms: the compare/evaluation/rewrite pipeline from <code>prompt-optimizer</code>, the separation of optimization target from evaluator in <code>autoresearch</code>, and the prompt/context governance boundary from <code>12-factor-agents</code>.</li>
+<li>ECC-type agent harnesses can serve as leads for memory, verification loop, and subagent orchestration, but should enter the conclusion layer later than the three mechanism types above.</li>
+</ul>
+<h2 id="next-steps">Next Steps</h2>
+<p>Completed: 12 candidate insights extracted from 4 audit notes, with evidence levels, applicability boundaries, and experiment-conversion potential annotated in the <a href="github_repo_insight_cards_20260608.en.html">GitHub Repository Candidate Insight Evidence Cards</a>.</p>
+<p>To continue (priority re-ordered 2026-06-10):</p>
+<ol>
+<li>(High) Prioritize cloning/auditing the canonical prompt optimizer repositories: <code>gepa-ai/gepa</code>, <code>microsoft/PromptWizard</code>, <code>SalesforceAIResearch/promptomatix</code>, <code>Eladlev/AutoPrompt</code> (all registered in <code>docs/source_inventory.md</code> but not yet audited). They are more directly decisive than the remaining documentation-type repositories from strict8 for determining "whether the GitHub channel truly has effectiveness evidence"; among them, <code>gepa-ai/gepa</code> is simultaneously the official implementation of the already deep-read paper GEPA, enabling paper ↔ source cross-verification (L4 candidate).</li>
+<li>(High) Configure <code>GITHUB_TOKEN</code> and re-run full discovery; correct the script recall by applying the "core / peripheral dual-track" recommendations from the quick-filter document, and verify whether "few optimizer repositories" is an artifact of low recall.</li>
+<li>(Low, intentionally deferred) The remaining 4 documentation/asset-type repositories from strict8 (<code>dair-ai/Prompt-Engineering-Guide</code>, <code>shanraisshan/claude-code-best-practice</code>, <code>f/prompts.chat</code>, <code>pathwaycom/llm-app</code>) can be re-audited on demand and should not block conclusions.</li>
+<li>Select 2–4 of the 12 candidate insights to enter <code>docs/experiment_plan.md</code>, prioritizing the freezing of the evaluator / data / ledger schema.</li>
+<li>Choose 1 minimal experiment to transfer <code>autoresearch</code>'s principle of "only allow modification of the optimization target, disallow modification of the evaluator/data" into a prompt/context optimization closed loop.</li>
+</ol>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/github_repo_source_audit_workflow_20260608.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#current-objectives">Current Objectives</a>
+<a class="lv2" href="#execution-commands">Execution Commands</a>
+<a class="lv2" href="#round-1-pinned-repositories">Round 1 Pinned Repositories</a>
+<a class="lv2" href="#round-2-pending-repositories-canonical-prompt-optimizers-not-yet-clonedaudited">Round 2 Pending Repositories (canonical prompt optimizers, not yet cloned/audited)</a>
+<a class="lv2" href="#evidence-levels">Evidence Levels</a>
+<a class="lv2" href="#insight-distillation-rules">Insight Distillation Rules</a>
+<a class="lv2" href="#round-1-preliminary-conclusions">Round 1 Preliminary Conclusions</a>
+<a class="lv2" href="#next-steps">Next Steps</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APO Seven Methods Backbone Primer (APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA) · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">APO Seven Methods Backbone Primer (APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA)</span><a class="back lang" href="apo_seven_methods_primer_20260611.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="apo-seven-methods-backbone-primer-apeprotegioprodspytextgradmiprov2gepa">APO Seven Methods Backbone Primer (APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA)</h1>
+<p>Generated: 2026-06-11</p>
+<p>reviewed_by: Claude</p>
+<p>Scope: The baseline backbone "APE→ProTeGi→OPRO→DSPy→TextGrad→MIPROv2→GEPA" is cited repeatedly across reports and notes in this repository (see the <code>CHANGELOG.md</code> classic-anchor catch-up entry), yet previously only individual deep-read notes existed — there was no single document weaving the seven methods into a coherent narrative with terminology introductions. This document fills that gap: each method receives its positioning, mechanism, representative results, and the gap that subsequent methods addressed, along with a pointer to its deep-read note.</p>
+<p>Evidence level: All content is synthesized from seven <code>method-and-results-read</code> deep-read notes (each based on a locally read PDF/text with SHA256); all figures use consistent definitions with those notes and can be traced item by item. This constitutes <strong>paper-level evidence, not reproduction results from this project</strong>; raw scores across papers cannot be directly compared (tasks, models, and eras differ) — when citing, you must bind each figure to its original experimental setup.</p>
+<blockquote>
+<p>This backbone is not the only lineage. The evolutionary-algorithm branch (EvoPrompt, PromptBreeder) and the controlled counterexample PROSE are covered in the lateral comparison at <a href="classic_optimizer_methods_comparison_20260610.en.html">classic_optimizer_methods_comparison_20260610.md</a>; the planning-search branch (PromptAgent) and the historical anchor (GrIPS) serve as off-backbone anchors under Hidden Thread 3 and §1 historical positioning; this document covers only the seven methods treated as the "baseline backbone" by this repository. Why this backbone was selected and ordered this way is explained below under "Why This Backbone."</p>
+</blockquote>
+<h2 id="the-backbone-in-one-sentence">The Backbone in One Sentence</h2>
+<p>This chain is the evolutionary history of automatic prompt optimization (APO) from <strong>blind search → exploiting failure feedback → exploiting optimization trajectories → optimizing an entire program → general-purpose textual backpropagation → joint Bayesian search → reflective evolution</strong>. Three hidden threads drive the evolution: <strong>feedback signals grow richer</strong> (scalar scores → failure critiques → per-node textual gradients → full execution traces); <strong>the optimization target grows larger</strong> (a single instruction → instruction + demonstrations → multi-module programs); <strong>search structures grow smarter</strong> (blind sampling → beam → MCTS planning → Pareto candidate pools; the planning-search station is provided by the off-backbone anchor PromptAgent — see "Meaning of the Three Hidden Threads," item 3).</p>
+<p>Ordering note: the seven methods are ordered <strong>chronologically</strong>, and their mechanisms form a <strong>dual-track convergence</strong> — the critique track (ProTeGi → TextGrad) and the program track (DSPy → MIPROv2) develop in parallel and converge in GEPA (reflective traces × multi-module programs × Pareto pool). MIPROv2 appearing after TextGrad is a chronological fact, not an indication that "feedback density keeps rising" — it belongs to the scalar-signal family (see the "Signal Family" column in the summary table below, noting the alternation). Reading the backbone as a monotonically ascending chain is a misreading.</p>
+<h2 id="why-this-backbone">Why This Backbone</h2>
+<p>The backbone is not a leaderboard, nor was it specified on a whim; its formation process and selection criteria are fully traceable:</p>
+<p><strong>Formation process (four steps, all documented in the repository)</strong></p>
+<ol>
+<li><strong>Seed</strong> (2026-06-08): <a href="literature_map.en.html">literature_map.md</a> and <code>research_brief.md</code> on the day the repository was initialized inventoried domain-recognized classics via literature search — this group of methods appeared there. They are a literature-search conclusion, not an improvised designation from conversation.</li>
+<li><strong>Flagged as gap</strong> (2026-06-08): When building a taxonomy from an arXiv top-80 scan, most classic anchors were found not in the top-80 sample; <a href="arxiv_top80_taxonomy.en.html">arxiv_top80_taxonomy.md</a> explicitly marked "classic anchors not yet deep-read" — at that point their status was only an unverified hypothesis.</li>
+<li><strong>Deep-read closure</strong> (2026-06-10): Full-text, evidence-level deep reads of APE / OPRO / DSPy / MIPROv2 / TextGrad were completed (together with existing ProTeGi / GEPA notes, etc.), formally establishing the baseline backbone (see the <code>CHANGELOG.md</code> classic-anchor catch-up entry).</li>
+<li><strong>External validation</strong> (2026-06-10): Three independent surveys (APO survey 2502.16923, APE survey 2502.11560, Context Engineering survey) were used for a <a href="arxiv_taxonomy_completeness_check_20260610.md">completeness check</a>, confirming no major omissions within the scope of "discrete natural-language prompt optimization." A backbone structural review on 2026-06-12 targeted GrIPS and PromptAgent for supplementary reading, verifying the historical-positioning anchor and the search-structure missing link respectively (conclusions incorporated into this document).</li>
+</ol>
+<p><strong>Selection criteria (why these seven, in this order)</strong></p>
+<ul>
+<li><strong>Baseline-anchor lineage, not a leaderboard</strong>: The inclusion criterion is "this project's experiments must compare against or reference it" — APE/OPRO are mandatory lower-bound comparisons, ProTeGi/TextGrad are critique-track comparisons, MIPROv2 is the instruction+demo joint optimization baseline, and GEPA is the strongest baseline most worth reproducing at present.</li>
+<li><strong>Each link leaves a gap; the next link fills it</strong>: APE doesn't use failure information → ProTeGi fills it; OPRO doesn't know why it fails → DSPy/MIPROv2 change the target, TextGrad/GEPA change the signal; DSPy doesn't optimize instructions → MIPROv2 fills it — the evolution has mechanistic logic, not merely chronological listing.</li>
+<li><strong>Evidence discipline</strong>: All seven methods have <code>method-and-results-read</code> deep-read notes (local PDF + SHA256), with figures traceable item by item; and all three independent surveys treat this group of methods as canonical.</li>
+<li><strong>Deliberate exclusions and their destinations</strong>: Evolutionary branch (EvoPrompt/PromptBreeder, scalar-signal family) → <a href="classic_optimizer_methods_comparison_20260610.en.html">six-method lateral comparison</a>; planning-search branch (PromptAgent) → Hidden Thread 3 off-backbone anchor; historical predecessors (GrIPS already read, AutoPrompt/RLPrompt pending) → §1 historical positioning; PROSE → coin-flip internal baseline, not an independent publication. The single-chain presentation serves the narrative entry point; the structural reality is the dual-track convergence described above.</li>
+<li><strong>Endpoint definition</strong>: The backbone stopping at GEPA is not a matter of lagging updates — the <a href="arxiv_2025_2026_frontier_synthesis_20260612.en.html">arXiv 2025/2026 frontier deep-read synthesis</a> time-slice of 25 papers shows "the era of naming new methods (2022–2024) is over"; the only named method establishing a backbone among those 25 is GEPA. Subsequent evolution appears as four shift patterns, bridged by the "After the Backbone" section.</li>
+</ul>
+<h2 id="1-ape-2022-starting-point-of-the-propose-then-select-paradigm">1. APE (2022) — Starting Point of the Propose-then-Select Paradigm</h2>
+<p><strong>Automatic Prompt Engineer</strong> (Zhou et al., ICLR 2023) formalizes "writing instructions" as a minimal two-phase black-box search: <strong>propose-then-select</strong>.</p>
+<ul>
+<li>
+<p><strong>Historical positioning</strong> (added 2026-06-12): GrIPS (v1 2022-03, eight months before APE) was already doing gradient-free black-box instruction search, but its candidates came from mechanical phrase edits (delete/swap/rewrite/add-back) and self-admittedly could not introduce information beyond the initial instruction. APE's claim to the starting position is that it was the <strong>first to delegate candidate generation to an LLM</strong> (LLM-as-generator), not "the first black-box instruction search." See <a href="paper_notes/paper-grips-2022.html">paper-grips-2022.md</a>; the earlier AutoPrompt (white-box gradients) / RLPrompt (RL policy) belong to a different signal family and remain to be read.</p>
+</li>
+<li>
+<p><strong>Mechanism</strong>: Show an LLM a small number of input-output examples, ask it to infer "what instruction would produce this mapping," generate roughly 50 candidate instructions in batch; then use a score function (execution accuracy or log probability) on a small training set to select the highest-scoring one. An optional iterative Monte Carlo search — generating semantic variants of high-scoring instructions for another round of filtering — is included, but the paper self-reports only marginal gains.</p>
+</li>
+<li><strong>Representative results</strong>: Reached or exceeded human performance on 24/24 instruction induction tasks (IQM 0.810 vs. 0.749); found the zero-shot CoT prompt "Let's work this out in a step by step way to be sure we have the right answer.", raising MultiArith from 78.7 to 82.0 and GSM8K from 40.7 to 43.0 (relative to the "Let's think step by step." starting point).</li>
+<li><strong>Gap left</strong>: Pure "generate → score → select" — <strong>does not exploit the information in failure cases</strong>, candidates are independent of each other, and search is nearly blind; it also first exposed the over-fitting caveat that "selection criteria must match the deployment scenario" (an instruction selected under a zero-shot criterion drops in performance in a few-shot scenario).</li>
+<li>Deep-read note: <a href="paper_notes/paper-ape-2022.html">paper-ape-2022.md</a></li>
+</ul>
+<h2 id="2-protegi-2023-introducing-textual-gradients">2. ProTeGi (2023) — Introducing "Textual Gradients"</h2>
+<p><strong>Prompt Optimization with Textual Gradients</strong> (Pryzant et al., EMNLP 2023) — the paper's title is literally "Automatic Prompt Optimization with 'Gradient Descent' and Beam Search."</p>
+<ul>
+<li><strong>Mechanism</strong>: Analogizes gradient descent to natural-language space — takes the <strong>error examples</strong> from a minibatch run with the current prompt, asks an LLM to summarize the reasons for failure (this critique is the "textual gradient"), then edits the prompt in the "semantic opposite direction"; candidates are expanded via paraphrase and entered into beam search, with a bandit algorithm (UCB family) handling evaluation budget allocation so that not every candidate needs to run on the full validation set.</li>
+<li><strong>Representative results</strong>: Averaged 3.9% above Monte Carlo search, 8.2% above RL, and 15.3% above the original prompt across four classification benchmarks; the maximum improvement over the initial prompt was 31%. Ablations show that beam search and bandit selection each contribute independently.</li>
+<li><strong>Gap left</strong>: The first method to make failure cases an optimization signal and the origin of the subsequent critique/trace track (TextGrad, GEPA); however, the learning curve plateaus at about 3 steps, after which it over-fits or stagnates locally, and the critique itself can mislead (qualitative cases of the gradient pulling focus in the wrong direction).</li>
+<li>Deep-read note: <a href="paper_notes/paper-protegi-2023.html">paper-protegi-2023.md</a></li>
+</ul>
+<h2 id="3-opro-2023-llm-as-optimizer">3. OPRO (2023) — LLM as Optimizer</h2>
+<p><strong>Optimization by PROmpting</strong> (Yang et al., DeepMind) takes a different angle: instead of failure cases, it uses <strong>optimization trajectories</strong>.</p>
+<ul>
+<li><strong>Mechanism</strong>: Constructs a meta-prompt containing historical (instruction, training-score) trajectories sorted in <strong>ascending</strong> score order (truncated to top-20), plus a few task examples; at each step the optimizer LLM samples 8 <strong>entirely new</strong> instructions (not edits, no semantic-preservation requirement), evaluates them, and appends the results back to the trajectory to loop. The LLM infers improvement directions from the "solution–score" patterns in context.</li>
+<li><strong>Representative results</strong>: Found "Take a deep breath and work on this problem step-by-step." (GSM8K test 80.2, vs. "Let's think step by step." 71.8, empty string 34.0); on BBH, exceeded human-written instructions by more than 5% on most tasks.</li>
+<li><strong>Gap left</strong>: The signal is only a scalar score — <strong>no understanding of why it fails</strong>, unable to locate root causes; the best prompt is highly model-specific (more like searching for "key phrases that trigger a specific model's specific capabilities"); the claim "no validation set required by default" was subsequently challenged repeatedly (train–test gap often 5%–20%). This project uses OPRO as a negative-control comparison and enforces a held-out set.</li>
+<li>Deep-read note: <a href="paper_notes/paper-opro-2023.html">paper-opro-2023.md</a></li>
+</ul>
+<h2 id="4-dspy-2023-from-optimizing-one-prompt-to-compiling-a-program">4. DSPy (2023) — From "Optimizing One Prompt" to "Compiling a Program"</h2>
+<p><strong>DSPy</strong> (Khattab et al., Stanford) is a paradigm shift, not just another algorithm.</p>
+<ul>
+<li><strong>Mechanism</strong>: Abstracts a multi-step LM pipeline into a <strong>program</strong> — uses signatures (e.g., <code>question -&gt; answer</code>) to declare the input/output semantics of each LM call, and modules (Predict / ChainOfThought / ReAct) to instantiate them into a composable computation graph; the specific prompt text is not hand-written but <strong>compiled out by a teleprompter (in-compiler optimizer) targeting a metric</strong>. The core optimizer in this version is BootstrapFewShot: runs the program at high temperature over training inputs, transparently traces multi-stage traces, filters traces where the full pass satisfies the metric, bootstraps the per-module input-output pairs from those traces as demonstration candidates, and then random-searches / uses Optuna to select combinations on a dev set.</li>
+<li><strong>Representative results</strong>: Compiled GPT-3.5 from ~33% to 88.3 dev / 81.6 test on GSM8K; compilation enabled Llama2-13b-chat to match GPT-3.5; T5-770M with only 200 annotated examples matched the expert-prompted GPT-3.5 solution.</li>
+<li><strong>Key clarification</strong> (repeatedly emphasized in this repository): <strong>This version optimizes demonstrations, not instructions</strong> — treating DSPy as "a tool that automatically rewrites instructions" is a misreading; systematic automatic instruction optimization comes only in MIPROv2/COPRO. Its paradigm contribution is shifting the evaluation criterion from "model X on task Y" to "model X + program P + compilation strategy S on task Y."</li>
+<li>Deep-read note: <a href="paper_notes/paper-dspy-2023.html">paper-dspy-2023.md</a></li>
+</ul>
+<h2 id="5-textgrad-2024-generalizing-textual-backpropagation">5. TextGrad (2024) — Generalizing Textual Backpropagation</h2>
+<p><strong>TextGrad</strong> (Yuksekgonul et al., Stanford) generalizes ProTeGi's "textual gradient" into a general-purpose <strong>textual automatic differentiation framework</strong>.</p>
+<ul>
+<li><strong>Mechanism</strong>: Models any compound system as a computation graph, where variables are text (prompts, code, molecules, answers, …). After computing a loss in the forward pass (LLM evaluation or rule-based metric), an LLM produces a natural-language critique (textual gradient) for each variable and <strong>backpropagates node by node</strong> through the graph; a text-based gradient descent (TGD) then rewrites the variables. The API is deliberately isomorphic to PyTorch (<code>Variable</code> / <code>loss.backward()</code> / <code>optimizer.step()</code>). Typical cost structure: <strong>a weak model handles forward passes, a strong model serves as the gradient engine</strong>; stability is supported by minibatch + momentum + a <strong>revert-if-worse validation gate</strong> (each round accepts only updates that improve performance on the validation set).</li>
+<li><strong>Representative results</strong>: Instruction-only (zero demo) prompt optimization on BBH Object Counting: 77.8 → 91.9, surpassing DSPy's 8-demo approach by 7%; matched DSPy on GSM8K (81.1), and adding DSPy-selected demos to the optimized instruction further raised it to 82.1 — <strong>instruction and demonstration are two complementary axes</strong>.</li>
+<li><strong>Gap left</strong>: "Gradient" is a metaphor the authors themselves acknowledge rather than a true gradient — this repository has a separate critical note <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025.md</a>; each backpropagation step involves multiple LLM calls at non-trivial cost; reliability degrades when many natural-language constraints are stacked; cross-model transfer has not been validated.</li>
+<li>Deep-read note: <a href="paper_notes/paper-textgrad-2024.html">paper-textgrad-2024.md</a></li>
+</ul>
+<h2 id="6-miprov2-2024-joint-bayesian-optimization-of-instructions-and-demonstrations">6. MIPROv2 (2024) — Joint Bayesian Optimization of Instructions and Demonstrations</h2>
+<p><strong>MIPRO</strong> (Opsahl-Ong et al., EMNLP 2024; implemented in the DSPy library as MIPROv2) fills the gap DSPy left on "how to automatically optimize instructions in a multi-stage program," formalizing the problem as two challenges: <strong>proposal</strong> (the prompt space is too large — how to sample a small number of high-quality candidates) and <strong>credit assignment</strong> (only a program-level metric is available with no module-level labels — how to attribute it to individual modules).</p>
+<ul>
+<li><strong>Mechanism</strong>: Three steps — (1) <strong>bootstrap demonstrations</strong> (reusing DSPy's trace-filtered bootstrapping); (2) <strong>grounded instruction proposal</strong>: feeds the proposer LM a summary of dataset patterns, a summary of the program control flow, bootstrapped demos, and historical scores, asking it to write task-grounded candidate instructions; (3) <strong>Bayesian joint search</strong>: uses Optuna's TPE to build a surrogate model, evaluates "which instruction × which demo set per module" combinations on mini-batches, and updates the prior — proposal and selection are decoupled.</li>
+<li><strong>Representative results</strong> (7 tasks, 5 runs + significance tests): Joint optimization was best on 5/7 tasks, with a maximum gain of +13%. The most important diagnostic conclusion: <strong>on most tasks, optimizing bootstrapped demonstrations is more effective than optimizing instructions</strong>; instruction optimization is decisive only for tasks with "non-obvious conditional rules that cannot be expressed with a few examples."</li>
+<li><strong>Gap left</strong>: The optimizer cannot infer hidden rules for complex tasks — a seed prompt still needs to be written by a human; the surrogate model can only select within a fixed candidate set and cannot improve candidates themselves; the demo set itself has high variance.</li>
+<li>Deep-read note: <a href="paper_notes/paper-miprov2-2024.html">paper-miprov2-2024.md</a></li>
+</ul>
+<h2 id="7-gepa-2025-reflective-evolution-pareto-frontier">7. GEPA (2025) — Reflective Evolution + Pareto Frontier</h2>
+<p><strong>GEPA</strong> (Genetic-Pareto, Agrawal et al.) is the current endpoint of the backbone, positioned as "reflective prompt evolution can surpass RL fine-tuning."</p>
+<ul>
+<li><strong>Mechanism</strong>: Three core components —
+  1. <strong>Reflective mutation</strong>: Selects one module in the system, executes it on a minibatch and collects execution traces + evaluation traces (compilation errors, failed rubrics, module-level failure reasons, and other natural-language feedback), and asks a reflection LM to rewrite that module's prompt accordingly — inheriting ProTeGi/TextGrad's critique approach, but the input is the full rollout trace rather than just a score or single-point critique;
+  2. <strong>Pareto candidate pool</strong>: Maintains a candidate × example score matrix, keeps all non-dominated candidates that are best on at least one example, and samples parents according to their frequency of appearance on the Pareto frontier — preventing greedy global-best optimization from locking into a local pattern too early;
+  3. <strong>System-aware merge (crossover)</strong>: Combines the winning prompt from each module across different evolution branches into a new candidate (GEPA+Merge).</li>
+<li><strong>Representative results</strong>: On Qwen3 8B, aggregate score 45.23 → 54.85, surpassing GRPO (RL, fixed 24,000 rollouts) at 48.91 and MIPROv2 at 47.84, while GEPA used on average only ~3,936 rollouts; the paper reports an average of ~6% above GRPO and up to 20% maximum, using up to 35× fewer rollouts. Ablations show <strong>Pareto selection itself is the primary contributor</strong> (aggregate improvement +12.44 vs. greedy +6.05, beam +5.11); the output prompt is up to 9.2× shorter than MIPROv2's.</li>
+<li><strong>Gap left</strong>: Still below GRPO on AIME-2025 (reflective evolution is not a universal replacement for RL); Merge actually decreases performance on Qwen3 8B; most rollout budget is spent validating candidates rather than generating learning signal; the advantage depends on feedback function quality, and narrows when evaluation can only return a scalar. The applicable conditions were later formalized by VISTA as "feedback contains trace-level diagnosis + the true root cause lies within the hypothesis space" — counterexamples and figures appear in the "After the Backbone" section below.</li>
+<li>Deep-read note: <a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a></li>
+</ul>
+<h2 id="backbone-summary">Backbone Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Year</th>
+<th>Feedback Signal</th>
+<th>Optimization Target</th>
+<th>Signal Family</th>
+<th>Search / Selection Structure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APE</td>
+<td>2022</td>
+<td>Small training-set scalar score</td>
+<td>Single instruction</td>
+<td>Scalar</td>
+<td>Batch proposal (~50), select by score, optional MC iteration</td>
+</tr>
+<tr>
+<td>ProTeGi</td>
+<td>2023</td>
+<td>Natural-language critique of failure examples</td>
+<td>Single prompt</td>
+<td>Critique</td>
+<td>Beam search + bandit (UCB family) budget allocation</td>
+</tr>
+<tr>
+<td>OPRO</td>
+<td>2023</td>
+<td>Historical (prompt, score) ascending trajectory</td>
+<td>Single instruction</td>
+<td>Scalar</td>
+<td>Trajectory top-20 append loop, 8 candidates per step, keep best</td>
+</tr>
+<tr>
+<td>DSPy</td>
+<td>2023</td>
+<td>Metric pass/fail (trace used to filter demos)</td>
+<td>Multi-module program, primarily demonstrations</td>
+<td>Scalar (with trace filtering)</td>
+<td>RandomSearch / Optuna (TPE) to select combinations on dev</td>
+</tr>
+<tr>
+<td>TextGrad</td>
+<td>2024</td>
+<td>Per-node backpropagated textual critique</td>
+<td>Any text variable</td>
+<td>Critique</td>
+<td>Minibatch TGD + momentum + revert-if-worse gate</td>
+</tr>
+<tr>
+<td>MIPROv2</td>
+<td>2024</td>
+<td>Metric + Bayesian surrogate model</td>
+<td>Per-module instruction × demo combinations</td>
+<td>Scalar</td>
+<td>TPE Bayesian surrogate joint search</td>
+</tr>
+<tr>
+<td>GEPA</td>
+<td>2025</td>
+<td>Reflection over full execution/evaluation trace</td>
+<td>Multi-module prompt pool (Pareto)</td>
+<td>Trace</td>
+<td>Pareto candidate pool + frequency-sampled parents + merge</td>
+</tr>
+</tbody>
+</table>
+<p>Meaning of the three hidden threads:</p>
+<ol>
+<li><strong>Feedback information density determines sample efficiency.</strong> From scalar (APE/OPRO) to critique (ProTeGi/TextGrad) to full trace (GEPA), the information extracted per rollout continuously increases — this directly corresponds to GEPA's claimed 35× rollout savings over GRPO. This project classifies evaluation methods using the three-tier "scalar / critique / trace" taxonomy and does not conflate them as "LLM rewrites prompt" (consistent with <a href="classic_optimizer_methods_comparison_20260610.en.html">classic_optimizer_methods_comparison_20260610.md</a>, conclusion 2).</li>
+<li><strong>Scaling up the optimization target depends on program abstraction.</strong> From single instructions to instruction+demos to multi-module systems, DSPy's signature/module/compilation abstractions are the foundation that enables this expansion; both MIPROv2 and GEPA are built on top of it. Therefore any result must be recorded together with the program structure and compilation/optimization strategy to be reproducible.</li>
+<li><strong>Search structure is an evolution dimension independent of feedback signal</strong> (added 2026-06-12, evidence level). Blind sampling (APE/OPRO) → beam (ProTeGi) → MCTS planning (PromptAgent, off-backbone anchor) → Pareto candidate pool (GEPA). Two single-variable ablations from different papers cross-validate: PromptAgent with candidate generation and feedback fully fixed at equal exploration budget: MCTS 0.754 &gt; Greedy 0.698 ≈ Beam 0.697 &gt; single-step MC 0.635 (<a href="paper_notes/paper-promptagent-2023.html">paper-promptagent-2023.md</a> Table 4); GEPA ablations show Pareto selection itself is the primary contributor (aggregate +12.44 vs. greedy +6.05, beam +5.11, <a href="paper_notes/paper-gepa-2026.html">paper-gepa-2026.md</a>). Implication for this project: when comparing optimizers, report "number of candidates explored" as a separate budget axis, ablate search structure and feedback signal independently, and do not attribute gains from search structure to "reflection being effective."</li>
+</ol>
+<h2 id="after-the-backbone-why-there-is-no-eighth-method-20252026">After the Backbone: Why There Is No Eighth Method (2025/2026)</h2>
+<p>The backbone stopping at GEPA is not a matter of lagging updates. The time-slice conclusion of the <a href="arxiv_2025_2026_frontier_synthesis_20260612.en.html">arXiv 2025/2026 frontier deep-read synthesis</a> across 25 papers is: <strong>"the era of naming new methods" (2022–2024) is over</strong> — among those 25 papers, only GEPA is a named method that establishes a backbone; the rest take the form of diagnosis, formalization, target scaling, self-evolution, and hygiene. For backbone readers, this means the gaps left by GEPA are not filled by an "eighth named method" but rather addressed in four diverging shifts:</p>
+<ul>
+<li><strong>Applicable conditions for reflection</strong> (Shift 1 · Cooling and Diagnosis): VISTA proves that when the root cause is not within the hypothesis space, more reflection leads further astray — on a defective seed, GEPA 23.81% → 13.50%, and decoupling hypothesis generation from rewriting recovers 87.57%; cross-model transfer of GEPA-optimized results yields only 22.74% vs. VISTA 86.05%. "Reflection useful vs. harmful" thereby converges to two preconditions: feedback must contain trace-level diagnosis, and the true root cause must lie within the optimizer's hypothesis space. See <a href="paper_notes/paper-vista-reflection-dark-2026.html">paper-vista-reflection-dark-2026.md</a>.</li>
+<li><strong>Prompt bloat and spurious gains</strong> (Shift 4 · Hygiene and Regularization): Prompt Codebooks decompose prompts into reusable units routed by input — on HotpotQA, 14.1× shorter than MIPROv2 prompts while still outperforming GEPA (IFBench 41.33, +2.72); PrefPO incorporates length/repetition/hacking rate into evaluation (TextGrad hacking rate 86% vs. PrefPO 37%). See <a href="paper_notes/paper-prompt-codebooks-2026.html">paper-prompt-codebooks-2026.md</a>, <a href="paper_notes/paper-prefpo-2026.html">paper-prefpo-2026.md</a>.</li>
+<li><strong>Feedback modality continues to evolve</strong> (extension of Hidden Thread 1): SPEAR lets the optimizer itself write Python for confusion-matrix / groupby-style error analysis — BBH-7 average 0.938 vs. GEPA 0.628 — suggesting "structured computational analysis" as the next station after traces. See <a href="paper_notes/paper-spear-2026.html">paper-spear-2026.md</a>.</li>
+<li><strong>The optimizer itself enters the loop</strong> (Shift 3 · Self-Evolution): SePO includes the optimizer's own system prompt in evolution (71.89 → 76.38; removing self-improvement drops back to 74.94); MemAPO uses dual memory for cross-task reuse (70.7% vs. TextGrad 63.6%, with cost actually down 58.6%) — the shared default assumption of all seven backbone methods that "the optimizer is static" is beginning to loosen. See <a href="paper_notes/paper-sepo-2026.html">paper-sepo-2026.md</a>, <a href="paper_notes/paper-memapo-2026.html">paper-memapo-2026.md</a>.</li>
+</ul>
+<p>For the complete timeline, convergence of the two tensions (reflection useful vs. harmful; large gains vs. coin flip), and gap inventory (bi-level / thought-driven entirely absent), see the frontier synthesis itself; this section only bridges from the backbone perspective and does not duplicate its conclusions — all figures are consistent with that synthesis and the individual notes.</p>
+<h2 id="usage-conventions-for-this-project">Usage Conventions for This Project</h2>
+<ul>
+<li>This backbone is a <strong>baseline-anchor lineage</strong>, not a leaderboard: APE and OPRO are mandatory lower-bound comparisons for any optimizer experiment; ProTeGi/TextGrad are critique-track comparisons; MIPROv2 is the instruction+demo joint-optimization baseline; GEPA is the strongest baseline most worth reproducing at present (see <a href="literature_map.en.html">literature_map.md</a>).</li>
+<li>Before deploying any backbone method, first pass the <strong>pre-optimization gate</strong>: zero-shot baseline → headroom / noise-floor estimate → Prompt Repetition zero-cost comparison (in non-reasoning mode, 47/70 significant wins with 0 losses — a free lower bound); basis in <a href="arxiv_2025_2026_frontier_synthesis_20260612.en.html">frontier synthesis</a> Shift 1 (Coin Flip: 49% of 72 optimization runs fell below zero-shot).</li>
+<li>When citing figures from any of these methods, bind them to their original experimental setup; the only fair cross-method comparisons are results from placing multiple methods inside the same framework (e.g., coin-flip; see <a href="classic_optimizer_methods_comparison_20260610.en.html">classic_optimizer_methods_comparison_20260610.md</a>).</li>
+<li>The minimal validation/reproduction plan for each method is written in the final section of the corresponding deep-read note and is not repeated here.</li>
+</ul>
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li>Seven deep-read notes: <a href="paper_notes/paper-ape-2022.html">APE</a>, <a href="paper_notes/paper-protegi-2023.html">ProTeGi</a>, <a href="paper_notes/paper-opro-2023.html">OPRO</a>, <a href="paper_notes/paper-dspy-2023.html">DSPy</a>, <a href="paper_notes/paper-textgrad-2024.html">TextGrad</a>, <a href="paper_notes/paper-miprov2-2024.html">MIPROv2</a>, <a href="paper_notes/paper-gepa-2026.html">GEPA</a></li>
+<li>Off-backbone anchors (added in 2026-06-12 structural review): <a href="paper_notes/paper-grips-2022.html">GrIPS (historical predecessor: gradient-free edit search)</a>, <a href="paper_notes/paper-promptagent-2023.html">PromptAgent (planning-search missing link)</a></li>
+<li>Time slice after the backbone: <a href="arxiv_2025_2026_frontier_synthesis_20260612.en.html">arXiv 2025/2026 Frontier Deep-Read Synthesis</a> (four shifts + two tensions + gap inventory)</li>
+<li>Evolutionary-algorithm branch and same-framework lateral comparison: <a href="classic_optimizer_methods_comparison_20260610.en.html">classic_optimizer_methods_comparison_20260610.md</a></li>
+<li>Literature panorama and priority reading order: <a href="literature_map.en.html">literature_map.md</a></li>
+<li>Critique of the "textual gradient" metaphor: <a href="paper_notes/paper-textual-gradients-flawed-metaphor-2025.html">paper-textual-gradients-flawed-metaphor-2025.md</a></li>
+<li>Field and evidence criteria: <code>docs/insight_field_standard.md</code></li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/apo_seven_methods_primer_20260611.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#the-backbone-in-one-sentence">The Backbone in One Sentence</a>
+<a class="lv2" href="#why-this-backbone">Why This Backbone</a>
+<a class="lv2" href="#1-ape-2022-starting-point-of-the-propose-then-select-paradigm">1. APE (2022) — Starting Point of the Propose-then-Select Paradigm</a>
+<a class="lv2" href="#2-protegi-2023-introducing-textual-gradients">2. ProTeGi (2023) — Introducing "Textual Gradients"</a>
+<a class="lv2" href="#3-opro-2023-llm-as-optimizer">3. OPRO (2023) — LLM as Optimizer</a>
+<a class="lv2" href="#4-dspy-2023-from-optimizing-one-prompt-to-compiling-a-program">4. DSPy (2023) — From "Optimizing One Prompt" to "Compiling a Program"</a>
+<a class="lv2" href="#5-textgrad-2024-generalizing-textual-backpropagation">5. TextGrad (2024) — Generalizing Textual Backpropagation</a>
+<a class="lv2" href="#6-miprov2-2024-joint-bayesian-optimization-of-instructions-and-demonstrations">6. MIPROv2 (2024) — Joint Bayesian Optimization of Instructions and Demonstrations</a>
+<a class="lv2" href="#7-gepa-2025-reflective-evolution-pareto-frontier">7. GEPA (2025) — Reflective Evolution + Pareto Frontier</a>
+<a class="lv2" href="#backbone-summary">Backbone Summary</a>
+<a class="lv2" href="#after-the-backbone-why-there-is-no-eighth-method-20252026">After the Backbone: Why There Is No Eighth Method (2025/2026)</a>
+<a class="lv2" href="#usage-conventions-for-this-project">Usage Conventions for This Project</a>
+<a class="lv2" href="#related-documents">Related Documents</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Other Platforms Content Supplement: Zhihu / Twitter/X / web_search Channel Compilation · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">Other Platforms Content Supplement: Zhihu / Twitter/X / web_search Channel Compilation</span><a class="back lang" href="platform_insights_supplement_20260612.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="other-platforms-content-supplement-zhihu-twitterx-web_search-channel-compilation">Other Platforms Content Supplement: Zhihu / Twitter/X / web_search Channel Compilation</h1>
+<p>Date: 2026-06-12</p>
+<h2 id="0-what-this-document-is-and-is-not">0. What This Document Is — and Is Not</h2>
+<p>The evidence layer of the main report v4 (14 insights, method map, effect numbers) is entirely anchored to arXiv; content from the three channels — Zhihu, Twitter/X, and other platforms (web_search) — can only appear in three positions based on evidence grading: cross-channel corroboration, misconception list, and per-channel narrative. As a result, a batch of organized findings from these three channels — <strong>not in conflict with the main-line conclusions, but without space to expand in the report body</strong> — remained in channel batch files and are nearly invisible in the main report.</p>
+<p>This document reorganizes that content by theme as a companion supplement to the main report. Starting 2026-06-12, the main report v4's section ⑧ end has been supplemented with a "three-channel card-by-card review" overview block linking to this document; per-card details and thematic expansions remain exclusively in this document. The criteria are as follows:</p>
+<ul>
+<li><strong>No evidence level is changed</strong>: Zhihu remains D (lead), Twitter remains B* (traceability pending), web_search remains B. This document only "organizes and presents" — it does not "upgrade" evidence.</li>
+<li><strong>No new conclusions are added</strong>: all entries retain their original channel IDs (ZHI-xx / HM-ZH-xx / tw-insight-xx / conclusion-xx / method-xx / WPI-xx / WHM-xx) and are traceable back to batch files.</li>
+<li><strong>Conflict check</strong>: all 44 numbered cards across the three channels have been reviewed one by one against the main report's 14 insights (I-01~I-14) and 12 misconceptions — <strong>no viewpoint conflicts were found</strong>; the two "tension but not conflict" points are disclosed transparently in §6.</li>
+<li><strong>GitHub channel is not in scope here</strong>: its engineering structure content (frozen evaluator, artifact ledger, compare-first rewrite, etc.) has already been heavily adopted in main report section ④, and has a separate <a href="github_repo_channel_synthesis_20260609.en.html">channel synthesis</a>.</li>
+</ul>
+<h2 id="1-three-channel-adoption-status-overview">1. Three-Channel Adoption Status Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Number of Cards</th>
+<th>Main-line Adopted</th>
+<th>Corroboration Only</th>
+<th>Not Absorbed</th>
+<th>Key Supplementary Content in This Document</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zhihu</td>
+<td>11 (ZHI-01~08 + HM-ZH-01~03)</td>
+<td>5</td>
+<td>6</td>
+<td>0</td>
+<td>Misconception sample library, tool screening fields, domestic tool leads (§4.6, §5, §2.3)</td>
+</tr>
+<tr>
+<td>Twitter/X</td>
+<td>19 (8 insight + 5 conclusion + 6 method)</td>
+<td>13</td>
+<td>5</td>
+<td>1*</td>
+<td>Research→tool adoption mapping, seven-layer failure attribution, safety optimization gate (§3, §4.2, §6)</td>
+</tr>
+<tr>
+<td>web_search</td>
+<td>14 (WPI-01~10 + WHM-01~04)</td>
+<td>7 + 1 upgrade candidate</td>
+<td>6</td>
+<td>0</td>
+<td>Eight-tool five-dimension comparison full table, stage-based selection rationale, field-level operational details (§2.1, §2.2, §4)</td>
+</tr>
+</tbody>
+</table>
+<p>*The only "not absorbed" card is tw-insight-07: it was briefly mentioned in the Twitter per-channel narrative of v4 ⑧ ("tw-07, grade D, deep-read pending"), but its ideas were not absorbed into the 14 insights or method layer (see §6.1). Adoption criteria: main-line adopted = cited as evidence in the v4 body or the unified catalog (WHM-03 is a v4 ⑤ upgrade candidate for the 5th method, listed separately); corroboration only = appears only in cross-channel corroboration, misconception table, tool map, or per-channel narrative. Additional note: the gap in the web_search channel is not in the cards but in tabular outputs — the eight-tool full comparison table did not enter the v4 body (section ④ only included the three-stage conclusions and adoption mapping); the full table appears in §2.1 of this document.</p>
+<h2 id="2-theme-a-tools-and-selection-report-gave-only-three-stage-conclusions-full-version-here">2. Theme A: Tools and Selection (Report Gave Only Three-Stage Conclusions — Full Version Here)</h2>
+<h3 id="21-five-dimension-tool-ecosystem-full-comparison-table-web_search-channel-grade-b">2.1 Five-Dimension Tool Ecosystem Full Comparison Table (web_search channel, grade B)</h3>
+<p>The main report section ④ only cited the "three-stage" conclusions; the full comparison is as follows (original source: <a href="source_batches/web_search_platform_analysis_20260608.en.html">Other Platforms Channel Analysis</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Tool / Ecosystem</th>
+<th>Positioning</th>
+<th>Optimization Target</th>
+<th>Feedback Signal</th>
+<th>Versioning / Rollback Capability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DSPy / GEPA</td>
+<td>prompt-as-program + reflective optimizer</td>
+<td>Prompt / instructions / demos of DSPy modules</td>
+<td>Task metric, textual feedback, trajectory reflection, Pareto frontier</td>
+<td>Requires external Git / LangSmith / Langfuse management</td>
+</tr>
+<tr>
+<td>Hugging Face cookbook / blog</td>
+<td>Cookbook and paper index</td>
+<td>Prompt programs, datasets, and optimizers in notebooks</td>
+<td>Benchmark metric, train/val/test, paper claims</td>
+<td>No production rollback, but provides runnable examples</td>
+</tr>
+<tr>
+<td>Arize Phoenix / AX</td>
+<td>Eval + prompt learning + observability</td>
+<td>Prompt version, prompt learning loop</td>
+<td>Dataset, evaluator, experiment scores, trace feedback</td>
+<td>Prompt Hub / version / rollback / side-by-side</td>
+</tr>
+<tr>
+<td>Promptfoo</td>
+<td>CLI eval-backed prompt optimization</td>
+<td>Individual prompt/provider pair</td>
+<td>Tests/assertions, LLM rubric, validation split</td>
+<td>Depends on config file / Git</td>
+</tr>
+<tr>
+<td>Langfuse</td>
+<td>Prompt management + experiments + tracing</td>
+<td>Prompt version, dataset experiment</td>
+<td>LLM-as-judge, code evaluator, trace</td>
+<td>Labels, production version, trace linking</td>
+</tr>
+<tr>
+<td>Humanloop</td>
+<td>Prompt files + logs + datasets + evaluators</td>
+<td>Prompt template, model, parameters, tools</td>
+<td>Online/offline evaluators, human/AI/code judgments</td>
+<td>Prompt file version, environment deploy</td>
+</tr>
+<tr>
+<td>LangSmith / Promptim</td>
+<td>Prompt commit + optimization library</td>
+<td>Prompt text, few-shot examples, LangGraph graph</td>
+<td>Dataset, custom evaluators, optional human feedback</td>
+<td>Commit tags, staging/production, rollback</td>
+</tr>
+<tr>
+<td>OPIK</td>
+<td>Agent optimizer SDK + eval platform</td>
+<td>Prompt, few-shot examples, parameters, tool schemas</td>
+<td>Dataset, metric, optimization history, G-Eval</td>
+<td>Dashboard trial logging, OptimizationResult</td>
+</tr>
+<tr>
+<td>Weaviate</td>
+<td>RAG / context engineering + DSPy examples</td>
+<td>RAG prompt, retrieval / context organization</td>
+<td>RAG metric, LLM judge, retrieval quality</td>
+<td>Prompt versioning is not the primary focus</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-decision-rationale-for-three-stage-selection-wpi-09-grade-b">2.2 Decision Rationale for Three-Stage Selection (WPI-09, grade B)</h3>
+<p>The report only mentioned category names; the complete decision logic from WPI-09 is:</p>
+<ol>
+<li><strong>Early stage (lacking a small dataset and scorer)</strong>: first use a lightweight eval gate like Promptfoo to satisfy "having a test set and assertions" — do not introduce a heavy platform from the start;</li>
+<li><strong>Multi-person collaboration / live traffic</strong>: then introduce governance and tracing platforms such as Langfuse / Humanloop / LangSmith (teams with live traffic can introduce these earlier);</li>
+<li><strong>After both of the above are satisfied</strong>: only then consider optimizer dashboards and SDKs such as Arize / OPIK.</li>
+</ol>
+<p>The implication of this sequence: <strong>first satisfy the eval gate, then do prompt management, and only then adopt an optimizer</strong> — isomorphic with main-line I-01 (first test whether optimization is worthwhile).</p>
+<h3 id="23-domestic-and-newly-added-tool-leads-zhihu-grade-d-web_search-net-new-all-unread">2.3 Domestic and Newly Added Tool Leads (Zhihu grade D + web_search net-new, all unread)</h3>
+<ul>
+<li><strong>Coze workflow-based optimizer, OPIK, and Hermes/Manus memory and skill practices</strong> (Zhihu): worth a deep-read only after passing ZHI-05 screening criteria (must expose the three field types: evaluation inputs / candidate changes / run results);</li>
+<li><strong>AWS Bedrock advanced prompt optimization / migration tool</strong> (RSS / AWS blog): a vendor optimizer not yet covered — registration only completed so far;</li>
+<li><strong>Vertex AI Prompt Optimizer's <code>placeholder_to_content</code> segment-locking mechanism</strong> (Stack Overflow): a concrete production-tool implementation of "frozen/variable segments," already mapped to I-06, but the source material has not been deep-read.</li>
+</ul>
+<h2 id="3-theme-b-researchtool-adoption-mapping-unique-value-of-twitterx-channel-b-traceability-pending">3. Theme B: Research→Tool Adoption Mapping (Unique Value of Twitter/X Channel, B* Traceability Pending)</h2>
+<p>This is the most distinctive content from the Twitter channel, only mentioned by name in the report's corroboration section: <strong>which paper methods have actually been integrated into which tools</strong>. It answers not "is the method effective?" but "what is the industry adopting?"</p>
+<table>
+<thead>
+<tr>
+<th>Paper / Method</th>
+<th>Known Tool Integrations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GEPA</td>
+<td>Pydantic AI / Evals, DSPyground, Sentient ROMA V2</td>
+</tr>
+<tr>
+<td>MIPRO / MIPROv2</td>
+<td>DSPy official optimizer (official integration)</td>
+</tr>
+<tr>
+<td>PromptBreeder</td>
+<td>Self-referential evolution approach via hyper-mutation (co-evolving the mutation prompt itself)</td>
+</tr>
+<tr>
+<td>DSPy framework</td>
+<td>LangChain Promptim, Microsoft PromptWizard, Google Vertex AI, Pydantic, LangSmith</td>
+</tr>
+<tr>
+<td>Context Engineering</td>
+<td>LangChain, 12-factor-agents, Anthropic official documentation</td>
+</tr>
+<tr>
+<td>Versioning / Release Gate</td>
+<td>LangSmith Prompt Hub, Langfuse, Humanloop, Promptfoo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Usage note</strong>: the <code>main_sources</code> of the 21 source cards in this channel still point to external URLs (traceability pending), so this table can only serve as an "industry adoption signal," not as effectiveness evidence; any row in this table must have the in-repository traceability path back-filled before entering the main report body.</p>
+<h2 id="4-theme-c-engineering-operational-details-report-cited-principles-field-level-content-is-here">4. Theme C: Engineering Operational Details (Report Cited Principles — Field-Level Content Is Here)</h2>
+<p>The main report body adopted the "principles" from these cards, but field-level, directly reusable operational details all remain in the batch files:</p>
+<ol>
+<li><strong>Trial history minimum fields</strong> (WPI-03, B): an optimizer run must retain at minimum: top candidates, rejected candidates, score deltas, failure tags, rejection reason — rejected candidates are also learning material for the optimizer.</li>
+<li><strong>Seven-layer failure attribution</strong> (tw-insight-05 / method-03, B, pending addition to unified catalog): before modifying a prompt, label the failure owner: instruction / example / retrieval / memory / tool policy / output schema / model — seven layers, change only one layer at a time.</li>
+<li><strong>Source quick-screening and reproducibility field verification</strong> (WHM-04 + WPI-04, B): official docs / cookbook &gt; practitioner blog &gt; paper digest &gt; marketing; cookbooks expose reproducible variables, while secondary digests typically omit failure cases, costs, and evaluation boundaries; tool rankings are only used to discover official docs — never cite the rankings directly.</li>
+<li><strong>Adopt process, not numbers, from vendor materials</strong> (WPI-07, B): extract four types of process fields from vendor benchmarks: required_inputs, implementation_steps, evaluation_metrics, rollback_plan; improvement percentages are downgraded by default.</li>
+<li><strong>Governance layer ≠ effectiveness evidence</strong> (WPI-05, B): prompt management / observability platforms improve auditability but cannot independently prove an optimizer is effective; benchmarks in tool documentation can only serve as method leads and need to be re-run by this project.</li>
+<li><strong>Tool-article screening field checklist</strong> (Zhihu three-layer analysis, D): to judge whether a tool-practice article is worth a deep-read, check whether it exposes: dataset source, evaluator definition, comparison results, cost, failure cases, and version management.</li>
+<li><strong>Four-layer production loop details</strong> (WHM-01/02, B): intake (dataset + metric + baseline + constraints all OK before starting, headroom ≥ noise floor) → version (owner / model / params / tools / schema / diff / eval run / trace sample / cost / adoption_decision) → rollback (retain best_seen, last stable version, parent, enabling O(1) rollback) → observability (version→score→failure samples are reversibly traceable; versions are bound to cost / latency).</li>
+</ol>
+<h2 id="5-theme-d-community-understanding-and-dissemination-samples-zhihu-twitter-exclusive">5. Theme D: Community Understanding and Dissemination Samples (Zhihu / Twitter Exclusive)</h2>
+<p>This section is the raw sample library for the main report's "misconception list" and has direct reuse value for the <a href="popsci_prompt_evolution_story_20260610.en.html">popular-science document</a> targeting Chinese-language readers and for the advisor recommendation assistant:</p>
+<ul>
+<li><strong>DSPy misreading samples</strong> (ZHI-03, D, cited as the source for misconception #2 in v4's misconception table, but the sample library itself was not expanded): the Chinese-language community commonly simplifies DSPy into "an automatic prompt-rewriting tool," overlooking that signature / module / metric all need to be manually defined; this is a Chinese-language dissemination instance of misconception #2.</li>
+<li><strong>Six major problem-awareness patterns in the Chinese-language community</strong> (Zhihu three-layer analysis): concrete dissemination-path samples ranging from "looking for a universal prompt template" to "GEPA being spread as stronger than RL," supporting the misconception judgments of ZHI-02/03.</li>
+<li><strong>GEPA "35× rollout" simplified misreading</strong> (Twitter analysis): social media spread GEPA as "35× efficiency boost," dropping the true mechanism of trace-aware reflection.</li>
+<li><strong>Lyra / 4-D-style "universal templates" weakly correlated with the eval-driven main line</strong> (Twitter analysis): explicitly judged as a boundary sample not to be added to the library.</li>
+<li><strong>Dissemination volume statistics</strong> (Twitter analysis): approximately 60 candidate items are duplicates / secondary reposts — in-channel empirical evidence for "high repost count ≠ effective" (tw-insight-06).</li>
+</ul>
+<h2 id="6-tension-points-and-non-adopted-items-disclosed-transparently-none-are-viewpoint-conflicts">6. Tension Points and Non-Adopted Items (Disclosed Transparently — None Are Viewpoint Conflicts)</h2>
+<ol>
+<li><strong>tw-insight-07 "Safety monitoring prompts must not optimize for average score alone"</strong> (D, the only card among 44 not absorbed by the insight layer, only briefly mentioned in v4 ⑧ per-channel narrative): proposes three types of metrics — audit budget, monitor failure, and safety regression — and argues that "safety boundaries must not be optimized away." Its focus is offset from, not contradictory to, I-10 (focus on tool schema). Already listed as a follow-up special item in v4 ⑨ collection gaps: the Safety / Eval / Observability dimension in the main report has always had weak coverage (the Zhihu channel has only about 2 candidate items in that direction).</li>
+<li><strong>Slight tension between WPI-09 and report section ④</strong>: the report only mentioned tool category names without expanding on stage-selection criteria — §2.2 of this document has filled in the full details; no changes to the report are needed.</li>
+<li><strong>Channel-self-reported coverage gaps</strong> (as stated in the source; this is not a new finding by this document): the web_search channel has fewer real failure cases / incident post-mortems than the coverage matrix requires (should be ≥5 sources); Reddit / dev.to had zero hits and x_api was not run; the Zhihu channel has weak coverage in the Safety direction — no numbers were forced.</li>
+</ol>
+<h2 id="7-appendix-full-numbered-card-adoption-status-breakdown-for-all-three-channels">7. Appendix: Full Numbered Card Adoption Status Breakdown for All Three Channels</h2>
+<h3 id="71-zhihu-8-insight-3-method">7.1 Zhihu (8 insight + 3 method)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Claim</th>
+<th>Level</th>
+<th>Adoption Status</th>
+<th>Unique Information Points Beyond the Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZHI-01</td>
+<td>Prompt optimization shifting from techniques to eval-driven iteration</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Chinese-community user-language expression of the "universal template → sample+scorer" shift</td>
+</tr>
+<tr>
+<td>ZHI-02</td>
+<td>What is transferable from GEPA is trace-aware reflection, not "surpassing RL"</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Sample of how the "surpassing RL" headline was misread and spread</td>
+</tr>
+<tr>
+<td>ZHI-03</td>
+<td>DSPy should be explained as prompt-as-program, not an auto-rewriter</td>
+<td>D</td>
+<td>Corroboration only (source for misconception table #2)</td>
+<td>Chinese developer simplified-misreading samples (see §5)</td>
+</tr>
+<tr>
+<td>ZHI-04</td>
+<td>Context engineering expands the optimization target to the entire visible context</td>
+<td>D</td>
+<td>Corroboration only</td>
+<td>Chinese-community discussion density on "the entire context window" higher than other channels</td>
+</tr>
+<tr>
+<td>ZHI-05</td>
+<td>Screen tool-practice articles by "reviewable eval loop"</td>
+<td>D</td>
+<td>Corroboration only</td>
+<td>Chinese–English comparison of domestic tools (Coze) vs. foreign tool marketing language</td>
+</tr>
+<tr>
+<td>ZHI-06</td>
+<td>Agent self-evolving must first declare mutable / frozen</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Chinese-language description of "optimization targets not split" and community attention</td>
+</tr>
+<tr>
+<td>ZHI-07</td>
+<td>Chinese-language sources are suitable for interpretation and misconception layers, not strong evidence</td>
+<td>D</td>
+<td>Corroboration only</td>
+<td>Channel-level methodology judgment (corresponding to I-12)</td>
+</tr>
+<tr>
+<td>ZHI-08</td>
+<td>Generic techniques divorced from eval are an anti-pattern to be downgraded</td>
+<td>D</td>
+<td>Corroboration only</td>
+<td>User pain-point expression: "don't collect universal templates"</td>
+</tr>
+<tr>
+<td>HM-ZH-01</td>
+<td>Eval-first intake (build the health-check gate before running search)</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Converges across four channels with coin-flip / tw-insight-01 / WHM-01</td>
+</tr>
+<tr>
+<td>HM-ZH-02</td>
+<td>Trace-first layered diagnosis by failure owner</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Aligned with compare-first rewrite / method-01</td>
+</tr>
+<tr>
+<td>HM-ZH-03</td>
+<td>Secondary-post → primary-source upgrade gate</td>
+<td>D</td>
+<td>Main-line adopted (net-new)</td>
+<td>The only reusable method exclusive to Zhihu across the entire report</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-twitterx-8-insight-5-conclusion-6-method">7.2 Twitter/X (8 insight + 5 conclusion + 6 method)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Claim</th>
+<th>Level</th>
+<th>Adoption Status</th>
+<th>Unique Information Points Beyond the Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tw-insight-01</td>
+<td>Have a test set and scorer first, then discuss automatic prompt modification</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Industry-language version of conclusion-01</td>
+</tr>
+<tr>
+<td>tw-insight-02</td>
+<td>Let the optimizer read the failure process, not only the final score</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Social-media version of the transferable mechanism from GEPA / MIPRO</td>
+</tr>
+<tr>
+<td>tw-insight-03</td>
+<td>Write tasks as programs, then let the optimizer compile them</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Consistent with DSPy documentation and Drew Breunig's writing</td>
+</tr>
+<tr>
+<td>tw-insight-04</td>
+<td>Prompts should be comparable, reviewable, and rollbackable like code</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Engineering checklist: versioning / diff / owner / environment</td>
+</tr>
+<tr>
+<td>tw-insight-05</td>
+<td>First determine whether to modify the prompt or the context</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Seven-layer failure attribution (see §4.2)</td>
+</tr>
+<tr>
+<td>tw-insight-06</td>
+<td>High repost count does not equal higher effectiveness</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Six-category label triage method</td>
+</tr>
+<tr>
+<td>tw-insight-07</td>
+<td>Safety monitoring prompts must not optimize for average score alone</td>
+<td>D</td>
+<td>Not absorbed (only briefly mentioned in ⑧ per-channel narrative)</td>
+<td>Safety optimization gate (see §6.1)</td>
+</tr>
+<tr>
+<td>tw-insight-08</td>
+<td>Trust dataset/metric/baseline/cost/rollback; downgrade marketing numbers</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Vendor optimizer evaluation checklist</td>
+</tr>
+<tr>
+<td>conclusion-01</td>
+<td>Automated optimization requires eval+trace+version constraints; missing eval is equivalent to stylistic rewriting</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Converged conclusion across four channels</td>
+</tr>
+<tr>
+<td>conclusion-02</td>
+<td>GEPA is trace-aware reflective evolution, not an RL substitute</td>
+<td>D</td>
+<td>Corroboration only</td>
+<td>One of the sources for misconception #1</td>
+</tr>
+<tr>
+<td>conclusion-03</td>
+<td>DSPy positioned as prompt-as-program</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Engineering maintainability perspective</td>
+</tr>
+<tr>
+<td>conclusion-04</td>
+<td>Pre-release gate requires versioning/diff and variable separation; missing either prevents attribution</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Cross-channel consistency with 12-factor-agents</td>
+</tr>
+<tr>
+<td>conclusion-05</td>
+<td>Social media and vendor materials serve only as the discovery layer</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>One of the sources elevated to I-12</td>
+</tr>
+<tr>
+<td>method-01</td>
+<td>Generate multiple candidates under metric+trace constraints</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Comparison of scalar-only vs trace-aware</td>
+</tr>
+<tr>
+<td>method-02</td>
+<td>Prompt release gate (candidate→offline eval→staging→production→rollback)</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>LangSmith / Langfuse / Humanloop implementation reference</td>
+</tr>
+<tr>
+<td>method-03</td>
+<td>prompt_context_variable_audit (failure owner annotation)</td>
+<td>B</td>
+<td>Corroboration only (pending addition to unified catalog)</td>
+<td>LangChain context engineering decomposition dimensions</td>
+</tr>
+<tr>
+<td>method-04</td>
+<td>prompt_as_program_spec (signature + metric + component list + versioning)</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Cross-channel corroboration with GitHub artifact manifest</td>
+</tr>
+<tr>
+<td>method-05</td>
+<td>social_signal_triage six-category label triage</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Twitter-original social-media evidence classification method</td>
+</tr>
+<tr>
+<td>method-06</td>
+<td>vendor_optimizer_evidence_filter</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>Systematic evaluation checklist for vendor benchmarks</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-web_search-other-platforms-10-insight-4-method">7.3 web_search / Other Platforms (10 insight + 4 method)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Claim</th>
+<th>Level</th>
+<th>Adoption Status</th>
+<th>Unique Information Points Beyond the Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WPI-01</td>
+<td>Optimizer intake: check dataset/metric/baseline/constraints first</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>None</td>
+</tr>
+<tr>
+<td>WPI-02</td>
+<td>Prompt version minimum ledger bound to trace/eval/cost/rollback point</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>None</td>
+</tr>
+<tr>
+<td>WPI-03</td>
+<td>Trial history and rejected candidates are learning material</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Minimum field checklist (see §4.1)</td>
+</tr>
+<tr>
+<td>WPI-04</td>
+<td>Cookbook-first triage preferred over secondary digests</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Three-tier quick-screen: official docs → secondary → leads</td>
+</tr>
+<tr>
+<td>WPI-05</td>
+<td>Management/observability platforms are the governance layer, not optimizer effectiveness evidence</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Explicit distinction between "process support vs. effectiveness proof"</td>
+</tr>
+<tr>
+<td>WPI-06</td>
+<td>Context engineering and prompt optimization verified with separate variables</td>
+<td>B</td>
+<td>Main-line adopted</td>
+<td>None</td>
+</tr>
+<tr>
+<td>WPI-07</td>
+<td>Adopt process, not numbers, from vendor benchmarks</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Four types of process fields (see §4.4)</td>
+</tr>
+<tr>
+<td>WPI-08</td>
+<td>Value of secondary posts lies in dissemination mapping and source discovery</td>
+<td>D</td>
+<td>Main-line adopted</td>
+<td>None</td>
+</tr>
+<tr>
+<td>WPI-09</td>
+<td>Match tools to stages; do not adopt a heavy platform from the start</td>
+<td>B</td>
+<td>Corroboration only</td>
+<td>Three-stage decision rationale (see §2.2)</td>
+</tr>
+<tr>
+<td>WPI-10</td>
+<td>Judge prompts should also be versioned, evaluated, and optimized</td>
+<td>B</td>
+<td>Main-line adopted (elevated to primary body of I-14)</td>
+<td>None</td>
+</tr>
+<tr>
+<td>WHM-01</td>
+<td>Optimizer Intake Checklist</td>
+<td>B</td>
+<td>Main-line adopted (→HM-01)</td>
+<td>Required fields and eval metric checklist (see §4.7)</td>
+</tr>
+<tr>
+<td>WHM-02</td>
+<td>Prompt Version Ledger</td>
+<td>B</td>
+<td>Main-line adopted (→HM-04)</td>
+<td>Complete ledger fields (see §4.7)</td>
+</tr>
+<tr>
+<td>WHM-03</td>
+<td>Context First Diagnosis</td>
+<td>B</td>
+<td>Upgrade candidate (HM-05 pending)</td>
+<td>Separability criterion for failure_owner distribution</td>
+</tr>
+<tr>
+<td>WHM-04</td>
+<td>Blog and tool source quick-screening rules</td>
+<td>B</td>
+<td>Corroboration only (→I-12)</td>
+<td>Reproducibility field verification matrix (see §4.3)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-sources-and-maintenance">8. Sources and Maintenance</h2>
+<ul>
+<li>Source entries: <a href="source_batches/zhihu_insight_cards_20260609.en.html">Zhihu Insight Cards</a> · <a href="source_batches/zhihu_three_layer_analysis_20260608.en.html">Zhihu Three-Layer Analysis</a> · <a href="source_batches/twitter_web_insight_cards_20260609.en.html">Twitter/X Insight Cards</a> · <a href="source_batches/twitter_web_analysis_20260608.en.html">Twitter/X Channel Analysis</a> · <a href="source_batches/web_search_platform_insight_cards_20260609.en.html">Other Platforms Insight Cards</a> · <a href="source_batches/web_search_platform_analysis_20260608.en.html">Other Platforms Channel Analysis</a></li>
+<li>Main report version used for adoption status cross-reference: <a href="analysis_report_v4_20260611.en.html">Synthesis Report v4</a> and <a href="insight_method_catalog_20260609.en.html">Unified Catalog</a> (cross-checked 2026-06-12).</li>
+<li>Maintenance rules: when an entry's evidence level is upgraded, its traceability path is back-filled, or it enters the unified catalog, update the "adoption status" field of the corresponding row in this document; if the main report reaches v5 and absorbs the tool content from §2/§3, the corresponding sections here can be condensed into pointers.</li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/platform_insights_supplement_20260612.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#0-what-this-document-is-and-is-not">0. What This Document Is — and Is Not</a>
+<a class="lv2" href="#1-three-channel-adoption-status-overview">1. Three-Channel Adoption Status Overview</a>
+<a class="lv2" href="#2-theme-a-tools-and-selection-report-gave-only-three-stage-conclusions-full-version-here">2. Theme A: Tools and Selection (Report Gave Only Three-Stage Conclusions — Full Version Here)</a>
+<a class="lv3" href="#21-five-dimension-tool-ecosystem-full-comparison-table-web_search-channel-grade-b">2.1 Five-Dimension Tool Ecosystem Full Comparison Table (web_search channel, grade B)</a>
+<a class="lv3" href="#22-decision-rationale-for-three-stage-selection-wpi-09-grade-b">2.2 Decision Rationale for Three-Stage Selection (WPI-09, grade B)</a>
+<a class="lv3" href="#23-domestic-and-newly-added-tool-leads-zhihu-grade-d-web_search-net-new-all-unread">2.3 Domestic and Newly Added Tool Leads (Zhihu grade D + web_search net-new, all unread)</a>
+<a class="lv2" href="#3-theme-b-researchtool-adoption-mapping-unique-value-of-twitterx-channel-b-traceability-pending">3. Theme B: Research→Tool Adoption Mapping (Unique Value of Twitter/X Channel, B* Traceability Pending)</a>
+<a class="lv2" href="#4-theme-c-engineering-operational-details-report-cited-principles-field-level-content-is-here">4. Theme C: Engineering Operational Details (Report Cited Principles — Field-Level Content Is Here)</a>
+<a class="lv2" href="#5-theme-d-community-understanding-and-dissemination-samples-zhihu-twitter-exclusive">5. Theme D: Community Understanding and Dissemination Samples (Zhihu / Twitter Exclusive)</a>
+<a class="lv2" href="#6-tension-points-and-non-adopted-items-disclosed-transparently-none-are-viewpoint-conflicts">6. Tension Points and Non-Adopted Items (Disclosed Transparently — None Are Viewpoint Conflicts)</a>
+<a class="lv2" href="#7-appendix-full-numbered-card-adoption-status-breakdown-for-all-three-channels">7. Appendix: Full Numbered Card Adoption Status Breakdown for All Three Channels</a>
+<a class="lv3" href="#71-zhihu-8-insight-3-method">7.1 Zhihu (8 insight + 3 method)</a>
+<a class="lv3" href="#72-twitterx-8-insight-5-conclusion-6-method">7.2 Twitter/X (8 insight + 5 conclusion + 6 method)</a>
+<a class="lv3" href="#73-web_search-other-platforms-10-insight-4-method">7.3 web_search / Other Platforms (10 insight + 4 method)</a>
+<a class="lv2" href="#8-sources-and-maintenance">8. Sources and Maintenance</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>

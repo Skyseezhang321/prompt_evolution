@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insight / Conclusion / Helpful Method Candidate List · prompt_evolution</title>
+<style>
+/* 视觉语言：学术期刊 / 研究档案。暖纸面 + 墨色 + 茶青主色 + 朱砂点缀；
+   宋体衬线作标题、黑体正文、等宽作编号——全部系统字体，离线可用。 */
+:root{--bg:#edeadd;--paper:#fbfaf3;--card:#fffefa;--ink:#232820;--muted:#6e7263;--faint:#999d8b;
+--line:#d9d5c1;--line-soft:#e7e4d4;--soft:#f3f1e4;
+--teal:#176a5e;--teal-deep:#0d4c43;--teal-soft:#e4efe9;--seal:#b23f2e;--seal-soft:#f8ece6;
+--blue:#2d5fa8;--amber:#94660f;--rose:#a84055;--violet:#5e54a8;--green:#4a742f;--slate:#4d5246;
+--serif:"Source Han Serif SC","Noto Serif SC","Songti SC","STSong",Georgia,"SimSun",serif;
+--sans:"Source Han Sans SC","Noto Sans SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+--mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+--radius:10px;}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8;}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");}
+a{color:var(--teal-deep);text-underline-offset:3px;text-decoration-thickness:1px;}
+a:hover{color:var(--seal);}
+.topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+padding:10px 22px;background:rgba(253,252,245,.92);backdrop-filter:saturate(160%) blur(8px);
+border-bottom:3px double var(--line);}
+.topbar a.back{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1px solid var(--line);
+border-radius:999px;background:var(--card);color:var(--ink);font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.topbar a.back:hover{border-color:var(--teal);color:var(--teal-deep);}
+.topbar a.home{background:var(--teal);border-color:var(--teal);color:#fff;}
+.topbar a.home:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff;}
+.topbar a.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;}
+.topbar .chip{padding:3px 11px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;}
+.topbar .doctitle{color:var(--muted);font-size:13.5px;font-weight:600;}
+.topbar .mark{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 88px;display:grid;
+grid-template-columns:minmax(0,1fr) 248px;gap:38px;align-items:start;}
+.content{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+box-shadow:0 1px 2px rgba(35,40,32,.05),0 26px 50px -30px rgba(35,40,32,.35);padding:46px 52px 40px;min-width:0;}
+.toc{position:sticky;top:72px;align-self:start;font-size:13.2px;padding:2px 0;max-height:calc(100vh - 100px);overflow:auto;}
+.toc h4{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+.toc a{display:block;padding:4px 0 4px 12px;color:#4a5042;text-decoration:none;line-height:1.5;border-left:2px solid var(--line);transition:color .12s,border-color .12s;}
+.toc a:hover{color:var(--teal-deep);border-left-color:var(--teal);}
+.toc a.lv3{padding-left:24px;font-size:12.4px;color:#6a705f;}
+.toc a.on{color:var(--teal-deep);border-left-color:var(--seal);font-weight:600;}
+.content h1{margin:0 0 10px;font-family:var(--serif);font-size:31px;line-height:1.25;font-weight:700;}
+.content h1::after{content:"";display:block;width:58px;height:3px;background:var(--seal);margin-top:16px;}
+.content h2{margin:40px 0 14px;padding-bottom:8px;font-family:var(--serif);font-size:23px;font-weight:700;
+border-bottom:1px solid var(--line);scroll-margin-top:72px;}
+.content h3{margin:26px 0 10px;font-family:var(--serif);font-size:18.5px;color:#2c3227;scroll-margin-top:72px;}
+.content h4{margin:20px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.content p{margin:0 0 14px;}
+.content ul,.content ol{margin:0 0 14px;padding-left:24px;}
+.content li{margin-bottom:5px;}
+.content li>p{margin:0;}
+.content a{font-weight:500;}
+.content hr{border:0;border-top:3px double var(--line);margin:30px 0;}
+.content blockquote{margin:0 0 15px;padding:12px 18px;border-left:3px solid var(--seal);
+background:var(--seal-soft);border-radius:0 var(--radius) var(--radius) 0;color:#4a3a30;}
+.content blockquote p:last-child{margin-bottom:0;}
+.content table{width:100%;border-collapse:collapse;border:1px solid var(--line);
+margin:6px 0 20px;font-size:14px;display:block;overflow-x:auto;background:var(--card);
+font-variant-numeric:tabular-nums;}
+.content thead th{background:var(--soft);color:var(--slate);font-weight:700;text-align:left;}
+.content th,.content td{padding:10px 13px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.62;}
+.content tbody tr:nth-child(even){background:#faf8ef;}
+.content code{font-family:var(--mono);font-size:.88em;
+background:var(--soft);border:1px solid var(--line-soft);border-radius:4px;padding:1px 5px;}
+.content pre{margin:0 0 16px;padding:14px 16px;border:1px solid var(--line-soft);border-left:3px solid var(--teal);
+border-radius:6px;background:var(--card);overflow-x:auto;}
+.content pre code{display:block;background:none;border:0;padding:0;font-size:12.8px;line-height:1.6;white-space:pre;color:#2c3227;}
+.content pre.mermaid{background:#fff;border-left:1px solid var(--line-soft);text-align:center;}
+.genfoot{margin-top:32px;padding-top:14px;border-top:3px double var(--line);color:var(--muted);font-size:12.3px;}
+@media (max-width:980px){.wrap{grid-template-columns:1fr;}.toc{position:static;max-height:none;order:-1;}}
+@media (max-width:640px){.content{padding:26px 20px;}.wrap{padding:16px 12px 48px;}.content h1{font-size:25px;}
+.topbar .mark{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back home" href="../advisor/advisor.html">💬 Advisor Home</a><a class="back" href="analysis_report_v4_20260611.en.html">← Back to Analysis Report</a><span class="chip" style="background:#4d5246">Middle Layer</span><span class="doctitle">Insight / Conclusion / Helpful Method Candidate List</span><a class="back lang" href="insight_method_catalog_20260609.html">中文</a><span class="mark">Prompt Evolution · Research Archive</span></div>
+<div class="wrap">
+<article class="content">
+<h1 id="insight-conclusion-helpful-method-candidate-list">Insight / Conclusion / Helpful Method Candidate List</h1>
+<p>Date: 2026-06-09 (I-13 / I-14 appended 2026-06-11, synchronized with main report v4; I-01..12 numbering and content unchanged)</p>
+<p>Scope: This document is an intermediate content-organization layer before the final report. It does not replace paper notes, source-code audits, or industry practice notes; instead it compresses existing materials into reusable insights, conclusions, methods, anti-patterns, and validation candidates following the latest insight-first principle.</p>
+<p>Evidence boundary:</p>
+<ul>
+<li><code>evidence_strength</code> in this document uses the A/B/C/D grading from <code>docs/final_report_outline.md</code>.</li>
+<li>Grade A/B may serve as stronger conclusion or method candidates; grade C requires replication experiments in this project before upgrading; grade D may only be written as an unverified conjecture.</li>
+<li>Without replication experiments in this project, no improvement percentage from any paper may be stated as "proven effective by this project."</li>
+</ul>
+<h2 id="how-to-use">How to Use</h2>
+<p>Field definitions and the criteria distinguishing insight / conclusion / helpful method are governed by <code>docs/insight_field_standard.md</code>. The abbreviated schema below omits <code>phenomenon</code> / <code>mechanism</code> / <code>actionable_rule</code> (each entry below already contains them), and <code>next_validation</code> should be unified to <code>validation_or_demo</code> per the standard.</p>
+<p>The final report should lead with insights and methods that readers can immediately understand, then expand into paper, source-code, and industry evidence. Every judgment entering the final report must retain at least:</p>
+<pre><code class="language-yaml">insight:
+user_facing_one_liner:
+exact_action_to_try:
+helpful_method:
+evidence_strength:
+counterexample_or_limit:
+next_validation:
+</code></pre>
+<h2 id="core-insight-candidates">Core Insight Candidates</h2>
+<h3 id="i-01-test-whether-optimization-is-worth-it-before-running-an-optimizer">I-01: Test Whether Optimization Is Worth It Before Running an Optimizer</h3>
+<pre><code class="language-yaml">insight: prompt optimization does not guarantee gains; many tasks may score below zero-shot after optimization.
+user_facing_one_liner: Check whether there is headroom first, then spend money on automatic optimization.
+phenomenon: In few-shot dev selection and free-text tasks, candidate differences may not exceed noise; a complex optimizer may select a prompt that happened to score high by chance.
+mechanism: When zero-shot already approaches the model's capability ceiling for a given task format, prompt search mainly amplifies evaluation noise.
+actionable_rule: Before every APO run, execute zero-shot, a manual baseline, and 10-20 candidates to estimate headroom and noise floor.
+exact_action_to_try: Test 10-20 candidates on 20 held-out examples; stop optimization if best gain is below the noise threshold.
+helpful_method: pre-optimization gate
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-coin-flip-2026.md
+  - docs/arxiv_deep_reading_batch3_synthesis.md
+counterexample_or_limit: Tasks requiring many rounds of search to discover combinatorial structure may have their gains underestimated by a simple headroom test; thresholds must be recalibrated per sample size and scorer.
+next_validation: Compare the predictive power of the headroom test on subsequent optimization gains across one structured-output task and one free-generation task.
+</code></pre>
+<h3 id="i-02-turn-failure-examples-into-editable-evidence-not-just-scores">I-02: Turn Failure Examples into Editable Evidence, Not Just Scores</h3>
+<pre><code class="language-yaml">insight: A score tells you &quot;something broke&quot;; a trace and critique tell you &quot;what to fix.&quot;
+user_facing_one_liner: Don't just log accuracy — log failure type, model output, and rewrite rationale.
+phenomenon: Methods such as ProTeGi, GEPA, CriSPO, SPEAR, and JTPRO all rely on failed examples, traces, critiques, or tool-call diagnostics to generate candidates.
+mechanism: Natural-language feedback compresses failed examples into editable prompt-revision directions, but it is not a mathematical gradient.
+actionable_rule: Each eval case must record at minimum: prediction, gold, error_type, critique, candidate_prompt_id, selector_reason.
+exact_action_to_try: For 20 failed examples, first write a failure-type table, then let the optimizer revise the prompt based solely on that table.
+helpful_method: trace-first critique loop
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-protegi-2023.md
+  - docs/paper_notes/paper-crispo-2024.md
+  - docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: Critiques may carry judge bias and must be anchored to examples and metrics; critiques must not be treated as genuine causal explanations.
+next_validation: score-only rewrite vs critique-guided rewrite vs trace-guided rewrite.
+</code></pre>
+<h3 id="i-03-generate-root-cause-hypotheses-before-rewriting-the-prompt">I-03: Generate Root-Cause Hypotheses Before Rewriting the Prompt</h3>
+<pre><code class="language-yaml">insight: Failures in reflective optimizers often stem from a hypothesis space that is too narrow, not from insufficient information.
+user_facing_one_liner: Don't ask the model to &quot;fix the prompt&quot; directly — first list possible failure causes and verify each one.
+phenomenon: In VISTA, GEPA with a defective seed failed to identify the true root cause and performance fell from 23.81% to 13.50%; after VISTA decoupled hypothesis generation and rewriting it recovered to 87.57%.
+mechanism: A single reflector repeatedly attributes failures within a familiar explanation space; verifying multiple hypotheses in parallel can surface structural prompt bugs.
+actionable_rule: Generate one candidate prompt per failure hypothesis and validate with a minibatch, rather than producing a final prompt in one shot.
+exact_action_to_try: Generate 3 mutually exclusive root-cause hypotheses for the same batch of failed examples — missing rules, missing context, conflicting format constraints — rewrite and score each separately.
+helpful_method: root-cause hypothesis gate
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-vista-reflection-dark-2026.md
+  - docs/paper_notes/paper-llm-prompt-optimizers-2024.md
+counterexample_or_limit: Root-cause boundaries are vague in open-ended writing tasks; multi-hypothesis validation cost may exceed the benefit.
+next_validation: one-shot reflection vs K hypotheses + parallel validation.
+</code></pre>
+<h3 id="i-04-candidate-selection-mechanism-is-as-important-as-prompt-rewriting">I-04: Candidate Selection Mechanism Is as Important as Prompt Rewriting</h3>
+<pre><code class="language-yaml">insight: Do not adopt the first optimized prompt the model produces; a candidate pool, selection rationale, and rollback point must be maintained.
+user_facing_one_liner: Have the model produce multiple versions, use a validation set to choose, and do not let it self-evaluate as optimal.
+phenomenon: ProTeGi, GEPA, PromptBreeder, EvoPrompt, SePO, and MASPO all rely on beam, archive, evolutionary search, Pareto, or bandit selection.
+mechanism: LLM candidate variance is high; search and selection structures filter bad rewrites, guard against one-off luck, and preserve tradeoffs.
+actionable_rule: Each round must save at minimum: seed, candidates, scores, selection_policy, rejected_reason, best_seen, rollback_point.
+exact_action_to_try: Generate 5 candidates and select the Pareto candidate across three dimensions — dev score, format error, and prompt length.
+helpful_method: candidate ledger + Pareto selector
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-protegi-2023.md
+  - docs/paper_notes/paper-gepa-2026.md
+  - docs/paper_notes/paper-promptbreeder-2023.md
+  - docs/paper_notes/paper-maspo-2026.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: Larger search budgets increase the risk of dev overfitting; dev/validation/test stratification is required.
+next_validation: one-shot rewrite vs candidate pool + validation selector.
+</code></pre>
+<h3 id="i-05-with-a-dev-set-exemplar-selection-is-a-first-class-optimization-variable">I-05: With a Dev Set, Exemplar Selection Is a First-Class Optimization Variable</h3>
+<pre><code class="language-yaml">insight: Exemplar selection often improves or stabilizes performance more than instruction rewriting.
+user_facing_one_liner: If you already have labeled examples, don't just use them for scoring — try optimizing which examples the model sees.
+phenomenon: &quot;Teach Better or Show Smarter&quot; shows that No IO + optimized exemplars frequently outperforms SoTA IO + no/random exemplars; ERM and DistillPrompt also support exemplar/feedback reuse.
+mechanism: Exemplars directly demonstrate decision boundaries and output format, and may be easier for the model to execute than abstract instructions.
+actionable_rule: Every APO experiment must compare at minimum: no-example, random-example, optimized-example, instruction + optimized-example.
+exact_action_to_try: Fix the instruction, search for 3 exemplars from a candidate pool, and check whether held-out performance exceeds instruction-only.
+helpful_method: exemplar optimization baseline
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-teach-better-show-smarter-2024.md
+  - docs/paper_notes/paper-erm-memory-2024.md
+  - docs/paper_notes/paper-distillprompt-2025.md
+counterexample_or_limit: Tight context budgets, skewed exemplar distributions, or exemplar leakage may hurt generalization.
+next_validation: instruction-only vs optimized examples vs combined.
+</code></pre>
+<h3 id="i-06-the-optimization-target-has-expanded-from-a-prompt-string-to-an-artifact-graph">I-06: The Optimization Target Has Expanded from a Prompt String to an Artifact Graph</h3>
+<pre><code class="language-yaml">insight: In real systems, failures may originate from examples, context, tool schema, agent role, memory, or the evaluator — not just from a single system prompt.
+user_facing_one_liner: First identify which component you are changing — do not call the entire context window a &quot;prompt.&quot;
+phenomenon: AutoPDL optimizes patterns; JTPRO optimizes tool schemas; Prompt Codebooks optimize codebook/routing; multi-agent papers optimize role/round/topology-aware prompts.
+mechanism: Different artifacts control different failure modes; mixing them in a single change makes attribution impossible and can bypass safety and format constraints.
+actionable_rule: Version records must separate at minimum: task_prompt, examples, context_packaging, tool_schema, agent_role_prompt, evaluator_prompt, selection_policy.
+exact_action_to_try: For an optimization run, generate an artifact manifest that declares mutable/frozen fields.
+helpful_method: prompt artifact graph
+evidence_strength: A/B
+main_sources:
+  - docs/paper_notes/paper-autopdl-2025.md
+  - docs/paper_notes/paper-jtpro-2026.md
+  - docs/paper_notes/paper-prompt-codebooks-2026.md
+  - docs/industry_practices.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: Simple one-off tasks do not require a complete artifact graph; research and production scenarios do.
+next_validation: whole-prompt rewrite vs section-local / artifact-local rewrite.
+</code></pre>
+<h3 id="i-07-longer-more-complex-prompts-with-more-meta-instructions-are-not-necessarily-progress">I-07: Longer, More Complex Prompts with More Meta-Instructions Are Not Necessarily Progress</h3>
+<pre><code class="language-yaml">insight: Prompt bloat may be a signal of overfitting, not a capability gain.
+user_facing_one_liner: A longer new prompt is not necessarily better; check whether it is merely patching training examples.
+phenomenon: TextReg, PrefPO, Edit-Level Analysis, and Flawed Textual Gradients all demonstrate that prompt hacking, rule inflation, meta-instructions, and complexification create spurious gains.
+mechanism: Optimizers may encode local failures as global rules, or exploit label distribution, judge preferences, and dev set noise.
+actionable_rule: When selecting candidates, record prompt length ratio, repetition ratio, edit family, dev-test gap, and OOD/stress delta.
+exact_action_to_try: If a candidate prompt's length increases beyond a threshold, require it to identify which failed examples the new rules address and pass a stress split.
+helpful_method: prompt hygiene gate
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-textreg-2026.md
+  - docs/paper_notes/paper-prefpo-2026.md
+  - docs/paper_notes/paper-causal-edit-level-2026.md
+  - docs/paper_notes/paper-textual-gradients-flawed-metaphor-2025.md
+counterexample_or_limit: Some complex tasks genuinely require more explicit constraints; the criterion is not brevity but necessity, traceability, and resistance to overfitting.
+next_validation: performance-only selector vs performance + hygiene selector.
+</code></pre>
+<h3 id="i-08-memory-is-useful-but-only-filtered-memory-is-useful">I-08: Memory Is Useful, but Only Filtered Memory Is Useful</h3>
+<pre><code class="language-yaml">insight: Remembering more history does not mean becoming smarter; unfiltered feedback memory corrupts optimization.
+user_facing_one_liner: An experience store needs provenance, scope of applicability, a quality score, and an expiry policy.
+phenomenon: ERM shows that raw feedback memory is insufficient — filtering and selective forgetting are what produce gains; MemAPO distinguishes successful templates from error patterns.
+mechanism: Memory can reduce repeated mistakes and lower candidate generation cost, but erroneous experience can negatively transfer across tasks.
+actionable_rule: The memory schema must include: success_template, error_pattern, source_task, applicability_condition, retrieval_reason, quality_score, forget_reason.
+exact_action_to_try: Do not inject raw conversation history; retrieve only 3-5 validated memory entries that match the current task.
+helpful_method: filtered dual memory
+evidence_strength: A/B
+main_sources:
+  - docs/paper_notes/paper-erm-memory-2024.md
+  - docs/paper_notes/paper-memapo-2026.md
+  - docs/paper_notes/paper-prompt-codebooks-2026.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: In highly non-stationary tasks and safety-sensitive tasks, historical experience may expire quickly or leak privacy.
+next_validation: no-memory vs raw-memory vs filtered-memory vs filtered+forgetting.
+</code></pre>
+<h3 id="i-09-in-multi-agent-optimization-credit-assignment-is-the-core-problem-not-more-agents">I-09: In Multi-Agent Optimization, Credit Assignment Is the Core Problem — Not More Agents</h3>
+<pre><code class="language-yaml">insight: One agent being locally correct may still cause global failure; role, round, and downstream impact must be recorded.
+user_facing_one_liner: In a multi-agent system, find the responsible step first, then revise locally — do not rewrite the entire system at once.
+phenomenon: MASPO, MAPRO, and Temporal/Structural Credit all address local–global mismatch, topology-aware reward, and updating low-credit components.
+mechanism: An agent's output affects downstream agents; local metrics cannot represent final task success.
+actionable_rule: Traces must record: role_id, round_id, local_validity, successor_utility, global_outcome, and local_pass_global_fail.
+exact_action_to_try: For a failed trace, identify which role/round first introduced an error and allow the optimizer to revise only that block.
+helpful_method: multi-agent credit ledger
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-maspo-2026.md
+  - docs/paper_notes/paper-mapro-2025.md
+  - docs/paper_notes/paper-temporal-structural-credit-mas-2026.md
+counterexample_or_limit: If agent interaction is weak, joint optimization cost may not be worthwhile; run a coupling test first.
+next_validation: independent agent optimization vs joint reward vs low-credit block update.
+</code></pre>
+<h3 id="i-10-in-tool-calling-tasks-the-tool-schema-must-be-treated-as-an-optimizable-artifact">I-10: In Tool-Calling Tasks, the Tool Schema Must Be Treated as an Optimizable Artifact</h3>
+<pre><code class="language-yaml">insight: tool-use failures commonly originate from tool descriptions and parameter semantics, not from the agent system prompt.
+user_facing_one_liner: When a tool call goes wrong, don't only revise the agent instruction — also revise the tool description and parameter rules.
+phenomenon: JTPRO improved TSA/SFA/OSR on ToolACE, ETID, and SEAL-Tools by jointly optimizing the global instruction and per-tool schema.
+mechanism: The global instruction addresses selection strategy; tool-local schema addresses tool ambiguity and slot/value format.
+actionable_rule: Tool evals must be decomposed into Tool Selection Accuracy, Slot Filling Accuracy, and Overall Success Rate.
+exact_action_to_try: Construct a tool-call eval for 20 similar tools and test global-only, schema-only, and joint optimization separately.
+helpful_method: tool-schema optimization loop
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-jtpro-2026.md
+  - docs/industry_practices.md
+counterexample_or_limit: When an external API schema cannot be modified, wrapper docs or retrieval context can carry local rules instead.
+next_validation: global-prompt-only vs schema-only vs joint global+schema optimization.
+</code></pre>
+<h3 id="i-11-structured-tasks-are-better-suited-for-the-first-validation-batch">I-11: Structured Tasks Are Better Suited for the First Validation Batch</h3>
+<pre><code class="language-yaml">insight: Tasks with strict output formats, complex schemas, tool calls, and structured extraction more readily yield interpretable APO evidence.
+user_facing_one_liner: Do not choose open-ended essays for the first batch of experiments; start with JSON extraction or tool calls that can be scored objectively.
+phenomenon: The positive examples in KG Construction, JTPRO, AutoPDL, and Coin Flip all concentrate on scenarios where schema, format, tool, or latent capability is well-defined.
+mechanism: Failure types, format errors, field F1, and tool slots in structured tasks are decomposable, making it easier to localize the effect of a prompt change.
+actionable_rule: M1 should prefer structured extraction or tool-call benchmarks over free-text generation.
+exact_action_to_try: Use 100–300 `{intent, entities, urgency}` JSON extraction examples as the minimal validation.
+helpful_method: structured-task validation demo
+evidence_strength: A/B
+main_sources:
+  - docs/paper_notes/paper-apo-kg-construction-2025.md
+  - docs/paper_notes/paper-jtpro-2026.md
+  - docs/paper_notes/paper-autopdl-2025.md
+  - docs/paper_notes/paper-coin-flip-2026.md
+counterexample_or_limit: Open-ended generation tasks remain important but are unsuitable as the first causally clear validations.
+next_validation: Run pre-gate, exemplar baseline, critique rewrite, and hygiene gate on a structured extraction task.
+</code></pre>
+<h3 id="i-12-social-media-and-secondary-articles-are-leads-not-evidence">I-12: Social Media and Secondary Articles Are Leads, Not Evidence</h3>
+<pre><code class="language-yaml">insight: A method appearing repeatedly across multiple platforms indicates popularity, not effectiveness.
+user_facing_one_liner: When you see a viral prompt technique, find the original paper, code, data, and failure cases first.
+phenomenon: Twitter/X, Medium/Substack, and some blogs extensively repeat GEPA/DSPy/MIPRO methods, but most do not include reproducible experiments.
+mechanism: Secondary dissemination amplifies conclusions while losing boundary conditions and version information.
+actionable_rule: Secondary sources may only serve as source pointers; before entering a conclusion, they must be traced back to a paper, official documentation, code, cookbook, or this project's experiments.
+exact_action_to_try: When reading about a technique, extract: dataset, metric, baseline, model, cost, failure cases; if fields are missing, downgrade to lead status.
+helpful_method: source evidence triage
+evidence_strength: B
+main_sources:
+  - docs/source_batches/twitter_web_analysis_20260608.md
+  - docs/source_batches/web_search_platform_analysis_20260608.md
+  - docs/source_collection_plan.md
+counterexample_or_limit: A high-quality engineering blog that includes code, data, and reproducible experiments can be upgraded to stronger evidence.
+next_validation: Build a trace-to-primary-source table for high-impact social claims.
+</code></pre>
+<h3 id="i-13-before-running-costly-search-try-zero-cost-deterministic-structural-transforms">I-13: Before Running Costly Search, Try Zero-Cost Deterministic Structural Transforms</h3>
+<pre><code class="language-yaml">insight: &quot;Information-order sensitivity&quot; caused by causal attention is a structural failure source in prompt performance that has nothing to do with wording quality; repeating the entire prompt verbatim can fix it without changing any semantics.
+user_facing_one_liner: Before running any costly optimizer, try one free transform — repeat the entire prompt verbatim.
+phenomenon: In non-reasoning mode, `&lt;QUERY&gt;` → `&lt;QUERY&gt;&lt;QUERY&gt;` achieved 47/70 significant wins and 0 significant losses across 7 mainstream models × 10 benchmark configurations (McNemar p&lt;0.1); options-first configurations gained more than question-first; a padding control (padding to equivalent length) showed no gain; on NameIndex, Gemini 2.0 Flash-Lite improved from 21.33% to 97.33%. With step-by-step reasoning enabled, the transform was largely ineffective (5 wins, 1 loss, 22 draws out of 28 groups).
+mechanism: In a causal LM, earlier tokens cannot attend to later tokens; after repetition every token in the second copy can attend to the complete first copy, approximating &quot;full second-pass attention&quot; within the prompt. Reasoning models already commonly re-state the problem spontaneously, so the benefit does not compound. Repetition occurs during the parallelizable prefill stage and does not increase output length or latency.
+actionable_rule: Include whole-prompt repetition ×2 (×3 for long-context index tasks) in the set of cheap baseline transforms; for any APO method reporting gains in this project's report, first answer &quot;does it beat this zero-intelligence transform?&quot;
+exact_action_to_try: Take 50–100 examples and run a three-arm comparison — baseline / repetition×2 / padding — recording accuracy, output format breakage rate, and cost; use the McNemar test.
+helpful_method: zero-cost transform baseline (control baseline for HM-01 health check)
+evidence_strength: A
+main_sources:
+  - docs/paper_notes/paper-prompt-repetition-2025.md
+counterexample_or_limit: recent-preprint (2025-12), currently a single arXiv-layer piece of evidence; largely ineffective in reasoning mode with 1 significant drop observed; repeating only a part of the prompt (e.g., only the question) yields no gain (Shaier 2024); input cost doubles when billed per token; repeating very long prompts increases prefill latency and may be infeasible; models tested are a 2025-early-generation cohort; newer models may already have internalized the re-statement behavior.
+next_validation: Run a three-arm A/B (baseline / ×2 / padding) on a small task drawn from this project with contemporary 2026 models, and use this as the HM-01 control baseline to measure how much net gain each APO method retains after accounting for it.
+</code></pre>
+<h3 id="i-14-the-optimizer-and-judge-are-also-components-that-must-be-versioned-and-can-be-optimized">I-14: The Optimizer and Judge Are Also Components That Must Be Versioned and Can Be Optimized</h3>
+<pre><code class="language-yaml">insight: The &quot;prompt responsible for rewriting prompts&quot; and the &quot;prompt responsible for scoring&quot; also determine optimization outcomes; without versioning them, experiments are not reproducible; without ever auditing them, they are hidden ceilings.
+user_facing_one_liner: Don't only version the task prompt — the optimizer prompt used to revise prompts and the judge prompt used to score must also be entered into the version ledger.
+phenomenon: SePO incorporated the prompt agent's own system prompt into the same evolutionary pipeline, raising the five-task average from Manual-CoT's 71.89 to 76.38; ablating self-improvement dropped it back to 74.94; TextGrad (70.39) and MetaSPO (71.32) with fixed optimizer prompts averaged below Manual-CoT. PromptBreeder's hyper-mutation (co-evolving the mutation prompt) points in the same direction. WPI-10 in web_search and GHI-05 in the GitHub autoresearch ledger independently proposed versioning of the judge prompt / optimizer configuration.
+mechanism: A fixed optimizer prompt constrains the space for error analysis and rewriting strategies; judge drift makes score changes unattributable (is it the task prompt's merit or a changed judge?); once optimizer artifacts enter the version ledger and evaluation loop, the optimization capability itself can be audited, trained, and transferred.
+actionable_rule: Run records must treat optimizer_prompt_version, judge_prompt_version, and meta_prompt_version as required fields; the judge in the evaluation pipeline is frozen by default just like the test set — any change triggers an independent review and recalibration and requires rerunning all previous scores; optimizing the judge/optimizer itself is done only on the dev set and is physically isolated from the evaluation pipeline.
+exact_action_to_try: Add optimizer_prompt / judge_prompt version fields to the run record schema — no separate experiment needed; take effect alongside any P0 experiment.
+helpful_method: HM-04 Prompt Artifact Ledger extension (optimizer_prompt / judge_prompt entered into ledger)
+evidence_strength: A/B
+main_sources:
+  - docs/paper_notes/paper-sepo-2026.md
+  - docs/paper_notes/paper-promptbreeder-2023.md
+  - docs/source_batches/web_search_platform_insight_cards_20260609.md
+  - docs/github_repo_insight_cards_20260608.md
+counterexample_or_limit: SePO numbers are from a recent-preprint requiring independent replication; &quot;optimizing the judge&quot; and &quot;frozen evaluator to prevent reward hacking&quot; are not in conflict — what is frozen is the judge in the evaluation pipeline, while what is being optimized is the development-phase auxiliary judge; conflating the two is reward hacking; an optimizer prompt that becomes stronger depends on the training tasks and scorer, and behaviors not covered by the metric will not automatically become safer.
+next_validation: Write optimizer_prompt / judge_prompt version fields into the run record schema to take effect with P0 experiments; subsequently ablate fixed optimizer prompt vs self-improved optimizer prompt.
+</code></pre>
+<h2 id="currently-trustworthy-core-conclusions">Currently Trustworthy Core Conclusions</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>conclusion</th>
+<th>evidence_strength</th>
+<th>Main evidence</th>
+<th>Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C-01</td>
+<td>Automatic prompt optimization must be built on dataset, metric, versioning, and rollback; "optimization" without eval is merely rewriting.</td>
+<td>A/B</td>
+<td>arXiv deep-reads, GitHub source-code audits, industry tool documentation</td>
+<td>Concrete tool effectiveness requires re-running on this project's tasks.</td>
+</tr>
+<tr>
+<td>C-02</td>
+<td>Textual feedback is useful but should not be interpreted as a real gradient.</td>
+<td>A</td>
+<td>ProTeGi, Flawed Textual Gradients, Scaling Textual Gradients</td>
+<td>Does not negate feedback-driven methods; only limits the interpretive framing.</td>
+</tr>
+<tr>
+<td>C-03</td>
+<td>One-shot rewrite is a weak baseline and should not be the target form of self-evolution.</td>
+<td>A/B</td>
+<td>ProTeGi, GEPA, PromptBreeder, GitHub compare/rewrite source code</td>
+<td>May be sufficient for small tasks but cannot support strong conclusions.</td>
+</tr>
+<tr>
+<td>C-04</td>
+<td>Exemplar selection, tool schema, context packaging, and agent role may each be more critical than instruction wording.</td>
+<td>A/B</td>
+<td>Teach Better, JTPRO, AutoPDL, 12-factor agents, industry docs</td>
+<td>First validation batch must control variables.</td>
+</tr>
+<tr>
+<td>C-05</td>
+<td>Prompt bloat, dev overfitting, judge hacking, and memory pollution are the main risks in prompt self-evolution.</td>
+<td>A/B</td>
+<td>TextReg, PrefPO, Coin Flip, ERM, industry eval docs</td>
+<td>Risk metrics need to be hardened into the experiment runner.</td>
+</tr>
+<tr>
+<td>C-06</td>
+<td>The GitHub channel is better suited for distilling engineering structure and governance methods, not for proving effectiveness in isolation.</td>
+<td>B</td>
+<td>core4 source-code audits and insight cards</td>
+<td>The "unsuitable for proving effectiveness" part is partly due to limited recall (no token, smoke-discovery of 8 queries) + core4-only audit — the canonical optimizer repos (gepa / PromptWizard / promptomatix) have not yet been audited; can be upgraded after supplementary audit + this project's minimal experiments; see "Channel Coverage and Known Bias" in <code>github_repo_channel_synthesis_20260609.md</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="helpful-method-candidates">Helpful Method Candidates</h2>
+<h3 id="hm-01-pre-optimization-gate">HM-01: Pre-Optimization Gate</h3>
+<pre><code class="language-yaml">name: Pre-Optimization Gate
+insight_supported: I-01, I-11
+problem: Avoid wasting complex optimizer cost on tasks with no headroom.
+recommended_when: Before running any automatic prompt optimizer.
+not_recommended_when: One-off low-risk prompt tweaks, or when the user only needs manual rewrite suggestions.
+required_inputs:
+  - 20-50 held-out examples
+  - zero-shot prompt
+  - manual baseline prompt
+  - 10-20 candidate prompts
+implementation_steps:
+  - Run zero-shot and manual baseline.
+  - Generate or hand-write 10-20 candidates.
+  - Evaluate all candidates with the same scorer.
+  - Compute best gain, score spread, format error, and cost.
+  - If best gain does not exceed the noise threshold, stop APO and return to task definition or eval.
+evaluation_metrics:
+  - main_score
+  - best_gain_over_zero_shot
+  - score_spread
+  - format_error_rate
+  - token_cost
+expected_benefit: Early cutoff on tasks with no improvement headroom.
+cost_and_latency: Low; typically less than the cost of a full optimizer run.
+risks: Small samples may misjudge; thresholds must not be applied rigidly across tasks.
+rollback_plan: Retain the zero-shot/manual baseline; do not accept automatic candidates.
+evidence: docs/paper_notes/paper-coin-flip-2026.md
+next_experiment: Run one gate each on a structured extraction task and an open-generation task.
+</code></pre>
+<h3 id="hm-02-trace-first-critique-rewrite">HM-02: Trace-First Critique Rewrite</h3>
+<pre><code class="language-yaml">name: Trace-First Critique Rewrite
+insight_supported: I-02, I-03, I-04
+problem: Having the LLM revise the prompt directly is not auditable and prone to misidentifying root causes.
+recommended_when: Tasks with failed examples, error types, or agent/tool traces.
+not_recommended_when: Subjective writing tasks with no verifiable output or scorer.
+required_inputs:
+  - baseline prompt
+  - failed examples
+  - gold/reference or judge rubric
+  - trace or intermediate outputs
+implementation_steps:
+  - Generate error_type and critique from failed examples.
+  - Generate 2-3 failure hypotheses.
+  - Generate one candidate prompt per hypothesis.
+  - Select the candidate using dev/validation.
+  - Record prompt diff, selection rationale, and rollback point.
+evaluation_metrics:
+  - main_score
+  - failure_type_delta
+  - validation_score
+  - prompt_length_ratio
+  - rejected_reason
+expected_benefit: Improves rewrite interpretability and reduces the randomness of one-shot rewriting.
+cost_and_latency: Moderate; requires additional critique and candidate evaluation calls.
+risks: Critique/judge bias; too many hypotheses causing budget inflation.
+rollback_plan: Retain the best_seen prompt; roll back if validation score decreases.
+evidence: docs/paper_notes/paper-protegi-2023.md, docs/paper_notes/paper-vista-reflection-dark-2026.md
+next_experiment: Compare direct rewrite vs trace-first rewrite on the same structured extraction task.
+</code></pre>
+<h3 id="hm-03-exemplar-optimization-baseline">HM-03: Exemplar Optimization Baseline</h3>
+<pre><code class="language-yaml">name: Exemplar Optimization Baseline
+insight_supported: I-05
+problem: Prevent overestimating the value of instruction rewriting.
+recommended_when: A labeled dev set is available and context length allows 3-5 examples.
+not_recommended_when: Very tight context, examples may leak sensitive information, or the task strongly depends on zero-shot performance.
+required_inputs:
+  - exemplar candidate pool
+  - fixed instruction
+  - dev split
+  - hidden/test split
+implementation_steps:
+  - Fix the instruction.
+  - Compare no-example, random examples, and optimized examples.
+  - Then compare instruction optimization + optimized examples.
+  - Report final generalization on the hidden/test split only.
+evaluation_metrics:
+  - main_score
+  - dev_test_gap
+  - context_tokens
+  - rare_label_score
+  - format_error_rate
+expected_benefit: Identify whether gains come from exemplars rather than instruction wording.
+cost_and_latency: Moderate; depends on exemplar search budget.
+risks: Exemplar selection overfitting; uneven exemplar coverage; increased cost.
+rollback_plan: If test/OOD performance drops, revert to no-example or random-example baseline.
+evidence: docs/paper_notes/paper-teach-better-show-smarter-2024.md
+next_experiment: Compare instruction-only vs exemplar-only on a structured extraction task.
+</code></pre>
+<h3 id="hm-04-prompt-artifact-ledger">HM-04: Prompt Artifact Ledger</h3>
+<pre><code class="language-yaml">name: Prompt Artifact Ledger
+insight_supported: I-04, I-06, I-07, I-08, I-10
+problem: Mixing prompt, examples, tool schema, context, and evaluator into the same change makes attribution impossible and rollback infeasible.
+recommended_when: Any research-grade or production-grade prompt optimization.
+not_recommended_when: Temporary one-off chat.
+required_inputs:
+  - artifact manifest
+  - prompt diff
+  - evaluation run
+  - cost report
+implementation_steps:
+  - Assign a version number to each artifact.
+  - Annotate as mutable/frozen.
+  - Record score, failed examples, cost, and accept/reject rationale for each candidate.
+  - Save rollback point.
+evaluation_metrics:
+  - reproducibility
+  - rollback_time
+  - source_traceability
+  - frozen_section_violation
+expected_benefit: Makes prompt evolution auditable, reproducible, and rollback-capable.
+cost_and_latency: Low to moderate; mainly the cost of record-keeping.
+risks: Too many fields slow down execution; the first version should keep fields minimal.
+rollback_plan: Restore the previous accepted artifact from the ledger.
+evidence: docs/github_repo_insight_cards_20260608.md, docs/industry_practices.md
+next_experiment: Have the first experiment runner output `prompt_runs.jsonl`.
+</code></pre>
+<h2 id="anti-patterns-and-risk-boundaries">Anti-Patterns and Risk Boundaries</h2>
+<table>
+<thead>
+<tr>
+<th>anti-pattern</th>
+<th>Why it is dangerous</th>
+<th>Corresponding safeguard</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Asking the model to "optimize the prompt" directly</td>
+<td>No goal, no evaluation, no rollback; output is only polishing or random rewriting.</td>
+<td>HM-01, HM-02</td>
+<td>ProTeGi, VISTA, industry eval docs</td>
+</tr>
+<tr>
+<td>Looking only at average scores</td>
+<td>Minority class, format errors, and safety boundaries may deteriorate.</td>
+<td>Stratified metrics, stress split</td>
+<td>TextReg, PrefPO, Coin Flip</td>
+</tr>
+<tr>
+<td>Letting the prompt keep growing longer</td>
+<td>May be patches for training examples and conflicting rules.</td>
+<td>hygiene gate</td>
+<td>TextReg, Edit-Level Analysis</td>
+</tr>
+<tr>
+<td>Allowing the optimizer to modify the evaluator or test cases</td>
+<td>Direct reward hacking.</td>
+<td>frozen evaluator/data</td>
+<td>GitHub autoresearch audit</td>
+</tr>
+<tr>
+<td>Appending raw memory without bounds</td>
+<td>Inherits bad feedback, risks privacy leakage, cross-task pollution.</td>
+<td>filtered memory + forgetting</td>
+<td>ERM, MemAPO, ECC</td>
+</tr>
+<tr>
+<td>Using social media popularity as evidence</td>
+<td>Popularity indicates spread, not effectiveness.</td>
+<td>source evidence triage</td>
+<td>source_batches</td>
+</tr>
+<tr>
+<td>Rewriting multiple agents together</td>
+<td>Impossible to determine which role/round caused the change.</td>
+<td>credit ledger</td>
+<td>MASPO, MAPRO</td>
+</tr>
+<tr>
+<td>Only modifying the system prompt for tool-calling tasks</td>
+<td>tool schema/slot errors cannot be fixed this way.</td>
+<td>JTPRO-style schema optimization</td>
+<td>JTPRO</td>
+</tr>
+</tbody>
+</table>
+<h2 id="first-validation-batch-priorities">First Validation Batch Priorities</h2>
+<table>
+<thead>
+<tr>
+<th>priority</th>
+<th>validation/demo</th>
+<th>validates</th>
+<th>Minimal task</th>
+<th>What both success and failure can produce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>Structured extraction pre-gate</td>
+<td>I-01, I-11, I-13 (control baseline), HM-01</td>
+<td>100-300 JSON extraction examples</td>
+<td>Determines whether there is optimization headroom and calibrates noise floor; run I-13 zero-cost transform in parallel as control baseline during the health check.</td>
+</tr>
+<tr>
+<td>P0</td>
+<td>Exemplar baseline</td>
+<td>I-05, HM-03</td>
+<td>Same extraction task</td>
+<td>Prevents mistaking exemplar selection gains for instruction rewrite gains.</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Direct rewrite vs trace-first rewrite</td>
+<td>I-02, I-03, HM-02</td>
+<td>Extraction/classification task with clear failure examples</td>
+<td>Determines whether critique/hypothesis improves held-out performance.</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Performance-only vs hygiene selector</td>
+<td>I-07</td>
+<td>Same candidate pool</td>
+<td>Determines whether the prompt bloat safeguard reduces spurious gains.</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Tool schema mini benchmark</td>
+<td>I-10</td>
+<td>20-50 similar tools</td>
+<td>Determines whether schema-only/joint outperforms global prompt-only.</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Filtered memory</td>
+<td>I-08</td>
+<td>Two similar tasks + one heterogeneous task</td>
+<td>Determines whether memory reduces cost or causes negative transfer.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="gaps-before-entering-the-final-report">Gaps Before Entering the Final Report</h2>
+<ul>
+<li>Each A/B-grade insight needs to be traced to 2-3 of its strongest sources rather than piling in every reference.</li>
+<li>At least 1 HM needs a minimal validation or demonstration record from this project before it can earn grade-C project evidence.</li>
+<li>Minimum fields for <code>prompt_runs</code> / <code>artifact ledger</code> must be defined so that helpful methods do not remain at the level of slogans.</li>
+<li>For 2026 new arXiv papers, the final report should annotate <code>recent-preprint</code> to avoid over-reliance.</li>
+<li>Industry tool documentation needs version numbers and access dates, especially for hosted prompt optimizer products that may have migrated or been deprecated.</li>
+</ul>
+<div class="genfoot">This page is auto-generated by <code>scripts/build_doc_html.py</code> from <code>docs/insight_method_catalog_20260609.en.md</code> (2026-06-14 14:52 CST). Do not edit this HTML by hand; edit the source <code>.en.md</code> and re-run the script. Visual synthesis: <a href="analysis_report_v4_20260611.en.html">Analysis Report v4</a>.</div>
+</article>
+<aside class="toc"><h4>On this page</h4><a class="lv2" href="#how-to-use">How to Use</a>
+<a class="lv2" href="#core-insight-candidates">Core Insight Candidates</a>
+<a class="lv3" href="#i-01-test-whether-optimization-is-worth-it-before-running-an-optimizer">I-01: Test Whether Optimization Is Worth It Before Running an Optimizer</a>
+<a class="lv3" href="#i-02-turn-failure-examples-into-editable-evidence-not-just-scores">I-02: Turn Failure Examples into Editable Evidence, Not Just Scores</a>
+<a class="lv3" href="#i-03-generate-root-cause-hypotheses-before-rewriting-the-prompt">I-03: Generate Root-Cause Hypotheses Before Rewriting the Prompt</a>
+<a class="lv3" href="#i-04-candidate-selection-mechanism-is-as-important-as-prompt-rewriting">I-04: Candidate Selection Mechanism Is as Important as Prompt Rewriting</a>
+<a class="lv3" href="#i-05-with-a-dev-set-exemplar-selection-is-a-first-class-optimization-variable">I-05: With a Dev Set, Exemplar Selection Is a First-Class Optimization Variable</a>
+<a class="lv3" href="#i-06-the-optimization-target-has-expanded-from-a-prompt-string-to-an-artifact-graph">I-06: The Optimization Target Has Expanded from a Prompt String to an Artifact Graph</a>
+<a class="lv3" href="#i-07-longer-more-complex-prompts-with-more-meta-instructions-are-not-necessarily-progress">I-07: Longer, More Complex Prompts with More Meta-Instructions Are Not Necessarily Progress</a>
+<a class="lv3" href="#i-08-memory-is-useful-but-only-filtered-memory-is-useful">I-08: Memory Is Useful, but Only Filtered Memory Is Useful</a>
+<a class="lv3" href="#i-09-in-multi-agent-optimization-credit-assignment-is-the-core-problem-not-more-agents">I-09: In Multi-Agent Optimization, Credit Assignment Is the Core Problem — Not More Agents</a>
+<a class="lv3" href="#i-10-in-tool-calling-tasks-the-tool-schema-must-be-treated-as-an-optimizable-artifact">I-10: In Tool-Calling Tasks, the Tool Schema Must Be Treated as an Optimizable Artifact</a>
+<a class="lv3" href="#i-11-structured-tasks-are-better-suited-for-the-first-validation-batch">I-11: Structured Tasks Are Better Suited for the First Validation Batch</a>
+<a class="lv3" href="#i-12-social-media-and-secondary-articles-are-leads-not-evidence">I-12: Social Media and Secondary Articles Are Leads, Not Evidence</a>
+<a class="lv3" href="#i-13-before-running-costly-search-try-zero-cost-deterministic-structural-transforms">I-13: Before Running Costly Search, Try Zero-Cost Deterministic Structural Transforms</a>
+<a class="lv3" href="#i-14-the-optimizer-and-judge-are-also-components-that-must-be-versioned-and-can-be-optimized">I-14: The Optimizer and Judge Are Also Components That Must Be Versioned and Can Be Optimized</a>
+<a class="lv2" href="#currently-trustworthy-core-conclusions">Currently Trustworthy Core Conclusions</a>
+<a class="lv2" href="#helpful-method-candidates">Helpful Method Candidates</a>
+<a class="lv3" href="#hm-01-pre-optimization-gate">HM-01: Pre-Optimization Gate</a>
+<a class="lv3" href="#hm-02-trace-first-critique-rewrite">HM-02: Trace-First Critique Rewrite</a>
+<a class="lv3" href="#hm-03-exemplar-optimization-baseline">HM-03: Exemplar Optimization Baseline</a>
+<a class="lv3" href="#hm-04-prompt-artifact-ledger">HM-04: Prompt Artifact Ledger</a>
+<a class="lv2" href="#anti-patterns-and-risk-boundaries">Anti-Patterns and Risk Boundaries</a>
+<a class="lv2" href="#first-validation-batch-priorities">First Validation Batch Priorities</a>
+<a class="lv2" href="#gaps-before-entering-the-final-report">Gaps Before Entering the Final Report</a></aside>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var byId = {};
+  links.forEach(function(a){ byId[decodeURIComponent(a.getAttribute('href')).slice(1)] = a; });
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var a = byId[e.target.id];
+      if (!a) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  }, {rootMargin: '-12% 0px -72% 0px'});
+  document.querySelectorAll('.content h2[id], .content h3[id]').forEach(function(h){ obs.observe(h); });
+})();
+</script>
+</body>
+</html>
